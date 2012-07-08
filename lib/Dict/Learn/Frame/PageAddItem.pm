@@ -68,10 +68,10 @@ sub new {
   $self->listbox_examples->InsertColumn( 2, 'Ukr',  wxLIST_FORMAT_LEFT, 300);
   $self->listbox_examples->InsertColumn( 3, 'Note', wxLIST_FORMAT_LEFT, 150);
 
-  $self->panel1_curr_example_id(-1);
+  $self->panel1_curr_example_id(undef);
 
-  # panel1_mode: 0 - add, other - edit
-  $self->panel1_item_id(0);
+  # panel1_mode: undef - add, other - edit
+  $self->panel1_item_id(undef);
 
   $self->panel1_vbox->Add( $self->listbox_examples, 1, wxALL|wxGROW|wxEXPAND, 5 );
 
@@ -120,7 +120,9 @@ sub add_word {
       examples     => [ @examples ]
   );
 
-  if ($self->panel1_item_id >= 0) {
+  if (defined $self->panel1_item_id and
+              $self->panel1_item_id >= 0)
+  {
     push @params, word_id => $self->panel1_item_id;
     $main::ioc->lookup('db')->update_item(@params);
   } else {
@@ -147,13 +149,16 @@ sub clear_example_inputs {
   $self->text_src->Clear;
   $self->text_dst->Clear;
   $self->example_note->Clear;
+
+  $self->panel1_curr_example_id(undef);
+
   $self
 }
 
 sub example_save {
   my $self = shift;
 
-  if ($self->panel1_curr_example_id < 0) {
+  unless (defined $self->panel1_curr_example_id) {
     warn "can't save";
     return
   }
@@ -166,7 +171,6 @@ sub example_save {
                                     $self->example_note->GetValue() );
 
   $self->clear_example_inputs;
-  $self->panel1_curr_example_id(-1);
 
   $self
 }
@@ -186,7 +190,8 @@ sub clear_fields {
   $self->example_note->Clear;
   $self->listbox_examples->DeleteAllItems;
   $self->wordclass->SetSelection(0);
-  $self->panel1_curr_example_id(-1);
+  $self->panel1_curr_example_id(undef);
+  $self->panel1_item_id(undef);
 }
 
 sub load_example_inputs {
