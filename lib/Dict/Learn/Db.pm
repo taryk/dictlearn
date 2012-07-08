@@ -35,7 +35,7 @@ sub add_word {
     word_orig     => $params{word_orig},
     word_tr       => $params{word_tr},
     dictionary_id => $self->dictionary_id,
-    wordclass_id  => $params{wordclass},
+    wordclass_id  => $params{wordclass_id},
     note          => $params{note},
     # examples      => [ @examples ],
   });
