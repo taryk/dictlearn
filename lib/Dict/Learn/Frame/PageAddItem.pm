@@ -18,7 +18,9 @@ use Class::XSAccessor
                      listbox_examples
                      panel1_vbox panel1_hbox_words panel1_hbox_examples panel1_hbox_btn
                      panel1_curr_example_id panel1_item_id
-                     btn_add_word btn_add_example btn_clear btn_tran btn_save btn_delete_word btn_delete_example | ];
+                     btn_add_word btn_add_example btn_clear btn_tran btn_save btn_delete_word
+                     btn_delete_example
+                   | ];
 
 sub new {
   my $class  = shift;
@@ -104,7 +106,9 @@ sub add_word {
                          undef,
       };
     }
-  } else {
+  } elsif ($self->text_src->GetValue and
+           $self->text_src->GetValue =~ /^\S+$/)
+  {
     push @examples  => {
       sentence_orig => $self->text_src->GetValue(),
       sentence_tr   => $self->text_dst->GetValue(),
