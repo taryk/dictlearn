@@ -12,7 +12,7 @@ use common::sense;
 
 use Class::XSAccessor
   accessors => [ qw| parent
-                     combobox listbox lb_item
+                     combobox listbox lb_item btn_lookup lookup_hbox
                      panel3_vbox listbox3_examples btn3_add_example
                      btn3_delete_example
                      btn3_edit panel3_hbox_btn
@@ -26,12 +26,19 @@ sub new {
   $self->panel3_vbox( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->SetSizer( $self->panel3_vbox );
 
-  $self->combobox( Wx::ComboBox->new( $self, wxID_ANY, "text", wxDefaultPosition, wxDefaultSize, [], 0, wxDefaultValidator  ) );
+  $self->lookup_hbox( Wx::BoxSizer->new( wxHORIZONTAL ) );
+
+  $self->combobox( Wx::ComboBox->new( $self, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, [], 0, wxDefaultValidator  ) );
+
+  $self->btn_lookup( Wx::Button->new( $self, -1, '#', [20, 20] ) );
+  $self->lookup_hbox->Add($self->combobox, 1, wxTOP|wxGROW, 0);
+  $self->lookup_hbox->Add($self->btn_lookup, 0);
+
   $self->listbox( Wx::ListCtrl->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
 
   $self->listbox->InsertColumn( 0 , 'id',      wxLIST_FORMAT_LEFT, 30);
   $self->listbox->InsertColumn( 1 , 'Eng',     wxLIST_FORMAT_LEFT, 200);
-  $self->listbox->InsertColumn( 2 , 'wc',      wxLIST_FORMAT_LEFT, 25);
+  $self->listbox->InsertColumn( 2 , 'wc',      wxLIST_FORMAT_LEFT, 35);
   $self->listbox->InsertColumn( 3 , 'Ukr',     wxLIST_FORMAT_LEFT, 200);
   $self->listbox->InsertColumn( 4 , 'note',    wxLIST_FORMAT_LEFT, 200);
   $self->listbox->InsertColumn( 5 , 'created', wxLIST_FORMAT_LEFT, 150);
@@ -50,7 +57,7 @@ sub new {
   $self->panel3_hbox_btn->Add( $self->btn3_edit   );
   $self->panel3_hbox_btn->Add( $self->btn3_delete_example );
 
-  $self->panel3_vbox->Add( $self->combobox, 0, wxTOP|wxGROW, 5 );
+  $self->panel3_vbox->Add( $self->lookup_hbox, 0, wxTOP|wxGROW, 5 );
   $self->panel3_vbox->Add( $self->listbox, 2, wxALL|wxGROW|wxEXPAND, 5 );
   $self->panel3_vbox->Add( $self->listbox3_examples, 1, wxALL|wxGROW|wxEXPAND, 5 );
   $self->panel3_vbox->Add( $self->panel3_hbox_btn, 0, wxALL|wxGROW|wxEXPAND, 5 );
@@ -59,14 +66,17 @@ sub new {
   $self->panel3_vbox->Fit( $self );
 
   # events
-  EVT_TEXT(   $self, $self->combobox,            \&on_text_enter  );
+  EVT_TEXT(   $self, $self->combobox,            \&lookup         );
+  EVT_BUTTON( $self, $self->btn_lookup,          \&lookup         );
   EVT_BUTTON( $self, $self->btn3_edit,           \&edit_item      );
   EVT_LIST_ITEM_SELECTED( $self, $self->listbox, \&load_examples  );
+
+  $self->lookup;
 
   $self
 }
 
-sub on_text_enter {
+sub lookup {
   my ( $self, $event ) = @_;
   $self->listbox->DeleteAllItems();
   for my $item ( $main::ioc->lookup('db')->find_items( $self->combobox->GetValue ) )
