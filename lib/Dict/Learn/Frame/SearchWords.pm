@@ -36,7 +36,7 @@ sub new {
 
   $self->listbox( Wx::ListCtrl->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
 
-  $self->listbox->InsertColumn( 0 , 'id',      wxLIST_FORMAT_LEFT, 30);
+  $self->listbox->InsertColumn( 0 , 'id',      wxLIST_FORMAT_LEFT, 35);
   $self->listbox->InsertColumn( 1 , 'Eng',     wxLIST_FORMAT_LEFT, 200);
   $self->listbox->InsertColumn( 2 , 'wc',      wxLIST_FORMAT_LEFT, 35);
   $self->listbox->InsertColumn( 3 , 'Ukr',     wxLIST_FORMAT_LEFT, 200);
@@ -44,7 +44,7 @@ sub new {
   $self->listbox->InsertColumn( 5 , 'created', wxLIST_FORMAT_LEFT, 150);
 
   $self->listbox3_examples( Wx::ListCtrl->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
-  $self->listbox3_examples->InsertColumn( 0, 'id',   wxLIST_FORMAT_LEFT, 30);
+  $self->listbox3_examples->InsertColumn( 0, 'id',   wxLIST_FORMAT_LEFT, 35);
   $self->listbox3_examples->InsertColumn( 1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
   $self->listbox3_examples->InsertColumn( 2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
   $self->listbox3_examples->InsertColumn( 3, 'Note', wxLIST_FORMAT_LEFT, 150);
