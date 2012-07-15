@@ -107,7 +107,7 @@ sub add_word {
       };
     }
   } elsif ($self->text_src->GetValue and
-           $self->text_src->GetValue =~ /^\S+$/)
+           $self->text_src->GetValue !~ /^\s+$/)
   {
     push @examples  => {
       sentence_orig => $self->text_src->GetValue(),
