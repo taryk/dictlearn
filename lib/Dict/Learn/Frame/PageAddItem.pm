@@ -201,8 +201,8 @@ sub clear_fields {
 sub load_example_inputs {
   my $self = shift;
   my $item = shift;
-  $self->panel1_curr_example_id($item->GetIndex());
   $self->clear_example_inputs;
+  $self->panel1_curr_example_id($item->GetIndex());
   $self->text_src->SetValue($self->listbox_examples->GetItem($item->GetIndex(), 1)->GetText);
   $self->text_dst->SetValue($self->listbox_examples->GetItem($item->GetIndex(), 2)->GetText);
   $self->example_note->SetValue($self->listbox_examples->GetItem($item->GetIndex(), 3)->GetText);
