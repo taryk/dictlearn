@@ -145,7 +145,15 @@ sub select_all {
 
 sub select_wordclass {
   my $self = shift;
-  my $rs   = $self->schema->resultset('Wordclass')->search({},
+  my %params = @_;
+  my $args = {};
+  if ($params{name}) {
+    $args->{-or} = [
+      name_orig => { -like => $params{name} },
+      name_tr   => { -like => $params{name} },
+    ];
+  }
+  my $rs = $self->schema->resultset('Wordclass')->search($args,
     { order_by => { -asc => 'wordclass_id' } });
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
   $rs->all
@@ -164,3 +172,7 @@ sub select_examples {
 }
 
 1;
+
+
+
+
