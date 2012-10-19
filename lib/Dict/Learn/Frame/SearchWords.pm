@@ -95,30 +95,28 @@ sub edit_item {
   my $self = shift;
   my $curr_id = -1;
   my $panel1 = $self->parent->panel1;
-  $panel1->clear_fields;
+
   $curr_id = $self->listbox->GetNextItem($curr_id, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-  $panel1->word_src->SetValue(  $self->listbox->GetItem($curr_id, 1)->GetText );
-  $panel1->word_dst->SetValue(  $self->listbox->GetItem($curr_id, 3)->GetText );
-  $panel1->word_note->SetValue( $self->listbox->GetItem($curr_id, 4)->GetText );
+
   my @examples;
-  for (my $i = 0; $i < $self->listbox3_examples->GetItemCount; $i++) {
-    my $id = $panel1->listbox_examples->InsertItem( Wx::ListItem->new );
-    $panel1->listbox_examples->SetItem(
-      $id, 0, $self->listbox3_examples->GetItem($i, 0)->GetText );
-    $panel1->listbox_examples->SetItem(
-      $id, 1, $self->listbox3_examples->GetItem($i, 1)->GetText );
-    $panel1->listbox_examples->SetItem(
-      $id, 2, $self->listbox3_examples->GetItem($i, 2)->GetText );
-    $panel1->listbox_examples->SetItem(
-      $id, 3, $self->listbox3_examples->GetItem($i, 3)->GetText );
+  for my $i (0 .. $self->listbox3_examples->GetItemCount - 1) {
+    push @examples => [
+      $self->listbox3_examples->GetItem($i, 0)->GetText,
+      $self->listbox3_examples->GetItem($i, 1)->GetText,
+      $self->listbox3_examples->GetItem($i, 2)->GetText,
+      $self->listbox3_examples->GetItem($i, 3)->GetText
+    ];
   }
 
-  $panel1->panel1_item_id( $self->listbox->GetItem($curr_id, 0)->GetText );
+  $panel1->load_word(
+    word_id   => $self->listbox->GetItem($curr_id, 0)->GetText,
+    word_src  => $self->listbox->GetItem($curr_id, 1)->GetText,
+    word_dst  => $self->listbox->GetItem($curr_id, 3)->GetText,
+    word_note => $self->listbox->GetItem($curr_id, 4)->GetText,
+    examples  => \@examples
+  );
 
-  $self->parent->notebook->SetPageText(
-    0 => "Edit item id#".$panel1->panel1_item_id);
   $self->parent->notebook->ChangeSelection(0);
-
 }
 
 sub load_examples {
