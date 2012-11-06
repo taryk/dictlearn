@@ -179,24 +179,26 @@ sub add_word {
     };
   }
 
+  my %params = (
+      word_orig    => $self->word_src->GetValue(),
+      word_tr      => [],
+      note         => $self->word_note->GetValue(),
+      examples     => [ @examples ]
+  );
   for my $word_dst_item ( @{ $self->word_dst } ) {
-    my @params = (
-        word_orig    => $self->word_src->GetValue(),
-        word_tr      => $word_dst_item->[1]->GetValue(),
-        note         => $self->word_note->GetValue(),
-        wordclass_id => int($word_dst_item->[0]->GetSelection()),
-        examples     => [ @examples ]
-    );
-
-    if (defined $self->panel1_item_id and
-                $self->panel1_item_id >= 0)
-    {
-      push @params, word_id => $self->panel1_item_id;
-      $main::ioc->lookup('db')->update_item(@params);
-      last;
-    } else {
-      $main::ioc->lookup('db')->add_word(@params);
-    }
+    push @{$params{word_tr}} => [
+      int($word_dst_item->[0]->GetSelection()), # wordclass
+      $word_dst_item->[1]->GetValue() # word
+    ];
+  }
+  if (defined $self->panel1_item_id and
+              $self->panel1_item_id >= 0)
+  {
+    $params{word_id} = $self->panel1_item_id;
+    $main::ioc->lookup('db')->update_item(%params);
+    last;
+  } else {
+    $main::ioc->lookup('db')->add_word(%params);
   }
 
   $self->clear_fields;
