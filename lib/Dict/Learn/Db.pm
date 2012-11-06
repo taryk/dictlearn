@@ -217,10 +217,27 @@ sub select_wordclass {
 sub select_examples {
   my $self    = shift;
   my $word_id = shift;
-  my $rs   = $self->schema->resultset('Example')->search(
-   { 'word_example.word_id' => $word_id   },
-   { 'join'     => 'word_example',
-     'order_by' => { -asc => 'me.example_id' }
+  my $rs   = $self->schema->resultset('WordExample')->search({
+    -and => [
+       'me.word_id' => $word_id,
+       'rel_examples.dictionary_id' => $self->dictionary_id,
+    ],
+  }, {
+    select => [ qw| rel_examples.note
+                    example1_id.example_id
+                    example1_id.example
+                    example1_id.note
+                    example2_id.example_id
+                    example2_id.example
+                    example2_id.note
+                  | ],
+     join   => { rel_examples => ['example1_id', 'example2_id'] },
+     # order_by => { -asc => 'me.example_id' }
+  });
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  $rs->all
+}
+
   });
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
   $rs->all
