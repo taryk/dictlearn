@@ -98,6 +98,7 @@ sub delete_word {
 
 sub add_example {
   my $self   = shift;
+  my %params = @_;
   # $self->schema->populate( 'Example' => [
   #   [qw| sentence_orig sentence_tr |],
   #   [ $params{sentence_orig}, $params{sentence_tr} ],
@@ -107,7 +108,26 @@ sub add_example {
   #   [ $params{word_id}, $params{example_id} ],
   # ]);
   # $self->schema->resultset('Example')->create({ ... });
-  $self
+  # p(%params);
+  my $new_example = $self->schema->resultset('Example')->create({
+    example => $params{text},
+    note    => $params{note},
+    lang_id => $params{lang_id},
+  });
+  if ($params{word}) {
+    my $rs = $self->schema->resultset('WordExample')->create({
+      word_id    => $params{word}[0],
+      example_id => $new_example->example_id,
+    });
+  }
+  for (@{ $params{translate} }) {
+    $new_example->add_to_examples({
+      example => $_->{text},
+      lang_id => $_->{lang_id},
+    }, {
+      dictionary_id => $self->dictionary_id
+    });
+  }
 }
 
 sub update_example { my $self = shift }
