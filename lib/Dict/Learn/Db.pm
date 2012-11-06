@@ -68,7 +68,6 @@ sub update_item {
       )->update($item);
     }
     else {
-      # p($item);
       $updated_word->add_to_examples($item);
     }
   }
