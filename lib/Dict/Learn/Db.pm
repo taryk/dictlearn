@@ -154,9 +154,37 @@ sub find_items {
   @r1
 }
 
+sub select_words {
+  my $self    = shift;
+  my $lang_id = shift;
+  my $rs      = $self->schema->resultset('Word')->search({
+    'lang_id' => $lang_id,
+  }, {
+    distinct => 1,
+    select   => [ qw| me.word_id me.word wordclass.abbr | ],
+    as       => [ qw| id word wordclass | ],
+    join     => [ 'wordclass' ],
+  });
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
   $rs->all;
 }
+
+# sub select_words {
+#   my $self    = shift;
+#   my $lang_id = shift;
+#   my $rs      = $self->schema->resultset('Words')->search({
+#     'me.dictionary_id' => $self->dictionary_id,
+#   }, {
+#     distinct => 1,
+#     select   => [ qw| words.word_id words.word words.wordclass_id | ],
+#     as       => [ qw| id word wordclass_id | ],
+#     join     => { dictionary => 'words' },
+#   });
+#   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+#   my @r1 = $rs->all;
+#   p(@r1);
+#   @r1
+# }
 
 sub select_all {
   my $self = shift;
