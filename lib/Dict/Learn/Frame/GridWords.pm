@@ -123,9 +123,9 @@ sub select_words {
   $self->grid->InsertRows(0 , scalar @items);
   for my $item ( $main::ioc->lookup('db')->select_all() ) {
     $self->grid->SetRowLabelValue($i => $item->{word_id});
-    $self->grid->SetCellValue( $i,   0, $item->{word_orig} );
-    $self->grid->SetCellValue( $i,   1, $item->{wordclass_abbr} );
-    $self->grid->SetCellValue( $i,   2, $item->{word_tr} );
+    $self->grid->SetCellValue( $i,   0, $item->{word1_id}{word} );
+    $self->grid->SetCellValue( $i,   1, $item->{wordclass}{name_orig} );
+    $self->grid->SetCellValue( $i,   2, $item->{word2_id}{word} );
     $self->grid->SetCellValue( $i,   3, $item->{mdate} );
     $self->grid->SetCellValue( $i++, 4, $item->{cdate} );
   }
