@@ -188,15 +188,14 @@ sub select_words {
 
 sub select_all {
   my $self = shift;
-  my $rs   = $self->schema->resultset('Word')->search(
-    { dictionary_id => $self->dictionary_id },
-    { 'join'     => 'wordclass',
-      '+select'  => 'wordclass.abbr',
-      '+as'      => 'wordclass_abbr',
-      'order_by' => { -asc => 'word_orig' } },
+  my $rs   = $self->schema->resultset('Words')->search(
+    { 'me.dictionary_id' => $self->dictionary_id },
+    { prefetch => [ qw| word1_id word2_id wordclass | ] }
   );
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-  $rs->all
+  my @r1 = $rs->all;
+  # p(@r1);
+  @r1
 }
 
 sub select_wordclass {
