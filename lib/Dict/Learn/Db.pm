@@ -1,6 +1,7 @@
 package Dict::Learn::Db 0.1;
 
 use common::sense;
+use namespace::autoclean;
 
 use Data::Printer;
 
