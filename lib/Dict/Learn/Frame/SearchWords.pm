@@ -12,10 +12,13 @@ use common::sense;
 
 use Class::XSAccessor
   accessors => [ qw| parent
-                     combobox lb_words btn_lookup lookup_hbox
-                     vbox lb_examples btn_add_example
-                     btn_delete_example
-                     btn_edit hbox_btn
+                     vbox combobox btn_lookup lookup_hbox
+                     hbox_words lb_words
+                     hbox_examples lb_examples
+                     vbox_btn_words
+                     btn_edit_word btn_delete_word
+                     vbox_btn_examples
+                     btn_add_example btn_delete_example btn_edit_example
                | ];
 
 sub new {
@@ -31,7 +34,17 @@ sub new {
   $self->lookup_hbox->Add($self->combobox, 1, wxTOP|wxGROW, 0);
   $self->lookup_hbox->Add($self->btn_lookup, 0);
 
-  ### words table
+  ### words
+
+  # buttons
+  $self->btn_edit_word( Wx::Button->new( $self, -1, 'Edit',    [-1, -1] ) );
+  $self->btn_delete_word( Wx::Button->new( $self, -1, 'Del',  [-1, -1] ) );
+  # layout
+  $self->vbox_btn_words( Wx::BoxSizer->new( wxVERTICAL ) );
+  $self->vbox_btn_words->Add( $self->btn_edit_word );
+  $self->vbox_btn_words->Add( $self->btn_delete_word );
+
+  # table
   $self->lb_words( Wx::ListCtrl->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
   $self->lb_words->InsertColumn( 0 , 'id',      wxLIST_FORMAT_LEFT, 35);
   $self->lb_words->InsertColumn( 1 , 'Eng',     wxLIST_FORMAT_LEFT, 200);
@@ -39,39 +52,47 @@ sub new {
   $self->lb_words->InsertColumn( 3 , 'Ukr',     wxLIST_FORMAT_LEFT, 200);
   $self->lb_words->InsertColumn( 4 , 'note',    wxLIST_FORMAT_LEFT, 200);
   $self->lb_words->InsertColumn( 5 , 'created', wxLIST_FORMAT_LEFT, 150);
+  # layout
+  $self->hbox_words( Wx::BoxSizer->new( wxHORIZONTAL ) );
+  $self->hbox_words->Add( $self->vbox_btn_words, 0, wxALL|wxTOP, 0 );
+  $self->hbox_words->Add( $self->lb_words, 2, wxALL|wxGROW|wxEXPAND, 0 );
 
-  ### examples table
+  ### examples
+
+  # buttons
+  $self->btn_add_example( Wx::Button->new( $self, -1, 'Add',     [-1, -1] ) );
+  $self->btn_edit_example( Wx::Button->new( $self, -1, 'Edit',    [-1, -1] ) );
+  $self->btn_delete_example( Wx::Button->new( $self, -1, 'Del',  [-1, -1] ) );
+  # layout
+  $self->vbox_btn_examples( Wx::BoxSizer->new( wxVERTICAL ) );
+  $self->vbox_btn_examples->Add( $self->btn_add_example );
+  $self->vbox_btn_examples->Add( $self->btn_edit_example );
+  $self->vbox_btn_examples->Add( $self->btn_delete_example );
+
+  # table
   $self->lb_examples( Wx::ListCtrl->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
   $self->lb_examples->InsertColumn( 0, 'id',   wxLIST_FORMAT_LEFT, 35);
   $self->lb_examples->InsertColumn( 1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
   $self->lb_examples->InsertColumn( 2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
   $self->lb_examples->InsertColumn( 3, 'Note', wxLIST_FORMAT_LEFT, 150);
-
-  ### buttons
-  $self->btn_add_example( Wx::Button->new( $self, -1, 'Add',     [-1, -1] ) );
-  $self->btn_edit( Wx::Button->new( $self, -1, 'Edit',    [-1, -1] ) );
-  $self->btn_delete_example( Wx::Button->new( $self, -1, 'Delete',  [-1, -1] ) );
-
   # layout
-  $self->hbox_btn( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->hbox_btn->Add( $self->btn_add_example );
-  $self->hbox_btn->Add( $self->btn_edit );
-  $self->hbox_btn->Add( $self->btn_delete_example );
+  $self->hbox_examples( Wx::BoxSizer->new( wxHORIZONTAL ) );
+  $self->hbox_examples->Add( $self->vbox_btn_examples, 0, wxALL|wxTOP, 0 );
+  $self->hbox_examples->Add( $self->lb_examples, 2, wxALL|wxGROW|wxEXPAND, 0 );
 
   ### main layout
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->vbox->Add( $self->lookup_hbox, 0, wxTOP|wxGROW, 5 );
-  $self->vbox->Add( $self->lb_words, 2, wxALL|wxGROW|wxEXPAND, 5 );
-  $self->vbox->Add( $self->lb_examples, 1, wxALL|wxGROW|wxEXPAND, 5 );
-  $self->vbox->Add( $self->hbox_btn, 0, wxALL|wxGROW|wxEXPAND, 5 );
+  $self->vbox->Add( $self->hbox_words, 2, wxALL|wxGROW|wxEXPAND, 0 );
+  $self->vbox->Add( $self->hbox_examples, 1, wxALL|wxGROW|wxEXPAND, 0 );
   $self->SetSizer( $self->vbox );
   $self->Layout();
   $self->vbox->Fit( $self );
 
   # events
-  EVT_TEXT(   $self, $self->combobox,            \&lookup         );
-  EVT_BUTTON( $self, $self->btn_lookup,          \&lookup         );
-  EVT_BUTTON( $self, $self->btn_edit,            \&edit_item      );
+  EVT_TEXT(   $self, $self->combobox,             \&lookup         );
+  EVT_BUTTON( $self, $self->btn_lookup,           \&lookup         );
+  EVT_BUTTON( $self, $self->btn_edit_example,     \&edit_item      );
   EVT_LIST_ITEM_SELECTED( $self, $self->lb_words, \&load_examples  );
 
   $self->lookup;
