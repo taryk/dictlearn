@@ -137,18 +137,23 @@ sub delete_example { my $self = shift }
 sub find_items {
   my $self = shift;
   my $word = shift;
-  my $rs   = $self->schema->resultset('Word')->search({
+  my $rs   = $self->schema->resultset('Words')->search({
     -and => [
-      dictionary_id => $self->dictionary_id,
-      -or => [
-        word_orig => { like => "%$word%" },
-        word_tr   => { like => "%$word%" },
-      ],
-    ]
-  },
-  { 'join'    => 'wordclass',
-    '+select' => 'wordclass.abbr',
-    '+as'     => 'wordclass_abbr' });
+      'me.dictionary_id' => $self->dictionary_id,
+      'word1_id.word'    => { like => "%$word%" },
+    ]}, {
+      join     => [ qw| word1_id word2_id wordclass | ],
+      select   => [ 'me.word1_id', 'word1_id.word', { group_concat => 'word2_id.word' }, 'me.mdate', 'me.cdate', 'me.note', 'wordclass.name_orig' ],
+      as       => [ qw| word_id word_orig word_tr mdate cdate note wordclass | ],
+      group_by => [ 'word1_id' ],
+    }
+  );
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  my @r1 = $rs->all;
+  # p(@r1);
+  @r1
+}
+
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
   $rs->all;
 }
