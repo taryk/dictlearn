@@ -13,6 +13,8 @@ use lib dirname(__FILE__).'/../lib/';
 
 use Dict::Learn::Db;
 use Dict::Learn::Frame::PageAddItem;
+use Dict::Learn::Frame::AddWord;
+use Dict::Learn::Frame::AddExample;
 use Dict::Learn::Frame::GridWords;
 use Dict::Learn::Frame::SearchWords;
 
@@ -20,7 +22,7 @@ use common::sense;
 
 use Class::XSAccessor
   accessors => [ qw| vbox menu_bar status_bar notebook
-                     panel1 panel2 panel3
+                     panel1 panel11 panel12 panel2 panel3
                | ];
 
 sub new {
@@ -36,6 +38,18 @@ sub new {
   $self->panel1( Dict::Learn::Frame::PageAddItem->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
 
   $self->notebook->AddPage( $self->panel1, "Add item", 1 );
+
+  # page11
+
+  $self->panel11( Dict::Learn::Frame::AddWord->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+
+  $self->notebook->AddPage( $self->panel11, "Word", 0 );
+
+  # page12
+
+  $self->panel12( Dict::Learn::Frame::AddExample->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+
+  $self->notebook->AddPage( $self->panel12, "Example", 0 );
 
   # page2
 
