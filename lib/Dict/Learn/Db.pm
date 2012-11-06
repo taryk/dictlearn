@@ -24,28 +24,30 @@ sub add_word {
   #   [qw| word_orig word_tr dictionary_id |],
   #   [ $params{word_orig}, $params{word_tr}, $self->dictionary_id ],
   # ]);
-  my @examples;
-  for my $item (@{ $params{examples} }) {
-    push @examples  => {
-      sentence_orig => $item->{sentence_orig},
-      sentence_tr   => $item->{sentence_tr},
-      note          => $item->{note}
-    };
-  }
   my $new_word = $self->schema->resultset('Word')->create({
-    word_orig     => $params{word_orig},
-    word_tr       => $params{word_tr},
-    dictionary_id => $self->dictionary_id,
-    wordclass_id  => $params{wordclass_id},
-    note          => $params{note},
-    # examples      => [ @examples ],
+    word    => $params{word},
+    note    => $params{note},
+    lang_id => $params{lang_id},
   });
-
-  # p($newword);
-  for my $item (@{ $params{examples} }) {
-    $new_word->add_to_examples( $item );
+  for my $word ( @{$params{translate}} ) {
+    $new_word->add_to_words({
+      word          => $word->{word},
+      wordclass_id  => $word->{wordclass},
+      lang_id       => $word->{lang_id},
+    }, {
+      dictionary_id => $self->dictionary_id
+    });
   }
 
+  # for my $item (@{ $params{examples} }) {
+  #   my $new_example = $self->schema->resultset('Word')->create({
+  #     example => $item->{sentence_orig},
+  #     note    => $item->{note},
+  #   });
+  #   $new_word->add_to_examples( { example_id => $new_example->example_id } );
+  #   $new_example->add_to_examples({ example => $item->{sentence_tr} })
+  #     if $item->{sentence_tr};
+  # }
   $self
 }
 
