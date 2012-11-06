@@ -36,13 +36,12 @@ sub new {
 
   $self->dictionary( $main::ioc->lookup('db')->get_dictionary(0) );
 
-  p($self->dictionary);
+  # p($self->dictionary);
 
-  # page1
+  # page3
 
-  $self->panel1( Dict::Learn::Frame::PageAddItem->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
-
-  $self->notebook->AddPage( $self->panel1, "Add item", 1 );
+  $self->panel3( Dict::Learn::Frame::SearchWords->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+  $self->notebook->AddPage( $self->panel3, "Search", 1 );
 
   # page11
 
@@ -61,11 +60,11 @@ sub new {
   $self->panel2( Dict::Learn::Frame::GridWords->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
   $self->notebook->AddPage( $self->panel2, "Words", 0 );
 
+  # page1
 
-  # page3
+  $self->panel1( Dict::Learn::Frame::PageAddItem->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
 
-  $self->panel3( Dict::Learn::Frame::SearchWords->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
-  $self->notebook->AddPage( $self->panel3, "Search", 0 );
+  $self->notebook->AddPage( $self->panel1, "Add item", 0 );
 
   # tell we want automatic layout
   # $self->SetAutoLayout( 1 );
