@@ -84,7 +84,7 @@ sub lookup {
     my $id = $self->listbox->InsertItem( Wx::ListItem->new );
     $self->listbox->SetItem($id, 0, $item->{word_id} );
     $self->listbox->SetItem($id, 1, $item->{word_orig} );
-    $self->listbox->SetItem($id, 2, $item->{wordclass_abbr} );
+    $self->listbox->SetItem($id, 2, $item->{wordclass} );
     $self->listbox->SetItem($id, 3, $item->{word_tr} );
     $self->listbox->SetItem($id, 4, $item->{note} );
     $self->listbox->SetItem($id, 5, $item->{cdate} );
@@ -127,10 +127,10 @@ sub load_examples {
   my @items = $main::ioc->lookup('db')->select_examples($id);
   for my $item (@items) {
     my $id = $self->listbox3_examples->InsertItem( Wx::ListItem->new );
-    $self->listbox3_examples->SetItem($id, 0, $item->{example_id} );
-    $self->listbox3_examples->SetItem($id, 1, $item->{sentence_orig} );
-    $self->listbox3_examples->SetItem($id, 2, $item->{sentence_tr} );
-    $self->listbox3_examples->SetItem($id, 3, $item->{note} );
+    $self->listbox3_examples->SetItem($id, 0, $item->{example1_id}{example_id} );
+    $self->listbox3_examples->SetItem($id, 1, $item->{example1_id}{example} );
+    $self->listbox3_examples->SetItem($id, 2, $item->{example2_id}{example} );
+    $self->listbox3_examples->SetItem($id, 3, $item->{rel_examples}{note} );
   }
 }
 
