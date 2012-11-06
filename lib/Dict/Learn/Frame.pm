@@ -23,6 +23,7 @@ use common::sense;
 use Class::XSAccessor
   accessors => [ qw| vbox menu_bar status_bar notebook
                      panel1 panel11 panel12 panel2 panel3
+                     dictionary
                | ];
 
 sub new {
@@ -32,6 +33,10 @@ sub new {
   $self->SetIcon( Wx::GetWxPerlIcon() );
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->notebook( Wx::Notebook->new( $self, -1, [-1,-1], [-1,-1], 0 ) );
+
+  $self->dictionary( $main::ioc->lookup('db')->get_dictionary(0) );
+
+  p($self->dictionary);
 
   # page1
 
