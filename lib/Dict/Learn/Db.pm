@@ -181,6 +181,19 @@ sub select_word {
   $rs->first;
 }
 
+sub select_example {
+  my $self       = shift;
+  my $example_id = shift;
+  my $rs = $self->schema->resultset('Example')->search({
+      'me.example_id'  => $example_id,
+    },{
+      prefetch => { 'rel_examples' => [ 'example2_id' ] },
+    }
+  );
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  $rs->first;
+}
+
 # sub select_words {
 #   my $self    = shift;
 #   my $lang_id = shift;
