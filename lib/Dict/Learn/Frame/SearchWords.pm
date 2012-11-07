@@ -145,16 +145,17 @@ sub edit_word {
   $self->parent->notebook->ChangeSelection(1);
 }
 
+sub edit_example {
+  my $self = shift;
+  my $curr_id = -1;
 
-  $panel1->load_word(
-    word_id   => $self->lb_words->GetItem($curr_id, 0)->GetText,
-    word_src  => $self->lb_words->GetItem($curr_id, 1)->GetText,
-    word_dst  => $self->lb_words->GetItem($curr_id, 3)->GetText,
-    word_note => $self->lb_words->GetItem($curr_id, 4)->GetText,
-    examples  => \@examples
+  $curr_id = $self->lb_examples->GetNextItem($curr_id, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
+  $self->parent->panel12->load_word(
+    example_id => $self->lb_examples->GetItem($curr_id, 0)->GetText,
   );
 
-  $self->parent->notebook->ChangeSelection(0);
+  $self->parent->notebook->ChangeSelection(2);
 }
 
 sub load_examples {
