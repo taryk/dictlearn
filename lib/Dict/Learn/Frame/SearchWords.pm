@@ -92,7 +92,11 @@ sub new {
   # events
   EVT_TEXT(   $self, $self->combobox,             \&lookup         );
   EVT_BUTTON( $self, $self->btn_lookup,           \&lookup         );
-  EVT_BUTTON( $self, $self->btn_edit_example,     \&edit_item      );
+  EVT_BUTTON( $self, $self->btn_edit_word,        \&edit_word      );
+  EVT_BUTTON( $self, $self->btn_delete_word,      \&delete_word    );
+  EVT_BUTTON( $self, $self->btn_add_example,      \&add_example    );
+  EVT_BUTTON( $self, $self->btn_edit_example,     \&edit_example   );
+  EVT_BUTTON( $self, $self->btn_delete_example,   \&delete_example );
   EVT_LIST_ITEM_SELECTED( $self, $self->lb_words, \&load_examples  );
 
   $self->lookup;
