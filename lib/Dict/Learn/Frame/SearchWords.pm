@@ -155,7 +155,7 @@ sub edit_example {
 
   $curr_id = $self->lb_examples->GetNextItem($curr_id, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
-  $self->parent->panel12->load_word(
+  $self->parent->panel12->load_example(
     example_id => $self->lb_examples->GetItem($curr_id, 0)->GetText,
   );
 
