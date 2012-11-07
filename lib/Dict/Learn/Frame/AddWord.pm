@@ -191,13 +191,35 @@ sub remove_all_dst {
 sub load_word {
   my $self   = shift;
   my %params = @_;
+  my $word = $main::ioc->lookup('db')->select_word( $params{word_id} );
+  my @translate = ();
+  for my $rel_word (@{ $word->{rel_words} }) {
+    push @translate => {
+      word      => $rel_word->{word2_id}{word},
+      wordclass => $rel_word->{wordclass_id},
+      note      => $rel_word->{note},
+    };
+  }
+  $self->fill_fields(
+    word_id   => $word->{word_id},
+    word      => $word->{word},
+    wordclass => $word->{wordclass_id},
+    note      => $word->{note},
+    translate => \@translate,
+  );
+}
+
+sub fill_fields {
+  my $self   = shift;
+  my %params = @_;
   $self->clear_fields;
   $self->remove_all_dst;
   $self->word_src->SetValue($params{word});
   $self->item_id( $params{word_id} );
   for my $word_tr ( @{ $params{translate} } ) {
     my $el = $self->add_dst_item;
-    $el->{word}->SetValue($word_tr);
+    $el->{word}->SetValue($word_tr->{word});
+    $el->{cbox}->SetSelection($word_tr->{wordclass});
   }
   $self->word_note->SetValue($params{note});
 
