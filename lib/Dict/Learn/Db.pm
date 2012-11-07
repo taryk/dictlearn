@@ -168,6 +168,19 @@ sub select_words {
   $rs->all;
 }
 
+sub select_word {
+  my $self    = shift;
+  my $word_id = shift;
+  my $rs = $self->schema->resultset('Word')->search({
+      'me.word_id'  => $word_id,
+    },{
+      prefetch => { 'rel_words' => [ 'word2_id' ] },
+    }
+  );
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  $rs->first;
+}
+
 # sub select_words {
 #   my $self    = shift;
 #   my $lang_id = shift;
