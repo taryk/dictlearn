@@ -218,15 +218,36 @@ sub remove_all_dst {
 }
 
 sub load_example {
+  my $self    = shift;
+  my %params  = @_;
+  my $example = $main::ioc->lookup('db')->select_example( $params{example_id} );
+  my @translate;
+  for my $rel_example ( @{ $example->{rel_examples} } ) {
+    push @translate => {
+      text      => $rel_example->{example2_id}{example},
+      note      => $rel_example->{note},
+      wordclass => $rel_example->{wordclass_id},
+    };
+  }
+  $self->fill_fields(
+    example_id => $example->{example_id},
+    text       => $example->{example},
+    note       => $example->{note},
+    translate  => \@translate,
+  );
+}
+
+sub fill_fields {
   my $self   = shift;
   my %params = @_;
   $self->clear_fields;
   $self->remove_all_dst;
   $self->curr_example_id( $params{example_id} );
   $self->text_src->SetValue( $params{text} );
+  $self->example_note->SetValue( $params{note} );
   for my $text_tr ( @{ $params{translate} } ) {
     my $el = $self->add_dst_item;
-    $el->{text}->SetValue($text_tr);
+    $el->{text}->SetValue($text_tr->{text});
   }
   $self->parent->notebook->SetPageText(
     2 => "Edit example id#".$self->curr_example_id);
