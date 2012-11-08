@@ -4,11 +4,13 @@ __PACKAGE__->table('example');
 __PACKAGE__->add_columns(qw[ example_id example lang_id idioma
                              note cdate mdate ]);
 __PACKAGE__->set_primary_key('example_id');
-
-__PACKAGE__->has_many( words => 'Dict::Learn::Main::Result::WordExample', 'example_id');
-
+__PACKAGE__->has_many( words => 'Dict::Learn::Main::Result::WordExample', 'example_id',
+                     { cascade_delete => 0 ,
+                       cascade_update => 0 });
 __PACKAGE__->has_many( rel_examples => 'Dict::Learn::Main::Result::Examples',
-                     { "foreign.example1_id" => "self.example_id" });
+                     { "foreign.example1_id" => "self.example_id" },
+                     { cascade_delete => 0 ,
+                       cascade_update => 0 });
 __PACKAGE__->many_to_many( examples => 'rel_examples', 'example2_id' );
 
 1;

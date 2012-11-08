@@ -9,8 +9,12 @@ __PACKAGE__->belongs_to( word_id    => 'Dict::Learn::Main::Result::Word',
 __PACKAGE__->belongs_to( example_id => 'Dict::Learn::Main::Result::Example',
                         'example_id', { cascade_delete => 0 } );
 __PACKAGE__->has_one( wordclass     => 'Dict::Learn::Main::Result::Wordclass',
-                    { 'foreign.wordclass_id' => 'self.wordclass_id' });
+                    { 'foreign.wordclass_id' => 'self.wordclass_id' },
+                    { cascade_delete => 0 ,
+                      cascade_update => 0 });
 __PACKAGE__->has_many( rel_examples => 'Dict::Learn::Main::Result::Examples',
-                     { 'foreign.example1_id' => 'self.example_id' });
+                     { 'foreign.example1_id' => 'self.example_id' },
+                     { cascade_delete => 0 ,
+                       cascade_update => 0 });
 
 1;
