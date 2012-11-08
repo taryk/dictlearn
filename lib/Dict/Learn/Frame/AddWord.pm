@@ -87,18 +87,19 @@ sub new {
 }
 
 sub make_dst_item {
-  my $self = shift;
+  my ($self, $word_id) = @_;
   push @{ $self->hbox_dst_item } => Wx::BoxSizer->new( wxHORIZONTAL );
   my $id = $#{ $self->hbox_dst_item };
   $self->word_dst->[$id] = {
-    id   => $id,
-    cbox => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [ $self->import_wordclass ], wxCB_DROPDOWN|wxCB_READONLY, wxDefaultValidator  ),
-    word => Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ),
-    btnp => Wx::Button->new( $self, -1, '+', [-1, -1] ),
-    btnm => Wx::Button->new( $self, -1, '-', [-1, -1] ),
+    word_id => $word_id,
+    id      => $id,
+    cbox    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [ $self->import_wordclass ], wxCB_DROPDOWN|wxCB_READONLY, wxDefaultValidator  ),
+    word    => Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ),
+    btnp    => Wx::Button->new( $self, -1, '+', [-1, -1] ),
+    btnm    => Wx::Button->new( $self, -1, '-', [-1, -1] ),
     parent_hbox => $self->hbox_dst_item->[$id]
   };
-  EVT_BUTTON( $self, $self->word_dst->[$id]{btnp}, \&add_dst_item );
+  EVT_BUTTON( $self, $self->word_dst->[$id]{btnp}, sub { $self->add_dst_item(); } );
   EVT_BUTTON( $self, $self->word_dst->[$id]{btnm}, sub { $self->del_dst_item($id); } );
   $self->word_dst->[$id]{cbox}->SetSelection(0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{cbox}, 2, wxALL|wxTOP, 0);
@@ -109,8 +110,8 @@ sub make_dst_item {
 }
 
 sub add_dst_item {
-  my $self = shift;
-  my $el = $self->make_dst_item;
+  my ($self, $word_id) = @_;
+  my $el = $self->make_dst_item( $word_id );
   $self->vbox_dst->Add( $el->{parent_hbox}, 1, wxALL|wxGROW, 0 );
   $self->Layout();
   $el
@@ -120,6 +121,7 @@ sub del_dst_item {
   my $self = shift;
   my $id = shift;
   for (qw[ cbox word btnm btnp ]) {
+    next unless defined $self->word_dst->[$id]{$_};
     $self->word_dst->[$id]{$_}->Destroy();
     delete $self->word_dst->[$id]{$_};
   }
@@ -127,7 +129,7 @@ sub del_dst_item {
     if defined $self->hbox_dst_item->[$id];
   $self->Layout();
   delete $self->hbox_dst_item->[$id];
-  delete $self->word_dst->[$id];
+  delete $self->word_dst->[$id]{parent_hbox};
   $self
 }
 
@@ -140,22 +142,26 @@ sub add {
     lang_id => $self->parent->dictionary->{language_orig_id}{language_id},
   );
   for my $word_dst_item ( grep { defined } @{ $self->word_dst } ) {
-    push @{$params{translate}} => {
-      wordclass => int($word_dst_item->{cbox}->GetSelection()),
-      word      => $word_dst_item->{word}->GetValue(),
-      lang_id   => $self->parent->dictionary->{language_tr_id}{language_id},
-    };
+    my $push_item = { word_id => $word_dst_item->{word_id} };
+    if ($word_dst_item->{word}) {
+      $push_item->{wordclass} = int($word_dst_item->{cbox}->GetSelection());
+      $push_item->{word}      = $word_dst_item->{word}->GetValue();
+      $push_item->{lang_id}   = $self->parent->dictionary->{language_tr_id}{language_id};
+    }
+    push @{$params{translate}} => $push_item;
   }
   if (defined $self->item_id and
               $self->item_id >= 0)
   {
-    $params{word_id} = $self->item_id;
-    $main::ioc->lookup('db')->update_item(%params);
+    $params{word_id} = $self->item_id ;
+    $main::ioc->lookup('db')->update_word(%params);
   } else {
     $main::ioc->lookup('db')->add_word(%params);
   }
 
   $self->clear_fields;
+  $self->remove_all_dst;
+  $self->add_dst_item;
   $self->parent->notebook->SetPageText(1 => "Word");
 
   # reload linked words
@@ -172,8 +178,8 @@ sub import_wordclass {
 sub clear_fields {
   my $self = shift;
   $self->word_src->Clear;
-  for my $word_dst_item ( @{ $self->word_dst } ) {
-    next unless $word_dst_item;
+  for my $word_dst_item ( grep { defined } @{ $self->word_dst } ) {
+    next unless defined $word_dst_item->{word};
     $word_dst_item->{cbox}->SetSelection(0);
     $word_dst_item->{word}->Clear;
   }
@@ -185,16 +191,18 @@ sub remove_all_dst {
   my $self = shift;
   for ( @{ $self->word_dst } ) {
     $self->del_dst_item($_->{id});
+    delete $self->word_dst->[$_->{id}];
   }
 }
 
 sub load_word {
   my $self   = shift;
   my %params = @_;
-  my $word = $main::ioc->lookup('db')->select_word( $params{word_id} );
-  my @translate = ();
+  my $word   = $main::ioc->lookup('db')->select_word( $params{word_id} );
+  my @translate;
   for my $rel_word (@{ $word->{rel_words} }) {
     push @translate => {
+      word_id   => $rel_word->{word2_id}{word_id},
       word      => $rel_word->{word2_id}{word},
       wordclass => $rel_word->{wordclass_id},
       note      => $rel_word->{note},
@@ -217,7 +225,7 @@ sub fill_fields {
   $self->word_src->SetValue($params{word});
   $self->item_id( $params{word_id} );
   for my $word_tr ( @{ $params{translate} } ) {
-    my $el = $self->add_dst_item;
+    my $el = $self->add_dst_item($word_tr->{word_id});
     $el->{word}->SetValue($word_tr->{word});
     $el->{cbox}->SetSelection($word_tr->{wordclass});
   }
