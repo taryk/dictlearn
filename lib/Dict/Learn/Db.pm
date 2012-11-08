@@ -85,9 +85,38 @@ sub update_item {
 sub update_word {
   my $self   = shift;
   my %params = @_;
-  $self->schema->resultset('Word')->search({
-    word_id => delete($params{id}),
-  })->update_all({ %params });
+  my $updated_word = $self->schema->resultset('Word')->
+  search({ word_id => $params{word_id} })->first->update({
+    word    => $params{word},
+    note    => $params{note},
+    lang_id => $params{lang_id},
+  });
+  for ( @{ $params{translate} } ) {
+    unless (defined $_->{word_id}) {
+      $updated_word->add_to_words({
+        word    => $_->{word},
+        note    => $_->{note},
+        lang_id => $_->{lang_id},
+      }, {
+        dictionary_id => $self->dictionary_id,
+        wordclass_id  => $_->{wordclass},
+      });
+      next;
+    }
+    my $rs = $self->schema->resultset('Words')->search({
+      word1_id => $params{word_id},
+      word2_id => $_->{word_id},
+    });
+    if ($_->{word}) {
+      $rs->first->update({ wordclass_id => $_->{wordclass} })->word2_id->update({
+        word    => $_->{word},
+        note    => $_->{note},
+        lang_id => $_->{lang_id},
+      });
+    } else {
+      $rs->delete;
+    }
+  }
 }
 
 sub delete_word {
@@ -181,6 +210,7 @@ sub select_word {
   $rs->first;
 }
 
+# @TODO get related words
 sub select_example {
   my $self       = shift;
   my $example_id = shift;
