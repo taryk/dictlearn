@@ -158,7 +158,44 @@ sub add_example {
   }
 }
 
-sub update_example { my $self = shift }
+sub update_example {
+  my $self = shift;
+  my %params = @_;
+  my $updated_example = $self->schema->resultset('Example')->
+  search({ example_id => $params{example_id} })->first->update({
+    example => $params{text},
+    note    => $params{note},
+    lang_id => $params{lang_id},
+    idioma  => $params{idioma} || 0,
+  });
+  for ( @{ $params{translate} } ) {
+    unless (defined $_->{example_id}) {
+      $updated_example->add_to_examples({
+        example => $_->{text},
+        note    => $_->{note},
+        lang_id => $_->{lang_id},
+        idioma  => $_->{idioma} || 0,
+      }, {
+        dictionary_id => $self->dictionary_id,
+      });
+      next;
+    }
+    my $rs = $self->schema->resultset('Examples')->search({
+      example1_id => $params{example_id},
+      example2_id => $_->{example_id},
+    });
+    if ($_->{text}) {
+      $rs->first->example2_id->update({
+        example => $_->{text},
+        note    => $_->{note},
+        lang_id => $_->{lang_id},
+        idioma  => $_->{idioma} || 0,
+      });
+    } else {
+      $rs->delete;
+    }
+  }
+}
 
 sub delete_example { my $self = shift }
 
