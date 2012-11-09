@@ -208,7 +208,7 @@ sub find_items {
       'word1_id.word'    => { like => "%$word%" },
     ]}, {
       join     => [ qw| word1_id word2_id wordclass | ],
-      select   => [ 'me.word1_id', 'word1_id.word', { group_concat => 'word2_id.word' }, 'me.mdate', 'me.cdate', 'me.note', 'wordclass.name_orig' ],
+      select   => [ 'me.word1_id', 'word1_id.word', { group_concat => [ 'word2_id.word', "', '" ] }, 'me.mdate', 'me.cdate', 'me.note', 'wordclass.abbr' ],
       as       => [ qw| word_id word_orig word_tr mdate cdate note wordclass | ],
       group_by => [ 'me.word1_id', 'me.wordclass_id' ],
     }
