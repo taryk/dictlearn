@@ -27,7 +27,7 @@ use Class::XSAccessor
                      hbox_examples hbox_btn
 
                      search_words linked_words
-                     curr_example_id item_id
+                     item_id
                      btn_add btn_clear btn_translate
                      tran
                    | ];
@@ -85,7 +85,6 @@ sub new {
 
   # mode: undef - add, other - edit
   $self->item_id(undef);
-  $self->curr_example_id(undef);
 
   # events
   EVT_BUTTON( $self, $self->btn_add,             \&add          );
@@ -96,18 +95,19 @@ sub new {
 }
 
 sub make_dst_item {
-  my $self = shift;
+  my ($self, $example_id) = @_;
   push @{ $self->hbox_dst_item } => Wx::BoxSizer->new( wxHORIZONTAL );
   my $id = $#{ $self->hbox_dst_item };
   $self->text_dst->[$id] = {
-    id   => $id,
-    text => Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1], wxTE_MULTILINE ),
-    vbox => Wx::BoxSizer->new( wxVERTICAL ),
-    btnm => Wx::Button->new( $self, -1, '-', [-1, -1] ),
-    btnp => Wx::Button->new( $self, -1, '+', [-1, -1] ),
+    example_id  => $example_id,
+    id          => $id,
+    text        => Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1], wxTE_MULTILINE ),
+    vbox        => Wx::BoxSizer->new( wxVERTICAL ),
+    btnm        => Wx::Button->new( $self, -1, '-', [-1, -1] ),
+    btnp        => Wx::Button->new( $self, -1, '+', [-1, -1] ),
     parent_hbox => $self->hbox_dst_item->[$id],
   };
-  EVT_BUTTON( $self, $self->text_dst->[$id]{btnp}, \&add_dst_item );
+  EVT_BUTTON( $self, $self->text_dst->[$id]{btnp}, sub { $self->add_dst_item();    } );
   EVT_BUTTON( $self, $self->text_dst->[$id]{btnm}, sub { $self->del_dst_item($id); } );
   # $self->text_dst->[$id]{text}->SetSelection(0);
   $self->hbox_dst_item->[$id]->Add($self->text_dst->[$id]{text}, 4, wxALL|wxEXPAND, 0);
@@ -118,8 +118,8 @@ sub make_dst_item {
 }
 
 sub add_dst_item {
-  my $self = shift;
-  my $el = $self->make_dst_item;
+  my ($self, $example_id) = @_;
+  my $el = $self->make_dst_item( $example_id );
   $self->vbox_dst->Add( $el->{parent_hbox}, 1, wxALL|wxGROW, 5 );
   $self->Layout();
   $el
@@ -128,21 +128,22 @@ sub add_dst_item {
 sub del_dst_item {
   my $self = shift;
   my $id = shift;
-  $self->text_dst->[$id]{vbox}->Remove($self->text_dst->[$id]{btnm});
-  $self->text_dst->[$id]{vbox}->Remove($self->text_dst->[$id]{btnp});
-  for (qw[ text btnm btnp ]) {
+  for (qw[ btnm btnp ]) {
+    next unless defined $self->text_dst->[$id]{$_};
+    $self->text_dst->[$id]{vbox}->Remove($self->text_dst->[$id]{$_});
     $self->text_dst->[$id]{$_}->Destroy();
     delete $self->text_dst->[$id]{$_};
   }
-  $self->text_dst->[$id]{vbox}->Destroy();
-  delete $self->text_dst->[$id]{vbox};
+  for (qw[ text vbox ]) {
+    next unless defined $self->text_dst->[$id]{$_};
+    $self->text_dst->[$id]{$_}->Destroy();
+    delete $self->text_dst->[$id]{$_};
+  }
   $self->vbox_dst->Detach($self->hbox_dst_item->[$id])
     if defined $self->hbox_dst_item->[$id];
   $self->Layout();
-  # weaken $self->hbox_dst_item->[$id];
   delete $self->hbox_dst_item->[$id];
-  delete $self->text_dst->[$id];
-  # $self->hbox_dst_item->[$id]->Destroy();
+  delete $self->text_dst->[$id]{parent_hbox};
   $self
 }
 
@@ -165,18 +166,19 @@ sub add {
                  $sel_word_id >= 0;
   }
   for my $text_dst_item ( grep { defined } @{ $self->text_dst } ) {
-    next unless $text_dst_item->{text}->GetValue or
-                $text_dst_item->{text}->GetValue !~ /^\s+$/;
-    push @{ $params{translate} } => {
-      text    => $text_dst_item->{text}->GetValue,
-      lang_id => $self->parent->dictionary->{language_tr_id}{language_id},
-    };
+    my $push_item = { example_id  => $text_dst_item->{example_id} };
+    if ($text_dst_item->{text}) {
+      $push_item->{text}    = $text_dst_item->{text}->GetValue;
+      $push_item->{lang_id} = $self->parent->dictionary->{language_tr_id}{language_id};
+    }
+    push @{ $params{translate} } => $push_item;
   }
+
 
   if (defined $self->item_id and
               $self->item_id >= 0)
   {
-    $params{example_id} = $self->example_id;
+    $params{example_id} = $self->item_id;
     $main::ioc->lookup('db')->update_example(%params);
     $self->parent->notebook->SetPageText(2 => "Example");
   } else {
@@ -184,6 +186,9 @@ sub add {
   }
 
   $self->clear_fields;
+  $self->remove_all_dst;
+  $self->add_dst_item;
+
   $self
 }
 
@@ -191,11 +196,11 @@ sub clear_fields {
   my $self = shift;
   $self->text_src->Clear;
   for my $text_dst_item ( @{ $self->text_dst } ) {
+    next unless defined $text_dst_item->{text};
     $text_dst_item->{text}->Clear;
   }
   $self->text_src->Clear;
   $self->example_note->Clear;
-  $self->curr_example_id(undef);
   $self->item_id(undef);
 }
 
@@ -203,7 +208,7 @@ sub clear_fields {
 #   my $self = shift;
 #   my $item = shift;
 #   $self->clear_example_inputs;
-#   $self->curr_example_id($item->GetIndex());
+#   $self->item_id($item->GetIndex());
 #   $self->text_src->SetValue($self->listbox_examples->GetItem($item->GetIndex(), 1)->GetText);
 #   $self->text_dst->SetValue($self->listbox_examples->GetItem($item->GetIndex(), 2)->GetText);
 #   $self->example_note->SetValue($self->listbox_examples->GetItem($item->GetIndex(), 3)->GetText);
@@ -214,9 +219,11 @@ sub remove_all_dst {
   my $self = shift;
   for ( @{ $self->text_dst } ) {
     $self->del_dst_item($_->{id});
+    delete $self->text_dst->[$_->{id}];
   }
 }
 
+# @TODO get related words
 sub load_example {
   my $self    = shift;
   my %params  = @_;
@@ -224,9 +231,10 @@ sub load_example {
   my @translate;
   for my $rel_example ( @{ $example->{rel_examples} } ) {
     push @translate => {
-      text      => $rel_example->{example2_id}{example},
-      note      => $rel_example->{note},
-      wordclass => $rel_example->{wordclass_id},
+      example_id => $rel_example->{example2_id}{example_id},
+      text       => $rel_example->{example2_id}{example},
+      note       => $rel_example->{note},
+      wordclass  => $rel_example->{wordclass_id},
     };
   }
   $self->fill_fields(
@@ -242,15 +250,15 @@ sub fill_fields {
   my %params = @_;
   $self->clear_fields;
   $self->remove_all_dst;
-  $self->curr_example_id( $params{example_id} );
+  $self->item_id( $params{example_id} );
   $self->text_src->SetValue( $params{text} );
   $self->example_note->SetValue( $params{note} );
   for my $text_tr ( @{ $params{translate} } ) {
-    my $el = $self->add_dst_item;
+    my $el = $self->add_dst_item($text_tr->{example_id});
     $el->{text}->SetValue($text_tr->{text});
   }
   $self->parent->notebook->SetPageText(
-    2 => "Edit example id#".$self->curr_example_id);
+    2 => "Edit example id#".$self->item_id);
 }
 
 sub load_words {
