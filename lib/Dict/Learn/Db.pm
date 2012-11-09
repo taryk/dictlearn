@@ -210,7 +210,7 @@ sub find_items {
       join     => [ qw| word1_id word2_id wordclass | ],
       select   => [ 'me.word1_id', 'word1_id.word', { group_concat => 'word2_id.word' }, 'me.mdate', 'me.cdate', 'me.note', 'wordclass.name_orig' ],
       as       => [ qw| word_id word_orig word_tr mdate cdate note wordclass | ],
-      group_by => [ 'word1_id' ],
+      group_by => [ 'me.word1_id', 'me.wordclass_id' ],
     }
   );
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
