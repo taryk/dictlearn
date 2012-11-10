@@ -170,6 +170,8 @@ sub add {
         $push_item->{word}      = $word_dst_item->{word}->GetValue();
       }
       $push_item->{lang_id}   = $self->parent->dictionary->{language_tr_id}{language_id};
+      # skip empty fields
+      next unless $push_item->{word} =~ /^.+$/;
     }
     push @{$params{translate}} => $push_item;
   }
