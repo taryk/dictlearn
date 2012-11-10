@@ -163,7 +163,12 @@ sub add {
     my $push_item = { word_id => $word_dst_item->{word_id} };
     if ($word_dst_item->{word}) {
       $push_item->{wordclass} = int($word_dst_item->{cbox}->GetSelection());
-      $push_item->{word}      = $word_dst_item->{word}->GetValue();
+      if ($word_dst_item->{word}->GetSelection > 0) {
+        $push_item->{word_id}  = $word_dst_item->{word}->GetClientData(
+                                 $word_dst_item->{word}->GetValue() );
+      } else {
+        $push_item->{word}      = $word_dst_item->{word}->GetValue();
+      }
       $push_item->{lang_id}   = $self->parent->dictionary->{language_tr_id}{language_id};
     }
     push @{$params{translate}} => $push_item;
