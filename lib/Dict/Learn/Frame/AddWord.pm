@@ -94,7 +94,8 @@ sub make_dst_item {
     word_id => $word_id,
     id      => $id,
     cbox    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [ $self->import_wordclass ], wxCB_DROPDOWN|wxCB_READONLY, wxDefaultValidator  ),
-    word    => Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ),
+    # word    => Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ),
+    word    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [], wxCB_DROPDOWN, wxDefaultValidator  ),
     btnp    => Wx::Button->new( $self, -1, '+', [-1, -1] ),
     btnm    => Wx::Button->new( $self, -1, '-', [-1, -1] ),
     parent_hbox => $self->hbox_dst_item->[$id]
