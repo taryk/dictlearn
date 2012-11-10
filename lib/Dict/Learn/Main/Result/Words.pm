@@ -1,9 +1,9 @@
 package Dict::Learn::Main::Result::Words 0.2;
 use base qw[ DBIx::Class::Core ];
 __PACKAGE__->table('word_xref');
-__PACKAGE__->add_columns(qw[ word1_id word2_id dictionary_id wordclass_id category_id
+__PACKAGE__->add_columns(qw[ word1_id word2_id dictionary_id wordclass_id rel_type category_id
                              note cdate mdate ]);
-__PACKAGE__->set_primary_key(qw[ word1_id word2_id ]);
+__PACKAGE__->set_primary_key(qw[ word1_id word2_id rel_type ]);
 __PACKAGE__->has_one( dictionary => 'Dict::Learn::Main::Result::Dictionary',
                     { 'foreign.dictionary_id' => 'self.dictionary_id' },
                     { cascade_update => 0 ,
