@@ -30,11 +30,15 @@ sub add_word {
     lang_id => $params{lang_id},
   });
   for my $word ( @{$params{translate}} ) {
-    $new_word->add_to_words({
-      word          => $word->{word},
-      wordclass_id  => $word->{wordclass},
-      lang_id       => $word->{lang_id},
-    }, {
+    my $fields = { };
+    if ($word->{word_id}) {
+      $fields->{word_id} = $word->{word_id};
+    } else {
+      $fields = { word          => $word->{word},
+                  wordclass_id  => $word->{wordclass},
+                  lang_id       => $word->{lang_id}, }
+    }
+    $new_word->add_to_words($fields => {
       dictionary_id => $self->dictionary_id
     });
   }
