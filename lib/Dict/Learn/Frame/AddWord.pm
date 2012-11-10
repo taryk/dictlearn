@@ -102,12 +102,29 @@ sub make_dst_item {
   };
   EVT_BUTTON( $self, $self->word_dst->[$id]{btnp}, sub { $self->add_dst_item(); } );
   EVT_BUTTON( $self, $self->word_dst->[$id]{btnm}, sub { $self->del_dst_item($id); } );
+  EVT_TEXT(   $self, $self->word_dst->[$id]{word}, sub { $self->query_words($id); } );
+  p($self->word_dst->[$id]{word});
   $self->word_dst->[$id]{cbox}->SetSelection(0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{cbox}, 2, wxALL|wxTOP, 0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{word}, 4, wxALL|wxEXPAND, 0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnp}, 1, wxALL|wxTOP, 0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnm}, 1, wxALL|wxTOP, 0);
   $self->word_dst->[$id]
+}
+
+sub query_words {
+  my ($self, $id) = @_;
+  my $cb = $self->word_dst->[$id]{word};
+  p($cb->GetValue());
+  my @words = $main::ioc->lookup('db')->select_words(
+    $self->parent->dictionary->{language_tr_id}{language_id},
+    $cb->GetValue(),
+  );
+  p(@words);
+  $cb->Clear;
+  for (@words) {
+    $cb->Append($_->{word});
+  }
 }
 
 sub add_dst_item {
