@@ -20,10 +20,6 @@ sub new {
 sub add_word {
   my $self   = shift;
   my %params = @_;
-  # $self->schema->populate( 'Word' => [
-  #   [qw| word_orig word_tr dictionary_id |],
-  #   [ $params{word_orig}, $params{word_tr}, $self->dictionary_id ],
-  # ]);
   my $new_word = $self->schema->resultset('Word')->create({
     word    => $params{word},
     note    => $params{note},
@@ -42,16 +38,6 @@ sub add_word {
       dictionary_id => $self->dictionary_id
     });
   }
-
-  # for my $item (@{ $params{examples} }) {
-  #   my $new_example = $self->schema->resultset('Word')->create({
-  #     example => $item->{sentence_orig},
-  #     note    => $item->{note},
-  #   });
-  #   $new_word->add_to_examples( { example_id => $new_example->example_id } );
-  #   $new_example->add_to_examples({ example => $item->{sentence_tr} })
-  #     if $item->{sentence_tr};
-  # }
   $self
 }
 
@@ -76,14 +62,6 @@ sub update_item {
     }
   }
 
-  #
-  # Recursive update is not supported over relationships of type 'multi' (word_example)
-  #
-  # my $res = $self->schema->resultset('Word')->search(
-  #  { 'me.word_id' => delete($params{word_id}) },
-  #  { join     => [ qw/word_example/ ],
-  #    prefetch => [ qw/word_example/ ] }
-  # )->update({ %params });
 }
 
 sub update_word {
@@ -131,16 +109,6 @@ sub delete_word {
 sub add_example {
   my $self   = shift;
   my %params = @_;
-  # $self->schema->populate( 'Example' => [
-  #   [qw| sentence_orig sentence_tr |],
-  #   [ $params{sentence_orig}, $params{sentence_tr} ],
-  # ]);
-  # $self->schema->populate( 'WordExample' => [
-  #   [qw| word_id example_id |],
-  #   [ $params{word_id}, $params{example_id} ],
-  # ]);
-  # $self->schema->resultset('Example')->create({ ... });
-  # p(%params);
   my $new_example = $self->schema->resultset('Example')->create({
     example => $params{text},
     note    => $params{note},
@@ -264,23 +232,6 @@ sub select_example {
   $rs->first;
 }
 
-# sub select_words {
-#   my $self    = shift;
-#   my $lang_id = shift;
-#   my $rs      = $self->schema->resultset('Words')->search({
-#     'me.dictionary_id' => $self->dictionary_id,
-#   }, {
-#     distinct => 1,
-#     select   => [ qw| words.word_id words.word words.wordclass_id | ],
-#     as       => [ qw| id word wordclass_id | ],
-#     join     => { dictionary => 'words' },
-#   });
-#   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-#   my @r1 = $rs->all;
-#   p(@r1);
-#   @r1
-# }
-
 sub select_all {
   my $self = shift;
   my $rs   = $self->schema->resultset('Words')->search(
@@ -346,7 +297,4 @@ sub get_dictionary {
 }
 
 1;
-
-
-
 
