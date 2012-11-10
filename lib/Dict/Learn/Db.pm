@@ -220,11 +220,10 @@ sub find_items {
 }
 
 sub select_words {
-  my $self    = shift;
-  my $lang_id = shift;
-  my $rs      = $self->schema->resultset('Word')->search({
-    'lang_id' => $lang_id,
-  }, {
+  my ($self, $lang_id, $word) = @_;
+  my $params = { 'lang_id' => $lang_id };
+  $params->{word} = { like => "%$word%" } if $word;
+  my $rs      = $self->schema->resultset('Word')->search( $params, {
     distinct => 1,
     select   => [ qw| me.word_id me.word wordclass.abbr | ],
     as       => [ qw| id word wordclass | ],
