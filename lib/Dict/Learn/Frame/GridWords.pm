@@ -51,7 +51,7 @@ sub new {
   $self->grid->SetColLabelValue(3 => 'Created');
   $self->grid->SetColLabelValue(4 => 'Modified');
 
-  $self->select_words();
+  # $self->select_words();
 
   $self->panel2_hbox_btn( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->btn_delete_item( Wx::Button->new( $self, -1, 'Delete',    [-1, -1] ) );

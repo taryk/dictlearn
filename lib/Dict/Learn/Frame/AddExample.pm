@@ -50,7 +50,7 @@ sub new {
   $self->vbox_src->Add( $self->search_words, 0, wxALL|wxGROW, 5 );
   $self->vbox_src->Add( $self->linked_words, 3, wxALL|wxEXPAND, 5 );
   # initialisation
-  $self->load_words;
+  # $self->load_words;
 
   ### dst
   $self->text_dst([]);

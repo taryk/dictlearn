@@ -42,7 +42,6 @@ sub new {
   $self->menu_dicts( Wx::Menu->new );
   $self->menu_bar->Append( $self->menu_dicts, 'Dictionaries' );
   $self->init_menu_dicts( $self->menu_dicts );
-  $self->set_dictionary( $self->dictionaries->{0} );
 
   # panel search
 
@@ -81,6 +80,8 @@ sub new {
   # $self->vbox->SetSizeHints( $self );
   $self->status_bar($self->CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY ));
 
+  $self->set_dictionary( $self->dictionaries->{0} );
+
   # events
   EVT_CLOSE( $self, \&on_close );
 
@@ -99,7 +100,9 @@ sub init_dicts {
 sub init_menu_dicts {
   my ($self, $menu) = @_;
   # Wx::MenuItem->new( $self->menu_dicts, wxID_ANY, "Test", "", wxITEM_NORMAL)
-  for ( values %{ $self->dictionaries } ) {
+  for ( sort { $a->{dictionary_id} <=> $b->{dictionary_id} }
+        values %{ $self->dictionaries } )
+  {
     $menu->AppendRadioItem( $_->{dictionary_id}, $_->{dictionary_name} );
     # event
     EVT_MENU( $self, $_->{dictionary_id}, \&dictionary_check );
@@ -126,25 +129,24 @@ sub set_dictionary {
     $self->dictionary( $self->dictionaries->{$dictionary} );
   }
   $main::ioc->lookup('db')->dictionary_id( $self->dictionary->{dictionary_id} );
-  if ($self->p_search) {
-    $self->p_search->lookup;
-    my @li = ( Wx::ListItem->new, Wx::ListItem->new );
-    $li[0]->SetText( $self->dictionary->{language_orig_id}{language_name} );
-    $li[1]->SetText( $self->dictionary->{language_tr_id}{language_name} );
-    $self->p_search->lb_words->SetColumn(
-      Dict::Learn::Frame::SearchWords::COL_LANG1,   $li[0],
-    );
-    $self->p_search->lb_words->SetColumn(
-      Dict::Learn::Frame::SearchWords::COL_LANG2,   $li[1]
-    );
-    $self->p_search->lb_examples->SetColumn(
-      Dict::Learn::Frame::SearchWords::COL_E_LANG1, $li[0]
-    );
-    $self->p_search->lb_examples->SetColumn(
-      Dict::Learn::Frame::SearchWords::COL_E_LANG2, $li[1]
-    );
-  }
-  $self->p_gridwords->refresh_words if $self->p_gridwords;
+  my @li = ( Wx::ListItem->new, Wx::ListItem->new );
+  $li[0]->SetText( $self->dictionary->{language_orig_id}{language_name} );
+  $li[1]->SetText( $self->dictionary->{language_tr_id}{language_name} );
+  $self->p_search->lb_words->SetColumn(
+    Dict::Learn::Frame::SearchWords::COL_LANG1,   $li[0],
+  );
+  $self->p_search->lb_words->SetColumn(
+    Dict::Learn::Frame::SearchWords::COL_LANG2,   $li[1]
+  );
+  $self->p_search->lb_examples->SetColumn(
+    Dict::Learn::Frame::SearchWords::COL_E_LANG1, $li[0]
+  );
+  $self->p_search->lb_examples->SetColumn(
+    Dict::Learn::Frame::SearchWords::COL_E_LANG2, $li[1]
+  );
+  $self->p_search->lookup;
+  $self->p_gridwords->refresh_words;
+  $self->p_addexample->load_words;
   $self
 }
 
