@@ -190,7 +190,7 @@ sub add {
   $self->parent->notebook->SetPageText(1 => "Word");
 
   # reload linked words
-  $self->parent->panel12->load_words;
+  $self->parent->p_addexample->load_words;
 
   $self
 }

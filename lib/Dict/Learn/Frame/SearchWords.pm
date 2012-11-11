@@ -135,14 +135,14 @@ sub edit_word {
   #   ];
   # }
 
-  # $self->parent->panel11->load_word(
+  # $self->parent->p_addword->load_word(
   #   word_id   => $self->lb_words->GetItem($curr_id, 0)->GetText,
   #   word_src  => $self->lb_words->GetItem($curr_id, 1)->GetText,
   #   word_dst  => $self->lb_words->GetItem($curr_id, 3)->GetText,
   #   word_note => $self->lb_words->GetItem($curr_id, 4)->GetText,
   # );
 
-  $self->parent->panel11->load_word(
+  $self->parent->p_addword->load_word(
     word_id => $self->lb_words->GetItem($curr_id, 0)->GetText,
   );
 
@@ -155,7 +155,7 @@ sub edit_example {
 
   $curr_id = $self->lb_examples->GetNextItem($curr_id, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
-  $self->parent->panel12->load_example(
+  $self->parent->p_addexample->load_example(
     example_id => $self->lb_examples->GetItem($curr_id, 0)->GetText,
   );
 

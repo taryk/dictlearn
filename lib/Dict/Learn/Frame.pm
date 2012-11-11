@@ -22,7 +22,7 @@ use common::sense;
 
 use Class::XSAccessor
   accessors => [ qw| vbox menu_bar menu_dicts status_bar notebook
-                     panel1 panel11 panel12 panel2 panel3
+                     p_additem p_addword p_addexample p_gridwords p_search
                      dictionary dictionaries
                | ];
 
@@ -44,35 +44,33 @@ sub new {
   $self->init_menu_dicts( $self->menu_dicts );
   $self->set_dictionary( $self->dictionaries->{0} );
 
-  # p($self->dictionary);
+  # panel search
 
-  # page3
+  $self->p_search( Dict::Learn::Frame::SearchWords->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+  $self->notebook->AddPage( $self->p_search, "Search", 1 );
 
-  $self->panel3( Dict::Learn::Frame::SearchWords->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
-  $self->notebook->AddPage( $self->panel3, "Search", 1 );
+  # panel addword
 
-  # page11
+  $self->p_addword( Dict::Learn::Frame::AddWord->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
 
-  $self->panel11( Dict::Learn::Frame::AddWord->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+  $self->notebook->AddPage( $self->p_addword, "Word", 0 );
 
-  $self->notebook->AddPage( $self->panel11, "Word", 0 );
+  # panel addexample
 
-  # page12
+  $self->p_addexample( Dict::Learn::Frame::AddExample->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
 
-  $self->panel12( Dict::Learn::Frame::AddExample->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+  $self->notebook->AddPage( $self->p_addexample, "Example", 0 );
 
-  $self->notebook->AddPage( $self->panel12, "Example", 0 );
+  # panel grid
 
-  # page2
-
-  $self->panel2( Dict::Learn::Frame::GridWords->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
-  $self->notebook->AddPage( $self->panel2, "Words", 0 );
+  $self->p_gridwords( Dict::Learn::Frame::GridWords->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+  $self->notebook->AddPage( $self->p_gridwords, "Words", 0 );
 
   # page1
 
-  $self->panel1( Dict::Learn::Frame::PageAddItem->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+  $self->p_additem( Dict::Learn::Frame::PageAddItem->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
 
-  $self->notebook->AddPage( $self->panel1, "Add item", 0 );
+  $self->notebook->AddPage( $self->p_additem, "Add item", 0 );
 
   # tell we want automatic layout
   # $self->SetAutoLayout( 1 );
@@ -128,8 +126,8 @@ sub set_dictionary {
     $self->dictionary( $self->dictionaries->{$dictionary} );
   }
   $main::ioc->lookup('db')->dictionary_id( $self->dictionary->{dictionary_id} );
-  $self->panel3->lookup if $self->panel3;
-  $self->panel2->refresh_words if $self->panel2;
+  $self->p_search->lookup if $self->p_search;
+  $self->p_gridwords->refresh_words if $self->p_gridwords;
   $self
 }
 
