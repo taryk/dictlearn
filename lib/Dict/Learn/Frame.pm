@@ -21,9 +21,9 @@ use Dict::Learn::Frame::SearchWords;
 use common::sense;
 
 use Class::XSAccessor
-  accessors => [ qw| vbox menu_bar status_bar notebook
+  accessors => [ qw| vbox menu_bar menu_dicts status_bar notebook
                      panel1 panel11 panel12 panel2 panel3
-                     dictionary
+                     dictionary dictionaries
                | ];
 
 sub new {
@@ -34,7 +34,15 @@ sub new {
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->notebook( Wx::Notebook->new( $self, -1, [-1,-1], [-1,-1], 0 ) );
 
-  $self->dictionary( $main::ioc->lookup('db')->get_dictionary(0) );
+  $self->dictionaries( $self->init_dicts );
+
+  # main menu
+  $self->menu_bar( Wx::MenuBar->new(0) );
+  $self->SetMenuBar( $self->menu_bar );
+  $self->menu_dicts( Wx::Menu->new );
+  $self->menu_bar->Append( $self->menu_dicts, 'Dictionaries' );
+  $self->init_menu_dicts( $self->menu_dicts );
+  $self->set_dictionary( $self->dictionaries->{0} );
 
   # p($self->dictionary);
 
@@ -74,12 +82,54 @@ sub new {
   # $self->vbox->Fit( $self );
   # $self->vbox->SetSizeHints( $self );
   $self->status_bar($self->CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY ));
-  $self->menu_bar(Wx::MenuBar->new(0));
-  $self->SetMenuBar( $self->menu_bar );
 
   # events
   EVT_CLOSE( $self, \&on_close );
 
+  $self
+}
+
+sub init_dicts {
+  my $self = shift;
+  my $dicts = { };
+  for ( $main::ioc->lookup('db')->get_dictionaries() ) {
+    $dicts->{ $_->{dictionary_id} } = $_;
+  }
+  $dicts;
+}
+
+sub init_menu_dicts {
+  my ($self, $menu) = @_;
+  # Wx::MenuItem->new( $self->menu_dicts, wxID_ANY, "Test", "", wxITEM_NORMAL)
+  for ( values %{ $self->dictionaries } ) {
+    $menu->AppendRadioItem( $_->{dictionary_id}, $_->{dictionary_name} );
+    # event
+    EVT_MENU( $self, $_->{dictionary_id}, \&dictionary_check );
+  }
+  $self
+}
+
+sub dictionary_check {
+  my ($self, $event) = @_;
+  # my $menu = $event->GetEventObject();
+  my $menu_item = $self->menu_dicts->FindItem( $event->GetId );
+  $self->status_bar->SetStatusText(
+    "Dictionary '" . $menu_item->GetLabel . "' selected"
+  );
+  $self->set_dictionary( $event->GetId );
+}
+
+sub set_dictionary {
+  my ($self, $dictionary) = @_;
+  if (ref $dictionary eq 'HASH') {
+    $self->dictionary( $dictionary );
+  }
+  else {
+    $self->dictionary( $self->dictionaries->{$dictionary} );
+  }
+  $main::ioc->lookup('db')->dictionary_id( $self->dictionary->{dictionary_id} );
+  $self->panel3->lookup if $self->panel3;
+  $self->panel2->refresh_words if $self->panel2;
   $self
 }
 
