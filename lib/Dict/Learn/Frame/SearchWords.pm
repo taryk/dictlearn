@@ -61,7 +61,7 @@ sub new {
   $self->lb_words->InsertColumn( 5          , 'created', wxLIST_FORMAT_LEFT, 150);
   # layout
   $self->hbox_words( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->hbox_words->Add( $self->vbox_btn_words, 0, wxALL|wxTOP, 0 );
+  $self->hbox_words->Add( $self->vbox_btn_words, 0, wxRIGHT, 5 );
   $self->hbox_words->Add( $self->lb_words, 2, wxALL|wxGROW|wxEXPAND, 0 );
 
   ### examples
@@ -84,7 +84,7 @@ sub new {
   $self->lb_examples->InsertColumn( 3, 'Note', wxLIST_FORMAT_LEFT, 150);
   # layout
   $self->hbox_examples( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->hbox_examples->Add( $self->vbox_btn_examples, 0, wxALL|wxTOP, 0 );
+  $self->hbox_examples->Add( $self->vbox_btn_examples, 0, wxRIGHT, 5 );
   $self->hbox_examples->Add( $self->lb_examples, 2, wxALL|wxGROW|wxEXPAND, 0 );
 
   ### main layout
