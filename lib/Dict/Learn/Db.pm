@@ -284,12 +284,13 @@ sub select_examples {
   $rs->all
 }
 
-sub get_dictionary {
+sub get_dictionaries {
   my $self = shift;
-  my $dictionary_id = shift;
-  my $rs = $self->schema->resultset('Dictionary')->search({
-    dictionary_id => $dictionary_id
-  }, {
+  my $params;
+  if (defined(my $dictionary_id = shift)) {
+    $params = { dictionary_id => $dictionary_id };
+  }
+  my $rs = $self->schema->resultset('Dictionary')->search($params => {
     prefetch => [ qw| language_orig_id language_tr_id | ],
   });
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
