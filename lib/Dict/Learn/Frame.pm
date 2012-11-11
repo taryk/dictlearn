@@ -126,7 +126,24 @@ sub set_dictionary {
     $self->dictionary( $self->dictionaries->{$dictionary} );
   }
   $main::ioc->lookup('db')->dictionary_id( $self->dictionary->{dictionary_id} );
-  $self->p_search->lookup if $self->p_search;
+  if ($self->p_search) {
+    $self->p_search->lookup;
+    my @li = ( Wx::ListItem->new, Wx::ListItem->new );
+    $li[0]->SetText( $self->dictionary->{language_orig_id}{language_name} );
+    $li[1]->SetText( $self->dictionary->{language_tr_id}{language_name} );
+    $self->p_search->lb_words->SetColumn(
+      Dict::Learn::Frame::SearchWords::COL_LANG1,   $li[0],
+    );
+    $self->p_search->lb_words->SetColumn(
+      Dict::Learn::Frame::SearchWords::COL_LANG2,   $li[1]
+    );
+    $self->p_search->lb_examples->SetColumn(
+      Dict::Learn::Frame::SearchWords::COL_E_LANG1, $li[0]
+    );
+    $self->p_search->lb_examples->SetColumn(
+      Dict::Learn::Frame::SearchWords::COL_E_LANG2, $li[1]
+    );
+  }
   $self->p_gridwords->refresh_words if $self->p_gridwords;
   $self
 }

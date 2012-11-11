@@ -10,6 +10,13 @@ use Data::Printer;
 
 use common::sense;
 
+use constant {
+  COL_LANG1 => 1,
+  COL_LANG2 => 3,
+  COL_E_LANG1 => 1,
+  COL_E_LANG2 => 2,
+};
+
 use Class::XSAccessor
   accessors => [ qw| parent
                      vbox combobox btn_lookup lookup_hbox
@@ -46,12 +53,12 @@ sub new {
 
   # table
   $self->lb_words( Wx::ListCtrl->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
-  $self->lb_words->InsertColumn( 0 , 'id',      wxLIST_FORMAT_LEFT, 35);
-  $self->lb_words->InsertColumn( 1 , 'Eng',     wxLIST_FORMAT_LEFT, 200);
-  $self->lb_words->InsertColumn( 2 , 'wc',      wxLIST_FORMAT_LEFT, 35);
-  $self->lb_words->InsertColumn( 3 , 'Ukr',     wxLIST_FORMAT_LEFT, 200);
-  $self->lb_words->InsertColumn( 4 , 'note',    wxLIST_FORMAT_LEFT, 200);
-  $self->lb_words->InsertColumn( 5 , 'created', wxLIST_FORMAT_LEFT, 150);
+  $self->lb_words->InsertColumn( 0          , 'id',      wxLIST_FORMAT_LEFT, 35);
+  $self->lb_words->InsertColumn( COL_LANG1  , 'Eng',     wxLIST_FORMAT_LEFT, 200);
+  $self->lb_words->InsertColumn( 2          , 'wc',      wxLIST_FORMAT_LEFT, 35);
+  $self->lb_words->InsertColumn( COL_LANG2  , 'Ukr',     wxLIST_FORMAT_LEFT, 200);
+  $self->lb_words->InsertColumn( 4          , 'note',    wxLIST_FORMAT_LEFT, 200);
+  $self->lb_words->InsertColumn( 5          , 'created', wxLIST_FORMAT_LEFT, 150);
   # layout
   $self->hbox_words( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_words->Add( $self->vbox_btn_words, 0, wxALL|wxTOP, 0 );
@@ -72,8 +79,8 @@ sub new {
   # table
   $self->lb_examples( Wx::ListCtrl->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
   $self->lb_examples->InsertColumn( 0, 'id',   wxLIST_FORMAT_LEFT, 35);
-  $self->lb_examples->InsertColumn( 1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
-  $self->lb_examples->InsertColumn( 2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
+  $self->lb_examples->InsertColumn( COL_E_LANG1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
+  $self->lb_examples->InsertColumn( COL_E_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
   $self->lb_examples->InsertColumn( 3, 'Note', wxLIST_FORMAT_LEFT, 150);
   # layout
   $self->hbox_examples( Wx::BoxSizer->new( wxHORIZONTAL ) );
@@ -99,7 +106,7 @@ sub new {
   EVT_BUTTON( $self, $self->btn_delete_example,   \&delete_example );
   EVT_LIST_ITEM_SELECTED( $self, $self->lb_words, \&load_examples  );
 
-  $self->lookup;
+  # $self->lookup;
 
   $self
 }
@@ -111,9 +118,9 @@ sub lookup {
   {
     my $id = $self->lb_words->InsertItem( Wx::ListItem->new );
     $self->lb_words->SetItem($id, 0, $item->{word_id} );
-    $self->lb_words->SetItem($id, 1, $item->{word_orig} );
+    $self->lb_words->SetItem($id, COL_LANG1, $item->{word_orig} );
     $self->lb_words->SetItem($id, 2, $item->{wordclass} );
-    $self->lb_words->SetItem($id, 3, $item->{word_tr} );
+    $self->lb_words->SetItem($id, COL_LANG2, $item->{word_tr} );
     $self->lb_words->SetItem($id, 4, $item->{note} );
     $self->lb_words->SetItem($id, 5, $item->{cdate} );
   }
