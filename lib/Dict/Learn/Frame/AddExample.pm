@@ -28,6 +28,7 @@ use Class::XSAccessor
 
                      search_words linked_words
                      item_id
+                     popup_examples popup_panel popup_vbox
                      hbox_add btn_additem btn_addexisting
                      btn_add btn_clear btn_translate
                      tran
@@ -57,10 +58,21 @@ sub new {
   $self->text_dst([]);
   $self->btn_additem( Wx::Button->new( $self, -1, '+', [-1, -1] ));
   $self->btn_addexisting( Wx::Button->new( $self, -1, '++', [-1, -1] ));
+  $self->popup_panel( Wx::Panel->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, "examples") );
+  $self->popup_examples( Wx::ListBox->new( $self->popup_panel, wxID_ANY, wxDefaultPosition, [300, 100], [], 0|wxSUNKEN_BORDER ) );
+  # $self->popup_examples->SetSize();
+  # $self->popup_examples->Hide();
+  $self->popup_panel->Hide;
   # layout
   $self->hbox_add( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_add->Add( $self->btn_additem, wxALIGN_LEFT|wxRIGHT, 5 );
   $self->hbox_add->Add( $self->btn_addexisting, wxALIGN_LEFT|wxRIGHT, 5 );
+  $self->popup_vbox( Wx::BoxSizer->new( wxVERTICAL ) );
+  $self->popup_vbox->Add( $self->popup_examples, 0, wxALL|wxEXPAND, 3 );
+  $self->popup_panel->SetSizer( $self->popup_vbox );
+  $self->popup_panel->Layout();
+  $self->popup_vbox->Fit( $self->popup_panel );
+
   # layout
   $self->vbox_dst( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->hbox_dst_item([]);
@@ -100,37 +112,65 @@ sub new {
   EVT_BUTTON( $self, $self->btn_addexisting, \&add_existing_item );
   EVT_BUTTON( $self, $self->btn_clear,       \&clear_fields );
   EVT_BUTTON( $self, $self->btn_translate,   \&translate    );
+  EVT_LISTBOX_DCLICK(  $self, $self->popup_examples, \&select_example );
+  $self
+}
 
+sub initialize_examples {
+  my $self = shift;
+  my @examples = $main::ioc->lookup('db')->get_all_examples(
+    $self->parent->dictionary->{language_tr_id}{language_id}
+  );
+  for (@examples) {
+    $self->popup_examples->Append($_->{example}, $_->{example_id});
+  }
+  $self
+}
+
+sub select_example {
+  my ($self, $event) = @_;
+  $self->popup_panel->Hide;
+  my $el = $self->add_dst_item( $event->GetClientData(), 1 );
+  $el->{text}->SetValue( $event->GetString );
   $self
 }
 
 sub make_dst_item {
-  my ($self, $example_id) = @_;
+  my ($self, $example_id, $ro) = @_;
   push @{ $self->hbox_dst_item } => Wx::BoxSizer->new( wxHORIZONTAL );
   my $id = $#{ $self->hbox_dst_item };
+  my $text;
   $self->text_dst->[$id] = {
     example_id  => $example_id,
     id          => $id,
     text        => Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1], wxTE_MULTILINE ),
     vbox        => Wx::BoxSizer->new( wxVERTICAL ),
     btnm        => Wx::Button->new( $self, -1, '-', [-1, -1] ),
-    btnp        => Wx::Button->new( $self, -1, '+', [-1, -1] ),
     parent_hbox => $self->hbox_dst_item->[$id],
   };
-  EVT_BUTTON( $self, $self->text_dst->[$id]{btnp}, sub { $self->add_dst_item();    } );
   EVT_BUTTON( $self, $self->text_dst->[$id]{btnm}, sub { $self->del_dst_item($id); } );
-  # $self->text_dst->[$id]{text}->SetSelection(0);
   $self->hbox_dst_item->[$id]->Add($self->text_dst->[$id]{text}, 4, wxALL|wxEXPAND, 0);
-  $self->hbox_dst_item->[$id]->Add($self->text_dst->[$id]{vbox}, 1, wxALL|wxBOTTOM, 0);
-  $self->text_dst->[$id]{vbox}->Add($self->text_dst->[$id]{btnm}, 1, wxALL|wxBOTTOM, 0);
-  $self->text_dst->[$id]{vbox}->Add($self->text_dst->[$id]{btnp}, 1, wxALL|wxBOTTOM, 0);
+  $self->hbox_dst_item->[$id]->Add($self->text_dst->[$id]{vbox}, 1, wxALL, 0);
+  $self->text_dst->[$id]{vbox}->Add($self->text_dst->[$id]{btnm}, 1, wxALL, 0);
+
+  if ($ro) {
+    # set readonly
+    $self->text_dst->[$id]{text}->SetEditable(0);
+    # add 'edit as new' button
+    $self->text_dst->[$id]{edit} = Wx::Button->new( $self, -1, 'e', [-1, -1] );
+    EVT_BUTTON( $self, $self->text_dst->[$id]{edit}, sub { $self->edit_example_as_new($id) } );
+    $self->text_dst->[$id]{vbox}->Add($self->text_dst->[$id]{edit}, 1, wxALL, 0);
+  }
+
   $self->text_dst->[$id]
 }
 
 sub add_dst_item {
-  my ($self, $example_id) = @_;
-  my $el = $self->make_dst_item( $example_id );
-  $self->vbox_dst->Add( $el->{parent_hbox}, 1, wxALL|wxGROW, 5 );
+  my ($self, $example_id, $ro) = @_;
+  my $el = $self->make_dst_item( $example_id, $ro );
+  # $self->vbox_dst->Add( $el->{parent_hbox}, 1, wxALL|wxGROW, 5 );
+  my @children = $self->vbox_dst->GetChildren;
+  $self->vbox_dst->Insert( $#children || 0, $el->{parent_hbox}, 1, wxALL|wxGROW, 5 );
   $self->Layout();
   $el
 }
@@ -138,7 +178,7 @@ sub add_dst_item {
 sub del_dst_item {
   my $self = shift;
   my $id = shift;
-  for (qw[ btnm btnp ]) {
+  for (qw[ btnm edit ]) {
     next unless defined $self->text_dst->[$id]{$_};
     $self->text_dst->[$id]{vbox}->Remove($self->text_dst->[$id]{$_});
     $self->text_dst->[$id]{$_}->Destroy();
@@ -154,6 +194,28 @@ sub del_dst_item {
   $self->Layout();
   delete $self->hbox_dst_item->[$id];
   delete $self->text_dst->[$id]{parent_hbox};
+  $self
+}
+
+# @TODO filter already added examples
+sub add_existing_item {
+  my $self = shift;
+  my @xy;
+  if ( 0 < grep { defined $_->{text} } @{ $self->text_dst } ) {
+    @xy = (
+      $self->btn_addexisting->GetPosition->x,
+      $self->btn_addexisting->GetPosition->y -
+      $self->popup_panel->GetRect->height
+    );
+  } else {
+    @xy = (
+      $self->btn_addexisting->GetPosition->x,
+      $self->btn_addexisting->GetPosition->y + $self->btn_addexisting->GetRect->height
+    );
+  }
+  $self->popup_panel->Move(\@xy);
+  # $self->popup_examples->Show;
+  $self->popup_panel->Show;
   $self
 }
 
