@@ -147,6 +147,7 @@ sub set_dictionary {
   $self->p_search->lookup;
   $self->p_gridwords->refresh_words;
   $self->p_addexample->load_words;
+  $self->p_addexample->initialize_examples;
   $self
 }
 
