@@ -291,17 +291,6 @@ sub clear_fields {
   $self->item_id(undef);
 }
 
-# sub load_example_inputs {
-#   my $self = shift;
-#   my $item = shift;
-#   $self->clear_example_inputs;
-#   $self->item_id($item->GetIndex());
-#   $self->text_src->SetValue($self->listbox_examples->GetItem($item->GetIndex(), 1)->GetText);
-#   $self->text_dst->SetValue($self->listbox_examples->GetItem($item->GetIndex(), 2)->GetText);
-#   $self->example_note->SetValue($self->listbox_examples->GetItem($item->GetIndex(), 3)->GetText);
-#   $self
-# }
-
 sub remove_all_dst {
   my $self = shift;
   for ( @{ $self->text_dst } ) {
