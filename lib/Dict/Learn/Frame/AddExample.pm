@@ -354,6 +354,7 @@ sub load_words {
   for my $item ( $main::ioc->lookup('db')->select_words(
     $self->parent->dictionary->{language_orig_id}{language_id} ))
   {
+    $self->search_words->Append($item->{word}." (".$item->{wordclass}.")", $item->{id});
     $self->linked_words->Append($item->{word}." (".$item->{wordclass}.")", $item->{id});
   }
 }
