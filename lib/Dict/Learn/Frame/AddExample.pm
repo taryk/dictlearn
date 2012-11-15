@@ -28,6 +28,7 @@ use Class::XSAccessor
 
                      search_words linked_words
                      item_id
+                     hbox_add btn_additem btn_addexisting
                      btn_add btn_clear btn_translate
                      tran
                    | ];
@@ -54,10 +55,17 @@ sub new {
 
   ### dst
   $self->text_dst([]);
+  $self->btn_additem( Wx::Button->new( $self, -1, '+', [-1, -1] ));
+  $self->btn_addexisting( Wx::Button->new( $self, -1, '++', [-1, -1] ));
+  # layout
+  $self->hbox_add( Wx::BoxSizer->new( wxHORIZONTAL ) );
+  $self->hbox_add->Add( $self->btn_additem, wxALIGN_LEFT|wxRIGHT, 5 );
+  $self->hbox_add->Add( $self->btn_addexisting, wxALIGN_LEFT|wxRIGHT, 5 );
   # layout
   $self->vbox_dst( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->hbox_dst_item([]);
-  $self->add_dst_item;
+  $self->vbox_dst->Add($self->hbox_add, 0, wxALIGN_LEFT|wxLEFT|wxTOP, 5);
+  # $self->add_dst_item;
 
   ### hbox_examples layout
   $self->hbox_examples( Wx::BoxSizer->new( wxHORIZONTAL ) );
@@ -87,9 +95,11 @@ sub new {
   $self->item_id(undef);
 
   # events
-  EVT_BUTTON( $self, $self->btn_add,             \&add          );
-  EVT_BUTTON( $self, $self->btn_clear,           \&clear_fields );
-  EVT_BUTTON( $self, $self->btn_translate,       \&translate    );
+  EVT_BUTTON( $self, $self->btn_add,         \&add          );
+  EVT_BUTTON( $self, $self->btn_additem,     sub { $self->add_dst_item } );
+  EVT_BUTTON( $self, $self->btn_addexisting, \&add_existing_item );
+  EVT_BUTTON( $self, $self->btn_clear,       \&clear_fields );
+  EVT_BUTTON( $self, $self->btn_translate,   \&translate    );
 
   $self
 }
