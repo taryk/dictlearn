@@ -219,6 +219,21 @@ sub add_existing_item {
   $self
 }
 
+sub edit_example_as_new {
+  my ($self, $example_id) = @_;
+  # set editable
+  $self->text_dst->[$example_id]{text}->SetEditable(1);
+  # remove example id
+  $self->text_dst->[$example_id]{example_id} = undef;
+  # remove edit button
+  $self->text_dst->[$example_id]{edit}->Destroy();
+  $self->text_dst->[$example_id]{vbox}->Remove(
+    $self->text_dst->[$example_id]{edit}
+  );
+  delete $self->text_dst->[$example_id]{edit};
+  $self
+}
+
 sub add {
   my $self = shift;
   return unless $self->text_src->GetValue or
