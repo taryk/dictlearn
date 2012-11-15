@@ -128,9 +128,7 @@ sub lookup {
 
 sub edit_word {
   my $self = shift;
-  my $curr_id = -1;
-
-  $curr_id = $self->lb_words->GetNextItem($curr_id, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+  my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
   # my @examples;
   # for my $i (0 .. $self->lb_examples->GetItemCount - 1) {
