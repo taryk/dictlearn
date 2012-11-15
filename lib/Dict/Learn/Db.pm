@@ -291,6 +291,16 @@ sub select_examples {
   $rs->all
 }
 
+sub get_all_examples {
+  my $self = shift;
+  my $lang_id = shift;
+  my $rs = $self->schema->resultset('Example')->search({
+     'me.lang_id' => $lang_id,
+  });
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  $rs->all
+}
+
 sub get_dictionaries {
   my $self = shift;
   my $params;
