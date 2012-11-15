@@ -121,12 +121,19 @@ sub add_example {
     });
   }
   for (@{ $params{translate} }) {
-    $new_example->add_to_examples({
-      example => $_->{text},
-      lang_id => $_->{lang_id},
-    }, {
-      dictionary_id => $self->dictionary_id
-    });
+    if (defined $_->{example_id}) {
+      $new_example->add_to_examples(
+        { example_id    => $_->{example_id}     } ,
+        { dictionary_id => $self->dictionary_id }
+      );
+    } else {
+      $new_example->add_to_examples({
+        example => $_->{text},
+        lang_id => $_->{lang_id},
+      }, {
+        dictionary_id => $self->dictionary_id
+      });
+    }
   }
 }
 
