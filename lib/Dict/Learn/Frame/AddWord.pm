@@ -27,6 +27,8 @@ use Class::XSAccessor
                      hbox_btn
 
                      item_id
+
+                     popup_words popup_panel popup_vbox
                      hbox_add btn_additem btn_addexisting
 
                      btn_add_word btn_clear btn_tran
@@ -48,12 +50,23 @@ sub new {
   $self->word_dst([]);
   $self->btn_additem( Wx::Button->new( $self, -1, '+', [-1, -1] ));
   $self->btn_addexisting( Wx::Button->new( $self, -1, '++', [-1, -1] ));
+  $self->popup_panel( Wx::Panel->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, "examples") );
+  $self->popup_words( Wx::ListBox->new( $self->popup_panel, wxID_ANY, wxDefaultPosition, [300, 100], [], 0|wxSUNKEN_BORDER ) );
+  $self->popup_panel->Hide;
   # layout
   $self->hbox_dst_item([]);
   $self->vbox_dst( Wx::BoxSizer->new( wxVERTICAL ));
   $self->hbox_add( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_add->Add( $self->btn_additem, wxALIGN_LEFT|wxRIGHT, 5 );
   $self->hbox_add->Add( $self->btn_addexisting, wxALIGN_LEFT|wxRIGHT, 5 );
+  $self->popup_vbox( Wx::BoxSizer->new( wxVERTICAL ) );
+  $self->popup_vbox->Add( $self->popup_words, 0, wxALL|wxEXPAND, 3 );
+  $self->popup_panel->SetSizer( $self->popup_vbox );
+  $self->popup_panel->Layout();
+  $self->popup_vbox->Fit( $self->popup_panel );
+  $self->vbox_dst->Add($self->hbox_add, 0, wxALIGN_LEFT|wxRIGHT, 5);
+
+  # $self->add_dst_item;
 
   ### hbox_words layout
   $self->hbox_words( Wx::BoxSizer->new( wxHORIZONTAL ) );
@@ -87,12 +100,41 @@ sub new {
   EVT_BUTTON( $self, $self->btn_add_word,        \&add                       );
   EVT_BUTTON( $self, $self->btn_additem,         sub { $self->add_dst_item } );
   EVT_BUTTON( $self, $self->btn_addexisting,     \&add_existing_item         );
+  EVT_BUTTON( $self, $self->btn_clear,           \&clear_fields              );
+  EVT_BUTTON( $self, $self->btn_translate_word,  \&translate_word            );
+  EVT_LEAVE_WINDOW( $self->popup_panel,          \&leave_popup               );
+  EVT_LISTBOX_DCLICK( $self, $self->popup_words, \&select_word               );
+  $self
+}
 
+{ my $cnt = 0;
+  sub leave_popup {
+    my $self = shift;
+    $self->Hide if $cnt++ % 2 != 0;
+  }
+};
+
+sub initialize_words {
+  my $self = shift;
+  my @words = $main::ioc->lookup('db')->get_all_words(
+    $self->parent->dictionary->{language_tr_id}{language_id}
+  );
+  for (@words) {
+    $self->popup_words->Append($_->{word}, $_->{word_id});
+  }
+  $self
+}
+
+sub select_word {
+  my ($self, $event) = @_;
+  $self->popup_panel->Hide;
+  my $el = $self->add_dst_item( $event->GetClientData(), 1 );
+  $el->{word}->SetValue( $event->GetString );
   $self
 }
 
 sub make_dst_item {
-  my ($self, $word_id) = @_;
+  my ($self, $word_id, $ro) = @_;
   push @{ $self->hbox_dst_item } => Wx::BoxSizer->new( wxHORIZONTAL );
   my $id = $#{ $self->hbox_dst_item };
   $self->word_dst->[$id] = {
@@ -101,31 +143,39 @@ sub make_dst_item {
     cbox    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [ $self->import_wordclass ], wxCB_DROPDOWN|wxCB_READONLY, wxDefaultValidator  ),
     # word    => Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ),
     word    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [], wxCB_DROPDOWN, wxDefaultValidator  ),
-    btnp    => Wx::Button->new( $self, -1, '+', [-1, -1] ),
+    # btnp    => Wx::Button->new( $self, -1, '+', [-1, -1] ),
     btnm    => Wx::Button->new( $self, -1, '-', [-1, -1] ),
     parent_hbox => $self->hbox_dst_item->[$id]
   };
-  EVT_BUTTON( $self, $self->word_dst->[$id]{btnp}, sub { $self->add_dst_item(); } );
+  # EVT_BUTTON( $self, $self->word_dst->[$id]{btnp}, sub { $self->add_dst_item(); } );
   EVT_BUTTON( $self, $self->word_dst->[$id]{btnm}, sub { $self->del_dst_item($id); } );
   EVT_TEXT(   $self, $self->word_dst->[$id]{word}, sub { $self->query_words($id); } );
-  p($self->word_dst->[$id]{word});
+  # p($self->word_dst->[$id]{word});
   $self->word_dst->[$id]{cbox}->SetSelection(0);
-  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{cbox}, 2, wxALL|wxTOP, 0);
+  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{cbox}, 2, wxALL, 0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{word}, 4, wxALL|wxEXPAND, 0);
-  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnp}, 1, wxALL|wxTOP, 0);
-  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnm}, 1, wxALL|wxTOP, 0);
+  # $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnp}, 1, wxALL|wxTOP, 0);
+  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnm}, 1, wxALL, 0);
+
+  if ($ro) {
+    $self->word_dst->[$id]{word}->SetEditable(0);
+    $self->word_dst->[$id]{edit} = Wx::Button->new( $self, -1, 'e', [-1, -1] );
+    EVT_BUTTON( $self, $self->word_dst->[$id]{edit}, sub { $self->edit_word_as_new($id) } );
+    $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{edit}, 1, wxALL, 0);
+  }
+
   $self->word_dst->[$id]
 }
 
 sub query_words {
   my ($self, $id) = @_;
   my $cb = $self->word_dst->[$id]{word};
-  p($cb->GetValue());
+  # p($cb->GetValue());
   my @words = $main::ioc->lookup('db')->select_words(
     $self->parent->dictionary->{language_tr_id}{language_id},
     $cb->GetValue(),
   );
-  p(@words);
+  # p(@words);
   $cb->Clear;
   for (@words) {
     $cb->Append($_->{word});
@@ -133,9 +183,11 @@ sub query_words {
 }
 
 sub add_dst_item {
-  my ($self, $word_id) = @_;
-  my $el = $self->make_dst_item( $word_id );
-  $self->vbox_dst->Add( $el->{parent_hbox}, 1, wxALL|wxGROW, 0 );
+  my ($self, $word_id, $ro) = @_;
+  my $el = $self->make_dst_item( $word_id, $ro );
+  # $self->vbox_dst->Add( $el->{parent_hbox}, 1, wxALL|wxGROW, 0 );
+  my @children = $self->vbox_dst->GetChildren;
+  $self->vbox_dst->Insert( $#children || 0, $el->{parent_hbox}, 1, wxALL|wxGROW, 0 );
   $self->Layout();
   $el
 }
@@ -153,6 +205,28 @@ sub del_dst_item {
   $self->Layout();
   delete $self->hbox_dst_item->[$id];
   delete $self->word_dst->[$id]{parent_hbox};
+  $self
+}
+
+# @TODO filter already added examples
+sub add_existing_item {
+  my $self = shift;
+  my @xy;
+#  if ( 0 < grep { defined $_->{text} } @{ $self->word_dst } ) {
+#    @xy = (
+#      $self->btn_addexisting->GetPosition->x,
+#      $self->btn_addexisting->GetPosition->y -
+#      $self->popup_panel->GetRect->height
+#    );
+#  } else {
+    @xy = (
+      $self->btn_addexisting->GetPosition->x,
+      $self->btn_addexisting->GetPosition->y + $self->btn_addexisting->GetRect->height
+    );
+#  }
+  $self->popup_panel->Move(\@xy);
+  # $self->popup_examples->Show;
+  $self->popup_panel->Show;
   $self
 }
 
