@@ -96,17 +96,6 @@ sub new {
   $self
 }
 
-sub initialize_words {
-  my $self = shift;
-  my @words = $main::ioc->lookup('db')->get_all_words(
-    $self->parent->dictionary->{language_tr_id}{language_id}
-  );
-  for (@words) {
-    $self->popup_words->Append($_->{word}, $_->{word_id});
-  }
-  $self
-}
-
 sub select_word {
   my ($self, $event) = @_;
   my $el = $self->add_dst_item( $event->GetClientData(), 1 );

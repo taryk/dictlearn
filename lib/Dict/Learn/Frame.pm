@@ -148,7 +148,6 @@ sub set_dictionary {
   $self->p_gridwords->refresh_words;
   $self->p_addexample->load_words;
   $self->p_addexample->initialize_examples;
-  $self->p_addword->initialize_words;
   $self
 }
 
