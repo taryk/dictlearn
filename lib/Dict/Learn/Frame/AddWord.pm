@@ -230,6 +230,21 @@ sub add_existing_item {
   $self
 }
 
+sub edit_word_as_new {
+  my ($self, $word_id) = @_;
+  # set editable
+  $self->word_dst->[$word_id]{word}->SetEditable(1);
+  # remove example id
+  $self->word_dst->[$word_id]{word_id} = undef;
+  # remove edit button
+  $self->word_dst->[$word_id]{edit}->Destroy();
+  $self->word_dst->[$word_id]{parent_hbox}->Remove(
+    $self->word_dst->[$word_id]{edit}
+  );
+  delete $self->word_dst->[$word_id]{edit};
+  $self
+}
+
 sub add {
   my $self = shift;
 
