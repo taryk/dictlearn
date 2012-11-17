@@ -28,7 +28,6 @@ use Class::XSAccessor
 
                      item_id
 
-                     popup_words popup_panel popup_vbox
                      hbox_add btn_additem btn_addexisting
 
                      btn_add_word btn_clear btn_tran
@@ -50,20 +49,12 @@ sub new {
   $self->word_dst([]);
   $self->btn_additem( Wx::Button->new( $self, -1, '+', [-1, -1] ));
   $self->btn_addexisting( Wx::Button->new( $self, -1, '++', [-1, -1] ));
-  $self->popup_panel( Wx::Panel->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, "examples") );
-  $self->popup_words( Wx::ListBox->new( $self->popup_panel, wxID_ANY, wxDefaultPosition, [300, 100], [], 0|wxSUNKEN_BORDER ) );
-  $self->popup_panel->Hide;
   # layout
   $self->hbox_dst_item([]);
-  $self->vbox_dst( Wx::BoxSizer->new( wxVERTICAL ));
+  $self->vbox_dst( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->hbox_add( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_add->Add( $self->btn_additem, wxALIGN_LEFT|wxRIGHT, 5 );
   $self->hbox_add->Add( $self->btn_addexisting, wxALIGN_LEFT|wxRIGHT, 5 );
-  $self->popup_vbox( Wx::BoxSizer->new( wxVERTICAL ) );
-  $self->popup_vbox->Add( $self->popup_words, 0, wxALL|wxEXPAND, 3 );
-  $self->popup_panel->SetSizer( $self->popup_vbox );
-  $self->popup_panel->Layout();
-  $self->popup_vbox->Fit( $self->popup_panel );
   $self->vbox_dst->Add($self->hbox_add, 0, wxALIGN_LEFT|wxRIGHT, 5);
 
   # $self->add_dst_item;
@@ -102,17 +93,8 @@ sub new {
   EVT_BUTTON( $self, $self->btn_addexisting,     \&add_existing_item         );
   EVT_BUTTON( $self, $self->btn_clear,           \&clear_fields              );
   EVT_BUTTON( $self, $self->btn_translate_word,  \&translate_word            );
-  EVT_LEAVE_WINDOW( $self->popup_panel,          \&leave_popup               );
-  EVT_LISTBOX_DCLICK( $self, $self->popup_words, \&select_word               );
   $self
 }
-
-{ my $cnt = 0;
-  sub leave_popup {
-    my $self = shift;
-    $self->Hide if $cnt++ % 2 != 0;
-  }
-};
 
 sub initialize_words {
   my $self = shift;
@@ -127,7 +109,6 @@ sub initialize_words {
 
 sub select_word {
   my ($self, $event) = @_;
-  $self->popup_panel->Hide;
   my $el = $self->add_dst_item( $event->GetClientData(), 1 );
   $el->{word}->SetValue( $event->GetString );
   $self
@@ -205,28 +186,6 @@ sub del_dst_item {
   $self->Layout();
   delete $self->hbox_dst_item->[$id];
   delete $self->word_dst->[$id]{parent_hbox};
-  $self
-}
-
-# @TODO filter already added examples
-sub add_existing_item {
-  my $self = shift;
-  my @xy;
-#  if ( 0 < grep { defined $_->{text} } @{ $self->word_dst } ) {
-#    @xy = (
-#      $self->btn_addexisting->GetPosition->x,
-#      $self->btn_addexisting->GetPosition->y -
-#      $self->popup_panel->GetRect->height
-#    );
-#  } else {
-    @xy = (
-      $self->btn_addexisting->GetPosition->x,
-      $self->btn_addexisting->GetPosition->y + $self->btn_addexisting->GetRect->height
-    );
-#  }
-  $self->popup_panel->Move(\@xy);
-  # $self->popup_examples->Show;
-  $self->popup_panel->Show;
   $self
 }
 
