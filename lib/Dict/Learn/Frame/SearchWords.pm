@@ -6,6 +6,7 @@ use Wx::Event qw[:everything];
 
 use base 'Wx::Panel';
 
+use Dict::Learn::Dictionary;
 use Data::Printer;
 
 use common::sense;
@@ -107,14 +108,27 @@ sub new {
   EVT_LIST_ITEM_SELECTED( $self, $self->lb_words, \&load_examples  );
 
   # $self->lookup;
+  Dict::Learn::Dictionary->cb(sub {
+    my $dict = shift;
+    my @li = ( Wx::ListItem->new, Wx::ListItem->new );
+    $li[0]->SetText( $dict->curr->{language_orig_id}{language_name} );
+    $li[1]->SetText( $dict->curr->{language_tr_id}{language_name} );
+    $self->lb_words->SetColumn( COL_LANG1, $li[0] );
+    $self->lb_words->SetColumn( COL_LANG2, $li[1] );
+    $self->lb_examples->SetColumn( COL_E_LANG1, $li[0] );
+    $self->lb_examples->SetColumn( COL_E_LANG2, $li[1] );
+    $self->lookup;
+  });
 
   $self
 }
 
 sub lookup {
-  my ( $self, $event ) = @_;
+  my ($self, $event) = @_;
   $self->lb_words->DeleteAllItems();
-  for my $item ( $main::ioc->lookup('db')->find_items( $self->combobox->GetValue ) )
+  for my $item ($main::ioc->lookup('db')->find_items(
+    word          => $self->combobox->GetValue,
+    dictionary_id => Dict::Learn::Dictionary->curr_id ))
   {
     my $id = $self->lb_words->InsertItem( Wx::ListItem->new );
     $self->lb_words->SetItem($id, 0, $item->{word_id} );

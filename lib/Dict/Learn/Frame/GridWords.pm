@@ -69,6 +69,11 @@ sub new {
   EVT_BUTTON( $self, $self->btn_refresh,         \&refresh_words  );
   EVT_BUTTON( $self, $self->btn_delete_item,     \&delete_word    );
 
+  Dict::Learn::Dictionary->cb(sub {
+    my $dict = shift;
+    $self->refresh_words;
+  });
+
   $self
 
 }
@@ -119,9 +124,13 @@ sub clear_db {
 sub select_words {
   my $self = shift;
   my $i=0;
-  my @items = $main::ioc->lookup('db')->select_all();
+  my @items = $main::ioc->lookup('db')->select_all(
+    dictionary_id => Dict::Learn::Dictionary->curr_id
+  );
   $self->grid->InsertRows(0 , scalar @items);
-  for my $item ( $main::ioc->lookup('db')->select_all() ) {
+  for my $item ( $main::ioc->lookup('db')->select_all(
+    dictionary_id => Dict::Learn::Dictionary->curr_id ))
+  {
     $self->grid->SetRowLabelValue($i => $item->{word_id});
     $self->grid->SetCellValue( $i,   0, $item->{word1_id}{word} );
     $self->grid->SetCellValue( $i,   1, $item->{wordclass}{name_orig} );

@@ -11,6 +11,7 @@ use LWP::UserAgent;
 # use lib qw[ ];
 
 use Dict::Learn::Translate;
+use Dict::Learn::Dictionary;
 
 use common::sense;
 
@@ -139,7 +140,7 @@ sub query_words {
   my $cb = $self->word_dst->[$id]{word};
   # p($cb->GetValue());
   my @words = $main::ioc->lookup('db')->select_words(
-    $self->parent->dictionary->{language_tr_id}{language_id},
+    Dict::Learn::Dictionary->curr->{language_tr_id}{language_id},
     $cb->GetValue(),
   );
   # p(@words);
@@ -196,19 +197,20 @@ sub add {
   my %params = (
     word    => $self->word_src->GetValue(),
     note    => $self->word_note->GetValue(),
-    lang_id => $self->parent->dictionary->{language_orig_id}{language_id},
+    lang_id => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
+    dictionary_id => Dict::Learn::Dictionary->curr_id,
   );
   for my $word_dst_item ( grep { defined } @{ $self->word_dst } ) {
     my $push_item = { word_id => $word_dst_item->{word_id} };
     if ($word_dst_item->{word}) {
       $push_item->{wordclass} = int($word_dst_item->{cbox}->GetSelection());
       if ($word_dst_item->{word}->GetSelection > 0) {
-        $push_item->{word_id}  = $word_dst_item->{word}->GetClientData(
-                                 $word_dst_item->{word}->GetValue() );
+        $push_item->{word_id} = $word_dst_item->{word}->GetClientData(
+                                $word_dst_item->{word}->GetValue() );
       } else {
-        $push_item->{word}      = $word_dst_item->{word}->GetValue();
+        $push_item->{word} = $word_dst_item->{word}->GetValue();
       }
-      $push_item->{lang_id}   = $self->parent->dictionary->{language_tr_id}{language_id};
+      $push_item->{lang_id} = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
       # skip empty fields
       next unless $push_item->{word} =~ /^.+$/;
     }

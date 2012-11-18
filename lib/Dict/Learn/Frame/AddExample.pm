@@ -11,6 +11,7 @@ use LWP::UserAgent;
 # use lib qw[ ];
 
 use Dict::Learn::Translate;
+use Dict::Learn::Dictionary;
 
 use common::sense;
 
@@ -113,13 +114,20 @@ sub new {
   EVT_BUTTON( $self, $self->btn_clear,       \&clear_fields );
   EVT_BUTTON( $self, $self->btn_translate,   \&translate    );
   EVT_LISTBOX_DCLICK(  $self, $self->popup_examples, \&select_example );
+
+  Dict::Learn::Dictionary->cb(sub {
+    my $dict = shift;
+    $self->load_words;
+    $self->initialize_examples;
+  });
+
   $self
 }
 
 sub initialize_examples {
   my $self = shift;
   my @examples = $main::ioc->lookup('db')->get_all_examples(
-    $self->parent->dictionary->{language_tr_id}{language_id}
+    Dict::Learn::Dictionary->curr->{language_tr_id}{language_id}
   );
   for (@examples) {
     $self->popup_examples->Append($_->{example}, $_->{example_id});
@@ -241,7 +249,8 @@ sub add {
   my %params = (
     text    => $self->text_src->GetValue(),
     note    => $self->example_note->GetValue(),
-    lang_id => $self->parent->dictionary->{language_orig_id}{language_id},
+    lang_id => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
+    dictionary_id => Dict::Learn::Dictionary->curr_id,
   );
   if (defined(my $index = $self->linked_words->GetSelection()))
   {
@@ -256,7 +265,7 @@ sub add {
     my $push_item = { example_id  => $text_dst_item->{example_id} };
     if ($text_dst_item->{text}) {
       $push_item->{text}    = $text_dst_item->{text}->GetValue;
-      $push_item->{lang_id} = $self->parent->dictionary->{language_tr_id}{language_id};
+      $push_item->{lang_id} = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
     }
     push @{ $params{translate} } => $push_item;
   }
@@ -341,7 +350,7 @@ sub load_words {
   my $self = shift;
   $self->linked_words->Clear;
   for my $item ( $main::ioc->lookup('db')->select_words(
-    $self->parent->dictionary->{language_orig_id}{language_id} ))
+    Dict::Learn::Dictionary->curr->{language_orig_id}{language_id} ))
   {
     $self->search_words->Append($item->{word}." (".$item->{wordclass}.")", $item->{id});
     $self->linked_words->Append($item->{word}." (".$item->{wordclass}.")", $item->{id});

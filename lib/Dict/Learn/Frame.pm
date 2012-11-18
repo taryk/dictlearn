@@ -23,7 +23,6 @@ use common::sense;
 use Class::XSAccessor
   accessors => [ qw| vbox menu_bar menu_dicts status_bar notebook
                      p_additem p_addword p_addexample p_gridwords p_search
-                     dictionary dictionaries
                | ];
 
 sub new {
@@ -33,8 +32,6 @@ sub new {
   $self->SetIcon( Wx::GetWxPerlIcon() );
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->notebook( Wx::Notebook->new( $self, -1, [-1,-1], [-1,-1], 0 ) );
-
-  $self->dictionaries( $self->init_dicts );
 
   # main menu
   $self->menu_bar( Wx::MenuBar->new(0) );
@@ -80,7 +77,7 @@ sub new {
   # $self->vbox->SetSizeHints( $self );
   $self->status_bar($self->CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY ));
 
-  $self->set_dictionary( $self->dictionaries->{0} );
+  Dict::Learn::Dictionary->set(0);
 
   # events
   EVT_CLOSE( $self, \&on_close );
@@ -88,20 +85,11 @@ sub new {
   $self
 }
 
-sub init_dicts {
-  my $self = shift;
-  my $dicts = { };
-  for ( $main::ioc->lookup('db')->get_dictionaries() ) {
-    $dicts->{ $_->{dictionary_id} } = $_;
-  }
-  $dicts;
-}
-
 sub init_menu_dicts {
   my ($self, $menu) = @_;
   # Wx::MenuItem->new( $self->menu_dicts, wxID_ANY, "Test", "", wxITEM_NORMAL)
   for ( sort { $a->{dictionary_id} <=> $b->{dictionary_id} }
-        values %{ $self->dictionaries } )
+        values %{ Dict::Learn::Dictionary->all } )
   {
     $menu->AppendRadioItem( $_->{dictionary_id}, $_->{dictionary_name} );
     # event
@@ -117,38 +105,7 @@ sub dictionary_check {
   $self->status_bar->SetStatusText(
     "Dictionary '" . $menu_item->GetLabel . "' selected"
   );
-  $self->set_dictionary( $event->GetId );
-}
-
-sub set_dictionary {
-  my ($self, $dictionary) = @_;
-  if (ref $dictionary eq 'HASH') {
-    $self->dictionary( $dictionary );
-  }
-  else {
-    $self->dictionary( $self->dictionaries->{$dictionary} );
-  }
-  $main::ioc->lookup('db')->dictionary_id( $self->dictionary->{dictionary_id} );
-  my @li = ( Wx::ListItem->new, Wx::ListItem->new );
-  $li[0]->SetText( $self->dictionary->{language_orig_id}{language_name} );
-  $li[1]->SetText( $self->dictionary->{language_tr_id}{language_name} );
-  $self->p_search->lb_words->SetColumn(
-    Dict::Learn::Frame::SearchWords::COL_LANG1,   $li[0],
-  );
-  $self->p_search->lb_words->SetColumn(
-    Dict::Learn::Frame::SearchWords::COL_LANG2,   $li[1]
-  );
-  $self->p_search->lb_examples->SetColumn(
-    Dict::Learn::Frame::SearchWords::COL_E_LANG1, $li[0]
-  );
-  $self->p_search->lb_examples->SetColumn(
-    Dict::Learn::Frame::SearchWords::COL_E_LANG2, $li[1]
-  );
-  $self->p_search->lookup;
-  $self->p_gridwords->refresh_words;
-  $self->p_addexample->load_words;
-  $self->p_addexample->initialize_examples;
-  $self
+  Dict::Learn::Dictionary->set( $event->GetId );
 }
 
 sub on_close {
