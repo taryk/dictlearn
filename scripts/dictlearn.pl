@@ -37,6 +37,15 @@ our $ioc = IOC::Slinky::Container->new(
           { _ref => 'schema' },
         ],
       },
+
+      dictionary => {
+        _class => 'Dict::Learn::Dictionary',
+        _constructor => 'new',
+        _constructor_args => [
+          { _ref => 'db' },
+        ]
+      },
+
     },
 });
 
