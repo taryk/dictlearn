@@ -6,14 +6,12 @@ use namespace::autoclean;
 use Data::Printer;
 
 use Class::XSAccessor
-    accessors => [ qw| schema
-                       dictionary_id | ];
+    accessors => [ qw| schema | ];
 
 sub new {
   my $class  = shift;
   my $self = bless {} => $class;
   $self->schema( shift );
-  $self->dictionary_id( 0 );
   $self
 }
 
@@ -35,7 +33,7 @@ sub add_word {
                   lang_id       => $word->{lang_id}, }
     }
     $new_word->add_to_words($fields => {
-      dictionary_id => $self->dictionary_id
+      dictionary_id => $params{dictionary_id},
     });
   }
   $self
@@ -80,7 +78,7 @@ sub update_word {
         note    => $_->{note},
         lang_id => $_->{lang_id},
       }, {
-        dictionary_id => $self->dictionary_id,
+        dictionary_id => $params{dictionary_id},
         wordclass_id  => $_->{wordclass},
       });
       next;
@@ -124,14 +122,14 @@ sub add_example {
     if (defined $_->{example_id}) {
       $new_example->add_to_examples(
         { example_id    => $_->{example_id}     } ,
-        { dictionary_id => $self->dictionary_id }
+        { dictionary_id => $params{dictionary_id} }
       );
     } else {
       $new_example->add_to_examples({
         example => $_->{text},
         lang_id => $_->{lang_id},
       }, {
-        dictionary_id => $self->dictionary_id
+        dictionary_id => $params{dictionary_id}
       });
     }
   }
@@ -155,7 +153,7 @@ sub update_example {
         lang_id => $_->{lang_id},
         idioma  => $_->{idioma} || 0,
       }, {
-        dictionary_id => $self->dictionary_id,
+        dictionary_id => $params{dictionary_id},
       });
       next;
     }
@@ -179,12 +177,12 @@ sub update_example {
 sub delete_example { my $self = shift }
 
 sub find_items {
-  my $self = shift;
-  my $word = shift;
+  my $self   = shift;
+  my %params = @_;
   my $rs   = $self->schema->resultset('Words')->search({
     -and => [
-      'me.dictionary_id' => $self->dictionary_id,
-      'word1_id.word'    => { like => "%$word%" },
+      'me.dictionary_id' => $params{dictionary_id},
+      'word1_id.word'    => { like => "%".$params{word}."%" },
     ]}, {
       join     => [ qw| word1_id word2_id wordclass | ],
       select   => [ 'me.word1_id', 'word1_id.word', { group_concat => [ 'word2_id.word', "', '" ] }, 'me.mdate', 'me.cdate', 'me.note', 'wordclass.abbr' ],
@@ -240,9 +238,10 @@ sub select_example {
 }
 
 sub select_all {
-  my $self = shift;
+  my $self   = shift;
+  my %params = @_;
   my $rs   = $self->schema->resultset('Words')->search(
-    { 'me.dictionary_id' => $self->dictionary_id },
+    { 'me.dictionary_id' => $params{dictionary_id} },
     { prefetch => [ qw| word1_id word2_id wordclass | ] }
   );
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
@@ -269,11 +268,11 @@ sub select_wordclass {
 
 sub select_examples {
   my $self    = shift;
-  my $word_id = shift;
+  my %params  = @_;
   my $rs   = $self->schema->resultset('WordExample')->search({
     -and => [
-       'me.word_id' => $word_id,
-       'rel_examples.dictionary_id' => $self->dictionary_id,
+       'me.word_id' => $params{word_id},
+       'rel_examples.dictionary_id' => $params{dictionary_id},
     ],
   }, {
     select => [ qw| rel_examples.note
