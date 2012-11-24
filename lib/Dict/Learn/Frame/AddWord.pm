@@ -113,7 +113,7 @@ sub make_dst_item {
     popup   => Dict::Learn::Combo::WordList->new(),
     # word    => Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ),
     # word    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [], wxCB_DROPDOWN, wxDefaultValidator  ),
-    word    => Wx::ComboCtrl->new( $self, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator ),
+    word    => Wx::ComboCtrl->new( $self, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxCB_DROPDOWN, wxDefaultValidator ),
     # btnp    => Wx::Button->new( $self, -1, '+', [-1, -1] ),
     btnm    => Wx::Button->new( $self, -1, '-', [-1, -1] ),
     parent_hbox => $self->hbox_dst_item->[$id]
