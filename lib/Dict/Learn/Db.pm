@@ -25,7 +25,7 @@ sub add_word {
   });
   for my $word ( @{$params{translate}} ) {
     my $fields = { };
-    if ($word->{word_id}) {
+    if (defined $word->{word_id} and $word->{word_id} >= 0) {
       $fields->{word_id} = $word->{word_id};
     } else {
       $fields = { word          => $word->{word},
