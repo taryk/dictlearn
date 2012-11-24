@@ -252,7 +252,7 @@ sub clear_fields {
   for my $word_dst_item ( grep { defined } @{ $self->word_dst } ) {
     next unless defined $word_dst_item->{word};
     $word_dst_item->{cbox}->SetSelection(0);
-    $word_dst_item->{word}->Clear;
+    $word_dst_item->{word}->SetText("");
   }
   $self->word_note->Clear;
   $self->item_id(undef);
