@@ -214,10 +214,10 @@ sub add {
                                 $word_dst_item->{word}->GetValue() );
       } else {
         $push_item->{word} = $word_dst_item->{word}->GetValue();
+        # skip empty fields
+        next unless $push_item->{word} =~ /^.+$/;
       }
       $push_item->{lang_id} = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
-      # skip empty fields
-      next unless $push_item->{word} =~ /^.+$/;
     }
     push @{$params{translate}} => $push_item;
   }
