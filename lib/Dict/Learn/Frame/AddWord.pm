@@ -88,10 +88,10 @@ sub new {
   $self->item_id(undef);
 
   # events
-  EVT_BUTTON( $self, $self->btn_add_word,        \&add                       );
-  EVT_BUTTON( $self, $self->btn_additem,         sub { $self->add_dst_item } );
-  EVT_BUTTON( $self, $self->btn_clear,           \&clear_fields              );
-  EVT_BUTTON( $self, $self->btn_translate_word,  \&translate_word            );
+  EVT_BUTTON( $self, $self->btn_add_word,       \&add                       );
+  EVT_BUTTON( $self, $self->btn_additem,        sub { $self->add_dst_item } );
+  EVT_BUTTON( $self, $self->btn_clear,          \&clear_fields              );
+  EVT_BUTTON( $self, $self->btn_translate_word, \&translate_word            );
   $self
 }
 
@@ -118,16 +118,14 @@ sub make_dst_item {
     btnm    => Wx::Button->new( $self, -1, '-', [-1, -1] ),
     parent_hbox => $self->hbox_dst_item->[$id]
   };
-
   $self->word_dst->[$id]{word}->SetPopupControl( $self->word_dst->[$id]{popup} );
+  # $self->word_dst->[$id]{word}->SetTextCtrlStyle( wxTE_MULTILINE );
   # EVT_BUTTON( $self, $self->word_dst->[$id]{btnp}, sub { $self->add_dst_item(); } );
   EVT_BUTTON( $self, $self->word_dst->[$id]{btnm}, sub { $self->del_dst_item($id); } );
   # EVT_TEXT(   $self, $self->word_dst->[$id]{word}, sub { $self->query_words($id); } );
-  # p($self->word_dst->[$id]{word});
   $self->word_dst->[$id]{cbox}->SetSelection(0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{cbox}, 2, wxALL, 0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{word}, 4, wxALL|wxEXPAND, 0);
-  # $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnp}, 1, wxALL|wxTOP, 0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnm}, 1, wxALL, 0);
 
   if ($ro) {
@@ -148,7 +146,6 @@ sub query_words {
     Dict::Learn::Dictionary->curr->{language_tr_id}{language_id},
     $cb->GetValue(),
   );
-  # p(@words);
   $cb->Clear;
   for (@words) {
     $cb->Append($_->{word});
@@ -198,7 +195,6 @@ sub edit_word_as_new {
 
 sub add {
   my $self = shift;
-
   my %params = (
     word    => $self->word_src->GetValue(),
     note    => $self->word_note->GetValue(),
@@ -209,9 +205,9 @@ sub add {
     my $push_item = { word_id => $word_dst_item->{word_id} };
     if ($word_dst_item->{word}) {
       $push_item->{wordclass} = int($word_dst_item->{cbox}->GetSelection());
-      if ($word_dst_item->{word}->GetSelection > 0) {
-        $push_item->{word_id} = $word_dst_item->{word}->GetClientData(
-                                $word_dst_item->{word}->GetValue() );
+      my $word_id = $word_dst_item->{word}->GetLabel();
+      if (defined $word_id and int $word_id >= 0) {
+        $push_item->{word_id} = $word_id;
       } else {
         $push_item->{word} = $word_dst_item->{word}->GetValue();
         # skip empty fields
@@ -229,7 +225,6 @@ sub add {
   } else {
     $main::ioc->lookup('db')->add_word(%params);
   }
-
   $self->clear_fields;
   $self->remove_all_dst;
   $self->add_dst_item;
