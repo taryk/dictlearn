@@ -186,7 +186,10 @@ sub load_examples {
   my $obj  = shift;
   my $id   = $obj->GetLabel();
   $self->lb_examples->DeleteAllItems();
-  my @items = $main::ioc->lookup('db')->select_examples($id);
+  my @items = $main::ioc->lookup('db')->select_examples(
+    word_id       => $id,
+    dictionary_id => Dict::Learn::Dictionary->curr_id,
+  );
   for my $item (@items) {
     my $id = $self->lb_examples->InsertItem( Wx::ListItem->new );
     $self->lb_examples->SetItem($id, 0, $item->{example1_id}{example_id} );
