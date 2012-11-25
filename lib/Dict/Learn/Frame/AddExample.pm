@@ -12,6 +12,7 @@ use LWP::UserAgent;
 
 use Dict::Learn::Translate;
 use Dict::Learn::Dictionary;
+use Dict::Learn::Combo::Button;
 
 use common::sense;
 
@@ -57,7 +58,8 @@ sub new {
   ### dst
   $self->text_dst([]);
   $self->btn_additem( Wx::Button->new( $self, -1, '+', [-1, -1] ));
-  $self->btn_addexisting( Wx::Button->new( $self, -1, '++', [-1, -1] ));
+  # $self->btn_addexisting( Wx::Button->new( $self, -1, '++', [-1, -1] ));
+  $self->btn_addexisting( Dict::Learn::Combo::Button->new( $self, -1, "++", [-1,-1] ));
   # layout
   $self->hbox_add( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_add->Add( $self->btn_additem, wxALIGN_LEFT|wxRIGHT, 5 );
@@ -99,24 +101,24 @@ sub new {
   # events
   EVT_BUTTON( $self, $self->btn_add,         \&add          );
   EVT_BUTTON( $self, $self->btn_additem,     sub { $self->add_dst_item } );
-  EVT_BUTTON( $self, $self->btn_addexisting, \&add_existing_item );
   EVT_BUTTON( $self, $self->btn_clear,       \&clear_fields );
   EVT_BUTTON( $self, $self->btn_translate,   \&translate    );
+  EVT_SELECTED( $self, $self->btn_addexisting, sub { $self->add_existing_item(@_) } );
 
   Dict::Learn::Dictionary->cb(sub {
     my $dict = shift;
     $self->load_words;
+    $self->btn_addexisting->init;
   });
 
   $self
 }
 
-# sub select_example {
-#   my ($self, $event) = @_;
-#   my $el = $self->add_dst_item( $event->GetClientData(), 1 );
-#   $el->{text}->SetValue( $event->GetString );
-#   $self
-# }
+sub add_existing_item {
+  my ($self, $example_id, $example) = @_;
+  my $el = $self->add_dst_item( $example_id, 1 );
+  $el->{text}->SetValue( $example );
+}
 
 sub make_dst_item {
   my ($self, $example_id, $ro) = @_;
