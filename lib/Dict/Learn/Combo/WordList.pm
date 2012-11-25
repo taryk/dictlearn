@@ -9,22 +9,25 @@ use Data::Printer;
 use common::sense;
 
 use Class::XSAccessor
-  accessors => [ qw| vbox panel search lb_words | ];
+  accessors => [ qw| parent vbox panel search lb_words | ];
 
 sub Init {
   my $self = shift;
   $self->{item_index} = undef;
+  $self->{cb} = undef;
+  $self
 }
 
 sub Create {
   my ($self, $parent) = @_;
+  $self->parent($parent);
   # widgets
   $self->panel( Wx::Panel->new( $parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCAPTION, "words") );
   # $self->search( Wx::TextCtrl->new( $self->panel, wxID_ANY, 'test', wxDefaultPosition, wxDefaultSize ) );
   # $self->search->SetEditable(1);
   $self->lb_words( Wx::ListCtrl->new( $self->panel, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                       wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
-  $self->lb_words->InsertColumn(0, 'id', wxLIST_FORMAT_LEFT, 35);
+  $self->lb_words->InsertColumn(0, 'id',   wxLIST_FORMAT_LEFT, 35);
   $self->lb_words->InsertColumn(1, 'word', wxLIST_FORMAT_LEFT, 200);
   $self->initialize_words();
   # layout
@@ -35,6 +38,7 @@ sub Create {
   $self->panel->SetSizer( $self->vbox );
   $self->panel->Layout();
   $self->vbox->Fit( $self->panel );
+  EVT_LIST_ITEM_ACTIVATED($parent, $self->lb_words, sub { $self->on_select(@_) });
 
   $self->panel
 }
@@ -48,12 +52,40 @@ sub GetControl {
 
 sub OnPopup {
   my $self = shift;
+  $self->SUPER::OnPopup();
   # Wx::LogMessage( "Popping up" );
 }
 
 sub OnDismiss {
   my $self = shift;
+  $self->SUPER::OnDismiss();
   # Wx::LogMessage( "Being dismissed" );
+}
+
+sub SetStringValue {
+  my ($self, $string) = @_;
+  # p($string);
+}
+
+sub GetStringValue {
+  my ($self) = @_;
+  my $item_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+  $self->parent->GetParent()->SetLabel($self->lb_words->GetItem($item_id,0)->GetText());
+  $self->lb_words->GetItem($item_id,1)->GetText
+}
+
+sub cb {
+  my ($self, $cb) = @_;
+  return unless ref $cb eq 'CODE';
+  $self->{cb} = $cb;
+}
+
+sub on_select {
+  my ($self, $parent, $event) = @_;
+  # p($event->GetIndex);
+  my $text = $self->lb_words->GetItem($event->GetIndex,1)->GetText;
+  # p($text);
+  $self->Dismiss();
 }
 
 sub initialize_words {
