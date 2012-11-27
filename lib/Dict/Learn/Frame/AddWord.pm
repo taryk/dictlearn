@@ -129,7 +129,9 @@ sub make_dst_item {
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnm}, 1, wxALL, 0);
 
   if ($ro) {
-    $self->word_dst->[$id]{word}->SetEditable(0);
+    # $self->word_dst->[$id]{word}->SetEditable(0);
+    $self->word_dst->[$id]{word}->GetTextCtrl->SetEditable(0);
+    $self->word_dst->[$id]{word}->GetPopupWindow->Disable;
     $self->word_dst->[$id]{edit} = Wx::Button->new( $self, -1, 'e', [-1, -1] );
     EVT_BUTTON( $self, $self->word_dst->[$id]{edit}, sub { $self->edit_word_as_new($id) } );
     $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{edit}, 1, wxALL, 0);
@@ -208,6 +210,7 @@ sub add {
       my $word_id = $word_dst_item->{word}->GetLabel();
       if (defined $word_id and int $word_id >= 0) {
         $push_item->{word_id} = $word_id;
+        $push_item->{word} = 0;
       } else {
         $push_item->{word} = $word_dst_item->{word}->GetValue();
         # skip empty fields
@@ -291,8 +294,9 @@ sub fill_fields {
   $self->word_src->SetValue($params{word});
   $self->item_id( $params{word_id} );
   for my $word_tr ( @{ $params{translate} } ) {
-    my $el = $self->add_dst_item($word_tr->{word_id});
+    my $el = $self->add_dst_item($word_tr->{word_id} => 1);
     $el->{word}->SetValue($word_tr->{word});
+    $el->{word}->SetLabel($word_tr->{word_id});
     $el->{cbox}->SetSelection($word_tr->{wordclass});
   }
   $self->word_note->SetValue($params{note});
