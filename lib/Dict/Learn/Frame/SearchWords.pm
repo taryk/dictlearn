@@ -127,8 +127,8 @@ sub lookup {
   my ($self, $event) = @_;
   $self->lb_words->DeleteAllItems();
   for my $item ($main::ioc->lookup('db')->find_items(
-    word          => $self->combobox->GetValue,
-    dictionary_id => Dict::Learn::Dictionary->curr_id ))
+    word    => $self->combobox->GetValue,
+    lang_id => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id} ))
   {
     my $id = $self->lb_words->InsertItem( Wx::ListItem->new );
     $self->lb_words->SetItem($id, 0, $item->{word_id} );
