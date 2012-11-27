@@ -149,6 +149,7 @@ sub update_example {
     idioma  => $params{idioma} || 0,
   });
   for ( @{ $params{translate} } ) {
+    # create new
     unless (defined $_->{example_id}) {
       $updated_example->add_to_examples({
         example => $_->{text},
@@ -160,19 +161,21 @@ sub update_example {
       });
       next;
     }
-    my $rs = $self->schema->resultset('Examples')->search({
+    # update or delete existed
+    my $example_xref = $self->schema->resultset('Examples')->find_or_create({
       example1_id => $params{example_id},
       example2_id => $_->{example_id},
     });
-    if ($_->{text}) {
-      $rs->first->example2_id->update({
+    if (defined $_->{text}) {
+      next if $_->{text} == 0;
+      $example_xref->example2_id->update({
         example => $_->{text},
         note    => $_->{note},
         lang_id => $_->{lang_id},
         idioma  => $_->{idioma} || 0,
       });
     } else {
-      $rs->delete;
+      $example_xref->delete;
     }
   }
 }
