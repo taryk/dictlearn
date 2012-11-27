@@ -277,25 +277,36 @@ sub select_wordclass {
 sub select_examples {
   my $self    = shift;
   my %params  = @_;
-  my $rs   = $self->schema->resultset('WordExample')->search({
+  my $rs   = $self->schema->resultset('Example')->search({
     -and => [
-       'me.word_id' => $params{word_id},
-       'rel_examples.dictionary_id' => $params{dictionary_id},
+       'word_id.word_id' => $params{word_id},
+       -or => [
+         'rel_examples.dictionary_id' => $params{dictionary_id},
+         'rel_examples.dictionary_id' => undef
+       ],
     ],
   }, {
-    select => [ qw| rel_examples.note
-                    example1_id.example_id
-                    example1_id.example
-                    example1_id.note
-                    example2_id.example_id
+    select => [ qw| me.example_id
+                    me.example
                     example2_id.example
-                    example2_id.note
+                    rel_examples.note
+                    me.cdate
+                    me.mdate
                   | ],
-     join   => { rel_examples => ['example1_id', 'example2_id'] },
-     # order_by => { -asc => 'me.example_id' }
+    as     => [ qw| example_id
+                    example_orig
+                    example_tr
+                    note
+                    cdate
+                    mdate
+                  | ],
+    join => { rel_examples => [ 'example2_id' ], words => [ 'word_id' ] },
+    order_by => { -asc => 'me.example_id' }
   });
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-  $rs->all
+  my @a = $rs->all;
+  p(@a);
+  @a
 }
 
 sub get_all_examples {

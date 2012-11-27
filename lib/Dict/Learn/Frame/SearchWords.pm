@@ -192,10 +192,10 @@ sub load_examples {
   );
   for my $item (@items) {
     my $id = $self->lb_examples->InsertItem( Wx::ListItem->new );
-    $self->lb_examples->SetItem($id, 0, $item->{example1_id}{example_id} );
-    $self->lb_examples->SetItem($id, 1, $item->{example1_id}{example} );
-    $self->lb_examples->SetItem($id, 2, $item->{example2_id}{example} );
-    $self->lb_examples->SetItem($id, 3, $item->{rel_examples}{note} );
+    $self->lb_examples->SetItem($id, 0, $item->{example_id} );
+    $self->lb_examples->SetItem($id, 1, $item->{example_orig} );
+    $self->lb_examples->SetItem($id, 2, $item->{example_tr} );
+    $self->lb_examples->SetItem($id, 3, $item->{note} );
   }
 }
 
