@@ -8,11 +8,9 @@ __PACKAGE__->has_one( wordclass     => 'Dict::Learn::Main::Result::Wordclass',
                     { 'foreign.wordclass_id' => 'self.wordclass_id' },
                     { cascade_delete => 0 ,
                       cascade_update => 0 });
-
 __PACKAGE__->might_have( examples => 'Dict::Learn::Main::Result::WordExample', 'word_id',
                        { cascade_delete => 0 ,
                          cascade_update => 0 });
-
 __PACKAGE__->has_many( rel_words => 'Dict::Learn::Main::Result::Words',
                       { "foreign.word1_id" => "self.word_id" },
                       { cascade_delete => 0 ,
