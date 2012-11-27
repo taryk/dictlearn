@@ -219,8 +219,16 @@ sub add {
   for my $text_dst_item ( grep { defined } @{ $self->text_dst } ) {
     my $push_item = { example_id  => $text_dst_item->{example_id} };
     if ($text_dst_item->{text}) {
-      $push_item->{text}    = $text_dst_item->{text}->GetValue;
-      $push_item->{lang_id} = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
+      if (defined $text_dst_item->{example_id} and
+                  $text_dst_item->{example_id} >= 0)
+      {
+        $push_item->{example_id} = $text_dst_item->{example_id};
+        $push_item->{text} = 0;
+      }
+      else {
+        $push_item->{text}    = $text_dst_item->{text}->GetValue;
+        $push_item->{lang_id} = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
+      }
     }
     push @{ $params{translate} } => $push_item;
   }
@@ -294,7 +302,7 @@ sub fill_fields {
   $self->text_src->SetValue( $params{text} );
   $self->example_note->SetValue( $params{note} );
   for my $text_tr ( @{ $params{translate} } ) {
-    my $el = $self->add_dst_item($text_tr->{example_id});
+    my $el = $self->add_dst_item($text_tr->{example_id} => 1);
     $el->{text}->SetValue($text_tr->{text});
   }
   $self->parent->notebook->SetPageText(
