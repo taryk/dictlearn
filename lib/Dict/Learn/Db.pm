@@ -72,6 +72,7 @@ sub update_word {
     lang_id => $params{lang_id},
   });
   for ( @{ $params{translate} } ) {
+    # create new
     unless (defined $_->{word_id}) {
       $updated_word->add_to_words({
         word    => $_->{word},
@@ -83,18 +84,20 @@ sub update_word {
       });
       next;
     }
-    my $rs = $self->schema->resultset('Words')->search({
+    # update or delete existed
+    my $word_xref = $self->schema->resultset('Words')->find_or_create({
       word1_id => $params{word_id},
       word2_id => $_->{word_id},
     });
-    if ($_->{word}) {
-      $rs->first->update({ wordclass_id => $_->{wordclass} })->word2_id->update({
+    if (defined $_->{word}) {
+      next if $_->{word} == 0;
+      $word_xref->first->update({ wordclass_id => $_->{wordclass} })->word2_id->update({
         word    => $_->{word},
         note    => $_->{note},
         lang_id => $_->{lang_id},
       });
     } else {
-      $rs->delete;
+      $word_xref->delete;
     }
   }
 }
