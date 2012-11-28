@@ -22,7 +22,6 @@ use Class::XSAccessor
   accessors => [ qw| parent
                      word_note wordclass
                      word_src word_dst
-                     text_src text_dst
                      btn_translate_word
                      vbox hbox_words vbox_dst hbox_dst_item
 
