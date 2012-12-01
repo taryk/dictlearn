@@ -34,6 +34,7 @@ use Class::XSAccessor
                      btn_add_word btn_clear btn_tran
                      tran
                      enable
+                     edit_origin
                    | ];
 
 sub new {
@@ -66,7 +67,7 @@ sub new {
   $self->hbox_words->Add( $self->vbox_dst, 4, wxALL|wxEXPAND, 5 );
 
   ### btn
-  $self->btn_add_word( Wx::Button->new( $self, -1, 'Add/Save', [-1, -1] ));
+  $self->btn_add_word( Wx::Button->new( $self, -1, 'Add', [-1, -1] ));
   $self->btn_tran( Wx::Button->new( $self, -1, 'Translate', [-1, -1] ));
   $self->btn_clear( Wx::Button->new( $self, -1, 'Clear',    [-1, -1] ));
   # layout
@@ -93,6 +94,8 @@ sub new {
   EVT_BUTTON( $self, $self->btn_additem,        sub { $self->add_dst_item } );
   EVT_BUTTON( $self, $self->btn_clear,          \&clear_fields              );
   EVT_BUTTON( $self, $self->btn_translate_word, \&translate_word            );
+
+  EVT_TEXT(   $self, $self->word_src,           \&check_word                );
   $self
 }
 
@@ -144,7 +147,6 @@ sub make_dst_item {
 sub query_words {
   my ($self, $id) = @_;
   my $cb = $self->word_dst->[$id]{word};
-  # p($cb->GetValue());
   my @words = $main::ioc->lookup('db')->select_words(
     Dict::Learn::Dictionary->curr->{language_tr_id}{language_id},
     $cb->GetValue(),
@@ -153,6 +155,39 @@ sub query_words {
   for (@words) {
     $cb->Append($_->{word});
   }
+}
+
+sub check_word {
+  my ($self, $event) = @_;
+  my $word;
+  unless (defined($word = $main::ioc->lookup('db')->match_word(
+    Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
+    $event->GetString )->first))
+  {
+    $self->enable(1);
+    $self->btn_add_word->SetLabel($self->item_id >= 0 ? 'Save' : 'Add');
+    EVT_BUTTON( $self, $self->btn_add_word, \&add );
+  }
+  else {
+    if ($self->item_id >= 0 ) {
+      return if $self->edit_origin and $self->edit_origin->{word} eq $event->GetString;
+    }
+    if ( (my $word_id = $word->word_id) >= 0)
+    {
+      $self->enable(0);
+      $self->btn_add_word->SetLabel('Edit word "'.$self->word_src->GetValue.'"');
+      EVT_BUTTON( $self, $self->btn_add_word, sub {
+        $self->enable(1);
+        $self->load_word(word_id => $word_id);
+        EVT_BUTTON( $self, $self->btn_add_word, \&add );
+      } );
+    } else {
+      $self->enable(1);
+      $self->btn_add_word->SetLabel('Add');
+      EVT_BUTTON( $self, $self->btn_add_word, \&add );
+    }
+  }
+  $self->enable_controls($self->enable);
 }
 
 sub add_dst_item {
@@ -205,6 +240,7 @@ sub do_word_dst($$) {
 
 sub add {
   my $self = shift;
+
   my %params = (
     word    => $self->word_src->GetValue(),
     note    => $self->word_note->GetValue(),
@@ -241,6 +277,7 @@ sub add {
   $self->remove_all_dst;
   $self->add_dst_item;
   $self->parent->notebook->SetPageText(1 => "Word");
+  $self->btn_add_word->SetLabel('Add');
 
   # reload linked words
   $self->parent->p_addexample->load_words;
@@ -255,6 +292,9 @@ sub import_wordclass {
 
 sub clear_fields {
   my $self = shift;
+
+  $self->item_id(undef);
+  $self->edit_origin(undef);
   $self->enable(1);
   $self->enable_controls($self->enable);
 
@@ -266,7 +306,6 @@ sub clear_fields {
     $word_dst_item->{word}->SetText("");
   });
   $self->word_note->Clear;
-  $self->item_id(undef);
 }
 
 sub remove_all_dst {
@@ -297,15 +336,17 @@ sub load_word {
     note      => $word->{note},
     translate => \@translate,
   );
+  $self->btn_add_word->SetLabel('Save');
 }
 
 sub fill_fields {
   my $self   = shift;
   my %params = @_;
   $self->clear_fields;
+  $self->edit_origin(\%params);
+  $self->item_id( $params{word_id} );
   $self->remove_all_dst;
   $self->word_src->SetValue($params{word});
-  $self->item_id( $params{word_id} );
   for my $word_tr ( @{ $params{translate} } ) {
     my $el = $self->add_dst_item($word_tr->{word_id} => 1);
     $el->{word}->SetValue($word_tr->{word});
