@@ -15,7 +15,7 @@ use Dict::Learn::Combo::WordList;
 use Dict::Learn::Dictionary;
 
 use common::sense;
-
+use Carp qw[croak confess];
 use Data::Printer;
 
 use Class::XSAccessor
@@ -324,6 +324,7 @@ sub load_word {
   my $word   = $main::ioc->lookup('db')->select_word( $params{word_id} );
   my @translate;
   for my $rel_word (@{ $word->{rel_words} }) {
+    croak "`word_id` doesn't exists" unless $rel_word->{word2_id}{word_id};
     push @translate => {
       word_id   => $rel_word->{word2_id}{word_id},
       word      => $rel_word->{word2_id}{word},
