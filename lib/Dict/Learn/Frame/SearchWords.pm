@@ -144,23 +144,6 @@ sub edit_word {
   my $self = shift;
   my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
-  # my @examples;
-  # for my $i (0 .. $self->lb_examples->GetItemCount - 1) {
-  #   push @examples => [
-  #     $self->lb_examples->GetItem($i, 0)->GetText,
-  #     $self->lb_examples->GetItem($i, 1)->GetText,
-  #     $self->lb_examples->GetItem($i, 2)->GetText,
-  #     $self->lb_examples->GetItem($i, 3)->GetText
-  #   ];
-  # }
-
-  # $self->parent->p_addword->load_word(
-  #   word_id   => $self->lb_words->GetItem($curr_id, 0)->GetText,
-  #   word_src  => $self->lb_words->GetItem($curr_id, 1)->GetText,
-  #   word_dst  => $self->lb_words->GetItem($curr_id, 3)->GetText,
-  #   word_note => $self->lb_words->GetItem($curr_id, 4)->GetText,
-  # );
-
   $self->parent->p_addword->load_word(
     word_id => $self->lb_words->GetItem($curr_id, 0)->GetText,
   );
