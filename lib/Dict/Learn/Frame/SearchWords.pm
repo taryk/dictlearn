@@ -131,12 +131,12 @@ sub lookup {
     lang_id => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id} ))
   {
     my $id = $self->lb_words->InsertItem( Wx::ListItem->new );
-    $self->lb_words->SetItem($id, 0, $item->{word_id} );
+    $self->lb_words->SetItem($id, 0,         $item->{word_id}   );
     $self->lb_words->SetItem($id, COL_LANG1, $item->{word_orig} );
-    $self->lb_words->SetItem($id, 2, $item->{wordclass} );
-    $self->lb_words->SetItem($id, COL_LANG2, $item->{word_tr} );
-    $self->lb_words->SetItem($id, 4, $item->{note} );
-    $self->lb_words->SetItem($id, 5, $item->{cdate} );
+    $self->lb_words->SetItem($id, 2,         $item->{wordclass} );
+    $self->lb_words->SetItem($id, COL_LANG2, $item->{word_tr}   );
+    $self->lb_words->SetItem($id, 4,         $item->{note}      );
+    $self->lb_words->SetItem($id, 5,         $item->{cdate}     );
   }
 }
 
@@ -175,11 +175,13 @@ sub load_examples {
   );
   for my $item (@items) {
     my $id = $self->lb_examples->InsertItem( Wx::ListItem->new );
-    $self->lb_examples->SetItem($id, 0, $item->{example_id} );
-    $self->lb_examples->SetItem($id, 1, $item->{example_orig} );
-    $self->lb_examples->SetItem($id, 2, $item->{example_tr} );
-    $self->lb_examples->SetItem($id, 3, $item->{note} );
+    $self->lb_examples->SetItem($id, 0,           $item->{example_id}   );
+    $self->lb_examples->SetItem($id, COL_E_LANG1, $item->{example_orig} );
+    $self->lb_examples->SetItem($id, COL_E_LANG2, $item->{example_tr}   );
+    $self->lb_examples->SetItem($id, 3,           $item->{note}         );
   }
 }
+
+
 
 1;
