@@ -252,7 +252,9 @@ sub add {
     my $push_item = { word_id => $word_dst_item->{word_id} };
     if ($word_dst_item->{word}) {
       $push_item->{wordclass} = int($word_dst_item->{cbox}->GetSelection());
+      # `GetLabel` returns "" or value
       my $word_id = $word_dst_item->{word}->GetLabel();
+      $word_id = undef if $word_id eq "";
       if (defined $word_id and int $word_id >= 0) {
         $push_item->{word_id} = $word_id;
         $push_item->{word} = 0;
