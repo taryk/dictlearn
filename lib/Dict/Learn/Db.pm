@@ -190,11 +190,10 @@ sub find_items {
       'me.lang_id' => $params{lang_id},
       'me.word'  => { like => "%".$params{word}."%" },
     ]}, {
-      distinct => 1,
       join     => { 'rel_words' => [ 'word2_id', 'wordclass' ] },
       select   => [ 'me.word_id', 'me.word', { group_concat => [ 'word2_id.word', "', '" ] }, 'me.mdate', 'me.cdate', 'me.note', 'wordclass.abbr' ],
       as       => [ qw| word_id word_orig word_tr mdate cdate note wordclass | ],
-      group_by => [ 'word2_id.word_id', 'rel_words.wordclass_id' ],
+      group_by => [ 'me.word_id', 'rel_words.wordclass_id' ],
       order_by => { -asc => 'me.cdate' },
     }
   );
