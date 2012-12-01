@@ -203,7 +203,7 @@ sub add_dst_item {
 sub del_dst_item {
   my $self = shift;
   my $id = shift;
-  for (qw[ cbox word btnm btnp ]) {
+  for (qw[ cbox word btnm btnp edit ]) {
     next unless defined $self->word_dst->[$id]{$_};
     $self->word_dst->[$id]{$_}->Destroy();
     delete $self->word_dst->[$id]{$_};
