@@ -33,6 +33,7 @@ use Class::XSAccessor
 
                      btn_add_word btn_clear btn_tran
                      tran
+                     enable
                    | ];
 
 sub new {
@@ -85,6 +86,7 @@ sub new {
 
   # mode: undef - add, other - edit
   $self->item_id(undef);
+  $self->enable(1);
 
   # events
   EVT_BUTTON( $self, $self->btn_add_word,       \&add                       );
@@ -245,6 +247,9 @@ sub import_wordclass {
 
 sub clear_fields {
   my $self = shift;
+  $self->enable(1);
+  $self->enable_controls($self->enable);
+
   $self->word_src->Clear;
   for my $word_dst_item ( grep { defined } @{ $self->word_dst } ) {
     next unless defined $word_dst_item->{word};
@@ -338,6 +343,23 @@ sub translate_word {
   else {
     $self->word_dst->[0]{word}->SetValue( $res->{_} );
   }
+}
+
+sub enable_controls($$) {
+  my ($self, $en) = @_;
+  $self->btn_additem->Enable($en);
+  # $self->btn_add_word->Enable($en);
+  $self->btn_clear->Enable($en);
+  $self->btn_translate_word->Enable($en);
+  $self->word_note->Enable($en);
+  $self->btn_tran->Enable($en);
+  $self->do_word_dst(sub {
+    my $item = pop;
+    $item->{word}->Enable($en);
+    $item->{cbox}->Enable($en);
+    $item->{btnm}->Enable($en);
+    $item->{edit}->Enable($en) if $item->{edit};
+  });
 }
 
 1;
