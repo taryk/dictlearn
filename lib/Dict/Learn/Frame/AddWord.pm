@@ -58,8 +58,6 @@ sub new {
   $self->hbox_add->Add( $self->btn_additem, wxALIGN_LEFT|wxRIGHT, 5 );
   $self->vbox_dst->Add($self->hbox_add, 0, wxALIGN_LEFT|wxRIGHT, 5);
 
-  # $self->add_dst_item;
-
   ### hbox_words layout
   $self->hbox_words( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_words->Add( $self->word_src, 2, wxALL|wxTOP, 5 );
@@ -277,7 +275,6 @@ sub add {
   }
   $self->clear_fields;
   $self->remove_all_dst;
-  $self->add_dst_item;
   $self->parent->notebook->SetPageText(1 => "Word");
   $self->btn_add_word->SetLabel('Add');
 
