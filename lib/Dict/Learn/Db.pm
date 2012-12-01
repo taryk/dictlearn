@@ -203,6 +203,15 @@ sub find_items {
   @r1
 }
 
+sub match_word {
+  my ($self, $lang_id, $word) = @_;
+  my $rs      = $self->schema->resultset('Word')->search({
+    lang_id => $lang_id,
+    word    => $word,
+  });
+  $rs
+}
+
 sub select_words {
   my ($self, $lang_id, $word) = @_;
   my $params = { 'lang_id' => $lang_id };
