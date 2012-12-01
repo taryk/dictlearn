@@ -196,6 +196,13 @@ sub edit_word_as_new {
   $self
 }
 
+sub do_word_dst($$) {
+  my ($self, $cb) = @_;
+  for my $word_dst_item ( grep { defined } @{ $self->word_dst } ) {
+    $cb->($self, $word_dst_item);
+  }
+}
+
 sub add {
   my $self = shift;
   my %params = (
@@ -204,7 +211,8 @@ sub add {
     lang_id => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
     dictionary_id => Dict::Learn::Dictionary->curr_id,
   );
-  for my $word_dst_item ( grep { defined } @{ $self->word_dst } ) {
+  $self->do_word_dst(sub {
+    my $word_dst_item = pop;
     my $push_item = { word_id => $word_dst_item->{word_id} };
     if ($word_dst_item->{word}) {
       $push_item->{wordclass} = int($word_dst_item->{cbox}->GetSelection());
@@ -220,7 +228,7 @@ sub add {
       $push_item->{lang_id} = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
     }
     push @{$params{translate}} => $push_item;
-  }
+  });
   if (defined $self->item_id and
               $self->item_id >= 0)
   {
@@ -251,11 +259,12 @@ sub clear_fields {
   $self->enable_controls($self->enable);
 
   $self->word_src->Clear;
-  for my $word_dst_item ( grep { defined } @{ $self->word_dst } ) {
-    next unless defined $word_dst_item->{word};
+  $self->do_word_dst(sub {
+    my $word_dst_item = pop;
+    return unless defined $word_dst_item->{word};
     $word_dst_item->{cbox}->SetSelection(0);
     $word_dst_item->{word}->SetText("");
-  }
+  });
   $self->word_note->Clear;
   $self->item_id(undef);
 }
