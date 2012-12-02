@@ -108,6 +108,12 @@ sub delete_word {
     { word_id => [ @_ ] }
   )->delete;
 }
+
+sub unlink_word {
+  my $self = shift;
+  $self->schema->resultset('Words')->search(
+    { word1_id => [ @_ ] }
+  )->delete;
 }
 
 sub add_example {
