@@ -104,7 +104,10 @@ sub update_word {
 
 sub delete_word {
   my $self = shift;
-  $self->schema->resultset('Word')->search({ word_id => [ @_ ] })->delete;
+  $self->schema->resultset('Word')->search(
+    { word_id => [ @_ ] }
+  )->delete;
+}
 }
 
 sub add_example {
