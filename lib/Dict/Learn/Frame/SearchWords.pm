@@ -199,6 +199,16 @@ sub get_example_id {
   $self->lb_examples->GetItem($rowid, 0)->GetText
 }
 
+sub delete_word {
+  my $self = shift;
+  my $curr_id = $self->lb_words->GetNextItem(
+    -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
+  );
+  $main::ioc->lookup('db')->delete_word(
+    $self->get_word_id($curr_id)
+  );
+  $self->lookup;
+}
 
 sub unlink_word {
   my $self = shift;
