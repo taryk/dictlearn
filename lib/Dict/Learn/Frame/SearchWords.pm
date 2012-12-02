@@ -149,10 +149,12 @@ sub lookup {
 
 sub edit_word {
   my $self = shift;
-  my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+  my $curr_id = $self->lb_words->GetNextItem(
+    -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
+  );
 
   $self->parent->p_addword->load_word(
-    word_id => $self->lb_words->GetItem($curr_id, 0)->GetText,
+    word_id => $self->get_word_id($curr_id),
   );
 
   $self->parent->notebook->ChangeSelection(1);
