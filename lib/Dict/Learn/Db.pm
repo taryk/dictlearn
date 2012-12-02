@@ -189,7 +189,12 @@ sub update_example {
   }
 }
 
-sub delete_example { my $self = shift }
+sub delete_example {
+  my $self = shift;
+  $self->schema->resultset('Example')->search(
+    { example_id => [ @_ ] }
+  )->delete;
+}
 
 sub unlink_example {
   my $self = shift;
