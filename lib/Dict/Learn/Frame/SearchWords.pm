@@ -46,12 +46,12 @@ sub new {
   ### words
 
   # buttons
-  $self->btn_edit_word( Wx::Button->new( $self, -1, 'Edit',    [-1, -1] ) );
-  $self->btn_delete_word( Wx::Button->new( $self, -1, 'Del',  [-1, -1] ) );
+  $self->btn_edit_word(   Wx::Button->new( $self, -1, 'Edit',   [-1, -1] ) );
   $self->btn_unlink_word( Wx::Button->new( $self, -1, 'Unlink', [-1, -1] ) );
+  $self->btn_delete_word( Wx::Button->new( $self, -1, 'Del',    [-1, -1] ) );
   # layout
   $self->vbox_btn_words( Wx::BoxSizer->new( wxVERTICAL ) );
-  $self->vbox_btn_words->Add( $self->btn_edit_word );
+  $self->vbox_btn_words->Add( $self->btn_edit_word   );
   $self->vbox_btn_words->Add( $self->btn_unlink_word );
   $self->vbox_btn_words->Add( $self->btn_delete_word );
 
@@ -71,14 +71,14 @@ sub new {
   ### examples
 
   # buttons
-  $self->btn_add_example( Wx::Button->new( $self, -1, 'Add',     [-1, -1] ) );
-  $self->btn_edit_example( Wx::Button->new( $self, -1, 'Edit',    [-1, -1] ) );
-  $self->btn_delete_example( Wx::Button->new( $self, -1, 'Del',  [-1, -1] ) );
+  $self->btn_add_example(    Wx::Button->new( $self, -1, 'Add',    [-1, -1] ) );
+  $self->btn_edit_example(   Wx::Button->new( $self, -1, 'Edit',   [-1, -1] ) );
   $self->btn_unlink_example( Wx::Button->new( $self, -1, 'Unlink', [-1, -1] ) );
+  $self->btn_delete_example( Wx::Button->new( $self, -1, 'Del',    [-1, -1] ) );
   # layout
-  $self->vbox_btn_examples( Wx::BoxSizer->new( wxVERTICAL ) );
-  $self->vbox_btn_examples->Add( $self->btn_add_example );
-  $self->vbox_btn_examples->Add( $self->btn_edit_example );
+  $self->vbox_btn_examples( Wx::BoxSizer->new( wxVERTICAL ));
+  $self->vbox_btn_examples->Add( $self->btn_add_example    );
+  $self->vbox_btn_examples->Add( $self->btn_edit_example   );
   $self->vbox_btn_examples->Add( $self->btn_unlink_example );
   $self->vbox_btn_examples->Add( $self->btn_delete_example );
 
