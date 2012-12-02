@@ -242,7 +242,6 @@ sub add {
 
   $self->clear_fields;
   $self->remove_all_dst;
-  $self->add_dst_item;
 
   $self
 }
