@@ -26,7 +26,8 @@ use Class::XSAccessor
                      vbox_btn_words
                      btn_edit_word btn_delete_word btn_unlink_word
                      vbox_btn_examples
-                     btn_add_example btn_delete_example btn_edit_example
+                     btn_add_example btn_delete_example
+                     btn_edit_example btn_unlink_example
                | ];
 
 sub new {
@@ -73,10 +74,12 @@ sub new {
   $self->btn_add_example( Wx::Button->new( $self, -1, 'Add',     [-1, -1] ) );
   $self->btn_edit_example( Wx::Button->new( $self, -1, 'Edit',    [-1, -1] ) );
   $self->btn_delete_example( Wx::Button->new( $self, -1, 'Del',  [-1, -1] ) );
+  $self->btn_unlink_example( Wx::Button->new( $self, -1, 'Unlink', [-1, -1] ) );
   # layout
   $self->vbox_btn_examples( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->vbox_btn_examples->Add( $self->btn_add_example );
   $self->vbox_btn_examples->Add( $self->btn_edit_example );
+  $self->vbox_btn_examples->Add( $self->btn_unlink_example );
   $self->vbox_btn_examples->Add( $self->btn_delete_example );
 
   # table
@@ -107,6 +110,7 @@ sub new {
   EVT_BUTTON( $self, $self->btn_delete_word,      \&delete_word    );
   EVT_BUTTON( $self, $self->btn_add_example,      \&add_example    );
   EVT_BUTTON( $self, $self->btn_edit_example,     \&edit_example   );
+  EVT_BUTTON( $self, $self->btn_unlink_example,   \&unlink_example );
   EVT_BUTTON( $self, $self->btn_delete_example,   \&delete_example );
   EVT_LIST_ITEM_SELECTED( $self, $self->lb_words, \&load_examples  );
 
@@ -190,6 +194,11 @@ sub get_word_id {
   $self->lb_words->GetItem($rowid, 0)->GetText
 }
 
+sub get_example_id {
+  my ($self, $rowid) = @_;
+  $self->lb_examples->GetItem($rowid, 0)->GetText
+}
+
 
 sub unlink_word {
   my $self = shift;
@@ -202,5 +211,16 @@ sub unlink_word {
   $self->lookup;
 }
 
+
+sub unlink_example {
+  my $self = shift;
+  my $curr_id = $self->lb_examples->GetNextItem(
+    -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
+  );
+  $main::ioc->lookup('db')->unlink_example(
+    $self->get_example_id($curr_id)
+  );
+  $self->lookup;
+}
 
 1;
