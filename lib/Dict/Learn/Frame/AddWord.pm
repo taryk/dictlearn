@@ -22,7 +22,6 @@ use Class::XSAccessor
   accessors => [ qw| parent
                      word_note wordclass
                      word_src word_dst
-                     btn_translate_word
                      vbox hbox_words vbox_dst hbox_dst_item
 
                      hbox_btn
@@ -45,7 +44,6 @@ sub new {
 
   ### src
   $self->word_src( Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ) );
-  $self->btn_translate_word( Wx::Button->new( $self, -1, '<=>', [-1, -1] ));
   $self->word_note( Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ) );
 
   ### dst
@@ -61,7 +59,6 @@ sub new {
   ### hbox_words layout
   $self->hbox_words( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_words->Add( $self->word_src, 2, wxALL|wxTOP, 5 );
-  $self->hbox_words->Add( $self->btn_translate_word, 1, wxTOP, 5 );
   $self->hbox_words->Add( $self->vbox_dst, 4, wxALL|wxEXPAND, 5 );
 
   ### btn
@@ -91,7 +88,6 @@ sub new {
   EVT_BUTTON( $self, $self->btn_add_word,       \&add                       );
   EVT_BUTTON( $self, $self->btn_additem,        sub { $self->add_dst_item } );
   EVT_BUTTON( $self, $self->btn_clear,          \&clear_fields              );
-  EVT_BUTTON( $self, $self->btn_translate_word, \&translate_word            );
 
   EVT_TEXT(   $self, $self->word_src,           \&check_word                );
   $self
@@ -400,7 +396,6 @@ sub enable_controls($$) {
   $self->btn_additem->Enable($en);
   # $self->btn_add_word->Enable($en);
   $self->btn_clear->Enable($en);
-  $self->btn_translate_word->Enable($en);
   $self->word_note->Enable($en);
   $self->btn_tran->Enable($en);
   $self->do_word_dst(sub {
