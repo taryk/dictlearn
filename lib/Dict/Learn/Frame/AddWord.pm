@@ -30,7 +30,7 @@ use Class::XSAccessor
 
                      hbox_add btn_additem
 
-                     btn_add_word btn_clear btn_tran
+                     btn_add_word btn_clear btn_tran btn_cancel
                      tran
                      enable
                      edit_origin
@@ -65,11 +65,13 @@ sub new {
   $self->btn_add_word( Wx::Button->new( $self, -1, 'Add',       [-1, -1] ));
   $self->btn_tran(     Wx::Button->new( $self, -1, 'Translate', [-1, -1] ));
   $self->btn_clear(    Wx::Button->new( $self, -1, 'Clear',     [-1, -1] ));
+  $self->btn_cancel(   Wx::Button->new( $self, -1, 'Cancel',    [-1, -1] ));
   # layout
   $self->hbox_btn( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_btn->Add( $self->btn_add_word, 0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
   $self->hbox_btn->Add( $self->btn_tran,     0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
   $self->hbox_btn->Add( $self->btn_clear,    0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->hbox_btn->Add( $self->btn_cancel,   0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
 
   ### main layout
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
@@ -89,6 +91,7 @@ sub new {
   EVT_BUTTON( $self, $self->btn_additem,  sub { $self->add_dst_item } );
   EVT_BUTTON( $self, $self->btn_clear,    \&clear_fields              );
   EVT_BUTTON( $self, $self->btn_tran,     \&translate_word            );
+  EVT_BUTTON( $self, $self->btn_cancel,   \&cancel                    );
 
   EVT_TEXT(   $self, $self->word_src,     \&check_word                );
   $self
@@ -406,6 +409,13 @@ sub enable_controls($$) {
     $item->{btnm}->Enable($en);
     $item->{edit}->Enable($en) if $item->{edit};
   });
+}
+
+sub cancel {
+  my $self = shift;
+  $self->clear_fields();
+  $self->remove_all_dst();
+  $self->parent->notebook->SetPageText(1 => "Word");
 }
 
 1;
