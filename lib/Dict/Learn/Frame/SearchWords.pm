@@ -221,6 +221,16 @@ sub unlink_word {
   $self->lookup;
 }
 
+sub delete_example {
+  my $self = shift;
+  my $curr_id = $self->lb_examples->GetNextItem(
+    -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
+  );
+  $main::ioc->lookup('db')->delete_example(
+    $self->get_example_id($curr_id)
+  );
+  $self->lookup;
+}
 
 sub unlink_example {
   my $self = shift;
