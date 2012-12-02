@@ -51,13 +51,10 @@ sub new {
   $self->vbox_src->Add( $self->example_note, 0, wxALL|wxGROW,   5 );
   $self->vbox_src->Add( $self->search_words, 0, wxALL|wxGROW,   5 );
   $self->vbox_src->Add( $self->linked_words, 3, wxALL|wxEXPAND, 5 );
-  # initialisation
-  # $self->load_words;
 
   ### dst
   $self->text_dst([]);
   $self->btn_additem( Wx::Button->new( $self, -1, '+', [-1, -1] ));
-  # $self->btn_addexisting( Wx::Button->new( $self, -1, '++', [-1, -1] ));
   $self->btn_addexisting( Dict::Learn::Combo::Button->new( $self, -1, "++", [-1,-1] ));
   # layout
   $self->hbox_add( Wx::BoxSizer->new( wxHORIZONTAL ) );
@@ -68,7 +65,6 @@ sub new {
   $self->vbox_dst( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->hbox_dst_item([]);
   $self->vbox_dst->Add($self->hbox_add, 0, wxALIGN_LEFT|wxLEFT|wxTOP, 5);
-  # $self->add_dst_item;
 
   ### hbox_examples layout
   $self->hbox_examples( Wx::BoxSizer->new( wxHORIZONTAL ) );
