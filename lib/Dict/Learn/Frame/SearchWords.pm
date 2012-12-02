@@ -24,7 +24,7 @@ use Class::XSAccessor
                      hbox_words lb_words
                      hbox_examples lb_examples
                      vbox_btn_words
-                     btn_edit_word btn_delete_word
+                     btn_edit_word btn_delete_word btn_unlink_word
                      vbox_btn_examples
                      btn_add_example btn_delete_example btn_edit_example
                | ];
@@ -47,9 +47,11 @@ sub new {
   # buttons
   $self->btn_edit_word( Wx::Button->new( $self, -1, 'Edit',    [-1, -1] ) );
   $self->btn_delete_word( Wx::Button->new( $self, -1, 'Del',  [-1, -1] ) );
+  $self->btn_unlink_word( Wx::Button->new( $self, -1, 'Unlink', [-1, -1] ) );
   # layout
   $self->vbox_btn_words( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->vbox_btn_words->Add( $self->btn_edit_word );
+  $self->vbox_btn_words->Add( $self->btn_unlink_word );
   $self->vbox_btn_words->Add( $self->btn_delete_word );
 
   # table
@@ -101,6 +103,7 @@ sub new {
   EVT_TEXT(   $self, $self->combobox,             \&lookup         );
   EVT_BUTTON( $self, $self->btn_lookup,           \&lookup         );
   EVT_BUTTON( $self, $self->btn_edit_word,        \&edit_word      );
+  EVT_BUTTON( $self, $self->btn_unlink_word,      \&unlink_word    );
   EVT_BUTTON( $self, $self->btn_delete_word,      \&delete_word    );
   EVT_BUTTON( $self, $self->btn_add_example,      \&add_example    );
   EVT_BUTTON( $self, $self->btn_edit_example,     \&edit_example   );
@@ -182,6 +185,22 @@ sub load_examples {
   }
 }
 
+sub get_word_id {
+  my ($self, $rowid) = @_;
+  $self->lb_words->GetItem($rowid, 0)->GetText
+}
+
+
+sub unlink_word {
+  my $self = shift;
+  my $curr_id = $self->lb_words->GetNextItem(
+    -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
+  );
+  $main::ioc->lookup('db')->unlink_word(
+    $self->get_word_id($curr_id)
+  );
+  $self->lookup;
+}
 
 
 1;
