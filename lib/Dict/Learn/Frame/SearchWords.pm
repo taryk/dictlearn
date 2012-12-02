@@ -162,12 +162,12 @@ sub edit_word {
 
 sub edit_example {
   my $self = shift;
-  my $curr_id = -1;
-
-  $curr_id = $self->lb_examples->GetNextItem($curr_id, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+  my $curr_id = $self->lb_examples->GetNextItem(
+    -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
+  );
 
   $self->parent->p_addexample->load_example(
-    example_id => $self->lb_examples->GetItem($curr_id, 0)->GetText,
+    example_id => $self->get_example_id($curr_id),
   );
 
   $self->parent->notebook->ChangeSelection(2);
