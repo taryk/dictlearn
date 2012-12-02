@@ -43,39 +43,39 @@ sub new {
   $self->parent( shift );
 
   ### src
-  $self->word_src( Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ) );
-  $self->word_note( Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ) );
+  $self->word_src(  Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ));
+  $self->word_note( Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ));
 
   ### dst
   $self->word_dst([]);
   $self->btn_additem( Wx::Button->new( $self, -1, '+', [-1, -1] ));
   # layout
   $self->hbox_dst_item([]);
-  $self->vbox_dst( Wx::BoxSizer->new( wxVERTICAL ) );
-  $self->hbox_add( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->hbox_add->Add( $self->btn_additem, wxALIGN_LEFT|wxRIGHT, 5 );
+  $self->vbox_dst( Wx::BoxSizer->new( wxVERTICAL ));
+  $self->hbox_add( Wx::BoxSizer->new( wxHORIZONTAL ));
+  $self->hbox_add->Add($self->btn_additem, wxALIGN_LEFT|wxRIGHT, 5);
   $self->vbox_dst->Add($self->hbox_add, 0, wxALIGN_LEFT|wxRIGHT, 5);
 
   ### hbox_words layout
   $self->hbox_words( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->hbox_words->Add( $self->word_src, 2, wxALL|wxTOP, 5 );
+  $self->hbox_words->Add( $self->word_src, 2, wxALL|wxTOP,    5 );
   $self->hbox_words->Add( $self->vbox_dst, 4, wxALL|wxEXPAND, 5 );
 
   ### btn
-  $self->btn_add_word( Wx::Button->new( $self, -1, 'Add', [-1, -1] ));
-  $self->btn_tran( Wx::Button->new( $self, -1, 'Translate', [-1, -1] ));
-  $self->btn_clear( Wx::Button->new( $self, -1, 'Clear',    [-1, -1] ));
+  $self->btn_add_word( Wx::Button->new( $self, -1, 'Add',       [-1, -1] ));
+  $self->btn_tran(     Wx::Button->new( $self, -1, 'Translate', [-1, -1] ));
+  $self->btn_clear(    Wx::Button->new( $self, -1, 'Clear',     [-1, -1] ));
   # layout
   $self->hbox_btn( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->hbox_btn->Add( $self->btn_add_word , 0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
-  $self->hbox_btn->Add( $self->btn_tran , 0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
-  $self->hbox_btn->Add( $self->btn_clear,  0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5);
+  $self->hbox_btn->Add( $self->btn_add_word, 0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->hbox_btn->Add( $self->btn_tran,     0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->hbox_btn->Add( $self->btn_clear,    0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
 
   ### main layout
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
-  $self->vbox->Add( $self->hbox_words ,  0, wxALL|wxGROW, 0 );
-  $self->vbox->Add( $self->word_note, 0, wxALL|wxGROW, 5 );
-  $self->vbox->Add( $self->hbox_btn,  0, wxALL|wxGROW,   5 );
+  $self->vbox->Add( $self->hbox_words, 0, wxALL|wxGROW, 0 );
+  $self->vbox->Add( $self->word_note,  0, wxALL|wxGROW, 5 );
+  $self->vbox->Add( $self->hbox_btn,   0, wxALL|wxGROW, 5 );
   $self->SetSizer( $self->vbox );
   $self->Layout();
   $self->vbox->Fit( $self );
@@ -85,11 +85,12 @@ sub new {
   $self->enable(1);
 
   # events
-  EVT_BUTTON( $self, $self->btn_add_word,       \&add                       );
-  EVT_BUTTON( $self, $self->btn_additem,        sub { $self->add_dst_item } );
-  EVT_BUTTON( $self, $self->btn_clear,          \&clear_fields              );
+  EVT_BUTTON( $self, $self->btn_add_word, \&add                       );
+  EVT_BUTTON( $self, $self->btn_additem,  sub { $self->add_dst_item } );
+  EVT_BUTTON( $self, $self->btn_clear,    \&clear_fields              );
+  EVT_BUTTON( $self, $self->btn_tran,     \&translate_word            );
 
-  EVT_TEXT(   $self, $self->word_src,           \&check_word                );
+  EVT_TEXT(   $self, $self->word_src,     \&check_word                );
   $self
 }
 
