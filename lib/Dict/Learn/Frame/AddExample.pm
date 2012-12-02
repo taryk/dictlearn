@@ -72,14 +72,16 @@ sub new {
   $self->hbox_examples->Add( $self->vbox_dst, 3, wxALL|wxEXPAND, 0 );
 
   ### btn
-  $self->btn_add(   Wx::Button->new( $self, -1, 'Add Example', [-1, -1] ));
-  $self->btn_tran(  Wx::Button->new( $self, -1, 'Translate',   [-1, -1] ));
-  $self->btn_clear( Wx::Button->new( $self, -1, 'Clear',       [-1, -1] ));
+  $self->btn_add(    Wx::Button->new( $self, -1, 'Add Example', [-1, -1] ));
+  $self->btn_tran(   Wx::Button->new( $self, -1, 'Translate',   [-1, -1] ));
+  $self->btn_clear(  Wx::Button->new( $self, -1, 'Clear',       [-1, -1] ));
+  $self->btn_cancel( Wx::Button->new( $self, -1, 'Cancel',      [-1, -1] ));
   # layout
   $self->hbox_btn( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->hbox_btn->Add( $self->btn_add,   0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
-  $self->hbox_btn->Add( $self->btn_tran,  0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
-  $self->hbox_btn->Add( $self->btn_clear, 0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->hbox_btn->Add( $self->btn_add,    0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->hbox_btn->Add( $self->btn_tran,   0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->hbox_btn->Add( $self->btn_clear,  0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->hbox_btn->Add( $self->btn_cancel, 0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
 
 
   ### main layout
@@ -94,10 +96,11 @@ sub new {
   $self->item_id(undef);
 
   # events
-  EVT_BUTTON( $self, $self->btn_add,     &add                        );
+  EVT_BUTTON( $self, $self->btn_add,     \&add                       );
   EVT_BUTTON( $self, $self->btn_additem, sub { $self->add_dst_item } );
   EVT_BUTTON( $self, $self->btn_clear,   \&clear_fields              );
   EVT_BUTTON( $self, $self->btn_tran,    \&translate                 );
+  EVT_BUTTON( $self, $self->btn_cancel,  \&cancel                    );
 
   EVT_SELECTED( $self, $self->btn_addexisting, sub { $self->add_existing_item(@_) } );
 
@@ -342,6 +345,13 @@ sub translate {
   else {
     $self->word_dst->[0][1]->SetValue( $res->{_} );
   }
+}
+
+sub cancel {
+  my $self = shift;
+  $self->clear_fields();
+  $self->remove_all_dst();
+  $self->parent->notebook->SetPageText(2 => "Example");
 }
 
 1;
