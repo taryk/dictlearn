@@ -191,6 +191,13 @@ sub update_example {
 
 sub delete_example { my $self = shift }
 
+sub unlink_example {
+  my $self = shift;
+  $self->schema->resultset('Examples')->search(
+    { example1_id => [ @_ ] }
+  )->delete;
+}
+
 sub find_items {
   my $self   = shift;
   my %params = @_;
