@@ -23,7 +23,6 @@ use Scalar::Util qw[ weaken ];
 use Class::XSAccessor
   accessors => [ qw| parent
                      text_src text_dst example_note
-                     btn_translate
                      vbox vbox_src vbox_dst hbox_dst_item
 
                      hbox_examples hbox_btn
@@ -31,7 +30,7 @@ use Class::XSAccessor
                      search_words linked_words
                      item_id
                      hbox_add btn_additem btn_addexisting
-                     btn_add btn_clear btn_translate
+                     btn_add btn_clear btn_tran btn_cancel
                      tran
                    | ];
 
@@ -48,9 +47,9 @@ sub new {
   $self->linked_words( Wx::CheckListBox->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, [], 0, wxDefaultValidator ) );
   # layout
   $self->vbox_src( Wx::BoxSizer->new( wxVERTICAL ));
-  $self->vbox_src->Add( $self->text_src, 3, wxALL|wxEXPAND, 5 );
-  $self->vbox_src->Add( $self->example_note, 0, wxALL|wxGROW, 5 );
-  $self->vbox_src->Add( $self->search_words, 0, wxALL|wxGROW, 5 );
+  $self->vbox_src->Add( $self->text_src,     3, wxALL|wxEXPAND, 5 );
+  $self->vbox_src->Add( $self->example_note, 0, wxALL|wxGROW,   5 );
+  $self->vbox_src->Add( $self->search_words, 0, wxALL|wxGROW,   5 );
   $self->vbox_src->Add( $self->linked_words, 3, wxALL|wxEXPAND, 5 );
   # initialisation
   # $self->load_words;
@@ -62,7 +61,7 @@ sub new {
   $self->btn_addexisting( Dict::Learn::Combo::Button->new( $self, -1, "++", [-1,-1] ));
   # layout
   $self->hbox_add( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->hbox_add->Add( $self->btn_additem, wxALIGN_LEFT|wxRIGHT, 5 );
+  $self->hbox_add->Add( $self->btn_additem,     wxALIGN_LEFT|wxRIGHT, 5 );
   $self->hbox_add->Add( $self->btn_addexisting, wxALIGN_LEFT|wxRIGHT, 5 );
 
   # layout
@@ -77,20 +76,20 @@ sub new {
   $self->hbox_examples->Add( $self->vbox_dst, 3, wxALL|wxEXPAND, 0 );
 
   ### btn
-  $self->btn_add( Wx::Button->new( $self, -1, 'Add Example', [-1, -1] ));
-  $self->btn_translate( Wx::Button->new( $self, -1, 'Translate', [-1, -1] ));
-  $self->btn_clear( Wx::Button->new( $self, -1, 'Clear',    [-1, -1] ));
+  $self->btn_add(   Wx::Button->new( $self, -1, 'Add Example', [-1, -1] ));
+  $self->btn_tran(  Wx::Button->new( $self, -1, 'Translate',   [-1, -1] ));
+  $self->btn_clear( Wx::Button->new( $self, -1, 'Clear',       [-1, -1] ));
   # layout
   $self->hbox_btn( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->hbox_btn->Add( $self->btn_add, 0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
-  $self->hbox_btn->Add( $self->btn_translate, 0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
-  $self->hbox_btn->Add( $self->btn_clear,  0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5);
+  $self->hbox_btn->Add( $self->btn_add,   0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->hbox_btn->Add( $self->btn_tran,  0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->hbox_btn->Add( $self->btn_clear, 0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
 
 
   ### main layout
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
-  $self->vbox->Add( $self->hbox_examples, 1, wxALL|wxGROW,   0 );
-  $self->vbox->Add( $self->hbox_btn,  0, wxALL|wxGROW,   0 );
+  $self->vbox->Add( $self->hbox_examples, 1, wxALL|wxGROW, 0 );
+  $self->vbox->Add( $self->hbox_btn,      0, wxALL|wxGROW, 0 );
   $self->SetSizer( $self->vbox );
   $self->Layout();
   $self->vbox->Fit( $self );
@@ -99,10 +98,11 @@ sub new {
   $self->item_id(undef);
 
   # events
-  EVT_BUTTON( $self, $self->btn_add,         \&add          );
-  EVT_BUTTON( $self, $self->btn_additem,     sub { $self->add_dst_item } );
-  EVT_BUTTON( $self, $self->btn_clear,       \&clear_fields );
-  EVT_BUTTON( $self, $self->btn_translate,   \&translate    );
+  EVT_BUTTON( $self, $self->btn_add,     &add                        );
+  EVT_BUTTON( $self, $self->btn_additem, sub { $self->add_dst_item } );
+  EVT_BUTTON( $self, $self->btn_clear,   \&clear_fields              );
+  EVT_BUTTON( $self, $self->btn_tran,    \&translate                 );
+
   EVT_SELECTED( $self, $self->btn_addexisting, sub { $self->add_existing_item(@_) } );
 
   Dict::Learn::Dictionary->cb(sub {
