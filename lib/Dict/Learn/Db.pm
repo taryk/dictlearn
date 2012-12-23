@@ -163,18 +163,18 @@ sub update_example {
   my $self = shift;
   my %params = @_;
   my %update = ( example => $params{text} );
-  $update{note}    = $params{note}    if $params{note};
-  $update{lang_id} = $params{lang_id} if $params{lang_id};
-  $update{idioma}  = $params{idioma}  if $params{idioma};
+  $update{note}    = $params{note}    if defined $params{note};
+  $update{lang_id} = $params{lang_id} if defined $params{lang_id};
+  $update{idioma}  = $params{idioma}  if defined $params{idioma};
   my $updated_example = $self->schema->resultset('Example')->
     search({ example_id => $params{example_id} })->first->update(\%update);
   for ( @{ $params{translate} } ) {
     # create new
     unless (defined $_->{example_id}) {
       my %update_tr = ( example => $_->{text} );
-      $update_tr{note}    = $_->{note}    if $_->{note};
-      $update_tr{lang_id} = $_->{lang_id} if $_->{lang_id};
-      $update_tr{idioma}  = $_->{idioma}  if $_->{idioma};
+      $update_tr{note}    = $_->{note}    if defined $_->{note};
+      $update_tr{lang_id} = $_->{lang_id} if defined $_->{lang_id};
+      $update_tr{idioma}  = $_->{idioma}  if defined $_->{idioma};
       $updated_example->add_to_examples(\%update_tr, {
         dictionary_id => $params{dictionary_id},
       });
