@@ -21,8 +21,9 @@ use Data::Printer;
 use Class::XSAccessor
   accessors => [ qw| parent
                      word_note wordclass
-                     word_src word_dst
+                     word_src word2_src word3_src word_dst
                      vbox hbox_words vbox_dst hbox_dst_item
+                     vbox_src cb_irregular
 
                      hbox_btn
 
@@ -43,8 +44,19 @@ sub new {
   $self->parent( shift );
 
   ### src
-  $self->word_src(  Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ));
+  $self->word_src(   Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ));
+  $self->word2_src(  Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ));
+  $self->word3_src(  Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ));
+  $self->word2_src->Enable(0);
+  $self->word3_src->Enable(0);
+  $self->cb_irregular( Wx::CheckBox->new( $self, wxID_ANY, 'Irregular verb', wxDefaultPosition, wxDefaultSize, wxCHK_2STATE, wxDefaultValidator ) );
   $self->word_note( Wx::TextCtrl->new( $self, -1, '', [-1,-1], [-1,-1] ));
+  # layout
+  $self->vbox_src( Wx::BoxSizer->new( wxVERTICAL ));
+  $self->vbox_src->Add($self->word_src, 0, wxGROW|wxBOTTOM, 5);
+  $self->vbox_src->Add($self->cb_irregular, 0, wxALIGN_LEFT|wxBOTTOM, 5);
+  $self->vbox_src->Add($self->word2_src, 0, wxGROW|wxBOTTOM, 5);
+  $self->vbox_src->Add($self->word3_src, 0, wxGROW|wxBOTTOM, 5);
 
   ### dst
   $self->word_dst([]);
@@ -58,7 +70,7 @@ sub new {
 
   ### hbox_words layout
   $self->hbox_words( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->hbox_words->Add( $self->word_src, 2, wxALL|wxTOP,    5 );
+  $self->hbox_words->Add( $self->vbox_src, 2, wxALL|wxTOP,    5 );
   $self->hbox_words->Add( $self->vbox_dst, 4, wxALL|wxEXPAND, 5 );
 
   ### btn
@@ -87,13 +99,13 @@ sub new {
   $self->enable(1);
 
   # events
-  EVT_BUTTON( $self, $self->btn_add_word, \&add                       );
-  EVT_BUTTON( $self, $self->btn_additem,  sub { $self->add_dst_item } );
-  EVT_BUTTON( $self, $self->btn_clear,    \&clear_fields              );
-  EVT_BUTTON( $self, $self->btn_tran,     \&translate_word            );
-  EVT_BUTTON( $self, $self->btn_cancel,   \&cancel                    );
-
-  EVT_TEXT(   $self, $self->word_src,     \&check_word                );
+  EVT_BUTTON(   $self, $self->btn_add_word, \&add                       );
+  EVT_BUTTON(   $self, $self->btn_additem,  sub { $self->add_dst_item } );
+  EVT_BUTTON(   $self, $self->btn_clear,    \&clear_fields              );
+  EVT_BUTTON(   $self, $self->btn_tran,     \&translate_word            );
+  EVT_BUTTON(   $self, $self->btn_cancel,   \&cancel                    );
+  EVT_CHECKBOX( $self, $self->cb_irregular, \&toggle_irregular          );
+  EVT_TEXT(     $self, $self->word_src,     \&check_word                );
   $self
 }
 
@@ -127,7 +139,7 @@ sub make_dst_item {
   # EVT_TEXT(   $self, $self->word_dst->[$id]{word}, sub { $self->query_words($id); } );
   $self->word_dst->[$id]{cbox}->SetSelection(0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{cbox}, 2, wxALL, 0);
-  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{word}, 4, wxALL|wxEXPAND, 0);
+  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{word}, 4, wxALL, 0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnm}, 1, wxALL, 0);
 
   if ($ro) {
@@ -393,6 +405,12 @@ sub translate_word {
   else {
     $self->word_dst->[0]{word}->SetValue( $res->{_} );
   }
+}
+
+sub toggle_irregular {
+  my ($self, $event) = @_;
+  $self->word2_src->Enable($event->IsChecked);
+  $self->word3_src->Enable($event->IsChecked);
 }
 
 sub enable_controls($$) {
