@@ -150,22 +150,20 @@ sub add_example {
 sub update_example {
   my $self = shift;
   my %params = @_;
+  my %update = ( example => $params{text} );
+  $update{note}    = $params{note}    if $params{note};
+  $update{lang_id} = $params{lang_id} if $params{lang_id};
+  $update{idioma}  = $params{idioma}  if $params{idioma};
   my $updated_example = $self->schema->resultset('Example')->
-  search({ example_id => $params{example_id} })->first->update({
-    example => $params{text},
-    note    => $params{note},
-    lang_id => $params{lang_id},
-    idioma  => $params{idioma} || 0,
-  });
+    search({ example_id => $params{example_id} })->first->update(\%update);
   for ( @{ $params{translate} } ) {
     # create new
     unless (defined $_->{example_id}) {
-      $updated_example->add_to_examples({
-        example => $_->{text},
-        note    => $_->{note},
-        lang_id => $_->{lang_id},
-        idioma  => $_->{idioma} || 0,
-      }, {
+      my %update_tr = ( example => $_->{text} );
+      $update_tr{note}    = $_->{note}    if $_->{note};
+      $update_tr{lang_id} = $_->{lang_id} if $_->{lang_id};
+      $update_tr{idioma}  = $_->{idioma}  if $_->{idioma};
+      $updated_example->add_to_examples(\%update_tr, {
         dictionary_id => $params{dictionary_id},
       });
       next;
