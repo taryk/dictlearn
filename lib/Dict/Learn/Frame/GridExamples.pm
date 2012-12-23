@@ -75,12 +75,12 @@ sub new {
 
   # events
   EVT_GRID_CMD_CELL_CHANGE( $self, $self->grid,  \&update_word   );
-  EVT_BUTTON( $self, $self->btn_refresh,         \&refresh_words );
   EVT_BUTTON( $self, $self->btn_delete_item,     \&delete_word   );
+  EVT_BUTTON( $self, $self->btn_refresh,         \&refresh_examples );
 
   Dict::Learn::Dictionary->cb(sub {
     my $dict = shift;
-    $self->refresh_words;
+    $self->refresh_examples;
   });
 
   $self
@@ -117,7 +117,6 @@ sub delete_word {
     # $self->grid->DeleteRows($_, 1, -1);
   }
   $main::ioc->lookup('db')->delete_word( @ids );
-  $self->refresh_words();
 }
 
 sub delete_example {
@@ -130,7 +129,7 @@ sub clear_db {
   # @TODO: implement
 }
 
-sub select_words {
+sub select_examples {
   my $self = shift;
   my $i=0;
   my @items = $main::ioc->lookup('db')->select_examples_grid(
@@ -150,11 +149,11 @@ sub select_words {
   }
 }
 
-sub refresh_words {
+sub refresh_examples {
   my $self = shift;
   $self->grid->ClearGrid();
   $self->grid->DeleteRows(0, $self->grid->GetNumberRows());
-  $self->select_words();
+  $self->select_examples();
 }
 
 1;
