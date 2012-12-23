@@ -257,6 +257,10 @@ sub add {
     lang_id => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
     dictionary_id => Dict::Learn::Dictionary->curr_id,
   );
+  if ($params{irregular} = $self->cb_irregular->IsChecked()) {
+    $params{word2} = $self->word2_src->GetValue();
+    $params{word3} = $self->word3_src->GetValue();
+  }
   $self->do_word_dst(sub {
     my $word_dst_item = pop;
     my $push_item = { word_id => $word_dst_item->{word_id} };
