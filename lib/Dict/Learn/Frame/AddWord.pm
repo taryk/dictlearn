@@ -314,6 +314,13 @@ sub clear_fields {
   $self->enable_controls($self->enable);
 
   $self->word_src->Clear;
+  # irregular words
+  $self->cb_irregular->SetValue(0);
+  $self->word2_src->Clear;
+  $self->word3_src->Clear;
+  $self->word2_src->Enable(0);
+  $self->word3_src->Enable(0);
+
   $self->do_word_dst(sub {
     my $word_dst_item = pop;
     return unless defined $word_dst_item->{word};
