@@ -11,9 +11,9 @@ use Data::Printer;
 use common::sense;
 
 use constant {
-  COL_ID      => 0,
-  COL_EXAMPLE => 1,
-  COL_REL     => 2,
+  COL_EXAMPLE => 0,
+  COL_REL_E   => 1,
+  COL_REL_W   => 2,
   COL_CDATE   => 3,
   COL_MDATE   => 4,
 };
@@ -34,12 +34,13 @@ sub new {
 
   $self->grid( Wx::Grid->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 ) );
   $self->vbox->Add( $self->grid,  1, wxALL|wxGROW,   5 );
-  $self->grid->CreateGrid( 0, 5 );
-  $self->grid->SetColSize(COL_ID,      20);
-  $self->grid->SetColSize(COL_EXAMPLE, 300);
-  $self->grid->SetColSize(COL_REL,     20);
-  $self->grid->SetColSize(COL_CDATE,   100);
-  $self->grid->SetColSize(COL_MDATE,   100);
+  # grid dimension: COL_MDATE+1 - the last column id + 1
+  $self->grid->CreateGrid( 0, COL_MDATE+1 );
+  $self->grid->SetColSize(COL_EXAMPLE, 400);
+  $self->grid->SetColSize(COL_REL_E,   20);
+  $self->grid->SetColSize(COL_REL_W,   20);
+  $self->grid->SetColSize(COL_CDATE,   140);
+  $self->grid->SetColSize(COL_MDATE,   140);
   $self->grid->EnableEditing( 1 );
   $self->grid->EnableGridLines( 1 );
   $self->grid->EnableDragGridSize( 0 );
@@ -53,9 +54,9 @@ sub new {
   $self->grid->EnableDragRowSize( 1 );
   $self->grid->SetRowLabelSize( 30 );
   $self->grid->SetRowLabelAlignment( wxALIGN_CENTRE, wxALIGN_CENTRE );
-  $self->grid->SetColLabelValue(COL_ID,      'ID'       );
   $self->grid->SetColLabelValue(COL_EXAMPLE, 'Example'  );
-  $self->grid->SetColLabelValue(COL_REL,     'Relations');
+  $self->grid->SetColLabelValue(COL_REL_E,   'E'        );
+  $self->grid->SetColLabelValue(COL_REL_W,   'W'        );
   $self->grid->SetColLabelValue(COL_CDATE,   'Created'  );
   $self->grid->SetColLabelValue(COL_MDATE,   'Modified' );
 
@@ -140,12 +141,12 @@ sub select_words {
   for my $item ( $main::ioc->lookup('db')->select_examples_grid(
     dictionary_id => Dict::Learn::Dictionary->curr_id ))
   {
-    $self->grid->SetRowLabelValue($i => $item->{example_id});
-    $self->grid->SetCellValue( $i,   COL_ID,      $item->{example_id} );
-    $self->grid->SetCellValue( $i,   COL_EXAMPLE, $item->{example} );
-    $self->grid->SetCellValue( $i,   COL_REL,     $item->{relations} );
-    $self->grid->SetCellValue( $i,   COL_CDATE,   $item->{mdate} );
-    $self->grid->SetCellValue( $i++, COL_MDATE,   $item->{cdate} );
+    $self->grid->SetRowLabelValue($i => $item->{example_id}             );
+    $self->grid->SetCellValue( $i,   COL_EXAMPLE, $item->{example}      );
+    $self->grid->SetCellValue( $i,   COL_REL_E,   $item->{rel_examples} );
+    $self->grid->SetCellValue( $i,   COL_REL_W,   $item->{rel_words}    );
+    $self->grid->SetCellValue( $i,   COL_CDATE,   $item->{mdate}        );
+    $self->grid->SetCellValue( $i++, COL_MDATE,   $item->{cdate}        );
   }
 }
 
