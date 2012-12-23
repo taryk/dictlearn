@@ -74,8 +74,8 @@ sub new {
   $self->vbox->Fit( $self );
 
   # events
-  EVT_GRID_CMD_CELL_CHANGE( $self, $self->grid,  \&update_word   );
   EVT_BUTTON( $self, $self->btn_delete_item,     \&delete_word   );
+  EVT_GRID_CMD_CELL_CHANGE( $self, $self->grid,  \&update_examples  );
   EVT_BUTTON( $self, $self->btn_refresh,         \&refresh_examples );
 
   Dict::Learn::Dictionary->cb(sub {
@@ -87,23 +87,15 @@ sub new {
 
 }
 
-sub update_word {
-  my $self = shift;
-  my $obj  = shift;
-  my @cols = qw[ word_orig word_tr ];
+sub update_examples {
+  my ($self, $obj) = @_;
   printf "%s %d %d\n", $self->grid->GetCellValue($obj->GetRow(), $obj->GetCol()),
                        $obj->GetRow(),
                        $obj->GetCol();
-  $main::ioc->lookup('db')->update_word(
-    id => $self->grid->GetRowLabelValue( $obj->GetRow() ),
-    $cols[$obj->GetCol()] // 0 => $self->grid->GetCellValue( $obj->GetRow() ,
-                                                             $obj->GetCol()),
+  $main::ioc->lookup('db')->update_example(
+    example_id => $self->grid->GetRowLabelValue( $obj->GetRow() ),
+    text       => $self->grid->GetCellValue( $obj->GetRow(), $obj->GetCol() ),
   );
-}
-
-sub update_example {
-  my $self = shift;
-  # @TODO: implement
 }
 
 sub delete_word {
