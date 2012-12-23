@@ -83,6 +83,9 @@ sub new {
   $self->status_bar($self->CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY ));
 
   Dict::Learn::Dictionary->set(0);
+  # set a frame title based on current dictionary
+  # like 'DictLearn - [English-Ukrainian]'
+  $self->set_frame_title();
 
   # events
   EVT_CLOSE( $self, \&on_close );
@@ -111,6 +114,14 @@ sub dictionary_check {
     "Dictionary '" . $menu_item->GetLabel . "' selected"
   );
   Dict::Learn::Dictionary->set( $event->GetId );
+  $self->set_frame_title( $event->GetId );
+}
+
+sub set_frame_title {
+  my ($self, $id) = @_;
+  $id ||= Dict::Learn::Dictionary->curr_id;
+  $self->SetTitle(sprintf 'DictLearn - [%s]',
+                  Dict::Learn::Dictionary->get($id)->{dictionary_name});
 }
 
 sub on_close {
