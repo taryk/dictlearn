@@ -309,22 +309,22 @@ sub select_words_grid {
 sub select_examples_grid {
   my $self   = shift;
   my %params = @_;
-  my $rs   = $self->schema->resultset('Examples')->search(
-    { 'me.dictionary_id' => $params{dictionary_id} },
-    { join     => [ 'example1_id', 'rel_words' ],
-      select   => [ 'example1_id.example_id', 'example1_id.example',
-                  { count => [ 'me.example2_id'    ] },
-                  { count => [ 'rel_words.word_id' ] },
-                  'me.cdate', 'me.mdate' ],
-      as       => [ 'example_id', 'example', 'rel_examples', 'rel_words',
-                    'cdate', 'mdate' ],
-      group_by => [ 'me.example2_id' ],
-      order_by => { -desc => ['example1_id.cdate'] }
+  my $rs   = $self->schema->resultset('Example')->search(
+    { 'me.lang_id' => $params{lang1_id} },
+    { join     => [ 'rel_examples', 'words' ],
+      select   => [ 'me.example_id', 'me.example',
+                  { count => [ 'rel_examples.example2_id' ] },
+                  { count => [ 'words.word_id' ] },
+                    'me.cdate', 'me.mdate' ],
+      as       => [ qw|example_id example rel_examples rel_words
+                       cdate mdate| ],
+      group_by => [ 'me.example_id' ],
+      order_by => { -desc => ['me.cdate'] }
     }
   );
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
   my @r1 = $rs->all;
-  p(@r1);
+  # p(@r1);
   @r1
 }
 

@@ -120,13 +120,12 @@ sub select_examples {
   my $self = shift;
   my $i=0;
   my @items = $main::ioc->lookup('db')->select_examples_grid(
+    lang1_id       => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
     dictionary_id => Dict::Learn::Dictionary->curr_id
   );
   $self->grid->InsertRows(0 , scalar @items);
   # Dict::Learn::Dictionary->curr->{language_orig_id}{language_id}
-  for my $item ( $main::ioc->lookup('db')->select_examples_grid(
-    dictionary_id => Dict::Learn::Dictionary->curr_id ))
-  {
+  for my $item ( @items ) {
     $self->grid->SetRowLabelValue($i => $item->{example_id}             );
     $self->grid->SetCellValue( $i,   COL_EXAMPLE, $item->{example}      );
     $self->grid->SetCellValue( $i,   COL_REL_E,   $item->{rel_examples} );
