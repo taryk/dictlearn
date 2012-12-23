@@ -74,9 +74,9 @@ sub new {
   $self->vbox->Fit( $self );
 
   # events
-  EVT_BUTTON( $self, $self->btn_delete_item,     \&delete_word   );
   EVT_GRID_CMD_CELL_CHANGE( $self, $self->grid,  \&update_examples  );
   EVT_BUTTON( $self, $self->btn_refresh,         \&refresh_examples );
+  EVT_BUTTON( $self, $self->btn_delete_item,     \&delete_examples  );
 
   Dict::Learn::Dictionary->cb(sub {
     my $dict = shift;
@@ -98,7 +98,7 @@ sub update_examples {
   );
 }
 
-sub delete_word {
+sub delete_examples {
   my $self = shift;
   my @rows = $self->grid->GetSelectedRows();
   my @ids;
@@ -106,14 +106,9 @@ sub delete_word {
     push @ids => $self->grid->GetRowLabelValue($_);
     printf "delete row #%d id #%d\n", $_,
                                       $self->grid->GetRowLabelValue($_);
-    # $self->grid->DeleteRows($_, 1, -1);
   }
-  $main::ioc->lookup('db')->delete_word( @ids );
-}
-
-sub delete_example {
-  my $self = shift;
-  # @TODO: implement
+  $main::ioc->lookup('db')->delete_example( @ids );
+  $self->refresh_examples();
 }
 
 sub clear_db {
