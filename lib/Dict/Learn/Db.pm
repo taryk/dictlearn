@@ -287,6 +287,24 @@ sub select_all {
   @r1
 }
 
+sub select_examples_grid {
+  my $self   = shift;
+  my %params = @_;
+  my $rs   = $self->schema->resultset('Examples')->search(
+    { 'me.dictionary_id' => $params{dictionary_id} },
+    { join   => [ 'example1_id' ],
+      select => [ 'example1_id.example_id', 'example1_id.example',
+                { count => [ 'me.example2_id' ] }, 'me.cdate', 'me.mdate' ],
+      as     => [ 'example_id', 'example', 'relations', 'cdate', 'mdate' ],
+      group_by => [ 'me.example2_id' ],
+    }
+  );
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  my @r1 = $rs->all;
+  p(@r1);
+  @r1
+}
+
 sub select_wordclass {
   my $self = shift;
   my %params = @_;
