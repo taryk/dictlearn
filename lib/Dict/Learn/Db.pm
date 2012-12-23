@@ -284,12 +284,21 @@ sub select_example {
   $rs->first;
 }
 
-sub select_all {
+sub select_words_grid {
   my $self   = shift;
   my %params = @_;
-  my $rs   = $self->schema->resultset('Words')->search(
-    { 'me.dictionary_id' => $params{dictionary_id} },
-    { prefetch => [ qw| word1_id word2_id wordclass | ] }
+  my $rs   = $self->schema->resultset('Word')->search(
+    { 'me.lang_id' => $params{lang1_id} },
+    { join     => [ 'rel_words', 'examples', 'wordclass' ],
+      select   => [ 'me.word_id', 'me.word', 'wordclass.abbr',
+                  { count => [ 'rel_words.word2_id'  ] },
+                  { count => [ 'examples.example_id' ] },
+                    'me.cdate', 'me.mdate' ],
+      as       => [ qw|word_id word wordclass rel_words rel_examples
+                       cdate mdate| ],
+      group_by => [ 'me.word_id' ],
+      order_by => { -desc => [ 'me.cdate' ] }
+    }
   );
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
   my @r1 = $rs->all;

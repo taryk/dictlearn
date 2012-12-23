@@ -10,6 +10,15 @@ use Data::Printer;
 
 use common::sense;
 
+use constant {
+  COL_WORD      => 0,
+  COL_REL_W     => 1,
+  COL_REL_E     => 2,
+  COL_WORDCLASS => 3,
+  COL_CDATE     => 4,
+  COL_MDATE     => 5,
+};
+
 use Class::XSAccessor
   accessors => [ qw| parent
                      grid panel2_vbox panel2_hbox_btn btn_delete_item btn_clear_all
@@ -26,12 +35,13 @@ sub new {
 
   $self->grid( Wx::Grid->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 ) );
   $self->panel2_vbox->Add( $self->grid,  1, wxALL|wxGROW,   5 );
-  $self->grid->CreateGrid( 0, 5 );
-  $self->grid->SetColSize(0, 200);
-  $self->grid->SetColSize(1, 25);
-  $self->grid->SetColSize(2, 200);
-  $self->grid->SetColSize(3, 100);
-  $self->grid->SetColSize(4, 100);
+  $self->grid->CreateGrid(0, COL_MDATE+1 );
+  $self->grid->SetColSize(COL_WORD,      300);
+  $self->grid->SetColSize(COL_REL_W,     20);
+  $self->grid->SetColSize(COL_REL_E,     20);
+  $self->grid->SetColSize(COL_WORDCLASS, 30);
+  $self->grid->SetColSize(COL_CDATE,     140);
+  $self->grid->SetColSize(COL_MDATE,     140);
   $self->grid->EnableEditing( 1 );
   $self->grid->EnableGridLines( 1 );
   $self->grid->EnableDragGridSize( 0 );
@@ -45,29 +55,30 @@ sub new {
   $self->grid->EnableDragRowSize( 1 );
   $self->grid->SetRowLabelSize( 30 );
   $self->grid->SetRowLabelAlignment( wxALIGN_CENTRE, wxALIGN_CENTRE );
-  $self->grid->SetColLabelValue(0 => 'Word');
-  $self->grid->SetColLabelValue(1 => 'wc');
-  $self->grid->SetColLabelValue(2 => 'Word tr');
-  $self->grid->SetColLabelValue(3 => 'Created');
-  $self->grid->SetColLabelValue(4 => 'Modified');
+  $self->grid->SetColLabelValue(COL_WORD,      'Word'     );
+  $self->grid->SetColLabelValue(COL_REL_W,     'W'        );
+  $self->grid->SetColLabelValue(COL_REL_E,     'E'        );
+  $self->grid->SetColLabelValue(COL_WORDCLASS, 'wc'       );
+  $self->grid->SetColLabelValue(COL_CDATE,     'Created'  );
+  $self->grid->SetColLabelValue(COL_MDATE,     'Modified' );
 
   # $self->select_words();
 
   $self->panel2_hbox_btn( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->btn_delete_item( Wx::Button->new( $self, -1, 'Delete',    [-1, -1] ) );
-  $self->btn_clear_all( Wx::Button->new( $self, -1, 'Clear All',    [-1, -1] ) );
-  $self->btn_refresh( Wx::Button->new( $self, -1, 'Refresh',    [-1, -1] ) );
+  $self->btn_clear_all(   Wx::Button->new( $self, -1, 'Clear All', [-1, -1] ) );
+  $self->btn_refresh(     Wx::Button->new( $self, -1, 'Refresh',   [-1, -1] ) );
   $self->panel2_hbox_btn->Add( $self->btn_delete_item,  0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
-  $self->panel2_hbox_btn->Add( $self->btn_clear_all,  0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
-  $self->panel2_hbox_btn->Add( $self->btn_refresh,  0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
-  $self->panel2_vbox->Add( $self->panel2_hbox_btn, 0, wxALL|wxGROW|wxEXPAND, 5 );
+  $self->panel2_hbox_btn->Add( $self->btn_clear_all,    0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->panel2_hbox_btn->Add( $self->btn_refresh,      0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
+  $self->panel2_vbox->Add(     $self->panel2_hbox_btn,  0, wxALL|wxGROW|wxEXPAND,        5 );
   $self->Layout();
   $self->panel2_vbox->Fit( $self );
 
   # events
-  EVT_GRID_CMD_CELL_CHANGE( $self, $self->grid,  \&update_word    );
-  EVT_BUTTON( $self, $self->btn_refresh,         \&refresh_words  );
-  EVT_BUTTON( $self, $self->btn_delete_item,     \&delete_word    );
+  EVT_GRID_CMD_CELL_CHANGE( $self, $self->grid,  \&update_word   );
+  EVT_BUTTON( $self, $self->btn_refresh,         \&refresh_words );
+  EVT_BUTTON( $self, $self->btn_delete_item,     \&delete_word   );
 
   Dict::Learn::Dictionary->cb(sub {
     my $dict = shift;
@@ -85,16 +96,13 @@ sub update_word {
   printf "%s %d %d\n", $self->grid->GetCellValue($obj->GetRow(), $obj->GetCol()),
                        $obj->GetRow(),
                        $obj->GetCol();
-  $main::ioc->lookup('db')->update_word(
-    id => $self->grid->GetRowLabelValue( $obj->GetRow() ),
-    $cols[$obj->GetCol()] // 0 => $self->grid->GetCellValue( $obj->GetRow() ,
-                                                             $obj->GetCol()),
-  );
-}
-
-sub update_example {
-  my $self = shift;
-  # @TODO: implement
+  my %upd_word = ( word_id => $self->grid->GetRowLabelValue( $obj->GetRow() ) );
+  my @words = split /[\/\\\|]+/ => $self->grid->GetCellValue( $obj->GetRow(), $obj->GetCol() );
+  $upd_word{irregular} = 1 if @words > 1;
+  $upd_word{word}  = $words[0] if $words[0];
+  $upd_word{word2} = $words[1] if $words[1];
+  $upd_word{word3} = $words[2] if $words[2];
+  $main::ioc->lookup('db')->update_word(\%upd_word);
 }
 
 sub delete_word {
@@ -111,11 +119,6 @@ sub delete_word {
   $self->refresh_words();
 }
 
-sub delete_example {
-  my $self = shift;
-  # @TODO: implement
-}
-
 sub clear_db {
   my $self = shift;
   # @TODO: implement
@@ -124,19 +127,19 @@ sub clear_db {
 sub select_words {
   my $self = shift;
   my $i=0;
-  my @items = $main::ioc->lookup('db')->select_all(
-    dictionary_id => Dict::Learn::Dictionary->curr_id
+  my @items = $main::ioc->lookup('db')->select_words_grid(
+    lang1_id => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
+    dict_id  => Dict::Learn::Dictionary->curr_id,
   );
   $self->grid->InsertRows(0 , scalar @items);
-  for my $item ( $main::ioc->lookup('db')->select_all(
-    dictionary_id => Dict::Learn::Dictionary->curr_id ))
-  {
+  for my $item ( @items ) {
     $self->grid->SetRowLabelValue($i => $item->{word_id});
-    $self->grid->SetCellValue( $i,   0, $item->{word1_id}{word} );
-    $self->grid->SetCellValue( $i,   1, $item->{wordclass}{name_orig} );
-    $self->grid->SetCellValue( $i,   2, $item->{word2_id}{word} );
-    $self->grid->SetCellValue( $i,   3, $item->{mdate} );
-    $self->grid->SetCellValue( $i++, 4, $item->{cdate} );
+    $self->grid->SetCellValue( $i,   COL_WORD,      $item->{word} );
+    $self->grid->SetCellValue( $i,   COL_WORDCLASS, $item->{wordclass} );
+    $self->grid->SetCellValue( $i,   COL_REL_W,     $item->{rel_words} );
+    $self->grid->SetCellValue( $i,   COL_REL_E,     $item->{rel_examples} );
+    $self->grid->SetCellValue( $i,   COL_CDATE,     $item->{cdate} );
+    $self->grid->SetCellValue( $i++, COL_MDATE,     $item->{mdate} );
   }
 }
 
