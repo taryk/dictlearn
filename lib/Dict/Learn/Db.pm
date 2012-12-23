@@ -70,12 +70,19 @@ sub update_item {
 sub update_word {
   my $self   = shift;
   my %params = @_;
-  my $updated_word = $self->schema->resultset('Word')->
-  search({ word_id => $params{word_id} })->first->update({
+  my %upd_word = (
     word    => $params{word},
     note    => $params{note},
     lang_id => $params{lang_id},
-  });
+  );
+  if ($upd_word{irregular} = $params{irregular}) {
+    $upd_word{word2} = $params{word2};
+    $upd_word{word3} = $params{word3};
+  } else {
+    $upd_word{word2} = $upd_word{word3} = undef;
+  }
+  my $updated_word = $self->schema->resultset('Word')->
+    search({ word_id => $params{word_id} })->first->update(\%upd_word);
   for ( @{ $params{translate} } ) {
     # create new
     unless (defined $_->{word_id}) {
