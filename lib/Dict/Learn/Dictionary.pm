@@ -49,7 +49,7 @@ sub cb {
 sub get {
   my ($self, $id) = @_;
   $self = $self->singleton unless ref $self;
-  defined $self->{dict_id}{$id} ? $self->{dict_id}{$id} : undef
+  defined $self->{dicts}{$id} ? $self->{dicts}{$id} : undef
 }
 
 sub curr {
