@@ -1,7 +1,7 @@
 package Dict::Learn::Main::Result::Word 0.2;
 use base qw[ DBIx::Class::Core ];
 __PACKAGE__->table('word');
-__PACKAGE__->add_columns(qw[ word_id word lang_id wordclass_id
+__PACKAGE__->add_columns(qw[ word_id word word2 word3 irregular lang_id wordclass_id
                              note cdate mdate ]);
 __PACKAGE__->set_primary_key('word_id');
 __PACKAGE__->has_one( wordclass     => 'Dict::Learn::Main::Result::Wordclass',
