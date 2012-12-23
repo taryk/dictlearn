@@ -18,11 +18,16 @@ sub new {
 sub add_word {
   my $self   = shift;
   my %params = @_;
-  my $new_word = $self->schema->resultset('Word')->create({
+  my %new_word = (
     word    => $params{word},
     note    => $params{note},
     lang_id => $params{lang_id},
-  });
+  );
+  if ($new_word{irregular} = $params{irregular}) {
+    $new_word{word2} = $params{word2};
+    $new_word{word3} = $params{word3};
+  }
+  my $new_word = $self->schema->resultset('Word')->create(\%new_word);
   for my $word ( @{$params{translate}} ) {
     my $fields = { };
     if (defined $word->{word_id} and $word->{word_id} >= 0) {
