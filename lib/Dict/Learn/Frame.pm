@@ -16,6 +16,7 @@ use Dict::Learn::Frame::PageAddItem;
 use Dict::Learn::Frame::AddWord;
 use Dict::Learn::Frame::AddExample;
 use Dict::Learn::Frame::GridWords;
+use Dict::Learn::Frame::GridExamples;
 use Dict::Learn::Frame::SearchWords;
 
 use common::sense;
@@ -23,6 +24,7 @@ use common::sense;
 use Class::XSAccessor
   accessors => [ qw| vbox menu_bar menu_dicts status_bar notebook
                      p_additem p_addword p_addexample p_gridwords p_search
+                     p_gridexamples
                | ];
 
 sub new {
@@ -61,6 +63,9 @@ sub new {
 
   $self->p_gridwords( Dict::Learn::Frame::GridWords->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
   $self->notebook->AddPage( $self->p_gridwords, "Words", 0 );
+
+    $self->p_gridexamples( Dict::Learn::Frame::GridExamples->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+  $self->notebook->AddPage( $self->p_gridexamples, "Examples", 0 );
 
   # page1
 
