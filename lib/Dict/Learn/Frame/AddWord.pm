@@ -315,11 +315,9 @@ sub clear_fields {
 
   $self->word_src->Clear;
   # irregular words
-  $self->cb_irregular->SetValue(0);
   $self->word2_src->Clear;
   $self->word3_src->Clear;
-  $self->word2_src->Enable(0);
-  $self->word3_src->Enable(0);
+  $self->enable_irregular(0);
 
   $self->do_word_dst(sub {
     my $word_dst_item = pop;
@@ -355,6 +353,9 @@ sub load_word {
   $self->fill_fields(
     word_id   => $word->{word_id},
     word      => $word->{word},
+    word2     => $word->{word2},
+    word3     => $word->{word3},
+    irregular => $word->{irregular},
     wordclass => $word->{wordclass_id},
     note      => $word->{note},
     translate => \@translate,
@@ -370,6 +371,11 @@ sub fill_fields {
   $self->item_id( $params{word_id} );
   $self->remove_all_dst;
   $self->word_src->SetValue($params{word});
+  $self->enable_irregular($params{irregular});
+  if ($params{irregular}) {
+    $self->word2_src->SetValue($params{word2}) if $params{word2};
+    $self->word3_src->SetValue($params{word3}) if $params{word3};
+  }
   for my $word_tr ( @{ $params{translate} } ) {
     my $el = $self->add_dst_item($word_tr->{word_id} => 1);
     $el->{word}->SetValue($word_tr->{word});
@@ -418,10 +424,16 @@ sub translate_word {
   }
 }
 
+sub enable_irregular {
+  my ($self, $is_checked) = @_;
+  $self->cb_irregular->SetValue($is_checked);
+  $self->word2_src->Enable($is_checked);
+  $self->word3_src->Enable($is_checked);
+}
+
 sub toggle_irregular {
   my ($self, $event) = @_;
-  $self->word2_src->Enable($event->IsChecked);
-  $self->word3_src->Enable($event->IsChecked);
+  $self->enable_irregular($event->IsChecked)
 }
 
 sub enable_controls($$) {
