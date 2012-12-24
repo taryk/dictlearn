@@ -412,5 +412,16 @@ sub get_dictionaries {
   $rs->all
 }
 
+sub get_irregular_verbs {
+  my ($self) = @_;
+  my $rs = $self->schema->resultset('Word')->search(
+    { 'me.irregular' => 1 },
+    { select => [ qw|me.word me.word2 me.word3 | ] }
+  );
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  my @a = $rs->all;
+  @a
+}
+
 1;
 
