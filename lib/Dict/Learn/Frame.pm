@@ -17,6 +17,7 @@ use Dict::Learn::Frame::AddExample;
 use Dict::Learn::Frame::GridWords;
 use Dict::Learn::Frame::GridExamples;
 use Dict::Learn::Frame::SearchWords;
+use Dict::Learn::Frame::IrregularVerbsTest;
 
 use common::sense;
 
@@ -24,6 +25,7 @@ use Class::XSAccessor
   accessors => [ qw| vbox menu_bar menu_dicts status_bar notebook
                      p_additem p_addword p_addexample p_gridwords p_search
                      p_gridexamples
+                     pt_irrverbs
                | ];
 
 sub new {
@@ -58,14 +60,20 @@ sub new {
 
   $self->notebook->AddPage( $self->p_addexample, "Example", 0 );
 
-  # panel grid
+  # panel: table of words
 
   $self->p_gridwords( Dict::Learn::Frame::GridWords->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
   $self->notebook->AddPage( $self->p_gridwords, "Words", 0 );
 
-    $self->p_gridexamples( Dict::Learn::Frame::GridExamples->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+  # panel: table of examples
+
+  $self->p_gridexamples( Dict::Learn::Frame::GridExamples->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
   $self->notebook->AddPage( $self->p_gridexamples, "Examples", 0 );
 
+  # Irregular Verbs test
+  $self->pt_irrverbs( Dict::Learn::Frame::IrregularVerbsTest->new($self, $self->notebook,
+wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
+  $self->notebook->AddPage( $self->pt_irrverbs, "Irregular Verbs Test", 0 );
 
   # tell we want automatic layout
   # $self->SetAutoLayout( 1 );
