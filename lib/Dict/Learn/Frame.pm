@@ -12,7 +12,6 @@ use File::Basename 'dirname';
 use lib dirname(__FILE__).'/../lib/';
 
 use Dict::Learn::Db;
-use Dict::Learn::Frame::PageAddItem;
 use Dict::Learn::Frame::AddWord;
 use Dict::Learn::Frame::AddExample;
 use Dict::Learn::Frame::GridWords;
@@ -67,11 +66,6 @@ sub new {
     $self->p_gridexamples( Dict::Learn::Frame::GridExamples->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
   $self->notebook->AddPage( $self->p_gridexamples, "Examples", 0 );
 
-  # page1
-
-  $self->p_additem( Dict::Learn::Frame::PageAddItem->new( $self, $self->notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
-
-  $self->notebook->AddPage( $self->p_additem, "Add item", 0 );
 
   # tell we want automatic layout
   # $self->SetAutoLayout( 1 );
