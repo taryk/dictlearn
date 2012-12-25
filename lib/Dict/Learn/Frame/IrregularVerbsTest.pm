@@ -83,7 +83,43 @@ sub new {
   EVT_BUTTON( $self, $self->btn_prev,  \&prev_word  );
   EVT_BUTTON( $self, $self->btn_next,  \&next_word  );
   EVT_BUTTON( $self, $self->btn_reset, \&reset_test );
+  EVT_KEY_UP( $self, sub { $self->keybind($_[1]) } );
+  EVT_KEY_UP( $self->e_word2, sub { $self->keybind2($_[1]) } );
+  EVT_KEY_UP( $self->e_word3, sub { $self->keybind3($_[1]) } );
   $self
+}
+
+sub keybind {
+  my ($self, $event) = @_;
+  p($event);
+  my $key = $event->GetKeyCode();
+  if ($key == WXK_RETURN) {
+    $self->next_word();
+  }
+}
+
+sub keybind2 {
+  my ($self, $event) = @_;
+  my $key = $event->GetKeyCode();
+  if ($key == WXK_RETURN) {
+    $self->e_word3->SetFocus();
+  }
+  elsif ($event->AltDown() and $key == WXK_BACK)
+  {
+    $self->prev_word();
+  }
+}
+
+sub keybind3 {
+  my ($self, $event) = @_;
+  my $key = $event->GetKeyCode();
+  if ($event->GetKeyCode() == WXK_RETURN) {
+    $self->next_word();
+  }
+  elsif ($event->AltDown() and $key == WXK_BACK)
+  {
+    $self->e_word2->SetFocus();
+  }
 }
 
 sub get_word {
@@ -150,6 +186,7 @@ sub prev_word {
   $self->clear_fields();
   $self->set_position($self->p_current-1);
   $self->load_step($self->p_current);
+  $self->SetFocus();
 }
 
 sub set_position {
@@ -165,6 +202,7 @@ sub load_fields {
   $self->e_word3->SetValue($words[2]) if $words[2];
   $self->e_word2->Enable($en);
   $self->e_word3->Enable($en);
+  $self->e_word2->SetFocus();
   $self->Layout();
 }
 
