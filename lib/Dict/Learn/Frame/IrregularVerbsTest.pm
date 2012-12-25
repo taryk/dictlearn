@@ -14,10 +14,13 @@ use Class::XSAccessor
   accessors => [ qw| parent
                      l_position
                      l_word e_word2 e_word3
+                     res res_word2 res_word3
                      btn_next btn_prev btn_reset
-                     vbox hbox_words hbox_buttons
+                     vbox hbox_words hbox_res hbox_buttons
 
                      p_current p_min p_max
+
+                     words exercise
                    | ];
 
 use constant {
@@ -42,6 +45,16 @@ sub new {
   $self->hbox_words->Add($self->e_word2, 1, wxRIGHT|wxEXPAND, 5);
   $self->hbox_words->Add($self->e_word3, 1, wxEXPAND, 0);
 
+  ### res
+  $self->res(  Wx::StaticText->new($self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE) );
+  $self->res_word2(  Wx::StaticText->new($self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE) );
+  $self->res_word3(  Wx::StaticText->new($self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE) );
+  # layout
+  $self->hbox_res( Wx::BoxSizer->new( wxHORIZONTAL ) );
+  $self->hbox_res->Add($self->res,    0, wxRIGHT|wxTOP|wxLEFT|wxEXPAND, 5);
+  $self->hbox_res->Add($self->res_word2, 1, wxRIGHT|wxEXPAND, 5);
+  $self->hbox_res->Add($self->res_word3, 1, wxEXPAND, 0);
+
   ### buttons
   $self->btn_prev(  Wx::Button->new($self, wxID_ANY, 'Prev',  wxDefaultPosition, wxDefaultSize) );
   $self->btn_next(  Wx::Button->new($self, wxID_ANY, 'Next',  wxDefaultPosition, wxDefaultSize) );
@@ -56,6 +69,7 @@ sub new {
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->vbox->Add( $self->l_position,   0, wxTOP|wxGROW, 5  );
   $self->vbox->Add( $self->hbox_words,   0, wxTOP|wxGROW, 20 );
+  $self->vbox->Add( $self->hbox_res,     0, wxTOP|wxGROW, 5  );
   $self->vbox->Add( $self->hbox_buttons, 0, wxTOP|wxGROW, 20 );
   $self->SetSizer( $self->vbox );
   $self->Layout();
@@ -66,30 +80,76 @@ sub new {
   $self->init_test();
 
   # events
-  EVT_BUTTON( $self, $self->btn_prev,  \&prev_word );
-  EVT_BUTTON( $self, $self->btn_next,  \&next_word );
+  EVT_BUTTON( $self, $self->btn_prev,  \&prev_word  );
+  EVT_BUTTON( $self, $self->btn_next,  \&next_word  );
   EVT_BUTTON( $self, $self->btn_reset, \&reset_test );
   $self
 }
 
+sub get_word {
+  my ($self, $id, $n) = @_;
+  $n //= 1;
+  my $words_c = scalar @{ $self->words };
+  $id %= $words_c if $id >= $words_c;
+  return unless defined $self->words->[$id];
+  return $self->words->[$id]
+}
+
+sub get_step {
+  my ($self, $id) = @_;
+  return $self->exercise->[$id]
+    if defined $self->exercise->[$id];
+}
+
 sub init_test {
   my ($self) = @_;
+  $self->exercise([]);
   $self->clear_fields();
   $self->set_position($self->p_min);
+  $self->words( [ $main::ioc->lookup('db')->get_irregular_verbs() ] );
+  for (my $id = $self->p_min-1; $id < $self->p_max; $id++)
+  {
+    my $word = $self->get_word($id);
+    push @{$self->exercise} => {
+      word => [ $word->{word}, $word->{word2}, $word->{word3} ],
+      user => [ undef, undef, undef ],
+      end  => 0,
+    };
+  }
+  $self->load_step($self->p_current);
+}
+
+sub write_step_res {
+  my ($self, $id, $end) = @_;
+  $end //= 1;
+  my $ex = $self->exercise->[$id-1];
+  $ex->{end}  = $end;
+  $ex->{user} = [
+    undef,
+    $self->e_word2->GetValue,
+    $self->e_word3->GetValue
+  ]
 }
 
 sub next_word {
   my ($self) = @_;
-  return unless $self->p_current < $self->p_max;
+  $self->write_step_res($self->p_current);
+  if ($self->p_current >= $self->p_max) {
+    $self->result();
+    return;
+  }
   $self->clear_fields();
   $self->set_position($self->p_current+1);
+  $self->load_step($self->p_current);
 }
 
 sub prev_word {
   my ($self) = @_;
   return unless $self->p_current > $self->p_min;
+  $self->write_step_res($self->p_current, 0);
   $self->clear_fields();
   $self->set_position($self->p_current-1);
+  $self->load_step($self->p_current);
 }
 
 sub set_position {
@@ -99,11 +159,24 @@ sub set_position {
 }
 
 sub load_fields {
-  my ($self, @words) = @_;
+  my ($self, $en, @words) = @_;
   $self->l_word->SetLabel($words[0])  if $words[0];
   $self->e_word2->SetValue($words[1]) if $words[1];
   $self->e_word3->SetValue($words[2]) if $words[2];
+  $self->e_word2->Enable($en);
+  $self->e_word3->Enable($en);
   $self->Layout();
+}
+
+sub load_step {
+  my ($self, $id) = @_;
+  my $step = $self->get_step($id-1);
+  $self->load_fields(
+    !$step->{end}    ,
+    $step->{word}[0] ,
+    $step->{user}[1] ,
+    $step->{user}[2]
+  );
 }
 
 sub clear_fields {
@@ -117,6 +190,30 @@ sub clear_fields {
 sub reset_test {
   my ($self) = @_;
   $self->init_test();
+}
+
+sub result {
+  my ($self) = @_;
+  my $passed = 0;
+  my $failed = 0;
+  p($self->exercise);
+  for my $item (@{ $self->exercise }) {
+    if ($item->{user}[1] eq $item->{word}[1] and
+        $item->{user}[2] eq $item->{word}[2])
+    {
+      $passed++
+    }
+    else {
+      $failed++
+    }
+  }
+  my $msg;
+  if ($failed == 0) {
+    $msg = 'Congratulations! Your test have been passed successfully!';
+  } else {
+    $msg = sprintf 'Your score: %d/%d', $passed, $self->p_max;
+  }
+  Wx::MessageBox( $msg, 'Result', wxYES, $self );
 }
 
 1;
