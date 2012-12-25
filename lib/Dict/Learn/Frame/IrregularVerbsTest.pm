@@ -213,7 +213,8 @@ sub result {
   } else {
     $msg = sprintf 'Your score: %d/%d', $passed, $self->p_max;
   }
-  Wx::MessageBox( $msg, 'Result', wxYES, $self );
+  my $res = Wx::MessageBox( $msg, 'Result', wxOK, $self );
+  $self->reset_test();
 }
 
 1;
