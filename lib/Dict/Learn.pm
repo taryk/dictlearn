@@ -11,7 +11,7 @@ use common::sense;
 sub OnInit {
   my $self  = shift;
   my $frame = Dict::Learn::Frame->new( undef,
-                                       -1,
+                                       wxID_ANY,
                                        'DictLearn v0.1',
                                        [ 200, 200 ],
                                        [ 800, 500 ],

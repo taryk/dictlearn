@@ -34,7 +34,7 @@ sub new {
 
   $self->SetIcon( Wx::GetWxPerlIcon() );
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
-  $self->notebook( Wx::Notebook->new( $self, -1, [-1,-1], [-1,-1], 0 ) );
+  $self->notebook( Wx::Notebook->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 ) );
 
   # main menu
   $self->menu_bar( Wx::MenuBar->new(0) );
@@ -91,7 +91,6 @@ wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
 
   # events
   EVT_CLOSE( $self, \&on_close );
-
   $self
 }
 
