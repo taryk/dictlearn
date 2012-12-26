@@ -22,11 +22,13 @@ use Dict::Learn::Frame::IrregularVerbsTest;
 use common::sense;
 
 use Class::XSAccessor
-  accessors => [ qw| vbox menu_bar menu_dicts status_bar notebook
+  accessors => [ qw| vbox menu_bar menu_dicts menu_db status_bar notebook
                      p_additem p_addword p_addexample p_gridwords p_search
                      p_gridexamples
                      pt_irrverbs
                | ];
+
+use constant DICT_OFFSET => 100;
 
 sub new {
   my $class = shift;
@@ -37,11 +39,18 @@ sub new {
   $self->notebook( Wx::Notebook->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 ) );
 
   # main menu
+  my $menu_id = 0;
   $self->menu_bar( Wx::MenuBar->new(0) );
   $self->SetMenuBar( $self->menu_bar );
   $self->menu_dicts( Wx::Menu->new );
   $self->menu_bar->Append( $self->menu_dicts, 'Dictionaries' );
   $self->init_menu_dicts( $self->menu_dicts );
+  $self->menu_db( Wx::Menu->new );
+  $self->menu_bar->Append( $self->menu_db, 'DB' );
+  $self->menu_db->Append(++$menu_id, 'Export');
+  EVT_MENU($self, $menu_id, \&export);
+  $self->menu_db->Append(++$menu_id, 'Import');
+  EVT_MENU($self, $menu_id, \&import);
 
   # panel search
 
@@ -100,9 +109,9 @@ sub init_menu_dicts {
   for ( sort { $a->{dictionary_id} <=> $b->{dictionary_id} }
         values %{ Dict::Learn::Dictionary->all } )
   {
-    $menu->AppendRadioItem( $_->{dictionary_id}, $_->{dictionary_name} );
+    $menu->AppendRadioItem( _MENU_ID($_->{dictionary_id}), $_->{dictionary_name} );
     # event
-    EVT_MENU( $self, $_->{dictionary_id}, \&dictionary_check );
+    EVT_MENU( $self, _MENU_ID($_->{dictionary_id}), \&dictionary_check );
   }
   $self
 }
@@ -114,8 +123,8 @@ sub dictionary_check {
   $self->status_bar->SetStatusText(
     "Dictionary '" . $menu_item->GetLabel . "' selected"
   );
-  Dict::Learn::Dictionary->set( $event->GetId );
-  $self->set_frame_title( $event->GetId );
+  Dict::Learn::Dictionary->set( _DICT_ID($event->GetId) );
+  $self->set_frame_title( _DICT_ID($event->GetId) );
 }
 
 sub set_frame_title {
@@ -125,10 +134,30 @@ sub set_frame_title {
                   Dict::Learn::Dictionary->get($id)->{dictionary_name});
 }
 
+sub _MENU_ID {
+  my ($dict_id) = @_;
+  int($dict_id) + DICT_OFFSET
+}
+
+sub _DICT_ID {
+  my ($menu_id) = @_;
+  int($menu_id) - DICT_OFFSET
+}
+
 sub on_close {
   my ( $self, $event ) = @_;
   print "exit\n";
   $self->Destroy;
+}
+
+sub export {
+  my $self = shift;
+  say "export";
+}
+
+sub import {
+  my $self = shift;
+  say "import";
 }
 
 1;
