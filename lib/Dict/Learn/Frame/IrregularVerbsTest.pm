@@ -7,6 +7,8 @@ use Wx::Event qw[:everything];
 use base 'Wx::Panel';
 
 use List::Util qw[shuffle];
+use Dict::Learn::Frame::IrregularVerbsTest::Result;
+
 use Data::Printer;
 
 use common::sense;
@@ -233,26 +235,17 @@ sub reset_test {
 
 sub result {
   my ($self) = @_;
-  my $passed = 0;
-  my $failed = 0;
-  p($self->exercise);
-  for my $item (@{ $self->exercise }) {
-    if ($item->{user}[1] eq $item->{word}[1] and
-        $item->{user}[2] eq $item->{word}[2])
-    {
-      $passed++
-    }
-    else {
-      $failed++
-    }
-  }
-  my $msg;
-  if ($failed == 0) {
-    $msg = 'Congratulations! Your test have been passed successfully!';
+  my $result_dialog = Dict::Learn::Frame::IrregularVerbsTest::Result->new(
+    $self, wxID_ANY, 'Result', wxDefaultPosition, wxDefaultSize,
+    wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxSTAY_ON_TOP
+  );
+  if ($result_dialog->fill_result($self->exercise)->ShowModal() == wxID_OK)
+  {
+    say "ok";
   } else {
-    $msg = sprintf 'Your score: %d/%d', $passed, $self->p_max;
+    say "cancel";
   }
-  my $res = Wx::MessageBox( $msg, 'Result', wxOK, $self );
+  $result_dialog->Destroy();
   $self->reset_test();
 }
 
