@@ -458,5 +458,45 @@ sub select_all_words_examples_xref {
   [ $rs->all ]
 }
 
+sub import_words {
+  my ($self, $data) = @_;
+  for my $item (@$data) {
+    $self->schema->resultset('Word')->create($item);
+  }
+  return 1;
+}
+
+sub import_words_xref {
+  my ($self, $data) = @_;
+  for my $item (@$data) {
+    $self->schema->resultset('Words')->create($item);
+  }
+  return 1;
+}
+
+sub import_examples {
+  my ($self, $data) = @_;
+  for my $item (@$data) {
+    $self->schema->resultset('Example')->create($item);
+  }
+  return 1;
+}
+
+sub import_examples_xref {
+  my ($self, $data) = @_;
+  for my $item (@$data) {
+    $self->schema->resultset('Examples')->create($item);
+  }
+  return 1;
+}
+
+sub import_words_examples_xref {
+  my ($self, $data) = @_;
+  for my $item (@$data) {
+    $self->schema->resultset('WordExample')->create($item);
+  }
+  return 1;
+}
+
 1;
 
