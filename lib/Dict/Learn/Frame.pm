@@ -12,6 +12,7 @@ use File::Basename 'dirname';
 use lib dirname(__FILE__).'/../lib/';
 
 use Dict::Learn::Db;
+use Dict::Learn::Export;
 use Dict::Learn::Frame::AddWord;
 use Dict::Learn::Frame::AddExample;
 use Dict::Learn::Frame::GridWords;
@@ -152,7 +153,11 @@ sub on_close {
 
 sub export {
   my $self = shift;
-  say "export";
+  if (my $fn = Dict::Learn::Export->new->do()) {
+    say "export [".$fn."]: successfully";
+  } else {
+    say "export failed";
+  }
 }
 
 sub import {
