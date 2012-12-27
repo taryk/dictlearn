@@ -49,7 +49,7 @@ sub new {
   $self->menu_db( Wx::Menu->new );
   $self->menu_bar->Append( $self->menu_db, 'DB' );
   $self->menu_db->Append(++$menu_id, 'Export');
-  EVT_MENU($self, $menu_id, \&export);
+  EVT_MENU($self, $menu_id, \&db_export);
   $self->menu_db->Append(++$menu_id, 'Import');
   EVT_MENU($self, $menu_id, \&import);
 
@@ -151,8 +151,8 @@ sub on_close {
   $self->Destroy;
 }
 
-sub export {
-  my $self = shift;
+sub db_export {
+  my ($self) = @_;
   if (my $fn = Dict::Learn::Export->new->do()) {
     say "export [".$fn."]: successfully";
   } else {
