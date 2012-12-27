@@ -13,6 +13,7 @@ use lib dirname(__FILE__).'/../lib/';
 
 use Dict::Learn::Db;
 use Dict::Learn::Export;
+use Dict::Learn::Import;
 use Dict::Learn::Frame::AddWord;
 use Dict::Learn::Frame::AddExample;
 use Dict::Learn::Frame::GridWords;
@@ -52,7 +53,7 @@ sub new {
   $self->menu_db->Append(++$menu_id, 'Export');
   EVT_MENU($self, $menu_id, \&db_export);
   $self->menu_db->Append(++$menu_id, 'Import');
-  EVT_MENU($self, $menu_id, \&import);
+  EVT_MENU($self, $menu_id, \&db_import);
 
   # panel search
 
@@ -161,9 +162,24 @@ sub db_export {
   }
 }
 
-sub import {
-  my $self = shift;
-  say "import";
+sub db_import {
+  my ($self) = @_;
+  my $fileopen = Wx::FileDialog->new($self,
+    'Select a file', '', '',
+    join('|', 'JSON files (*.json)|*.json',
+              'SQL files (*.sql)|*.sql',
+              'All files (*.*)|*.*'),
+    wxFD_OPEN
+  );
+  if( $fileopen->ShowModal == wxID_OK ) {
+    my $filename = $fileopen->GetPath();
+    say "open filename: ".$filename;
+    if (Dict::Learn::Import->new->do($filename)) {
+      say "import successfully";
+    } else {
+      say "import failed";
+    }
+  }
 }
 
 1;
