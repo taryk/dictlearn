@@ -423,5 +423,40 @@ sub get_irregular_verbs {
   @a
 }
 
+sub select_all_words {
+  my ($self) = @_;
+  my $rs = $self->schema->resultset('Word')->search({ },{ });
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  [ $rs->all ]
+}
+
+sub select_all_words_xref {
+  my ($self) = @_;
+  my $rs = $self->schema->resultset('Words')->search({ },{ });
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  [ $rs->all ]
+}
+
+sub select_all_examples {
+  my ($self) = @_;
+  my $rs = $self->schema->resultset('Example')->search({ },{ });
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  [ $rs->all ]
+}
+
+sub select_all_examples_xref {
+  my ($self) = @_;
+  my $rs = $self->schema->resultset('Examples')->search({ },{ });
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  [ $rs->all ]
+}
+
+sub select_all_words_examples_xref {
+  my ($self) = @_;
+  my $rs = $self->schema->resultset('WordExample')->search({ },{ });
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  [ $rs->all ]
+}
+
 1;
 
