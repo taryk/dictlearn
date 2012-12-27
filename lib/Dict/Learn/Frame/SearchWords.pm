@@ -138,8 +138,11 @@ sub lookup {
     lang_id => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id} ))
   {
     my $id = $self->lb_words->InsertItem( Wx::ListItem->new );
+    my $word = $item->{is_irregular} ?
+      join(' / ' => $item->{word_orig}, $item->{word2}, $item->{word3}) :
+      $item->{word_orig};
     $self->lb_words->SetItem($id, 0,         $item->{word_id}   );
-    $self->lb_words->SetItem($id, COL_LANG1, $item->{word_orig} );
+    $self->lb_words->SetItem($id, COL_LANG1, $word              );
     $self->lb_words->SetItem($id, 2,         $item->{wordclass} );
     $self->lb_words->SetItem($id, COL_LANG2, $item->{word_tr}   );
     $self->lb_words->SetItem($id, 4,         $item->{note}      );

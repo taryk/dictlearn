@@ -294,12 +294,13 @@ sub select_words_grid {
   my $rs   = $self->schema->resultset('Word')->search(
     { 'me.lang_id' => $params{lang1_id} },
     { join     => [ 'rel_words', 'examples', 'wordclass' ],
-      select   => [ 'me.word_id', 'me.word', 'wordclass.abbr',
+      select   => [ 'me.word_id', 'me.word', 'me.word2', 'me.word3',
+                    'me.irregular', 'wordclass.abbr',
                   { count => [ 'rel_words.word2_id'  ] },
                   { count => [ 'examples.example_id' ] },
                     'me.cdate', 'me.mdate' ],
-      as       => [ qw|word_id word wordclass rel_words rel_examples
-                       cdate mdate| ],
+      as       => [ qw|word_id word word2 word3 is_irregular wordclass
+                       rel_words rel_examples cdate mdate| ],
       group_by => [ 'me.word_id' ],
       order_by => { -desc => [ 'me.cdate' ] }
     }
