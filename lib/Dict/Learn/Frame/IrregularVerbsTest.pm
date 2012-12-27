@@ -129,6 +129,7 @@ sub get_word {
   my ($self, $id, $n) = @_;
   $n //= 1;
   my $words_c = scalar @{ $self->words };
+  return unless $words_c > 0;
   $id %= $words_c if $id >= $words_c;
   return unless defined $self->words->[$id];
   return $self->words->[$id]
