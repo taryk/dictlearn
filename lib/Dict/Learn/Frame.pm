@@ -23,7 +23,8 @@ use Dict::Learn::Frame::IrregularVerbsTest;
 use common::sense;
 
 use Class::XSAccessor
-  accessors => [ qw| vbox menu_bar menu_dicts menu_db status_bar notebook
+  accessors => [ qw| parent
+                     vbox menu_bar menu_dicts menu_db status_bar notebook
                      p_additem p_addword p_addexample p_gridwords p_search
                      p_gridexamples
                      pt_irrverbs
@@ -32,9 +33,9 @@ use Class::XSAccessor
 use constant DICT_OFFSET => 100;
 
 sub new {
-  my $class = shift;
-  my $self  = $class->SUPER::new( @_ );
-
+  my ($class, $parent) = @_;
+  my $self  = $class->SUPER::new( splice @_ => 1 );
+  $self->parent($parent);
   $self->SetIcon( Wx::GetWxPerlIcon() );
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->notebook( Wx::Notebook->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 ) );
