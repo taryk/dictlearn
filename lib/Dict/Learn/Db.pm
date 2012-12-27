@@ -222,8 +222,12 @@ sub find_items {
       'me.word'  => { like => "%".$params{word}."%" },
     ]}, {
       join     => { 'rel_words' => [ 'word2_id', 'wordclass' ] },
-      select   => [ 'me.word_id', 'me.word', { group_concat => [ 'word2_id.word', "', '" ] }, 'me.mdate', 'me.cdate', 'me.note', 'wordclass.abbr' ],
-      as       => [ qw| word_id word_orig word_tr mdate cdate note wordclass | ],
+      select   => [ 'me.word_id', 'me.word', 'me.word2', 'me.word3', 'me.irregular',
+                  { group_concat => [ 'word2_id.word', "', '" ] },
+                    'me.mdate', 'me.cdate', 'me.note', 'wordclass.abbr' ],
+      as       => [ qw| word_id word_orig word2 word3 is_irregular word_tr
+                        mdate cdate note wordclass
+                      | ],
       group_by => [ 'me.word_id', 'rel_words.wordclass_id' ],
       order_by => { -asc => 'me.cdate' },
     }

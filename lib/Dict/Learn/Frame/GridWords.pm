@@ -133,8 +133,11 @@ sub select_words {
   );
   $self->grid->InsertRows(0 , scalar @items);
   for my $item ( @items ) {
+    my $word = $item->{is_irregular} ?
+      join(' / ' => $item->{word}, $item->{word2}, $item->{word3}) :
+      $item->{word};
     $self->grid->SetRowLabelValue($i => $item->{word_id});
-    $self->grid->SetCellValue( $i,   COL_WORD,      $item->{word} );
+    $self->grid->SetCellValue( $i,   COL_WORD,      $word );
     $self->grid->SetCellValue( $i,   COL_WORDCLASS, $item->{wordclass} );
     $self->grid->SetCellValue( $i,   COL_REL_W,     $item->{rel_words} );
     $self->grid->SetCellValue( $i,   COL_REL_E,     $item->{rel_examples} );
