@@ -54,6 +54,8 @@ sub new {
   EVT_MENU($self, $menu_id, \&db_export);
   $self->menu_db->Append(++$menu_id, 'Import');
   EVT_MENU($self, $menu_id, \&db_import);
+  $self->menu_db->Append(++$menu_id, 'Clear');
+  EVT_MENU($self, $menu_id, \&db_clear);
 
   # panel search
 
@@ -179,6 +181,15 @@ sub db_import {
     } else {
       say "import failed";
     }
+  }
+}
+
+sub db_clear {
+  my ($self) = @_;
+  my $db = $main::ioc->lookup('db');
+  for (qw[Word Words Example Examples WordExample]) {
+    $db->schema->resultset($_)->clear_data();
+    say "clear $_";
   }
 }
 
