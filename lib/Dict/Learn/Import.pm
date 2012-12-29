@@ -7,6 +7,15 @@ use common::sense;
 
 use Data::Printer;
 
+use constant {
+  TABLE_MAP => { words               => 'Word',
+                 words_xref          => 'Words',
+                 examples            => 'Example',
+                 examples_xref       => 'Examples',
+                 words_examples_xref => 'WordExample',
+  }
+};
+
 sub new {
   my $class = shift;
   my $self  = bless { } => $class;
@@ -20,21 +29,11 @@ sub do {
   {
     my $data = decode_json(do { local $/; <$fh> } );
     my $db = $main::ioc->lookup('db');
-    $db->import_words($data->{words})
-      if defined $data->{words} and
-             ref $data->{words} eq 'ARRAY';
-    $db->import_words_xref($data->{words_xref})
-      if defined $data->{words_xref} and
-             ref $data->{words_xref} eq 'ARRAY';
-    $db->import_examples($data->{examples})
-      if defined $data->{examples} and
-             ref $data->{examples} eq 'ARRAY';
-    $db->import_examples_xref($data->{examples_xref})
-      if defined $data->{examples_xref} and
-             ref $data->{examples_xref} eq 'ARRAY';
-    $db->import_words_examples_xref($data->{words_examples_xref})
-      if defined $data->{words_examples_xref} and
-             ref $data->{words_examples_xref} eq 'ARRAY';
+    while ( my ($json_key, $rset_name) = each %{ +TABLE_MAP } ) {
+      $db->schema->resultset($rset_name)->import_data($data->{$json_key})
+        if defined $data->{$json_key} and
+               ref $data->{$json_key} eq 'ARRAY';
+    }
   }
 }
 
