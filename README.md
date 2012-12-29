@@ -16,3 +16,6 @@ The tool for improving and expanding your vocabulary
 * [Class::XSAccessor](https://metacpan.org/module/Class::XSAccessor)
 * [DBD::SQLite](https://metacpan.org/module/DBD::SQLite)
 * [Test::Class](https://metacpan.org/module/Test::Class)
+* [IO::File](https://metacpan.org/module/IO::File)
+* [URI::Escape](https://metacpan.org/module/URI::Escape)
+* [List::Util](https://metacpan.org/module/List::Util)
