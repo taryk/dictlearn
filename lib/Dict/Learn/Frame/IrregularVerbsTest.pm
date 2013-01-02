@@ -94,7 +94,7 @@ sub new {
 
 sub keybind {
   my ($self, $event) = @_;
-  p($event);
+  # p($event);
   my $key = $event->GetKeyCode();
   if ($key == WXK_RETURN) {
     $self->next_word();
@@ -146,7 +146,9 @@ sub init_test {
   $self->exercise([]);
   $self->clear_fields();
   $self->set_position($self->p_min);
-  $self->words( [ shuffle $main::ioc->lookup('db')->get_irregular_verbs() ] );
+  $self->words(
+    [ shuffle $main::ioc->lookup('db')->schema->resultset('Word')->get_irregular_verbs() ]
+  );
   for (my $id = $self->p_min-1; $id < $self->p_max; $id++)
   {
     my $word = $self->get_word($id);
