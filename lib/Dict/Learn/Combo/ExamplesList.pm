@@ -46,7 +46,7 @@ sub OnSelect {
 
 sub initialize_examples {
   my $self = shift;
-  my @examples = $main::ioc->lookup('db')->get_all_examples(
+  my @examples = $main::ioc->lookup('db')->schema->resultset('Example')->get_all(
     Dict::Learn::Dictionary->curr->{language_tr_id}{language_id}
   );
   $self->lb_examples->DeleteAllItems();
