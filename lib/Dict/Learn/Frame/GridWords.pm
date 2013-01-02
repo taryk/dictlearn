@@ -102,7 +102,7 @@ sub update_word {
   $upd_word{word}  = $words[0] if $words[0];
   $upd_word{word2} = $words[1] if $words[1];
   $upd_word{word3} = $words[2] if $words[2];
-  $main::ioc->lookup('db')->update_word(\%upd_word);
+  $main::ioc->lookup('db')->schema->resultset('Word')->update_one(\%upd_word);
 }
 
 sub delete_word {
@@ -115,7 +115,7 @@ sub delete_word {
                                       $self->grid->GetRowLabelValue($_);
     # $self->grid->DeleteRows($_, 1, -1);
   }
-  $main::ioc->lookup('db')->delete_word( @ids );
+  $main::ioc->lookup('db')->schema->resultset('Word')->delete_one( @ids );
   $self->refresh_words();
 }
 
@@ -127,7 +127,7 @@ sub clear_db {
 sub select_words {
   my $self = shift;
   my $i=0;
-  my @items = $main::ioc->lookup('db')->select_words_grid(
+  my @items = $main::ioc->lookup('db')->schema->resultset('Word')->select_words_grid(
     lang1_id => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
     dict_id  => Dict::Learn::Dictionary->curr_id,
   );
