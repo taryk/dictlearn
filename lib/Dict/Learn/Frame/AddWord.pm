@@ -157,7 +157,7 @@ sub make_dst_item {
 sub query_words {
   my ($self, $id) = @_;
   my $cb = $self->word_dst->[$id]{word};
-  my @words = $main::ioc->lookup('db')->select_words(
+  my @words = $main::ioc->lookup('db')->schema->resultset('Word')->select(
     Dict::Learn::Dictionary->curr->{language_tr_id}{language_id},
     $cb->GetValue(),
   );
@@ -170,7 +170,7 @@ sub query_words {
 sub check_word {
   my ($self, $event) = @_;
   my $word;
-  unless (defined($word = $main::ioc->lookup('db')->match_word(
+  unless (defined($word = $main::ioc->lookup('db')->schema->resultset('Word')->match(
     Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
     $event->GetString )->first))
   {
@@ -285,9 +285,9 @@ sub add {
               $self->item_id >= 0)
   {
     $params{word_id} = $self->item_id ;
-    $main::ioc->lookup('db')->update_word(%params);
+    $main::ioc->lookup('db')->schema->resultset('Word')->update_one(%params);
   } else {
-    $main::ioc->lookup('db')->add_word(%params);
+    $main::ioc->lookup('db')->schema->resultset('Word')->add_one(%params);
   }
   $self->clear_fields;
   $self->remove_all_dst;
@@ -302,7 +302,7 @@ sub add {
 
 sub import_wordclass {
   my $self = shift;
-  map { $_->{name_orig} } $main::ioc->lookup('db')->select_wordclass();
+  map { $_->{name_orig} } $main::ioc->lookup('db')->schema->resultset('Wordclass')->select()
 }
 
 sub clear_fields {
@@ -339,7 +339,7 @@ sub remove_all_dst {
 sub load_word {
   my $self   = shift;
   my %params = @_;
-  my $word   = $main::ioc->lookup('db')->select_word( $params{word_id} );
+  my $word   = $main::ioc->lookup('db')->schema->resultset('Word')->select_one( $params{word_id} );
   my @translate;
   for my $rel_word (@{ $word->{rel_words} }) {
     next unless $rel_word->{word2_id} or $rel_word->{word2_id}{word_id};
@@ -393,7 +393,7 @@ sub dst_count { scalar @{ $_[0]->word_dst } }
 sub get_partofspeach_index {
   my $self = shift;
   my $name = shift;
-  for ($main::ioc->lookup('db')->select_wordclass( name => $name ))
+  for ($main::ioc->lookup('db')->schema->resultset('Wordclass')->select( name => $name ))
     { return $_->{wordclass_id} }
 }
 
