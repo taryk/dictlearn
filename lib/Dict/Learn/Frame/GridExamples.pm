@@ -92,7 +92,7 @@ sub update_examples {
   printf "%s %d %d\n", $self->grid->GetCellValue($obj->GetRow(), $obj->GetCol()),
                        $obj->GetRow(),
                        $obj->GetCol();
-  $main::ioc->lookup('db')->update_example(
+  $main::ioc->lookup('db')->schema->resultset('Example')->update_one(
     example_id => $self->grid->GetRowLabelValue( $obj->GetRow() ),
     text       => $self->grid->GetCellValue( $obj->GetRow(), $obj->GetCol() ),
   );
@@ -107,7 +107,7 @@ sub delete_examples {
     printf "delete row #%d id #%d\n", $_,
                                       $self->grid->GetRowLabelValue($_);
   }
-  $main::ioc->lookup('db')->delete_example( @ids );
+  $main::ioc->lookup('db')->schema->resultset('Example')->delete_one( @ids );
   $self->refresh_examples();
 }
 
@@ -119,8 +119,8 @@ sub clear_db {
 sub select_examples {
   my $self = shift;
   my $i=0;
-  my @items = $main::ioc->lookup('db')->select_examples_grid(
-    lang1_id       => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
+  my @items = $main::ioc->lookup('db')->schema->resultset('Example')->select_examples_grid(
+    lang1_id      => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
     dictionary_id => Dict::Learn::Dictionary->curr_id
   );
   $self->grid->InsertRows(0 , scalar @items);
