@@ -237,10 +237,10 @@ sub add {
               $self->item_id >= 0)
   {
     $params{example_id} = $self->item_id;
-    $main::ioc->lookup('db')->update_example(%params);
+    $main::ioc->lookup('db')->schema->resultset('Example')->update_one(%params);
     $self->parent->notebook->SetPageText(2 => "Example");
   } else {
-    $main::ioc->lookup('db')->add_example(%params);
+    $main::ioc->lookup('db')->schema->resultset('Example')->add_one(%params);
   }
 
   $self->clear_fields;
@@ -273,7 +273,7 @@ sub remove_all_dst {
 sub load_example {
   my $self    = shift;
   my %params  = @_;
-  my $example = $main::ioc->lookup('db')->select_example( $params{example_id} );
+  my $example = $main::ioc->lookup('db')->schema->resultset('Example')->select_one( $params{example_id} );
   my @translate;
   for my $rel_example ( @{ $example->{rel_examples} } ) {
     push @translate => {
@@ -310,7 +310,7 @@ sub fill_fields {
 sub load_words {
   my $self = shift;
   $self->linked_words->Clear;
-  for my $item ( $main::ioc->lookup('db')->select_words(
+  for my $item ( $main::ioc->lookup('db')->schema->resultset('Word')->select(
     Dict::Learn::Dictionary->curr->{language_orig_id}{language_id} ))
   {
     $self->search_words->Append($item->{word}." (".$item->{wordclass}.")", $item->{id});
