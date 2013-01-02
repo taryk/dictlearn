@@ -133,7 +133,7 @@ sub new {
 sub lookup {
   my ($self, $event) = @_;
   $self->lb_words->DeleteAllItems();
-  for my $item ($main::ioc->lookup('db')->find_items(
+  for my $item ($main::ioc->lookup('db')->schema->resultset('Word')->find_ones(
     word    => $self->combobox->GetValue,
     lang_id => Dict::Learn::Dictionary->curr->{language_orig_id}{language_id} ))
   {
@@ -181,7 +181,7 @@ sub load_examples {
   my $obj  = shift;
   my $id   = $obj->GetLabel();
   $self->lb_examples->DeleteAllItems();
-  my @items = $main::ioc->lookup('db')->select_examples(
+  my @items = $main::ioc->lookup('db')->schema->resultset('Example')->select(
     word_id       => $id,
     dictionary_id => Dict::Learn::Dictionary->curr_id,
   );
@@ -209,7 +209,7 @@ sub delete_word {
   my $curr_id = $self->lb_words->GetNextItem(
     -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
   );
-  $main::ioc->lookup('db')->delete_word(
+  $main::ioc->lookup('db')->schema->resultset('Word')->delete_one(
     $self->get_word_id($curr_id)
   );
   $self->lookup;
@@ -220,7 +220,7 @@ sub unlink_word {
   my $curr_id = $self->lb_words->GetNextItem(
     -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
   );
-  $main::ioc->lookup('db')->unlink_word(
+  $main::ioc->lookup('db')->schema->resultset('Word')->unlink_one(
     $self->get_word_id($curr_id)
   );
   $self->lookup;
@@ -231,7 +231,7 @@ sub delete_example {
   my $curr_id = $self->lb_examples->GetNextItem(
     -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
   );
-  $main::ioc->lookup('db')->delete_example(
+  $main::ioc->lookup('db')->schema->resultset('Example')->delete_one(
     $self->get_example_id($curr_id)
   );
   $self->lookup;
@@ -242,7 +242,7 @@ sub unlink_example {
   my $curr_id = $self->lb_examples->GetNextItem(
     -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
   );
-  $main::ioc->lookup('db')->unlink_example(
+  $main::ioc->lookup('db')->schema->resultset('Example')->unlink_one(
     $self->get_example_id($curr_id)
   );
   $self->lookup;
