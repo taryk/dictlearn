@@ -22,7 +22,7 @@ sub all {
   my $self = shift;
   $self = $self->singleton unless ref $self;
   $self->{dicts} = { };
-  for ( $main::ioc->lookup('db')->get_dictionaries() )
+  for ( $main::ioc->lookup('db')->schema->resultset('Dictionary')->get_all() )
   {
     $self->{dicts}{ $_->{dictionary_id} } = $_;
   }
