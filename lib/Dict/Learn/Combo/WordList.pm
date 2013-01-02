@@ -90,7 +90,7 @@ sub on_select {
 
 sub initialize_words {
   my $self = shift;
-  my @words = $main::ioc->lookup('db')->get_all_words(
+  my @words = $main::ioc->lookup('db')->schema->resultset('Word')->get_all(
     Dict::Learn::Dictionary->curr->{language_tr_id}{language_id}
   );
   $self->lb_words->DeleteAllItems();
