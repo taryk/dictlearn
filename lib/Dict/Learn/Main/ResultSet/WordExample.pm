@@ -11,13 +11,13 @@ sub export_data {
   my ($self) = @_;
   my $rs = $self->search({ }, { });
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-  $rs->all();
+  $rs->all()
 }
 
 sub import_data {
   my ($self, $data) = @_;
   $self->populate($data);
-  return 1;
+  return 1
 }
 
 sub clear_data {
