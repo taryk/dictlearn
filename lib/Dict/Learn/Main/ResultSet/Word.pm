@@ -33,6 +33,7 @@ sub add_one {
     note    => $params{note},
     lang_id => $params{lang_id},
   );
+  $new_word{in_test} = $params{in_test} if defined $params{in_test};
   if ($new_word{irregular} = $params{irregular}) {
     $new_word{word2} = $params{word2};
     $new_word{word3} = $params{word3};
@@ -57,16 +58,19 @@ sub add_one {
 sub update_one {
   my $self   = shift;
   my %params = @_;
-  my %upd_word = (
-    word    => $params{word},
-    note    => $params{note},
-    lang_id => $params{lang_id},
-  );
-  if ($upd_word{irregular} = $params{irregular}) {
-    $upd_word{word2} = $params{word2};
-    $upd_word{word3} = $params{word3};
-  } else {
-    $upd_word{word2} = $upd_word{word3} = undef;
+  my %upd_word = ( );
+  $upd_word{word}    = $params{word}    if defined $params{word};
+  $upd_word{note}    = $params{note}    if defined $params{note};
+  $upd_word{lang_id} = $params{lang_id} if defined $params{lang_id};
+  $upd_word{in_test} = $params{in_test} if defined $params{in_test};
+
+  if (defined $params{irregular}) {
+    if ($upd_word{irregular} = $params{irregular} || 0) {
+      $upd_word{word2} = $params{word2};
+      $upd_word{word3} = $params{word3};
+    } else {
+      $upd_word{word2} = $upd_word{word3} = undef;
+    }
   }
   my $updated_word = $self->search({ word_id => $params{word_id} })->
     first->update(\%upd_word);
@@ -127,9 +131,9 @@ sub find_ones {
       join     => { 'rel_words' => [ 'word2_id', 'wordclass' ] },
       select   => [ 'me.word_id', 'me.word', 'me.word2', 'me.word3', 'me.irregular',
                   { group_concat => [ 'word2_id.word', "', '" ] },
-                    'me.mdate', 'me.cdate', 'me.note', 'wordclass.abbr' ],
+                    'me.mdate', 'me.cdate', 'me.note', 'wordclass.abbr', 'me.in_test' ],
       as       => [ qw| word_id word_orig word2 word3 is_irregular word_tr
-                        mdate cdate note wordclass
+                        mdate cdate note wordclass in_test
                       | ],
       group_by => [ 'me.word_id', 'rel_words.wordclass_id' ],
       order_by => { -asc => 'me.cdate' },
@@ -181,11 +185,11 @@ sub select_words_grid {
     { 'me.lang_id' => $params{lang1_id} },
     { join     => [ 'rel_words', 'examples', 'wordclass' ],
       select   => [ 'me.word_id', 'me.word', 'me.word2', 'me.word3',
-                    'me.irregular', 'wordclass.abbr',
+                    'me.irregular', 'wordclass.abbr', 'me.in_test',
                   { count => [ 'rel_words.word2_id'  ] },
                   { count => [ 'examples.example_id' ] },
                     'me.cdate', 'me.mdate' ],
-      as       => [ qw|word_id word word2 word3 is_irregular wordclass
+      as       => [ qw|word_id word word2 word3 is_irregular wordclass in_test
                        rel_words rel_examples cdate mdate| ],
       group_by => [ 'me.word_id' ],
       order_by => { -desc => [ 'me.cdate' ] }
