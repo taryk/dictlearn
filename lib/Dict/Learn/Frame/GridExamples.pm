@@ -11,11 +11,12 @@ use Data::Printer;
 use common::sense;
 
 use constant {
-  COL_EXAMPLE => 0,
-  COL_REL_E   => 1,
-  COL_REL_W   => 2,
-  COL_CDATE   => 3,
-  COL_MDATE   => 4,
+  COL_EXAMPLE => [ 0, 'example'      ],
+  COL_REL_E   => [ 1, 'rel_examples' ],
+  COL_REL_W   => [ 2, 'rel_words'    ],
+  COL_INTEST  => [ 3, 'in_test'      ],
+  COL_CDATE   => [ 4, 'cdate'        ],
+  COL_MDATE   => [ 5, 'mdate'        ],
 };
 
 use Class::XSAccessor
@@ -34,13 +35,14 @@ sub new {
 
   $self->grid( Wx::Grid->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 ) );
   $self->vbox->Add( $self->grid,  1, wxALL|wxGROW,   5 );
-  # grid dimension: COL_MDATE+1 - the last column id + 1
-  $self->grid->CreateGrid( 0, COL_MDATE+1 );
-  $self->grid->SetColSize(COL_EXAMPLE, 400);
-  $self->grid->SetColSize(COL_REL_E,   20);
-  $self->grid->SetColSize(COL_REL_W,   20);
-  $self->grid->SetColSize(COL_CDATE,   140);
-  $self->grid->SetColSize(COL_MDATE,   140);
+  # grid dimension: COL_MDATE->[0]+1 - the last column id + 1
+  $self->grid->CreateGrid( 0, COL_MDATE->[0]+1 );
+  $self->grid->SetColSize(COL_EXAMPLE->[0], 400);
+  $self->grid->SetColSize(COL_REL_E->[0],   20);
+  $self->grid->SetColSize(COL_REL_W->[0],   20);
+  $self->grid->SetColSize(COL_INTEST->[0],  20);
+  $self->grid->SetColSize(COL_CDATE->[0],   140);
+  $self->grid->SetColSize(COL_MDATE->[0],   140);
   $self->grid->EnableEditing( 1 );
   $self->grid->EnableGridLines( 1 );
   $self->grid->EnableDragGridSize( 0 );
@@ -54,11 +56,12 @@ sub new {
   $self->grid->EnableDragRowSize( 1 );
   $self->grid->SetRowLabelSize( 30 );
   $self->grid->SetRowLabelAlignment( wxALIGN_CENTRE, wxALIGN_CENTRE );
-  $self->grid->SetColLabelValue(COL_EXAMPLE, 'Example'  );
-  $self->grid->SetColLabelValue(COL_REL_E,   'E'        );
-  $self->grid->SetColLabelValue(COL_REL_W,   'W'        );
-  $self->grid->SetColLabelValue(COL_CDATE,   'Created'  );
-  $self->grid->SetColLabelValue(COL_MDATE,   'Modified' );
+  $self->grid->SetColLabelValue(COL_EXAMPLE->[0], 'Example'  );
+  $self->grid->SetColLabelValue(COL_REL_E->[0],   'E'        );
+  $self->grid->SetColLabelValue(COL_REL_W->[0],   'W'        );
+  $self->grid->SetColLabelValue(COL_INTEST->[0],  't'        );
+  $self->grid->SetColLabelValue(COL_CDATE->[0],   'Created'  );
+  $self->grid->SetColLabelValue(COL_MDATE->[0],   'Modified' );
 
   # $self->select_words();
 
@@ -92,10 +95,16 @@ sub update_examples {
   printf "%s %d %d\n", $self->grid->GetCellValue($obj->GetRow(), $obj->GetCol()),
                        $obj->GetRow(),
                        $obj->GetCol();
-  $main::ioc->lookup('db')->schema->resultset('Example')->update_one(
-    example_id => $self->grid->GetRowLabelValue( $obj->GetRow() ),
-    text       => $self->grid->GetCellValue( $obj->GetRow(), $obj->GetCol() ),
-  );
+  my %upd_example = ( example_id => $self->grid->GetRowLabelValue( $obj->GetRow() ) );
+  for ($obj->GetCol()) {
+    when (COL_EXAMPLE->[0]) {
+      $upd_example{text} = $self->grid->GetCellValue( $obj->GetRow(), COL_EXAMPLE->[0] );
+    }
+    when (COL_INTEST->[0]) {
+      $upd_example{in_test} = $self->grid->GetCellValue( $obj->GetRow(), COL_INTEST->[0] );
+    }
+  }
+  $main::ioc->lookup('db')->schema->resultset('Example')->update_one(%upd_example);
 }
 
 sub delete_examples {
@@ -127,11 +136,18 @@ sub select_examples {
   # Dict::Learn::Dictionary->curr->{language_orig_id}{language_id}
   for my $item ( @items ) {
     $self->grid->SetRowLabelValue($i => $item->{example_id}             );
-    $self->grid->SetCellValue( $i,   COL_EXAMPLE, $item->{example}      );
-    $self->grid->SetCellValue( $i,   COL_REL_E,   $item->{rel_examples} );
-    $self->grid->SetCellValue( $i,   COL_REL_W,   $item->{rel_words}    );
-    $self->grid->SetCellValue( $i,   COL_CDATE,   $item->{mdate}        );
-    $self->grid->SetCellValue( $i++, COL_MDATE,   $item->{cdate}        );
+    $self->grid->SetCellValue( $i,   COL_EXAMPLE->[0], $item->{COL_EXAMPLE->[1]}     );
+    $self->grid->SetCellValue( $i,   COL_REL_E->[0],   $item->{COL_REL_E->[1]}       );
+    $self->grid->SetReadOnly(  $i,   COL_REL_E->[0],   1);
+    $self->grid->SetCellValue( $i,   COL_REL_W->[0],   $item->{COL_REL_W->[1]}       );
+    $self->grid->SetReadOnly(  $i,   COL_REL_W->[0],   1);
+    $self->grid->SetCellEditor( $i,  COL_INTEST->[0],  Wx::GridCellBoolEditor->new   );
+    $self->grid->SetCellRenderer($i, COL_INTEST->[0],  Wx::GridCellBoolRenderer->new );
+    $self->grid->SetCellValue( $i,   COL_INTEST->[0],  $item->{COL_INTEST->[1]}      );
+    $self->grid->SetCellValue( $i,   COL_CDATE->[0],   $item->{COL_CDATE->[1]}       );
+    $self->grid->SetReadOnly(  $i,   COL_CDATE->[0],   1);
+    $self->grid->SetCellValue( $i,   COL_MDATE->[0],   $item->{COL_MDATE->[1]}       );
+    $self->grid->SetReadOnly(  $i++, COL_MDATE->[0],   1);
   }
 }
 

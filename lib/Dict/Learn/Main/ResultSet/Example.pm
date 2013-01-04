@@ -28,11 +28,13 @@ sub clear_data {
 sub add_one {
   my $self   = shift;
   my %params = @_;
-  my $new_example = $self->create({
+  my %new_example = (
     example => $params{text},
     note    => $params{note},
     lang_id => $params{lang_id},
-  });
+  );
+  $new_example{in_test} = $params{in_test} if defined $params{in_test};
+  my $new_example = $self->create(\%new_example);
   if ($params{word}) {
     my $rs = $self->result_source->schema->resultset('WordExample')->create({
       word_id    => $params{word}[0],
@@ -60,10 +62,12 @@ sub add_one {
 sub update_one {
   my $self = shift;
   my %params = @_;
-  my %update = ( example => $params{text} );
+  my %update = ( );
+  $update{example} = $params{text}    if defined $params{text};
   $update{note}    = $params{note}    if defined $params{note};
   $update{lang_id} = $params{lang_id} if defined $params{lang_id};
   $update{idioma}  = $params{idioma}  if defined $params{idioma};
+  $update{in_test} = $params{in_test} if defined $params{in_test};
   my $updated_example = $self->search(
     { example_id => $params{example_id} })->first->update(\%update);
   for ( @{ $params{translate} } ) {
@@ -144,6 +148,7 @@ sub select {
                     rel_examples.note
                     me.cdate
                     me.mdate
+                    me.in_test
                   | ],
     as     => [ qw| example_id
                     example_orig
@@ -151,6 +156,7 @@ sub select {
                     note
                     cdate
                     mdate
+                    in_test
                   | ],
     join => { rel_examples => [ 'example2_id' ], words => [ 'word_id' ] },
     order_by => { -asc => 'me.example_id' }
@@ -175,11 +181,11 @@ sub select_examples_grid {
   my $rs   = $self->search(
     { 'me.lang_id' => $params{lang1_id} },
     { join     => [ 'rel_examples', 'words' ],
-      select   => [ 'me.example_id', 'me.example',
+      select   => [ 'me.example_id', 'me.example', 'me.in_test',
                   { count => [ 'rel_examples.example2_id' ] },
                   { count => [ 'words.word_id' ] },
                     'me.cdate', 'me.mdate' ],
-      as       => [ qw|example_id example rel_examples rel_words
+      as       => [ qw|example_id example in_test rel_examples rel_words
                        cdate mdate| ],
       group_by => [ 'me.example_id' ],
       order_by => { -desc => ['me.cdate'] }
