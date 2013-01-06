@@ -93,17 +93,19 @@ CREATE TABLE IF NOT EXISTS test (
 CREATE TABLE IF NOT EXISTS test_session (
   `test_session_id`   INTEGER  PRIMARY KEY ASC AUTOINCREMENT,
   `test_id`           INTEGER  NOT NULL DEFAULT 0,
-  `score`             INTEGER  NOT NULL DEFAULT 0,
+  `score`             REAL     NOT NULL DEFAULT 0,
   `cdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP  
 );
 
-CREATE TABLE IF NOT EXISTS test_session_word_xref (
-  `test_session_id`   INTEGER  NOT NULL DEFAULT 0,
-  `word_id`           INTEGER  NOT NULL DEFAULT 0,
-  `score`             INTEGER  NOT NULL DEFAULT 0,
-  `cdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `mdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP 
+CREATE TABLE IF NOT EXISTS test_session_data (
+  `test_session_data_id` INTEGER  PRIMARY KEY ASC AUTOINCREMENT,
+  `test_session_id`      INTEGER  NOT NULL DEFAULT 0,
+  `word_id`              INTEGER  NOT NULL DEFAULT 0,
+  `data`                 VARCHAR,
+  `score`                REAL     NOT NULL DEFAULT 0,
+  `cdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP 
 );
 
 INSERT INTO language (language_id, language_name) VALUES (0, 'English');
