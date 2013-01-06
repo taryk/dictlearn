@@ -23,11 +23,12 @@ use Class::XSAccessor
 
                      p_current p_min p_max
 
-                     words exercise
+                     words exercise total_score
                    | ];
 
 use constant {
-  STEPS => 10
+  TEST_ID => 0,
+  STEPS   => 10
 };
 
 sub new {
@@ -80,6 +81,7 @@ sub new {
 
   $self->p_min(1);
   $self->p_max(STEPS);
+  $self->total_score(0);
   $self->init_test();
 
   # events
@@ -153,9 +155,11 @@ sub init_test {
   {
     my $word = $self->get_word($id);
     push @{$self->exercise} => {
-      word => [ $word->{word}, $word->{word2}, $word->{word3} ],
-      user => [ undef, undef, undef ],
-      end  => 0,
+      word_id => $word->{word_id},
+      word    => [ $word->{word}, $word->{word2}, $word->{word3} ],
+      user    => [ undef, [ undef, 0 ], [ undef, 0 ] ],
+      score   => undef,
+      end     => 0,
     };
   }
   $self->load_step($self->p_current);
@@ -166,11 +170,14 @@ sub write_step_res {
   $end //= 1;
   my $ex = $self->exercise->[$id-1];
   $ex->{end}  = $end;
+  return if $ex->{score} and $ex->{score} >= 0;
   $ex->{user} = [
     undef,
-    $self->e_word2->GetValue,
-    $self->e_word3->GetValue
-  ]
+    [ $self->e_word2->GetValue => $self->e_word2->GetValue eq $ex->{word}[1] ? 0.5 : 0 ],
+    [ $self->e_word3->GetValue => $self->e_word3->GetValue eq $ex->{word}[2] ? 0.5 : 0 ]
+  ],
+  $ex->{score} = $ex->{user}[1][1] + $ex->{user}[2][1];
+  $self->total_score($self->total_score + $ex->{score});
 }
 
 sub next_word {
@@ -218,8 +225,8 @@ sub load_step {
   $self->load_fields(
     !$step->{end}    ,
     $step->{word}[0] ,
-    $step->{user}[1] ,
-    $step->{user}[2]
+    $step->{user}[1][0] ,
+    $step->{user}[2][0]
   );
 }
 
@@ -244,9 +251,10 @@ sub result {
   );
   if ($result_dialog->fill_result($self->exercise)->ShowModal() == wxID_OK)
   {
-    say "ok";
-  } else {
-    say "cancel";
+    $main::ioc->lookup('db')->schema->resultset('TestSession')->add( TEST_ID,
+      $self->total_score,
+      $self->exercise
+    );
   }
   $result_dialog->Destroy();
   $self->reset_test();

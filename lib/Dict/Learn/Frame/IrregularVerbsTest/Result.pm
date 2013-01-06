@@ -72,27 +72,24 @@ sub fill_result {
   };
   my $count = scalar @{ $result };
   for my $item (@{ $result }) {
-    my $score = 0;
     my $id = $self->lb_result->InsertItem( Wx::ListItem->new );
     $self->lb_result->SetItem( $id, 0, $item->{word}[0] );
-    $self->lb_result->SetItem( $id, 1, $item->{user}[1] );
-    $self->lb_result->SetItem( $id, 2, $item->{user}[2] );
-    $score += 0.5 if $item->{user}[1] eq $item->{word}[1];
-    $score += 0.5 if $item->{user}[2] eq $item->{word}[2];
+    $self->lb_result->SetItem( $id, 1, $item->{user}[1][0] );
+    $self->lb_result->SetItem( $id, 2, $item->{user}[2][0] );
     my @color = ();
-    if ($score == 0) {
+    if ($item->{score} == 0) {
       $res->{wrong}+=1;
       @color = (247, 183, 176);
-    } elsif ($score == 0.5) {
+    } elsif ($item->{score} == 0.5) {
       @color = (247, 217, 176);
       $res->{wrong}+=0.5;
       $res->{correct}+=0.5;
-    } elsif ($score == 1) {
+    } elsif ($item->{score} == 1) {
       $res->{correct}+=1;
       @color = (182, 247, 176);
     }
     $self->lb_result->SetItemBackgroundColour($id, Wx::Colour->new(@color));
-    $self->lb_result->SetItem( $id, 3, $score );
+    $self->lb_result->SetItem( $id, 3, $item->{score} );
   }
   $self->l_correct->SetLabel('Correct: '.$res->{correct});
   $self->l_wrong->SetLabel('Wrong: '.$res->{wrong});

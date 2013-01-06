@@ -25,4 +25,25 @@ sub clear_data {
   $self->delete_all()
 }
 
+sub add {
+  my ($self, $test_id, $total_score, $result) = @_;
+  my $test_session = $self->create({
+    test_id => $test_id,
+    score   => $total_score,
+  });
+  my @data;
+  for my $item (@{ $result }) {
+    for my $userdata (@{ $item->{user} }) {
+      next unless defined $userdata;
+      push @data => {
+        test_session_id => $test_session->test_session_id,
+        word_id         => $item->{word_id},
+        data            => $userdata->[0],
+        score           => $userdata->[1],
+      }
+    }
+  }
+  $self->result_source->schema->resultset('TestSessionData')->populate(\@data);
+}
+
 1;

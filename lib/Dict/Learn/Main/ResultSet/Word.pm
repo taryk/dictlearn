@@ -213,7 +213,7 @@ sub get_irregular_verbs {
   my ($self) = @_;
   my $rs = $self->search(
     { 'me.irregular' => 1, 'me.in_test' => 1 },
-    { select => [ qw|me.word me.word2 me.word3 | ] }
+    { select => [ qw|me.word_id me.word me.word2 me.word3 | ] }
   );
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
   $rs->all()
