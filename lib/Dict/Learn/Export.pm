@@ -16,6 +16,8 @@ use constant {
                  examples            => 'Example',
                  examples_xref       => 'Examples',
                  words_examples_xref => 'WordExample',
+                 test_session        => 'TestSession',
+                 test_session_data   => 'TestSessionData'
   }
 };
 
