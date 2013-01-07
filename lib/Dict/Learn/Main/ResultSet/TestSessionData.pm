@@ -25,4 +25,18 @@ sub clear_data {
   $self->delete_all()
 }
 
+sub get_words {
+  my ($self) = @_;
+  my $rs = $self->search({}, {
+    select   => [ 'word_id',
+                { count => [ 'word_id' ], -as => 'count' }  ,
+                { avg   => [ 'score'   ], -as => 'avg_score' } ],
+#    as       => [ qw| word_id count avg_scrore | ],
+    group_by => [ 'word_id' ],
+    order_by => { -asc => ['avg_score'] },
+  });
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  $rs->all()
+}
+
 1;

@@ -210,13 +210,51 @@ sub get_all {
 }
 
 sub get_irregular_verbs {
-  my ($self) = @_;
-  my $rs = $self->search(
-    { 'me.irregular' => 1, 'me.in_test' => 1 },
-    { select => [ qw|me.word_id me.word me.word2 me.word3 | ] }
-  );
-  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-  $rs->all()
+  my ($self, $min_count) = @_;
+  my @res;
+  # replace by join
+  my @words = $self->result_source->schema->resultset('TestSessionData')->get_words();
+
+  sub search_irregular_verbs {
+    $self->search({
+        irregular => 1,
+        in_test   => 1,
+        %{$_[0]}
+      }, {
+        select => [ qw|me.word_id me.word me.word2 me.word3 | ],
+        %{$_[1]}
+    })
+  }
+
+  # select untested words
+  my $rs_untested = search_irregular_verbs({
+    word_id => { -not_in => [ map { $_->{word_id} } @words ] }
+  });
+  $rs_untested->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  push @res => $rs_untested->all();
+
+  # select failed words ( scrore <= 0.5 )
+  unless (@res >= $min_count) {
+    my $rs_failed = search_irregular_verbs({
+      word_id => { -in => [ grep { $_->{avg_score} < 0.5 } @words ] }
+    });
+    $rs_failed->result_class('DBIx::Class::ResultClass::HashRefInflator');
+    push @res => $rs_failed->all();
+  }
+
+  # select other words ( any scrore )
+  # TODO: oldest passed ones at first
+  unless (@res >= $min_count) {
+    my $limit = $min_count - scalar @res;
+    my $rs_other = search_irregular_verbs(
+      { word_id => { -not_in => [ map { $_->{word_id} } @res ] } },
+      { limit   => $limit }
+    );
+    $rs_other->result_class('DBIx::Class::ResultClass::HashRefInflator');
+    push @res => $rs_other->all();
+  }
+
+  @res
 }
 
 1;
