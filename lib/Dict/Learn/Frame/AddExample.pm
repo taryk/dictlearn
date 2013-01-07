@@ -1,14 +1,11 @@
 package Dict::Learn::Frame::AddExample 0.1;
 
 use Wx qw[:everything];
-use Wx::Grid;
 use Wx::Event qw[:everything];
 
 use base 'Wx::Panel';
 
 use LWP::UserAgent;
-
-# use lib qw[ ];
 
 use Dict::Learn::Translate;
 use Dict::Learn::Dictionary;

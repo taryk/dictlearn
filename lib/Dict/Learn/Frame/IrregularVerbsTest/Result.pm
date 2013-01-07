@@ -1,7 +1,6 @@
 package Dict::Learn::Frame::IrregularVerbsTest::Result 0.1;
 
 use Wx qw[:everything];
-use Wx::Grid;
 use Wx::Event qw[:everything];
 
 use base 'Wx::Dialog';
