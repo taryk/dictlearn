@@ -123,10 +123,15 @@ sub unlink_one {
 sub find_ones {
   my $self   = shift;
   my %params = @_;
+  my $word_pattern = "%".$params{word}."%";
   my $rs   = $self->search({
     -and => [
       'me.lang_id' => $params{lang_id},
-      'me.word'  => { like => "%".$params{word}."%" },
+      -or => [
+        'me.word'  => { like => $word_pattern },
+        'me.word2' => { like => $word_pattern },
+        'me.word3' => { like => $word_pattern },
+      ]
     ]}, {
       join     => { 'rel_words' => [ 'word2_id', 'wordclass' ] },
       select   => [ 'me.word_id', 'me.word', 'me.word2', 'me.word3', 'me.irregular',
