@@ -56,7 +56,7 @@ sub new {
   EVT_MENU($self, $menu_id, \&db_export);
   $self->menu_db->Append(++$menu_id, 'Import');
   EVT_MENU($self, $menu_id, \&db_import);
-  $self->menu_db->Append(++$menu_id, 'Clear');
+  $self->menu_db->Append(++$menu_id, 'Clear All Data');
   EVT_MENU($self, $menu_id, \&db_clear);
   $self->menu_db->Append(++$menu_id, 'Clear Test Results');
   EVT_MENU($self, $menu_id, \&db_clear_test_results);
@@ -196,7 +196,13 @@ sub db_import {
 sub db_clear {
   my ($self) = @_;
   my $db = $main::ioc->lookup('db');
-  for (qw[Word Words Example Examples WordExample]) {
+  for (qw[Word Words Example Examples WordExample
+          TestSession TestSessionData])
+  {
+    $db->schema->resultset($_)->clear_data();
+    say "clear $_";
+  }
+}
 
 sub db_clear_test_results {
   my ($self) = @_;
