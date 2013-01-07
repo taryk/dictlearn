@@ -242,7 +242,7 @@ sub get_irregular_verbs {
   # select failed words ( scrore <= 0.5 )
   unless (@res >= $min_count) {
     my $rs_failed = search_irregular_verbs({
-      word_id => { -in => [ grep { $_->{avg_score} < 0.5 } @words ] }
+      word_id => { -in => [ map { $_->{word_id} } grep { $_->{avg_score} < 0.5 } @words ] }
     });
     $rs_failed->result_class('DBIx::Class::ResultClass::HashRefInflator');
     push @res => $rs_failed->all();
