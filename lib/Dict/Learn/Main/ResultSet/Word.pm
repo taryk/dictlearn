@@ -50,6 +50,7 @@ sub add_one {
     }
     $new_word->add_to_words($fields => {
       dictionary_id => $params{dictionary_id},
+      wordclass_id  => $word->{wordclass},
     });
   }
   $self
