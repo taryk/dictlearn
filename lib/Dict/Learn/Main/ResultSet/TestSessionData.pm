@@ -31,7 +31,7 @@ sub get_words {
     select   => [ 'word_id',
                 { count => [ 'word_id' ], -as => 'count' }  ,
                 { avg   => [ 'score'   ], -as => 'avg_score' } ],
-#    as       => [ qw| word_id count avg_scrore | ],
+    # as       => [ qw| word_id count avg_scrore | ],
     group_by => [ 'word_id' ],
     order_by => { -asc => ['avg_score'] },
   });

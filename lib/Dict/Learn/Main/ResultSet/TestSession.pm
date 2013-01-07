@@ -46,4 +46,18 @@ sub add {
   $self->result_source->schema->resultset('TestSessionData')->populate(\@data);
 }
 
+sub get_all {
+  my ($self, $test_id) = @_;
+  my $rs = $self->search({
+    'me.test_id'  => $test_id,
+  },{
+    prefetch => { 'data' => [ 'word_id' ] },
+    group_by => [ 'data.word_id' ],
+    order_by => [{ -asc => 'me.test_session_id' },
+                 { -asc => 'data.test_session_data_id' }],
+  });
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  $rs->all()
+}
+
 1;

@@ -20,6 +20,7 @@ use Dict::Learn::Frame::GridWords;
 use Dict::Learn::Frame::GridExamples;
 use Dict::Learn::Frame::SearchWords;
 use Dict::Learn::Frame::IrregularVerbsTest;
+use Dict::Learn::Frame::TestSummary;
 
 use common::sense;
 
@@ -29,6 +30,7 @@ use Class::XSAccessor
                      p_additem p_addword p_addexample p_gridwords p_search
                      p_gridexamples
                      pt_irrverbs
+                     pts_irrverbs
                | ];
 
 use constant DICT_OFFSET => 100;
@@ -88,6 +90,11 @@ sub new {
   $self->pt_irrverbs( Dict::Learn::Frame::IrregularVerbsTest->new($self, $self->notebook,
 wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ));
   $self->notebook->AddPage( $self->pt_irrverbs, "Irregular Verbs Test", 0 );
+
+  # Test Summary
+  $self->pts_irrverbs( Dict::Learn::Frame::TestSummary->new($self, $self->notebook,
+wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ) );
+  $self->notebook->AddPage( $self->pts_irrverbs, "TestSummary", 0 );
 
   # tell we want automatic layout
   # $self->SetAutoLayout( 1 );
