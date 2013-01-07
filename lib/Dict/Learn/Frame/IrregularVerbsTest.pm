@@ -36,7 +36,7 @@ sub new {
   $self->parent( shift );
 
   ### position
-  $self->l_position( Wx::StaticText->new($self, wxID_ANY, '1/10', wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE) );
+  $self->l_position( Wx::StaticText->new($self, wxID_ANY, '1/'.STEPS, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE) );
 
   ### words
   $self->l_word(  Wx::StaticText->new($self, wxID_ANY, 'Word', wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE) );
