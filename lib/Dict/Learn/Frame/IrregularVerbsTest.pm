@@ -258,6 +258,7 @@ sub result {
   }
   $result_dialog->Destroy();
   $self->reset_test();
+  $self->parent->pts_irrverbs->refresh_data();
 }
 
 1;
