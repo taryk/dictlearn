@@ -107,6 +107,7 @@ sub update_one {
         lang_id => $_->{lang_id},
       });
     } else {
+      # delete word if `word` is undefined
       $word_xref->delete;
     }
   }
