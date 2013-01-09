@@ -44,10 +44,11 @@ sub add_one {
   for (@{ $params{translate} }) {
     if (defined $_->{example_id}) {
       $new_example->add_to_examples(
-        { example_id    => $_->{example_id}     } ,
+        { example_id    => $_->{example_id} } ,
         { dictionary_id => $params{dictionary_id} }
       );
     } else {
+      next unless defined $_->{text};
       $new_example->add_to_examples({
         example => $_->{text},
         lang_id => $_->{lang_id},
@@ -73,6 +74,7 @@ sub update_one {
   for ( @{ $params{translate} } ) {
     # create new
     unless (defined $_->{example_id}) {
+      next unless defined $_->{text};
       my %update_tr = ( example => $_->{text} );
       $update_tr{note}    = $_->{note}    if defined $_->{note};
       $update_tr{lang_id} = $_->{lang_id} if defined $_->{lang_id};
