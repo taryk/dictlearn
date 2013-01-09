@@ -69,9 +69,9 @@ sub new {
   # $self->select_words();
 
   $self->panel2_hbox_btn( Wx::BoxSizer->new( wxHORIZONTAL ) );
-  $self->btn_delete_item( Wx::Button->new( $self, wxID_ANY, 'Delete',    [-1, -1] ) );
-  $self->btn_clear_all(   Wx::Button->new( $self, wxID_ANY, 'Clear All', [-1, -1] ) );
-  $self->btn_refresh(     Wx::Button->new( $self, wxID_ANY, 'Refresh',   [-1, -1] ) );
+  $self->btn_delete_item( Wx::Button->new( $self, wxID_ANY, 'Delete',    wxDefaultPosition, wxDefaultSize ) );
+  $self->btn_clear_all(   Wx::Button->new( $self, wxID_ANY, 'Clear All', wxDefaultPosition, wxDefaultSize ) );
+  $self->btn_refresh(     Wx::Button->new( $self, wxID_ANY, 'Refresh',   wxDefaultPosition, wxDefaultSize ) );
   $self->panel2_hbox_btn->Add( $self->btn_delete_item,  0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
   $self->panel2_hbox_btn->Add( $self->btn_clear_all,    0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
   $self->panel2_hbox_btn->Add( $self->btn_refresh,      0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
