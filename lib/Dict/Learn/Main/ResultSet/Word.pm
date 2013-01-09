@@ -7,6 +7,10 @@ use common::sense;
 
 use Data::Printer;
 
+use constant {
+  MIN_SCORE => 0.43,
+};
+
 sub export_data {
   my ($self) = @_;
   my $rs = $self->search({ }, { });
@@ -125,7 +129,7 @@ sub find_ones {
   my $self   = shift;
   my %params = @_;
   my $word_pattern = "%".$params{word}."%";
-  my $rs   = $self->search({
+  my $rs = $self->search({
     -and => [
       'me.lang_id' => $params{lang_id},
       -or => [
@@ -151,7 +155,7 @@ sub find_ones {
 
 sub match {
   my ($self, $lang_id, $word) = @_;
-  my $rs      = $self->search({
+  my $rs = $self->search({
     lang_id => $lang_id,
     word    => $word,
   });
@@ -242,7 +246,7 @@ sub get_irregular_verbs {
   # select failed words ( scrore <= 0.5 )
   unless (@res >= $min_count) {
     my $rs_failed = search_irregular_verbs({
-      word_id => { -in => [ map { $_->{word_id} } grep { $_->{avg_score} < 0.5 } @words ] }
+      word_id => { -in => [ map { $_->{word_id} } grep { $_->{avg_score} < MIN_SCORE } @words ] }
     });
     $rs_failed->result_class('DBIx::Class::ResultClass::HashRefInflator');
     push @res => $rs_failed->all();
