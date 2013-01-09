@@ -281,7 +281,7 @@ sub add {
   if (defined $self->item_id and
               $self->item_id >= 0)
   {
-    $params{word_id} = $self->item_id ;
+    $params{word_id} = $self->item_id;
     $main::ioc->lookup('db')->schema->resultset('Word')->update_one(%params);
   } else {
     $main::ioc->lookup('db')->schema->resultset('Word')->add_one(%params);
@@ -442,6 +442,7 @@ sub enable_controls($$) {
   $self->btn_tran->Enable($en);
   $self->do_word_dst(sub {
     my $item = pop;
+    return unless defined $item->{word};
     $item->{word}->Enable($en);
     $item->{cbox}->Enable($en);
     $item->{btnm}->Enable($en);
