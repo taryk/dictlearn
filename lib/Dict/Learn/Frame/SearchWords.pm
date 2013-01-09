@@ -36,7 +36,7 @@ sub new {
 
   ### lookup
   $self->combobox( Wx::ComboBox->new( $self, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, [], 0, wxDefaultValidator  ) );
-  $self->btn_lookup( Wx::Button->new( $self, -1, '#', [20, 20] ) );
+  $self->btn_lookup( Wx::Button->new( $self, wxID_ANY, '#', [20, 20] ) );
   # layout
   $self->lookup_hbox( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->lookup_hbox->Add($self->combobox, 1, wxTOP|wxGROW, 0);
@@ -45,9 +45,9 @@ sub new {
   ### words
 
   # buttons
-  $self->btn_edit_word(   Wx::Button->new( $self, -1, 'Edit',   [-1, -1] ) );
-  $self->btn_unlink_word( Wx::Button->new( $self, -1, 'Unlink', [-1, -1] ) );
-  $self->btn_delete_word( Wx::Button->new( $self, -1, 'Del',    [-1, -1] ) );
+  $self->btn_edit_word(   Wx::Button->new( $self, wxID_ANY, 'Edit',   [-1, -1] ) );
+  $self->btn_unlink_word( Wx::Button->new( $self, wxID_ANY, 'Unlink', [-1, -1] ) );
+  $self->btn_delete_word( Wx::Button->new( $self, wxID_ANY, 'Del',    [-1, -1] ) );
   # layout
   $self->vbox_btn_words( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->vbox_btn_words->Add( $self->btn_edit_word   );
@@ -70,10 +70,10 @@ sub new {
   ### examples
 
   # buttons
-  $self->btn_add_example(    Wx::Button->new( $self, -1, 'Add',    [-1, -1] ) );
-  $self->btn_edit_example(   Wx::Button->new( $self, -1, 'Edit',   [-1, -1] ) );
-  $self->btn_unlink_example( Wx::Button->new( $self, -1, 'Unlink', [-1, -1] ) );
-  $self->btn_delete_example( Wx::Button->new( $self, -1, 'Del',    [-1, -1] ) );
+  $self->btn_add_example(    Wx::Button->new( $self, wxID_ANY, 'Add',    [-1, -1] ) );
+  $self->btn_edit_example(   Wx::Button->new( $self, wxID_ANY, 'Edit',   [-1, -1] ) );
+  $self->btn_unlink_example( Wx::Button->new( $self, wxID_ANY, 'Unlink', [-1, -1] ) );
+  $self->btn_delete_example( Wx::Button->new( $self, wxID_ANY, 'Del',    [-1, -1] ) );
   # layout
   $self->vbox_btn_examples( Wx::BoxSizer->new( wxVERTICAL ));
   $self->vbox_btn_examples->Add( $self->btn_add_example    );
