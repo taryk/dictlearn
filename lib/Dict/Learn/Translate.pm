@@ -27,8 +27,6 @@ sub preload_tplugins {
   my $self = shift;
   my $tplugins_dir = ( __PACKAGE__ =~ s[::][/]gr );
   my @files = glob 'lib/'.$tplugins_dir.'/*';
-  p('lib/'.$tplugins_dir.'/*');
-  p(@files);
   for my $tplugin (glob 'lib/'.$tplugins_dir.'/*')
   {
     next unless $tplugin =~ m[/(?<tplugin>\w+)\.pm$]i;
