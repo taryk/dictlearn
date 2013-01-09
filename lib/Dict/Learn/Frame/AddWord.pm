@@ -41,13 +41,13 @@ sub new {
   $self->parent( shift );
 
   ### src
-  $self->word_src(   Wx::TextCtrl->new( $self, -1, '', wxDefaultPosition, wxDefaultSize ));
-  $self->word2_src(  Wx::TextCtrl->new( $self, -1, '', wxDefaultPosition, wxDefaultSize ));
-  $self->word3_src(  Wx::TextCtrl->new( $self, -1, '', wxDefaultPosition, wxDefaultSize ));
+  $self->word_src(   Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
+  $self->word2_src(  Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
+  $self->word3_src(  Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
   $self->word2_src->Enable(0);
   $self->word3_src->Enable(0);
   $self->cb_irregular( Wx::CheckBox->new( $self, wxID_ANY, 'Irregular verb', wxDefaultPosition, wxDefaultSize, wxCHK_2STATE, wxDefaultValidator ) );
-  $self->word_note( Wx::TextCtrl->new( $self, -1, '', wxDefaultPosition, wxDefaultSize ));
+  $self->word_note( Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
   # layout
   $self->vbox_src( Wx::BoxSizer->new( wxVERTICAL ));
   $self->vbox_src->Add($self->word_src, 0, wxGROW|wxBOTTOM, 5);
@@ -57,7 +57,7 @@ sub new {
 
   ### dst
   $self->word_dst([]);
-  $self->btn_additem( Wx::Button->new( $self, -1, '+', wxDefaultPosition, wxDefaultSize ));
+  $self->btn_additem( Wx::Button->new( $self, wxID_ANY, '+', wxDefaultPosition, wxDefaultSize ));
   # layout
   $self->hbox_dst_item([]);
   $self->vbox_dst( Wx::BoxSizer->new( wxVERTICAL ));
@@ -71,10 +71,10 @@ sub new {
   $self->hbox_words->Add( $self->vbox_dst, 4, wxALL|wxEXPAND, 5 );
 
   ### btn
-  $self->btn_add_word( Wx::Button->new( $self, -1, 'Add',      wxDefaultPosition, wxDefaultSize ));
-  $self->btn_tran(     Wx::Button->new( $self, -1, 'Translate',wxDefaultPosition, wxDefaultSize ));
-  $self->btn_clear(    Wx::Button->new( $self, -1, 'Clear',    wxDefaultPosition, wxDefaultSize ));
-  $self->btn_cancel(   Wx::Button->new( $self, -1, 'Cancel',   wxDefaultPosition, wxDefaultSize ));
+  $self->btn_add_word( Wx::Button->new( $self, wxID_ANY, 'Add',      wxDefaultPosition, wxDefaultSize ));
+  $self->btn_tran(     Wx::Button->new( $self, wxID_ANY, 'Translate',wxDefaultPosition, wxDefaultSize ));
+  $self->btn_clear(    Wx::Button->new( $self, wxID_ANY, 'Clear',    wxDefaultPosition, wxDefaultSize ));
+  $self->btn_cancel(   Wx::Button->new( $self, wxID_ANY, 'Cancel',   wxDefaultPosition, wxDefaultSize ));
   # layout
   $self->hbox_btn( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_btn->Add( $self->btn_add_word, 0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
@@ -122,11 +122,11 @@ sub make_dst_item {
     id      => $id,
     cbox    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [ $self->import_wordclass ], wxCB_DROPDOWN|wxCB_READONLY, wxDefaultValidator  ),
     popup   => Dict::Learn::Combo::WordList->new(),
-    # word    => Wx::TextCtrl->new( $self, -1, '', wxDefaultPosition, wxDefaultSize ),
+    # word    => Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ),
     # word    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [], wxCB_DROPDOWN, wxDefaultValidator  ),
     word    => Wx::ComboCtrl->new( $self, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxCB_DROPDOWN, wxDefaultValidator ),
-    # btnp    => Wx::Button->new( $self, -1, '+', wxDefaultPosition, wxDefaultSize ),
-    btnm    => Wx::Button->new( $self, -1, '-', wxDefaultPosition, wxDefaultSize ),
+    # btnp    => Wx::Button->new( $self, wxID_ANY, '+', wxDefaultPosition, wxDefaultSize ),
+    btnm    => Wx::Button->new( $self, wxID_ANY, '-', wxDefaultPosition, wxDefaultSize ),
     parent_hbox => $self->hbox_dst_item->[$id]
   };
   $self->word_dst->[$id]{word}->SetPopupControl( $self->word_dst->[$id]{popup} );
@@ -143,7 +143,7 @@ sub make_dst_item {
     # $self->word_dst->[$id]{word}->SetEditable(0);
     $self->word_dst->[$id]{word}->GetTextCtrl->SetEditable(0);
     $self->word_dst->[$id]{word}->GetPopupWindow->Disable;
-    $self->word_dst->[$id]{edit} = Wx::Button->new( $self, -1, 'e', wxDefaultPosition, wxDefaultSize );
+    $self->word_dst->[$id]{edit} = Wx::Button->new( $self, wxID_ANY, 'e', wxDefaultPosition, wxDefaultSize );
     EVT_BUTTON( $self, $self->word_dst->[$id]{edit}, sub { $self->edit_word_as_new($id) } );
     $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{edit}, 1, wxALL, 0);
   }
