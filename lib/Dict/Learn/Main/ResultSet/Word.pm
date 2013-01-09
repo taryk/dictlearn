@@ -48,6 +48,7 @@ sub add_one {
     if (defined $word->{word_id} and $word->{word_id} >= 0) {
       $fields->{word_id} = $word->{word_id};
     } else {
+      next unless defined $word->{word};
       $fields = { word          => $word->{word},
                   wordclass_id  => $word->{wordclass},
                   lang_id       => $word->{lang_id}, }
@@ -82,6 +83,7 @@ sub update_one {
   for ( @{ $params{translate} } ) {
     # create new
     unless (defined $_->{word_id}) {
+      next unless defined $_->{word};
       $updated_word->add_to_words({
         word    => $_->{word},
         note    => $_->{note},
