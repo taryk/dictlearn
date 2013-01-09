@@ -38,8 +38,8 @@ sub new {
   $self->parent( shift );
 
   ### src
-  $self->text_src( Wx::TextCtrl->new( $self, wxID_ANY, '', [-1,-1], [-1,-1], wxTE_MULTILINE ) );
-  $self->example_note( Wx::TextCtrl->new( $self, wxID_ANY, '', [-1,-1], [-1,-1] ) );
+  $self->text_src( Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE ) );
+  $self->example_note( Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ) );
   $self->search_words( Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [  ], wxCB_DROPDOWN, wxDefaultValidator ) );
   $self->linked_words( Wx::CheckListBox->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, [], 0, wxDefaultValidator ) );
   # layout
@@ -51,8 +51,8 @@ sub new {
 
   ### dst
   $self->text_dst([]);
-  $self->btn_additem( Wx::Button->new( $self, wxID_ANY, '+', [-1, -1] ));
-  $self->btn_addexisting( Dict::Learn::Combo::Button->new( $self, wxID_ANY, "++", [-1,-1] ));
+  $self->btn_additem( Wx::Button->new( $self, wxID_ANY, '+', wxDefaultPosition, wxDefaultSize ));
+  $self->btn_addexisting( Dict::Learn::Combo::Button->new( $self, wxID_ANY, "++", wxDefaultPosition, wxDefaultSize ));
   # layout
   $self->hbox_add( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_add->Add( $self->btn_additem,     wxALIGN_LEFT|wxRIGHT, 5 );
@@ -69,10 +69,10 @@ sub new {
   $self->hbox_examples->Add( $self->vbox_dst, 3, wxALL|wxEXPAND, 0 );
 
   ### btn
-  $self->btn_add(    Wx::Button->new( $self, wxID_ANY, 'Add Example', [-1, -1] ));
-  $self->btn_tran(   Wx::Button->new( $self, wxID_ANY, 'Translate',   [-1, -1] ));
-  $self->btn_clear(  Wx::Button->new( $self, wxID_ANY, 'Clear',       [-1, -1] ));
-  $self->btn_cancel( Wx::Button->new( $self, wxID_ANY, 'Cancel',      [-1, -1] ));
+  $self->btn_add(    Wx::Button->new( $self, wxID_ANY, 'Add Example', wxDefaultPosition ));
+  $self->btn_tran(   Wx::Button->new( $self, wxID_ANY, 'Translate',   wxDefaultPosition ));
+  $self->btn_clear(  Wx::Button->new( $self, wxID_ANY, 'Clear',       wxDefaultPosition ));
+  $self->btn_cancel( Wx::Button->new( $self, wxID_ANY, 'Cancel',      wxDefaultPosition ));
   # layout
   $self->hbox_btn( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->hbox_btn->Add( $self->btn_add,    0, wxBOTTOM|wxALIGN_LEFT|wxLEFT, 5 );
@@ -124,9 +124,9 @@ sub make_dst_item {
   $self->text_dst->[$id] = {
     example_id  => $example_id,
     id          => $id,
-    text        => Wx::TextCtrl->new( $self, wxID_ANY, '', [-1,-1], [-1,-1], wxTE_MULTILINE ),
+    text        => Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE ),
     vbox        => Wx::BoxSizer->new( wxVERTICAL ),
-    btnm        => Wx::Button->new( $self, wxID_ANY, '-', [-1, -1] ),
+    btnm        => Wx::Button->new( $self, wxID_ANY, '-', wxDefaultPosition, wxDefaultSize ),
     parent_hbox => $self->hbox_dst_item->[$id],
   };
   EVT_BUTTON( $self, $self->text_dst->[$id]{btnm}, sub { $self->del_dst_item($id); } );
@@ -138,7 +138,7 @@ sub make_dst_item {
     # set readonly
     $self->text_dst->[$id]{text}->SetEditable(0);
     # add 'edit as new' button
-    $self->text_dst->[$id]{edit} = Wx::Button->new( $self, wxID_ANY, 'e', [-1, -1] );
+    $self->text_dst->[$id]{edit} = Wx::Button->new( $self, wxID_ANY, 'e', wxDefaultPosition );
     EVT_BUTTON( $self, $self->text_dst->[$id]{edit}, sub { $self->edit_example_as_new($id) } );
     $self->text_dst->[$id]{vbox}->Add($self->text_dst->[$id]{edit}, 1, wxALL, 0);
   }
