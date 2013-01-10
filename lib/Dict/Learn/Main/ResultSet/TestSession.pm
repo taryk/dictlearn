@@ -60,4 +60,26 @@ sub get_all {
   $rs->all()
 }
 
+sub get_words_stats {
+  my ($self, $test_id) = @_;
+  my $rs = $self->result_source->schema->resultset('TestSessionData')->search({
+    # 'me.test_id'  => $test_id,
+  },{
+    select    => [ { count => [ 'me.test_session_data_id' ], -as => 'wcount' },
+                   { sum   => [ 'me.score' ], -as => 'sumscore' }],
+    prefetch  => [ 'word_id' ],
+    group_by  => [ 'me.word_id' ],
+    order_by  => [{ -asc => 'sumscore' }],
+  });
+  $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+  # TODO: find out how to do this using DBIx::Class
+  my @a = sort { $b->{perc} <=> $a->{perc} } map {
+    $_->{word} = $_->{word_id}{word}." / ".$_->{word_id}{word2}." / ".$_->{word_id}{word3};
+    $_->{sumscore} *= 2;
+    $_->{perc} = $_->{sumscore}*100/$_->{wcount};
+    $_
+  } $rs->all();
+  @a
+}
+
 1;

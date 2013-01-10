@@ -14,8 +14,8 @@ use Data::Printer;
 
 use Class::XSAccessor
   accessors => [ qw| parent
-                     vbox
-                     grid
+                     vbox hbox
+                     grid lb_word_score
                    | ];
 
 use constant {
@@ -24,16 +24,18 @@ use constant {
 
   COL_DATE  => 0,
   COL_SCORE => 1,
+
+  COL_LB_WORD  => 0,
+  COL_LB_SCORE => 1,
 };
 
 sub new {
   my $class = shift;
   my $self  = $class->SUPER::new( splice @_ => 1 );
   $self->parent( shift );
-  $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
-  $self->SetSizer( $self->vbox );
+
+  ### grid
   $self->grid( Wx::Grid->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 ) );
-  $self->vbox->Add( $self->grid, 1, wxALL|wxGROW, 5 );
   $self->grid->CreateGrid(0, RES_COUNT*3+2 );
   $self->grid->SetColSize( COL_DATE,  140 );
   $self->grid->SetColSize( COL_SCORE, 100 );
@@ -50,6 +52,21 @@ sub new {
 
   $self->grid->SetColLabelValue(0, 'Date' );
   $self->grid->SetColLabelValue(1, 'Score' );
+
+  ### lb word
+  $self->lb_word_score( Wx::ListCtrl->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
+  $self->lb_word_score->InsertColumn( COL_LB_WORD,  'Word',  wxLIST_FORMAT_LEFT, 120);
+  $self->lb_word_score->InsertColumn( COL_LB_SCORE, 'Score', wxLIST_FORMAT_LEFT, 90);
+
+  # layouts
+  $self->hbox( Wx::BoxSizer->new( wxHORIZONTAL ) );
+  $self->hbox->Add( $self->grid, 3, wxRIGHT|wxEXPAND, 5 );
+  $self->hbox->Add( $self->lb_word_score, 1, wxALL|wxGROW, 0 );
+
+  # panel layout
+  $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
+  $self->vbox->Add( $self->hbox, 1, wxALL|wxGROW, 0 );
+  $self->SetSizer( $self->vbox );
 
   $self->Layout();
   $self->vbox->Fit( $self );
@@ -106,11 +123,23 @@ sub select_data {
   }
 }
 
+sub select_words_stats {
+  my ($self) = shift;
+  my @stats = $main::ioc->lookup('db')->schema->resultset('TestSession')->get_words_stats( TEST_ID );
+  for my $stat (@stats) {
+    my $id = $self->lb_word_score->InsertItem( Wx::ListItem->new );
+    $self->lb_word_score->SetItem( $id, COL_LB_WORD,  $stat->{word}  );
+    $self->lb_word_score->SetItem( $id, COL_LB_SCORE, sprintf "%d%% (%d/%d)",
+                                   $stat->{perc}, $stat->{sumscore}, $stat->{wcount} );
+  }
+}
+
 sub refresh_data {
   my $self = shift;
   $self->grid->ClearGrid();
   $self->grid->DeleteRows(0, $self->grid->GetNumberRows());
   $self->select_data();
+  $self->select_words_stats();
 }
 
 1;
