@@ -6,10 +6,21 @@ use IOC::Slinky::Container;
 
 use File::Basename 'dirname';
 use File::Path 'make_path';
+use Getopt::Long;
 
 use lib dirname(__FILE__).'/../lib/';
 
 my $dbfile = $ENV{HOME}."/.config/dictlearn/dictlearn.db";
+
+GetOptions(
+  'debug'       => \my $debug,
+  'import=s'    => \my $import,
+  'export=s'    => \my $export,
+  'clear-all'   => \my $clear_all,
+  'clear-data'  => \my $clear_data,
+  'clear-tests' => \my $clear_tests,
+  'reset'       => \my $reset,
+);
 
 unless (-e $dbfile) {
   my $config_dir = dirname $dbfile;
@@ -27,7 +38,7 @@ our $ioc = IOC::Slinky::Container->new(
           "dbi:SQLite:".$dbfile, '', '',
           { sqlite_unicode => 1,
             loader_options => {
-              debug => $ENV{DBIC_TRACE} || 0 ,
+              debug => $debug || $ENV{DBIC_TRACE} || 0,
               use_namespaces => 1
           } }
       ] },
@@ -51,10 +62,40 @@ our $ioc = IOC::Slinky::Container->new(
     },
 });
 
-unless ($ioc->lookup('db')->check_tables()) {
-  $ioc->lookup('db')->install_schema();
+if ($import) {
+  require Dict::Learn::Import;
+  exit !Dict::Learn::Import->new->do($import)
 }
 
-my $app = Dict::Learn->new;
-$app->MainLoop;
+elsif ($export) {
+  require Dict::Learn::Export;
+  exit !Dict::Learn::Export->new->do($export)
+}
 
+elsif ($clear_all) {
+  exit !$ioc->lookup('db')->clear_all()
+}
+
+elsif ($clear_data) {
+  exit !$ioc->lookup('db')->clear_data()
+}
+
+elsif ($clear_tests) {
+  exit !$ioc->lookup('db')->clear_test_results()
+}
+
+elsif ($reset) {
+  if ($ioc->lookup('db')->clear_all()) {
+    $ioc->lookup('db')->install_schema();
+  } else { exit 1 }
+  exit 0
+}
+
+else {
+  unless ($ioc->lookup('db')->check_tables()) {
+    $ioc->lookup('db')->install_schema();
+  }
+  require Dict::Learn;
+  my $app = Dict::Learn->new;
+  $app->MainLoop;
+}
