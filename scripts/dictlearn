@@ -9,10 +9,6 @@ use File::Path 'make_path';
 
 use lib dirname(__FILE__).'/../lib/';
 
-use Dict::Learn;
-use Dict::Learn::Main;
-use Dict::Learn::Db;
-
 my $dbfile = $ENV{HOME}."/.config/dictlearn/dictlearn.db";
 
 unless (-e $dbfile) {
