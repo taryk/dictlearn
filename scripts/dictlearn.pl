@@ -55,6 +55,10 @@ our $ioc = IOC::Slinky::Container->new(
     },
 });
 
+unless ($ioc->lookup('db')->check_tables()) {
+  $ioc->lookup('db')->install_schema();
+}
+
 my $app = Dict::Learn->new;
 $app->MainLoop;
 
