@@ -5,6 +5,7 @@ use common::sense;
 use IOC::Slinky::Container;
 
 use File::Basename 'dirname';
+use File::Path 'make_path';
 
 use lib dirname(__FILE__).'/../lib/';
 
@@ -14,6 +15,10 @@ use Dict::Learn::Db;
 
 my $dbfile = $ENV{HOME}."/.config/dictlearn/dictlearn.db";
 
+unless (-e $dbfile) {
+  my $config_dir = dirname $dbfile;
+  make_path($config_dir) unless -d $config_dir;
+}
 
 our $ioc = IOC::Slinky::Container->new(
   config => {
