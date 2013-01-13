@@ -39,6 +39,37 @@ sub install_schema {
   for (split ';' => $sql) {
     $self->schema->storage->dbh->do($_);
   }
+  1
+}
+
+sub clear_data {
+  my $self = shift;
+  for (qw[Word Words Example Examples WordExample
+          TestSession TestSessionData])
+  {
+    $self->schema->resultset($_)->clear_data();
+  }
+  1
+}
+
+sub clear_test_results {
+  my $self = shift;
+  for (qw[TestSession TestSessionData])
+  {
+    $self->schema->resultset($_)->clear_data();
+  }
+  1
+}
+
+sub clear_all {
+  my $self = shift;
+  for (qw[Word Words Example Examples WordExample
+          Language Wordclass Dictionary
+          Test TestSession TestSessionData])
+  {
+    $self->schema->resultset($_)->clear_data();
+  }
+  1
 }
 
 1;
@@ -151,7 +182,7 @@ CREATE TABLE IF NOT EXISTS test_session_data (
   `data`                 VARCHAR,
   `score`                REAL     NOT NULL DEFAULT 0,
   `cdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `mdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP 
+  `mdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO language (language_id, language_name) VALUES (0, 'English');

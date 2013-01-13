@@ -195,23 +195,12 @@ sub db_import {
 
 sub db_clear {
   my ($self) = @_;
-  my $db = $main::ioc->lookup('db');
-  for (qw[Word Words Example Examples WordExample
-          TestSession TestSessionData])
-  {
-    $db->schema->resultset($_)->clear_data();
-    say "clear $_";
-  }
+  $main::ioc->lookup('db')->clear_data()
 }
 
 sub db_clear_test_results {
   my ($self) = @_;
-  my $db = $main::ioc->lookup('db');
-  for (qw[TestSession TestSessionData])
-  {
-    $db->schema->resultset($_)->clear_data();
-    say "clear $_";
-  }
+  $main::ioc->lookup('db')->clear_test_results()
 }
 
 1;
