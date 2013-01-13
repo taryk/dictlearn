@@ -12,8 +12,10 @@ use lib dirname(__FILE__).'/../lib/';
 
 my $dbfile = $ENV{HOME}."/.config/dictlearn/dictlearn.db";
 
+my $debug = 0;
+
 GetOptions(
-  'debug'       => \my $debug,
+  'debug'       => \$debug,
   'import=s'    => \my $import,
   'export=s'    => \my $export,
   'clear-all'   => \my $clear_all,
@@ -38,7 +40,7 @@ our $ioc = IOC::Slinky::Container->new(
           "dbi:SQLite:".$dbfile, '', '',
           { sqlite_unicode => 1,
             loader_options => {
-              debug => $debug || $ENV{DBIC_TRACE} || 0,
+              debug => $ENV{DBIC_TRACE} //= $debug,
               use_namespaces => 1
           } }
       ] },
