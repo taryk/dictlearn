@@ -229,6 +229,7 @@ sub get_irregular_verbs {
   my @words = $self->result_source->schema->resultset('TestSessionData')->get_words();
 
   sub search_irregular_verbs {
+    my $self = shift;
     $self->search({
         irregular => 1,
         in_test   => 1,
@@ -240,7 +241,7 @@ sub get_irregular_verbs {
   }
 
   # select untested words
-  my $rs_untested = search_irregular_verbs({
+  my $rs_untested = $self->search_irregular_verbs({
     word_id => { -not_in => [ map { $_->{word_id} } @words ] }
   });
   $rs_untested->result_class('DBIx::Class::ResultClass::HashRefInflator');
@@ -248,7 +249,7 @@ sub get_irregular_verbs {
 
   # select failed words ( scrore <= 0.5 )
   unless (@res >= $min_count) {
-    my $rs_failed = search_irregular_verbs({
+    my $rs_failed = $self->search_irregular_verbs({
       word_id => { -in => [ map { $_->{word_id} } grep { $_->{avg_score} < MIN_SCORE } @words ] }
     });
     $rs_failed->result_class('DBIx::Class::ResultClass::HashRefInflator');
@@ -259,7 +260,7 @@ sub get_irregular_verbs {
   # TODO: oldest passed ones at first
   unless (@res >= $min_count) {
     my $limit = $min_count - scalar @res;
-    my $rs_other = search_irregular_verbs(
+    my $rs_other = $self->search_irregular_verbs(
       { word_id => { -not_in => [ map { $_->{word_id} } @res ] } },
       { limit   => $limit }
     );

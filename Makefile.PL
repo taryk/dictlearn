@@ -5,7 +5,7 @@ all_from 'lib/Dict/Learn.pm';
 author   q{Taras Yagniuk <mrtaryk@gmail.net>};
 license  'perl';
 
-perl_version '5.016';
+perl_version '5.014';
 
 requires 'Wx'                     => '0.9914';
 requires 'DBIx::Class'            => '0.08204';

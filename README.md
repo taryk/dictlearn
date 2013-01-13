@@ -4,7 +4,7 @@ The tool for improving and expanding your vocabulary
 
 ## Dependencies
 
-* [perl 5.16](http://www.perl.org/get.html)
+* [perl 5.14](http://www.perl.org/get.html)
 * [Wx](https://metacpan.org/module/Wx)
 * [DBIx::Class](https://metacpan.org/module/DBIx::Class)
 * [LWP::UserAgent](https://metacpan.org/module/LWP::UserAgent)
