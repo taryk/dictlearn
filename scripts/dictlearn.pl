@@ -12,7 +12,8 @@ use Dict::Learn;
 use Dict::Learn::Main;
 use Dict::Learn::Db;
 
-use constant DBFILE => dirname(__FILE__) . '/../db/dictlearn.db';
+my $dbfile = $ENV{HOME}."/.config/dictlearn/dictlearn.db";
+
 
 our $ioc = IOC::Slinky::Container->new(
   config => {
@@ -22,7 +23,7 @@ our $ioc = IOC::Slinky::Container->new(
         _class            => 'Dict::Learn::Main',
         _constructor      => 'connect',
         _constructor_args => [
-          "dbi:SQLite:".DBFILE, '', '',
+          "dbi:SQLite:".$dbfile, '', '',
           { sqlite_unicode => 1,
             loader_options => {
               debug => $ENV{DBIC_TRACE} || 0 ,
