@@ -28,7 +28,7 @@ no_index directory => qw| db inc t |;
 
 repository 'http://github.com/taryk/dictlearn';
 
-install_script 'scripts/dictlearn.pl';
+install_script 'scripts/dictlearn';
 
 # install_as_cpan;
 auto_install;
