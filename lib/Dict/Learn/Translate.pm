@@ -25,14 +25,14 @@ sub new {
 
 sub preload_tplugins {
   my $self = shift;
-  my $tplugins_dir = ( __PACKAGE__ =~ s[::][/]gr );
-  my @files = glob 'lib/'.$tplugins_dir.'/*';
-  for my $tplugin (glob 'lib/'.$tplugins_dir.'/*')
+  my $path = substr $INC{'Dict/Learn/Translate.pm'},
+             0, length($INC{'Dict/Learn/Translate.pm'}) - 3;
+  for my $tplugin (glob $path.'/*')
   {
     next unless $tplugin =~ m[/(?<tplugin>\w+)\.pm$]i;
     eval {
       require $tplugin;
-      1;
+      1
     } or do {
       printf "%s wrong plugin\n" => $tplugin;
       next
@@ -74,7 +74,6 @@ sub using {
 
 sub http_request {
   my ($self, $method, $url, $headers, $content) = @_;
-  p(@_);
   my $h = HTTP::Headers->new();
   $h->header( %$headers )
     if $headers and ref $headers eq 'HASH';
