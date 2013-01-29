@@ -136,9 +136,10 @@ sub find_ones {
     -and => [
       'me.lang_id' => $params{lang_id},
       -or => [
-        'me.word'  => { like => $word_pattern },
-        'me.word2' => { like => $word_pattern },
-        'me.word3' => { like => $word_pattern },
+        'me.word'       => { like => $word_pattern },
+        'me.word2'      => { like => $word_pattern },
+        'me.word3'      => { like => $word_pattern },
+        'word2_id.word' => { like => $word_pattern },
       ]
     ]}, {
       join     => { 'rel_words' => [ 'word2_id', 'wordclass' ] },
