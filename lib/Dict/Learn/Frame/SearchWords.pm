@@ -56,7 +56,7 @@ sub new {
 
   # table
   $self->lb_words( Wx::ListCtrl->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
-  $self->lb_words->InsertColumn( 0          , 'id',      wxLIST_FORMAT_LEFT, 35);
+  $self->lb_words->InsertColumn( 0          , 'id',      wxLIST_FORMAT_LEFT, 45);
   $self->lb_words->InsertColumn( COL_LANG1  , 'Eng',     wxLIST_FORMAT_LEFT, 200);
   $self->lb_words->InsertColumn( 2          , 'wc',      wxLIST_FORMAT_LEFT, 35);
   $self->lb_words->InsertColumn( COL_LANG2  , 'Ukr',     wxLIST_FORMAT_LEFT, 200);
@@ -83,7 +83,7 @@ sub new {
 
   # table
   $self->lb_examples( Wx::ListCtrl->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_HRULES|wxLC_VRULES ) );
-  $self->lb_examples->InsertColumn( 0, 'id',   wxLIST_FORMAT_LEFT, 35);
+  $self->lb_examples->InsertColumn( 0, 'id',   wxLIST_FORMAT_LEFT, 45);
   $self->lb_examples->InsertColumn( COL_E_LANG1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
   $self->lb_examples->InsertColumn( COL_E_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
   $self->lb_examples->InsertColumn( 3, 'Note', wxLIST_FORMAT_LEFT, 150);

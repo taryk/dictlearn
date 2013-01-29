@@ -54,7 +54,7 @@ sub new {
   $self->grid->SetColLabelAlignment( wxALIGN_CENTRE, wxALIGN_CENTRE );
 
   $self->grid->EnableDragRowSize( 1 );
-  $self->grid->SetRowLabelSize( 30 );
+  $self->grid->SetRowLabelSize( 45 );
   $self->grid->SetRowLabelAlignment( wxALIGN_CENTRE, wxALIGN_CENTRE );
   $self->grid->SetColLabelValue(COL_EXAMPLE->[0], 'Example'  );
   $self->grid->SetColLabelValue(COL_REL_E->[0],   'E'        );
