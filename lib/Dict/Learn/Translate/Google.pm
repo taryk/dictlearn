@@ -28,7 +28,7 @@ sub parse_result {
   my $cur_partofspeach;
   for my $item (@{ $json->[1] }) {
     $cur_partofspeach = $item->[0];
-    $res->{$cur_partofspeach} = $item->[1];
+    $res->{$cur_partofspeach} = [ map { { word => $_ } } @{ $item->[1]} ];
   }
   $res
 }
@@ -42,7 +42,7 @@ sub translate {
   return if $res->{code} < 0;
   $res->{content} =~ s/,{2,}/,/g;
   my $json = from_json( $res->{content}, { utf8  => 1 });
-  parse_result($json);
+  { I => parse_result($json) }
 }
 
 1;

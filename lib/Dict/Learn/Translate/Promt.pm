@@ -1,4 +1,4 @@
-package Dict::Learn::Translate::Promt;
+package Dict::Learn::Translate::Promt 0.1;
 
 use base qw[ Dict::Learn::Translate ];
 
@@ -29,9 +29,6 @@ use constant {
   }
 };
 
-
-our $VERSION = '0.01';
-
 sub parse_result {
   my $json = shift;
   my $res;
@@ -52,10 +49,10 @@ sub parse_result {
                         (\s\((?<word_category>[\w\ ]*)\))?
                         $/iux)
       {
-        push @{$res->{$cur_partofspeach}} => [
-          $+{word},
-          $+{word_category}
-        ];
+        push @{$res->{$cur_partofspeach}} => {
+          word     => $+{word},
+          category => $+{word_category}
+        };
       }
       elsif (not defined $cur_partofspeach) {
         $res->{_} = $line;
@@ -106,7 +103,7 @@ sub translate {
   return if $res->{code} < 0;
   my $json = from_json( $res->{content}, { utf8  => 1 });
   # p($json);
-  parse_result($json);
+  { I => parse_result($json) }
 }
 
 1;

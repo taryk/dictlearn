@@ -402,22 +402,35 @@ sub translate_word {
   );
   p($res);
   my $limit = $self->dst_count;
-  if (keys %$res > 1) {
+  if (keys %$res >= 1) {
     my $i = 0;
-    for my $partofspeach ( keys %$res ) {
-      next if $partofspeach eq '_';
-      $self->add_dst_item if $i >= $limit;
-      $self->word_dst->[$i]{cbox}->SetSelection(
-        $self->get_partofspeach_index($partofspeach)
-      );
-      $self->word_dst->[$i]{word}->SetValue( join ' | ' =>
-        map { ref $_ eq 'ARRAY' ? $_->[0] : $_ } @{$res->{$partofspeach}}
-      );
-      $i++;
+    for my $meaning_group ( keys %$res ) {
+      for my $partofspeach ( keys %$res->{$meaning_group} ) {
+        next if $partofspeach eq '_';
+        for my $words ( @{$res->{$meaning_group}{$partofspeach}} ) {
+          given (ref $words) {
+            when ('ARRAY') {
+              for my $word ( @$words ) {
+                $self->add_dst_item;
+                $self->word_dst->[$i]{cbox}->SetSelection(
+                  $self->get_partofspeach_index($partofspeach)
+                 );
+                $self->word_dst->[$i]{word}->SetValue($word->{word});
+                $i++;
+              }
+            }
+            when ('HASH') {
+              $self->add_dst_item;
+              $self->word_dst->[$i]{cbox}->SetSelection(
+                $self->get_partofspeach_index($partofspeach)
+              );
+              $self->word_dst->[$i]{word}->SetValue($words->{word});
+              $i++;
+            }
+          }
+        }
+      }
     }
-  }
-  else {
-    $self->word_dst->[0]{word}->SetValue( $res->{_} );
   }
 }
 
