@@ -22,6 +22,7 @@ GetOptions(
   'clear-data'  => \my $clear_data,
   'clear-tests' => \my $clear_tests,
   'reset'       => \my $reset,
+  'migration=s' => \my $migration,
 );
 
 unless (-e $dbfile) {
@@ -91,6 +92,20 @@ elsif ($reset) {
     $ioc->lookup('db')->install_schema();
   } else { exit 1 }
   exit 0
+}
+
+elsif ($migration) {
+  eval {
+    my $class = 'Dict::Learn::Main::Migration::'.$migration;
+    require ($class =~ s/::/\//rg).".pm";
+    my $data = $class->down();
+    say "down...";
+    $class->up($data);
+    say "up...";
+    1
+  } || do {
+    say "something went wrong $@";
+  }
 }
 
 else {
