@@ -26,11 +26,13 @@ use common::sense;
 
 use Class::XSAccessor
   accessors => [ qw| parent
-                     vbox menu_bar menu_dicts menu_db status_bar notebook
+                     vbox menu_bar menu_dicts menu_db menu_trans
+                     status_bar notebook
                      p_additem p_addword p_addexample p_gridwords p_search
                      p_gridexamples
                      pt_irrverbs
                      pts_irrverbs
+                     tran
                | ];
 
 use constant DICT_OFFSET => 100;
@@ -42,6 +44,8 @@ sub new {
   $self->SetIcon( Wx::GetWxPerlIcon() );
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->notebook( Wx::Notebook->new( $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 ) );
+
+  $self->tran( Dict::Learn::Translate->new() );
 
   # main menu
   my $menu_id = 0;
@@ -60,6 +64,9 @@ sub new {
   EVT_MENU($self, $menu_id, \&db_clear);
   $self->menu_db->Append(++$menu_id, 'Clear Test Results');
   EVT_MENU($self, $menu_id, \&db_clear_test_results);
+  $self->menu_trans( Wx::Menu->new );
+  $self->menu_bar->Append( $self->menu_trans, 'Translate' );
+  $self->init_menu_translate($self->menu_trans, $menu_id);
 
   # panel search
 
@@ -130,6 +137,14 @@ sub init_menu_dicts {
   $self
 }
 
+sub init_menu_translate {
+  my ($self, $menu, $menu_id) = @_;
+  for my $tran_backend (@{ $self->tran->get_backends_list }) {
+    $self->menu_trans->AppendRadioItem(++$menu_id, $tran_backend);
+    EVT_MENU( $self, $menu_id, \&set_tran_backend );
+  }
+}
+
 sub dictionary_check {
   my ($self, $event) = @_;
   # my $menu = $event->GetEventObject();
@@ -139,6 +154,15 @@ sub dictionary_check {
   );
   Dict::Learn::Dictionary->set( _DICT_ID($event->GetId) );
   $self->set_frame_title( _DICT_ID($event->GetId) );
+}
+
+sub set_tran_backend {
+  my ($self, $event) = @_;
+  my $menu_item = $self->menu_trans->FindItem( $event->GetId );
+  $self->status_bar->SetStatusText(
+    "Use '" . $menu_item->GetLabel . "' translator"
+  );
+  $self->tran->using($menu_item->GetLabel);
 }
 
 sub set_frame_title {

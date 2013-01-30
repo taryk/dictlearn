@@ -41,6 +41,11 @@ sub preload_tplugins {
   }
 }
 
+sub get_backends_list {
+  my $self = shift;
+  $self->{tplugins}
+}
+
 sub do {
   my $self = shift;
   my ($from, $to, $text) = @_;

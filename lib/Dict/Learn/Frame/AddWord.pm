@@ -29,7 +29,6 @@ use Class::XSAccessor
                      hbox_add btn_additem
 
                      btn_add_word btn_clear btn_tran btn_cancel
-                     tran
                      enable
                      edit_origin
                    | ];
@@ -37,7 +36,6 @@ use Class::XSAccessor
 sub new {
   my $class  = shift;
   my $self   = $class->SUPER::new( splice @_ => 1 );
-  $self->tran( Dict::Learn::Translate->new() );
   $self->parent( shift );
 
   ### src
@@ -396,7 +394,7 @@ sub get_partofspeach_index {
 
 sub translate_word {
   my $self = shift;
-  my $res = $self->tran->using('Google')->do(
+  my $res = $self->parent->tran->do(
     'en' => 'uk',
     $self->word_src->GetValue()
   );
