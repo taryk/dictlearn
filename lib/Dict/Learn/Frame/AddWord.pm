@@ -404,7 +404,8 @@ sub translate_word {
     my $i = 0;
     for my $meaning_group ( keys %$res ) {
       for my $partofspeach ( keys %$res->{$meaning_group} ) {
-        next if $partofspeach eq '_';
+        next if $partofspeach eq '_' and
+                ref $res->{$meaning_group}{$partofspeach} eq '';
         for my $words ( @{$res->{$meaning_group}{$partofspeach}} ) {
           given (ref $words) {
             when ('ARRAY') {
