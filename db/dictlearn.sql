@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS word (
   `wordclass_id`      INTEGER  NOT NULL DEFAULT 0,
   `irregular`         INTEGER  NOT NULL DEFAULT 0,
   `in_test`           INTEGER  NOT NULL DEFAULT 1,
+  `example`           INTEGER  NOT NULL DEFAULT 0,
   `note`              TEXT,
   `cdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
