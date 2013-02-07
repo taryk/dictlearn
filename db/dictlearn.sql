@@ -5,9 +5,9 @@ CREATE TABLE IF NOT EXISTS word (
   `word3`             VARCHAR  NULL,
   `lang_id`           INTEGER  NOT NULL DEFAULT 0,
   `wordclass_id`      INTEGER  NOT NULL DEFAULT 0,
-  `irregular`         INTEGER  NOT NULL DEFAULT 0,
-  `in_test`           INTEGER  NOT NULL DEFAULT 1,
-  `example`           INTEGER  NOT NULL DEFAULT 0,
+  `irregular`         INTEGER  NULL,
+  `in_test`           INTEGER  NULL DEFAULT 1,
+  `example`           INTEGER  NULL,
   `note`              TEXT,
   `cdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
