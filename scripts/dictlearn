@@ -23,6 +23,7 @@ GetOptions(
   'clear-tests' => \my $clear_tests,
   'reset'       => \my $reset,
   'migration=s' => \my $migration,
+  'db=s'        => \$dbfile,
 );
 
 unless (-e $dbfile) {
