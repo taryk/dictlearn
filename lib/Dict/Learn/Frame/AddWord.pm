@@ -289,9 +289,6 @@ sub add {
   $self->parent->notebook->SetPageText(1 => "Word");
   $self->btn_add_word->SetLabel('Add');
 
-  # reload linked words
-  $self->parent->p_addexample->load_words;
-
   $self
 }
 
