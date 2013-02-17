@@ -64,6 +64,10 @@ sub new {
   EVT_MENU($self, $menu_id, \&db_clear);
   $self->menu_db->Append(++$menu_id, 'Clear Test Results');
   EVT_MENU($self, $menu_id, \&db_clear_test_results);
+  $self->menu_db->Append(++$menu_id, 'Analyze');
+  EVT_MENU($self, $menu_id, \&analyze);
+  $self->menu_db->Append(++$menu_id, 'Reset Analyzer');
+  EVT_MENU($self, $menu_id, \&reset_analyzer);
   $self->menu_trans( Wx::Menu->new );
   $self->menu_bar->Append( $self->menu_trans, 'Translate' );
   $self->init_menu_translate($self->menu_trans, $menu_id);
@@ -225,6 +229,16 @@ sub db_clear {
 sub db_clear_test_results {
   my ($self) = @_;
   $main::ioc->lookup('db')->clear_test_results()
+}
+
+sub analyze {
+  my ($self) = @_;
+  $main::ioc->lookup('db')->analyze()
+}
+
+sub reset_analyzer {
+  my ($self) = @_;
+  $main::ioc->lookup('db')->reset_analyzer()
 }
 
 1;

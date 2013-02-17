@@ -1,5 +1,10 @@
 package Dict::Learn::Db 0.1;
 
+use DBIx::Class::QueryLog;
+use DBIx::Class::QueryLog::Analyzer;
+
+use Term::ANSIColor ':constants';
+
 use common::sense;
 use namespace::autoclean;
 
@@ -11,13 +16,36 @@ use constant REQ_TABLES =>
      |];
 
 use Class::XSAccessor
-    accessors => [ qw| schema | ];
+    accessors => [ qw| schema querylog | ];
 
 sub new {
   my $class = shift;
   my $self = bless {} => $class;
   $self->schema( shift );
+  # adding QueryLog
+  $self->schema->storage->debugobj(
+    $self->querylog(DBIx::Class::QueryLog->new)
+  );
+  $self->schema->storage->debug(1);
   $self
+}
+
+sub analyze {
+  my ($self) = @_;
+  my $analyzer = DBIx::Class::QueryLog::Analyzer->new({ querylog => $self->querylog });
+  for my $query ( @{ $analyzer->get_sorted_queries } ) {
+    printf "%s sec | %d | %s\n",
+      RED.($query->time_elapsed).RESET,
+      $query->count,
+      GREEN.$query->sql.RESET;
+    say "[ ".YELLOW.join(", " => @{ $query->params }).RESET." ]";
+  }
+  $self->querylog->reset;
+}
+
+sub reset_analyzer {
+  my ($self) = @_;
+  $self->querylog->reset;
 }
 
 sub check_tables {
