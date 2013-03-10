@@ -33,7 +33,7 @@ use Class::XSAccessor
                      pt_irrverbs
                      pts_irrverbs
                      tran
-               | ];
+                   | ];
 
 use constant DICT_OFFSET => 100;
 

@@ -14,7 +14,7 @@ sub OnInit {
                                        wxID_ANY,
                                        'DictLearn v0.1',
                                        [ 200, 200 ],
-                                       [ 800, 500 ],
+                                       [ 1200, 500 ],
                                        wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
   $frame->Show( 1 );
   return 1;

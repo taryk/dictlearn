@@ -6,6 +6,7 @@ use Wx::Event qw[:everything];
 use base 'Wx::Panel';
 
 use Dict::Learn::Dictionary;
+use Dict::Learn::Frame::Sidebar;
 use Data::Printer;
 
 use common::sense;
@@ -18,7 +19,7 @@ use constant {
 };
 
 use Class::XSAccessor
-  accessors => [ qw| parent
+  accessors => [ qw| parent hbox
                      vbox combobox btn_lookup lookup_hbox
                      hbox_words lb_words
                      hbox_examples lb_examples
@@ -27,6 +28,7 @@ use Class::XSAccessor
                      vbox_btn_examples
                      btn_add_example btn_delete_example
                      btn_edit_example btn_unlink_example
+                     sidebar
                | ];
 
 sub new {
@@ -92,14 +94,20 @@ sub new {
   $self->hbox_examples->Add( $self->vbox_btn_examples, 0, wxRIGHT, 5 );
   $self->hbox_examples->Add( $self->lb_examples, 2, wxALL|wxGROW|wxEXPAND, 0 );
 
+  # right sidebar
+  $self->sidebar( Dict::Learn::Frame::Sidebar->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize) );
+
   ### main layout
+  $self->hbox( Wx::BoxSizer->new( wxHORIZONTAL ) );
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
   $self->vbox->Add( $self->lookup_hbox, 0, wxTOP|wxGROW, 5 );
   $self->vbox->Add( $self->hbox_words, 2, wxALL|wxGROW|wxEXPAND, 0 );
   $self->vbox->Add( $self->hbox_examples, 1, wxALL|wxGROW|wxEXPAND, 0 );
-  $self->SetSizer( $self->vbox );
+  $self->hbox->Add( $self->vbox, 3, wxALL|wxGROW|wxEXPAND, 0 );
+  $self->hbox->Add( $self->sidebar, 1, wxGROW|wxEXPAND|wxALL, 0 );
+  $self->SetSizer( $self->hbox );
   $self->Layout();
-  $self->vbox->Fit( $self );
+  $self->hbox->Fit( $self );
 
   # events
   EVT_TEXT(   $self, $self->combobox,             \&lookup         );
@@ -191,6 +199,8 @@ sub load_examples {
     $self->lb_examples->SetItem($id, COL_E_LANG2, $item->{example_tr}   );
     $self->lb_examples->SetItem($id, 3,           $item->{note}         );
   }
+
+  $self->sidebar->load_word( word_id => $id );
 }
 
 sub get_word_id {
