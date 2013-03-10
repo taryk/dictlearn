@@ -39,19 +39,19 @@ sub new {
   $self->parent( shift );
 
   ### src
-  $self->word_src(   Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
+  $self->word_src(   Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE ));
   $self->word2_src(  Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
   $self->word3_src(  Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
   $self->word2_src->Enable(0);
   $self->word3_src->Enable(0);
   $self->cb_irregular( Wx::CheckBox->new( $self, wxID_ANY, 'Irregular verb', wxDefaultPosition, wxDefaultSize, wxCHK_2STATE, wxDefaultValidator ) );
-  $self->word_note( Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
+  $self->word_note( Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE ));
   # layout
   $self->vbox_src( Wx::BoxSizer->new( wxVERTICAL ));
-  $self->vbox_src->Add($self->word_src, 0, wxGROW|wxBOTTOM, 5);
-  $self->vbox_src->Add($self->cb_irregular, 0, wxALIGN_LEFT|wxBOTTOM, 5);
-  $self->vbox_src->Add($self->word2_src, 0, wxGROW|wxBOTTOM, 5);
-  $self->vbox_src->Add($self->word3_src, 0, wxGROW|wxBOTTOM, 5);
+  $self->vbox_src->Add($self->word_src, 2, wxGROW|wxEXPAND|wxBOTTOM, 5);
+  $self->vbox_src->Add($self->cb_irregular, 1, wxALIGN_LEFT|wxBOTTOM, 5);
+  $self->vbox_src->Add($self->word2_src, 1, wxGROW|wxBOTTOM, 5);
+  $self->vbox_src->Add($self->word3_src, 1, wxGROW|wxBOTTOM, 5);
 
   ### dst
   $self->word_dst([]);
@@ -82,8 +82,8 @@ sub new {
 
   ### main layout
   $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
-  $self->vbox->Add( $self->hbox_words, 0, wxALL|wxGROW, 0 );
-  $self->vbox->Add( $self->word_note,  0, wxALL|wxGROW, 5 );
+  $self->vbox->Add( $self->hbox_words, 3, wxALL|wxEXPAND|wxGROW, 0 );
+  $self->vbox->Add( $self->word_note,  1, wxALL|wxEXPAND|wxGROW, 5 );
   $self->vbox->Add( $self->hbox_btn,   0, wxALL|wxGROW, 5 );
   $self->SetSizer( $self->vbox );
   $self->Layout();
