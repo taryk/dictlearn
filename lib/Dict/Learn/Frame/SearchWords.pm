@@ -155,6 +155,7 @@ sub lookup {
     $self->lb_words->SetItem($id, 4,         $item->{note}      );
     $self->lb_words->SetItem($id, 5,         $item->{cdate}     );
   }
+  $self->select_first_item;
 }
 
 sub edit_word {
@@ -255,6 +256,15 @@ sub unlink_example {
     $self->get_example_id($curr_id)
   );
   $self->lookup;
+}
+
+sub select_first_item {
+  my $self = shift;
+  $self->lb_words->SetItemState(
+    $self->lb_words->GetNextItem(-1,wxLIST_NEXT_ALL,wxLIST_STATE_DONTCARE),
+    wxLIST_STATE_SELECTED,
+    wxLIST_STATE_SELECTED
+  );
 }
 
 1;

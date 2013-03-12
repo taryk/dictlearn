@@ -288,6 +288,7 @@ sub add {
   $self->remove_all_dst;
   $self->parent->notebook->SetPageText(1 => "Word");
   $self->btn_add_word->SetLabel('Add');
+  $self->parent->p_search->lookup;
 
   $self
 }
