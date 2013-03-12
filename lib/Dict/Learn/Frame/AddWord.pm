@@ -118,13 +118,13 @@ sub make_dst_item {
   $self->word_dst->[$id] = {
     word_id => $word_id,
     id      => $id,
-    cbox    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [ $self->import_wordclass ], wxCB_DROPDOWN|wxCB_READONLY, wxDefaultValidator  ),
+    cbox    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, [110,-1], [ $self->import_wordclass ], wxCB_DROPDOWN|wxCB_READONLY, wxDefaultValidator  ),
     popup   => Dict::Learn::Combo::WordList->new(),
     # word    => Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ),
     # word    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [], wxCB_DROPDOWN, wxDefaultValidator  ),
     word    => Wx::ComboCtrl->new( $self, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxCB_DROPDOWN, wxDefaultValidator ),
     # btnp    => Wx::Button->new( $self, wxID_ANY, '+', wxDefaultPosition, wxDefaultSize ),
-    btnm    => Wx::Button->new( $self, wxID_ANY, '-', wxDefaultPosition, wxDefaultSize ),
+    btnm    => Wx::Button->new( $self, wxID_ANY, '-', wxDefaultPosition, [40,-1] ),
     parent_hbox => $self->hbox_dst_item->[$id]
   };
   $self->word_dst->[$id]{word}->SetPopupControl( $self->word_dst->[$id]{popup} );
@@ -133,17 +133,17 @@ sub make_dst_item {
   EVT_BUTTON( $self, $self->word_dst->[$id]{btnm}, sub { $self->del_dst_item($id); } );
   # EVT_TEXT(   $self, $self->word_dst->[$id]{word}, sub { $self->query_words($id); } );
   $self->word_dst->[$id]{cbox}->SetSelection(0);
-  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{cbox}, 2, wxALL, 0);
+  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{cbox}, 0, wxALL, 0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{word}, 4, wxALL, 0);
-  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnm}, 1, wxALL, 0);
+  $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnm}, 0, wxALL, 0);
 
   if ($ro) {
     # $self->word_dst->[$id]{word}->SetEditable(0);
     $self->word_dst->[$id]{word}->GetTextCtrl->SetEditable(0);
     $self->word_dst->[$id]{word}->GetPopupWindow->Disable;
-    $self->word_dst->[$id]{edit} = Wx::Button->new( $self, wxID_ANY, 'e', wxDefaultPosition, wxDefaultSize );
+    $self->word_dst->[$id]{edit} = Wx::Button->new( $self, wxID_ANY, 'e', wxDefaultPosition, [40,-1] );
     EVT_BUTTON( $self, $self->word_dst->[$id]{edit}, sub { $self->edit_word_as_new($id) } );
-    $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{edit}, 1, wxALL, 0);
+    $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{edit}, 0, wxALL, 0);
   }
 
   $self->word_dst->[$id]
