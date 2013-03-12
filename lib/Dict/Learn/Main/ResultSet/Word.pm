@@ -1,6 +1,8 @@
 package Dict::Learn::Main::ResultSet::Word 0.1;
 use base 'DBIx::Class::ResultSet';
 
+use Memoize qw[memoize flush_cache];
+
 use namespace::autoclean;
 
 use common::sense;
@@ -58,6 +60,7 @@ sub add_one {
       wordclass_id  => $word->{wordclass},
     });
   }
+  $self->get_all_flushcashe;
   $self
 }
 
@@ -111,6 +114,7 @@ sub update_one {
       $word_xref->delete;
     }
   }
+  $self->get_all_flushcashe;
   $self
 }
 
@@ -118,7 +122,8 @@ sub delete_one {
   my $self = shift;
   $self->search(
     { word_id => [ @_ ] }
-  )->delete
+  )->delete;
+  $self->get_all_flushcashe;
 }
 
 sub unlink_one {
@@ -213,6 +218,8 @@ sub select_words_grid {
   $rs->all()
 }
 
+memoize('get_all' , INSTALL=> 'get_all_cached');
+
 sub get_all {
   my $self = shift;
   my $lang_id = shift;
@@ -221,6 +228,12 @@ sub get_all {
   });
   $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
   $rs->all()
+}
+
+sub get_all_flushcashe {
+  my $self = shift;
+  flush_cache('get_all_cached');
+  $self
 }
 
 sub get_irregular_verbs {

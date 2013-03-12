@@ -39,9 +39,9 @@ sub new {
   $self->parent( shift );
 
   ### src
-  $self->word_src(   Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE ));
-  $self->word2_src(  Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
-  $self->word3_src(  Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
+  $self->word_src( Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE ));
+  $self->word2_src(Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
+  $self->word3_src(Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ));
   $self->word2_src->Enable(0);
   $self->word3_src->Enable(0);
   $self->cb_irregular( Wx::CheckBox->new( $self, wxID_ANY, 'Irregular verb', wxDefaultPosition, wxDefaultSize, wxCHK_2STATE, wxDefaultValidator ) );
