@@ -132,7 +132,18 @@ sub make_dst_item {
   # EVT_BUTTON( $self, $self->word_dst->[$id]{btnp}, sub { $self->add_dst_item(); } );
   EVT_BUTTON( $self, $self->word_dst->[$id]{btnm}, sub { $self->del_dst_item($id); } );
   # EVT_TEXT(   $self, $self->word_dst->[$id]{word}, sub { $self->query_words($id); } );
-  $self->word_dst->[$id]{cbox}->SetSelection(0);
+  my $part_of_speach_selection = 0;
+  if ($id > 0 and my $prev_item = $self->word_dst->[$id-1]) {
+    return unless defined $prev_item->{cbox}
+              and ref $prev_item->{cbox} eq 'Wx::ComboBox'
+              and $prev_item->{cbox}->GetSelection >= 0;
+
+    $part_of_speach_selection = $prev_item->{cbox}->GetSelection;
+  }
+  $self->word_dst->[$id]{cbox}->SetSelection(
+    $part_of_speach_selection
+  );
+
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{cbox}, 0, wxALL, 0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{word}, 4, wxALL, 0);
   $self->hbox_dst_item->[$id]->Add($self->word_dst->[$id]{btnm}, 0, wxALL, 0);
