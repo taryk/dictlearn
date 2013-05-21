@@ -77,9 +77,9 @@ sub new {
   $self->vbox->Fit( $self );
 
   # events
-  EVT_GRID_CMD_CELL_CHANGE( $self, $self->grid,  \&update_examples  );
-  EVT_BUTTON( $self, $self->btn_refresh,         \&refresh_examples );
-  EVT_BUTTON( $self, $self->btn_delete_item,     \&delete_examples  );
+  EVT_GRID_CMD_CELL_CHANGE( $self, $self->grid, \&update_examples  );
+  EVT_BUTTON( $self, $self->btn_refresh,        \&refresh_examples );
+  EVT_BUTTON( $self, $self->btn_delete_item,    \&delete_examples  );
 
   Dict::Learn::Dictionary->cb(sub {
     my $dict = shift;
