@@ -151,3 +151,4 @@ INSERT INTO word_example_xref (word_id, example_id) VALUES (0, 2);
 INSERT INTO word_example_xref (word_id, example_id) VALUES (2, 3);
 
 INSERT INTO test (test_id, name, lang_id, enabled) VALUES (0, 'Irregular Verbs Test', 0, 1);
+INSERT INTO test (test_id, name, lang_id, enabled) VALUES (1, 'Translation Test', 0, 1);
