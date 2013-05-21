@@ -40,6 +40,7 @@ sub add {
         word_id         => $item->{word_id},
         data            => $userdata->[0],
         score           => $userdata->[1],
+        note            => $item->{note} // '',
       }
     }
   }
