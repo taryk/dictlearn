@@ -9,15 +9,16 @@ use Dict::Learn::Frame;
 use common::sense;
 
 sub OnInit {
-  my $self  = shift;
-  my $frame = Dict::Learn::Frame->new( undef,
-                                       wxID_ANY,
-                                       'DictLearn v0.1',
-                                       [ 200, 200 ],
-                                       [ 1200, 500 ],
-                                       wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
-  $frame->Show( 1 );
-  return 1;
+    my $self  = shift;
+    my $frame = Dict::Learn::Frame->new(
+        undef, wxID_ANY,
+        'DictLearn v0.1',
+        [200,  200],
+        [1200, 500],
+        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER
+    );
+    $frame->Show(1);
+    return 1;
 }
 
 1;
