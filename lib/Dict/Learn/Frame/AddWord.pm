@@ -181,8 +181,8 @@ sub make_dst_item {
         ),
         popup => Dict::Learn::Combo::WordList->new(),
 
-# word    => Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ),
-# word    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [], wxCB_DROPDOWN, wxDefaultValidator  ),
+        # word    => Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ),
+        # word    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [], wxCB_DROPDOWN, wxDefaultValidator  ),
         word => Wx::ComboCtrl->new(
             $self,         wxID_ANY,
             "",            wxDefaultPosition,
@@ -190,7 +190,7 @@ sub make_dst_item {
             wxDefaultValidator
         ),
 
-# btnp    => Wx::Button->new( $self, wxID_ANY, '+', wxDefaultPosition, wxDefaultSize ),
+        # btnp => Wx::Button->new( $self, wxID_ANY, '+', wxDefaultPosition, wxDefaultSize ),
         btnm => Wx::Button->new(
             $self, wxID_ANY, '-', wxDefaultPosition, [40, -1]
         ),
@@ -199,15 +199,15 @@ sub make_dst_item {
     $self->word_dst->[$id]{word}
         ->SetPopupControl($self->word_dst->[$id]{popup});
 
-# $self->word_dst->[$id]{word}->SetTextCtrlStyle( wxTE_MULTILINE );
-# EVT_BUTTON( $self, $self->word_dst->[$id]{btnp}, sub { $self->add_dst_item(); } );
+    # $self->word_dst->[$id]{word}->SetTextCtrlStyle( wxTE_MULTILINE );
+    # EVT_BUTTON( $self, $self->word_dst->[$id]{btnp}, sub { $self->add_dst_item(); } );
     EVT_BUTTON(
         $self,
         $self->word_dst->[$id]{btnm},
         sub { $self->del_dst_item($id); }
     );
 
-# EVT_TEXT(   $self, $self->word_dst->[$id]{word}, sub { $self->query_words($id); } );
+    # EVT_TEXT(   $self, $self->word_dst->[$id]{word}, sub { $self->query_words($id); } );
     my $part_of_speach_selection = 0;
     if ($id > 0 and my $prev_item = $self->word_dst->[$id - 1]) {
         return

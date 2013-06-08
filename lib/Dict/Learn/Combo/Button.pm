@@ -2,16 +2,14 @@ package Dict::Learn::Combo::Button 0.1;
 
 use Wx qw[:everything];
 use Wx::Event qw[:everything];
-
 use Exporter qw[import];
 use base qw[Wx::Button];
 
 use Dict::Learn::Combo::ExamplesList;
 
-use Data::Printer;
-
 our @EXPORT = qw[ EVT_SELECTED ];
 
+use Data::Printer;
 use Class::XSAccessor accessors => [qw| parent popup_window button vbox |];
 
 use common::sense;

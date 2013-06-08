@@ -13,17 +13,16 @@ use common::sense;
 use constant {
     URL           => "http://www.lingvo.ua/ru/Translate/%s-%s/%s",
     PARTSOFSPEACH => {
-        n    => 'noun',            # іменник
-        a    => 'adjective',       # прикметник
-        num  => 'numeral',         # числівник
-        pron => 'pronoun',         # займенник
-        v    => 'verb',            # дієслово
-        adv  => 'adverb',          # прислівник
-        prep => 'preposition',     # прийменник
-        cj   => 'conjunction',     # сполучник
-        int  => 'interjection',    # вигук
-        'p. p.' =>
-            'participle',    # дієприкметник (past participle)
+        n    => 'noun',          # іменник
+        a    => 'adjective',     # прикметник
+        num  => 'numeral',       # числівник
+        pron => 'pronoun',       # займенник
+        v    => 'verb',          # дієслово
+        adv  => 'adverb',        # прислівник
+        prep => 'preposition',   # прийменник
+        cj   => 'conjunction',   # сполучник
+        int  => 'interjection',  # вигук
+        'p. p.' => 'participle', # дієприкметник (past participle)
     },
 };
 
@@ -53,7 +52,6 @@ use constant {
                         }
                     }
                     when ('l-article__abbrev') {
-
                         # if ($text =~ /^(n|v|)$/)
                         say "unknown: '$text'" unless PARTSOFSPEACH->{$text};
                         $curr->{partofspeach} = PARTSOFSPEACH->{$text}
@@ -107,7 +105,11 @@ sub translate {
     my $res = $class->SUPER::http_request(
         GET => sprintf(URL, $from, $to, uri_escape_utf8($text)),
         {   'Cookie' =>
-                'ClickedOnTranslationsCount=2; xst=E33FE85E8DE54DC5B7CC20A2F0EEDD33; LastSearchRequest=08.06.2013 20:37; rateUs_cnt_1_8=54; rateUs_later_1_8=true; tz=120; uiCulture=uk; profile=searchsrclang:S:en:searchtgtlang:S:uk;',
+                'ClickedOnTranslationsCount=2; '
+                . 'xst=E33FE85E8DE54DC5B7CC20A2F0EEDD33; '
+                . 'LastSearchRequest=08.06.2013 20:37; rateUs_cnt_1_8=54; '
+                . 'rateUs_later_1_8=true; tz=120; uiCulture=uk; '
+                . 'profile=searchsrclang:S:en:searchtgtlang:S:uk;',
             'Referer   ' => 'http://www.lingvo.ua/',
             'User-Agent' =>
                 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko)',
