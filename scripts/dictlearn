@@ -8,7 +8,7 @@ use IOC::Slinky::Container;
 use common::sense;
 use lib dirname(__FILE__) . '/../lib/';
 
-my $dbfile = $ENV{HOME} . "/.config/dictlearn/dictlearn.db";
+my $dbfile = "$ENV{HOME}/.config/dictlearn/dictlearn.db";
 
 my $debug = 0;
 
@@ -36,7 +36,7 @@ our $ioc = IOC::Slinky::Container->new(
                 _class            => 'Dict::Learn::Main',
                 _constructor      => 'connect',
                 _constructor_args => [
-                    "dbi:SQLite:" . $dbfile,
+                    "dbi:SQLite:$dbfile",
                     '', '',
                     {   sqlite_unicode => 1,
                         loader_options => {
@@ -79,20 +79,18 @@ elsif ($clear_tests) {
     exit !$ioc->lookup('db')->clear_test_results();
 }
 elsif ($reset) {
-    if ($ioc->lookup('db')->clear_all()) {
-        $ioc->lookup('db')->install_schema();
-    }
-    else { exit 1 }
+    exit 1 if !$ioc->lookup('db')->clear_all();
+    $ioc->lookup('db')->install_schema();
     exit 0;
 }
 elsif ($migration) {
     eval {
         my $class = 'Dict::Learn::Main::Migration::' . $migration;
-        require($class =~ s/::/\//rg) . ".pm";
+        require(($class =~ s/::/\//rg) . '.pm');
         my $data = $class->down();
-        say "down...";
+        say 'down...';
         $class->up($data);
-        say "up...";
+        say 'up...';
         1;
     } || do {
         say "something went wrong $@";
