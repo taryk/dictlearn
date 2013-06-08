@@ -95,9 +95,10 @@ sub translate {
   my ($from, $to, $text) = @_;
   my $res = $class->SUPER::http_request(
     GET => sprintf(URL, $from, $to, uri_escape_utf8( $text )),
-    { 'Cookie'     => 'ClickedOnTranslationsCount=2; xst=E33FE85E8DE54DC5B7CC20A2F0EEDD33; LastSearchRequest=22.01.2013 22:37; rateUs_cnt_1_8=54; rateUs_later_1_8=true; tz=120; uiCulture=ru',
+    { 'Cookie'     => 'ClickedOnTranslationsCount=2; xst=E33FE85E8DE54DC5B7CC20A2F0EEDD33; LastSearchRequest=08.06.2013 20:37; rateUs_cnt_1_8=54; rateUs_later_1_8=true; tz=120; uiCulture=uk; profile=searchsrclang:S:en:searchtgtlang:S:uk;',
       'Referer   ' => 'http://www.lingvo.ua/',
       'User-Agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko)',
+      'Accept-Charset' => 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
     }
   );
   # return if $res->{code} < 0;
