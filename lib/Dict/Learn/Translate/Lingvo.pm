@@ -1,6 +1,7 @@
 package Dict::Learn::Translate::Lingvo 0.1;
 
 use base qw[ Dict::Learn::Translate ];
+use Encode qw(encode decode);
 
 use URI::Escape qw[ uri_escape_utf8 ];
 use JSON qw[ decode_json from_json ];
@@ -100,7 +101,7 @@ sub translate {
     }
   );
   # return if $res->{code} < 0;
-  my $dom = Mojo::DOM->new($res->{content});
+  my $dom = Mojo::DOM->new(decode('UTF-8', $res->{content}));
   my $tr_res;
   if (my $res = $dom->at('div.js-article-html')) {
     # p($res->to_xml);
