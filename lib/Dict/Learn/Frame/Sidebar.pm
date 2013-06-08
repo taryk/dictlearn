@@ -10,86 +10,100 @@ use common::sense;
 use Carp qw[croak confess];
 use Data::Printer;
 
-use Class::XSAccessor
-  accessors => [ qw| parent vbox html btn_refresh
-                   | ];
+use Class::XSAccessor accessors => [
+    qw| parent vbox html btn_refresh |
+];
 
 sub new {
-  my $class = shift;
-  my $self  = $class->SUPER::new( @_ );
-  $self->parent(shift);
+    my $class = shift;
+    my $self  = $class->SUPER::new(@_);
+    $self->parent(shift);
 
-  $self->html(Wx::HtmlWindow->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize));
-  $self->html->SetPage("Dict::Learn");
+    $self->html(
+        Wx::HtmlWindow->new(
+            $self, wxID_ANY, wxDefaultPosition, wxDefaultSize
+        )
+    );
+    $self->html->SetPage("Dict::Learn");
 
-  $self->btn_refresh( Wx::Button->new( $self, wxID_ANY, 'Refresh', wxDefaultPosition, wxDefaultSize ) );
+    $self->btn_refresh(
+        Wx::Button->new(
+            $self, wxID_ANY, 'Refresh', wxDefaultPosition, wxDefaultSize
+        )
+    );
 
-  ### main layout
-  $self->vbox( Wx::BoxSizer->new( wxVERTICAL ) );
-  $self->vbox->Add( $self->html, 1, wxEXPAND|wxALL, 0 );
-  $self->vbox->Add($self->btn_refresh, 0, wxTOP, 5 );
-  $self->SetSizer( $self->vbox );
-  $self->Layout();
-  $self->vbox->Fit( $self );
+    ### main layout
+    $self->vbox(Wx::BoxSizer->new(wxVERTICAL));
+    $self->vbox->Add($self->html,        1, wxEXPAND | wxALL, 0);
+    $self->vbox->Add($self->btn_refresh, 0, wxTOP,            5);
+    $self->SetSizer($self->vbox);
+    $self->Layout();
+    $self->vbox->Fit($self);
 
-  $self
+    $self;
 }
 
 sub load_word {
-  my ($self, %params) = @_;
-  my $word = $main::ioc->lookup('db')->schema->resultset('Word')->search(
-    { 'me.word_id' => $params{word_id} },
-    { prefetch => { rel_words => [ 'word2_id' ] } }
-  )->first;
-  my $translate;
-  for my $rel_word ($word->rel_words) {
-    next unless $rel_word->word2_id or $rel_word->word2_id->word_id;
-    push @{ $translate->{$rel_word->wordclass->abbr} } => {
-      word_id   => $rel_word->word2_id->word_id,
-      word      => $rel_word->word2_id->word,
-      wordclass => $rel_word->wordclass->abbr,
-      note      => $rel_word->note,
-    };
-  }
-  $self->html->SetPage(
-    $self->gen_html(
-      word_id   => $word->word_id,
-      word      => $word->word,
-      word2     => $word->word2,
-      word3     => $word->word3,
-      irregular => $word->irregular,
-      wordclass => $word->wordclass->abbr,
-      note      => $word->note,
-      translate => $translate,
-    )
-  );
+    my ($self, %params) = @_;
+    my $word = $main::ioc->lookup('db')->schema->resultset('Word')->search(
+        {'me.word_id' => $params{word_id}},
+        {prefetch     => {rel_words => ['word2_id']}}
+    )->first;
+    my $translate;
+    for my $rel_word ($word->rel_words) {
+        next unless $rel_word->word2_id or $rel_word->word2_id->word_id;
+        push @{$translate->{$rel_word->wordclass->abbr}} => {
+            word_id   => $rel_word->word2_id->word_id,
+            word      => $rel_word->word2_id->word,
+            wordclass => $rel_word->wordclass->abbr,
+            note      => $rel_word->note,
+        };
+    }
+    $self->html->SetPage(
+        $self->gen_html(
+            word_id   => $word->word_id,
+            word      => $word->word,
+            word2     => $word->word2,
+            word3     => $word->word3,
+            irregular => $word->irregular,
+            wordclass => $word->wordclass->abbr,
+            note      => $word->note,
+            translate => $translate,
+        )
+    );
 }
 
 sub gen_html {
-  my ($self, %params) = @_;
-  my ($word_line, $translate, $note);
-  # word line
-  $word_line  = '<h3>'.$params{word}.'</h3>';
-  $word_line .= '<i>past simple:</i> <b> '.$params{word2}.'</b><br> ' if $params{word2};
-  $word_line .= '<i>past participle:</i> <b> '.$params{word3}.'</b><br> ' if $params{word3};
+    my ($self, %params) = @_;
+    my ($word_line, $translate, $note);
 
-  # translation
-  for my $partofspeach (keys %{ $params{translate} }) {
-    $translate .= "<font size='-1'>".$partofspeach.".:</font>";
-    $translate .= "<ol>";
-    for my $word ( @{ $params{translate}{$partofspeach} } ) {
-      $translate .= '<li>' . $word->{word}
-        . ( $word->{note} ? '<i>('.$word->{note}.')</i>' : '' )
-        . '</li>';
+    # word line
+    $word_line = '<h3>' . $params{word} . '</h3>';
+    $word_line .= '<i>past simple:</i> <b> ' . $params{word2} . '</b><br> '
+        if $params{word2};
+    $word_line
+        .= '<i>past participle:</i> <b> ' . $params{word3} . '</b><br> '
+        if $params{word3};
+
+    # translation
+    for my $partofspeach (keys %{$params{translate}}) {
+        $translate .= "<font size='-1'>" . $partofspeach . ".:</font>";
+        $translate .= "<ol>";
+        for my $word (@{$params{translate}{$partofspeach}}) {
+            $translate
+                .= '<li>'
+                . $word->{word}
+                . ($word->{note} ? '<i>(' . $word->{note} . ')</i>' : '')
+                . '</li>';
+        }
+        $translate .= '</ol>';
     }
-    $translate.='</ol>';
-  }
 
-  # note
-  $note = sprintf('note: <i>%s</i>', $params{note}) if $params{note};
+    # note
+    $note = sprintf('note: <i>%s</i>', $params{note}) if $params{note};
 
-  # result
-  $word_line . '<br><br>' . $translate . '<br><br>' . $note // ''
+    # result
+    $word_line . '<br><br>' . $translate . '<br><br>' . $note // '';
 }
 
 1;

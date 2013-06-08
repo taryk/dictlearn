@@ -12,89 +12,96 @@ use Data::Printer;
 use common::sense;
 
 has parent => (
-  is   => 'ro',
-  isa  => 'Dict::Learn::Frame::TranslationTest',
-  required => 1,
+    is       => 'ro',
+    isa      => 'Dict::Learn::Frame::TranslationTest',
+    required => 1,
 );
 
 has hbox => (
-  is      => 'ro',
-  isa     => 'Wx::BoxSizer',
-  default => sub { Wx::BoxSizer->new( wxHORIZONTAL ) },
+    is      => 'ro',
+    isa     => 'Wx::BoxSizer',
+    default => sub { Wx::BoxSizer->new(wxHORIZONTAL) },
 );
 
 has vbox => (
-  is      => 'ro',
-  isa     => 'Wx::BoxSizer',
-  default => sub { Wx::BoxSizer->new( wxVERTICAL ) },
+    is      => 'ro',
+    isa     => 'Wx::BoxSizer',
+    default => sub { Wx::BoxSizer->new(wxVERTICAL) },
 );
 
 has btn_ok => (
-  is      => 'ro',
-  isa     => 'Wx::Button',
-  default => sub {
-    Wx::Button->new($_[0], wxID_OK, 'OK',  wxDefaultPosition, wxDefaultSize)
-  }
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    default => sub {
+        Wx::Button->new($_[0], wxID_OK, 'OK', wxDefaultPosition,
+            wxDefaultSize);
+    }
 );
 
 has btn_cancel => (
-  is      => 'ro',
-  isa     => 'Wx::Button',
-  default => sub {
-    Wx::Button->new($_[0], wxID_CANCEL, 'Cancel',  wxDefaultPosition, wxDefaultSize)
-  }
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    default => sub {
+        Wx::Button->new($_[0], wxID_CANCEL, 'Cancel', wxDefaultPosition,
+            wxDefaultSize);
+    }
 );
 
 has listbox => (
-  is  => 'ro',
-  isa => 'Wx::SimpleHtmlListBox',
-  default => sub {
-    Wx::SimpleHtmlListBox->new($_[0], wxID_ANY, wxDefaultPosition, [350, 300], [], wxLB_MULTIPLE )
-  }
+    is      => 'ro',
+    isa     => 'Wx::SimpleHtmlListBox',
+    default => sub {
+        Wx::SimpleHtmlListBox->new($_[0], wxID_ANY, wxDefaultPosition,
+            [350, 300],
+            [], wxLB_MULTIPLE);
+    }
 );
 
 sub FOREIGNBUILDARGS {
-  my ( $class, @args ) = @_;
-  return @args;
+    my ($class, @args) = @_;
+    return @args;
 }
 
 sub BUILDARGS {
-  my ( $class, $parent ) = @_;
-  return { parent => $parent };
+    my ($class, $parent) = @_;
+    return {parent => $parent};
 }
 
 sub BUILD {
-  my ($self, @args) = @_;
-  $self->hbox->Add($self->btn_ok,     0, wxEXPAND, 0);
-  $self->hbox->Add($self->btn_cancel, 0, wxEXPAND, 0);
+    my ($self, @args) = @_;
+    $self->hbox->Add($self->btn_ok,     0, wxEXPAND, 0);
+    $self->hbox->Add($self->btn_cancel, 0, wxEXPAND, 0);
 
-  $self->vbox->Add($self->listbox, 0, wxALL|wxEXPAND, 5);
-  $self->vbox->Add($self->hbox, 0, wxALL|wxEXPAND, 5);
+    $self->vbox->Add($self->listbox, 0, wxALL | wxEXPAND, 5);
+    $self->vbox->Add($self->hbox,    0, wxALL | wxEXPAND, 5);
 
-  $self->SetSizer( $self->vbox );
-  $self->Layout();
-  $self->vbox->Fit( $self );
+    $self->SetSizer($self->vbox);
+    $self->Layout();
+    $self->vbox->Fit($self);
 }
 
 sub fill_result {
-  my ($self, @res) = @_;
-  $self->listbox->Clear();
-  for my $item (@res) {
-    # TODO add note
-    $self->listbox->Append( sprintf '<div style="border: 1px solid black">'.
-      '<h3>%i</h3><br>'.
-      '<font color="#cccccc"><u>text</u></font> %s<br>'.
-      '<font color="#cccccc"><u>answer</u></font> <b>%s</b><br>'.
-      '<font color="#cccccc"><u>match most</u></font> <b>%s</b><br>%s'.
-      '</div>',
-      $item->{score},
-      $item->{word},
-      $item->{user}[0][0],
-      $item->{note},
-      join ', ', @{ $item->{other} }
-    );
-  }
-  $self
+    my ($self, @res) = @_;
+    $self->listbox->Clear();
+    for my $item (@res) {
+
+        # TODO add note
+        $self->listbox->Append(
+            sprintf '<div style="border: 1px solid black">'
+                . '<h3>%i</h3><br>'
+                . '<font color="#cccccc"><u>text</u></font> %s<br>'
+                . '<font color="#cccccc"><u>answer</u></font> <b>%s</b><br>'
+                . '<font color="#cccccc"><u>match most</u></font> <b>%s</b><br>%s'
+                . '</div>',
+            $item->{score},
+            $item->{word},
+            $item->{user}[0][0],
+            $item->{note},
+            join ', ',
+            @{$item->{other}}
+        );
+    }
+    $self;
 }
 
 no Moose;
