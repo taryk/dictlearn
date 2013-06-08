@@ -9,40 +9,36 @@ use Data::Printer;
 
 use common::sense;
 
-use constant URL => "http://translate.google.com/translate_a/t?client=t&sl=%s&tl=%s&text=%s";
+use constant URL =>
+    "http://translate.google.com/translate_a/t?client=t&sl=%s&tl=%s&text=%s";
 
 our $VERSION = '0.01';
 
-# sub new {
-#   my $class = shift;
-#   my $self  = $class->SUPER::new( @_ );
-#   $self
-# }
-
 sub parse_result {
-  my $json = shift;
-  my $res;
-  if ($json->[0][0][0]) {
-    $res->{_} = $json->[0][0][0];
-  }
-  my $cur_partofspeach;
-  for my $item (@{ $json->[1] }) {
-    $cur_partofspeach = $item->[0];
-    $res->{$cur_partofspeach} = [ map { { word => $_ } } @{ $item->[1]} ];
-  }
-  $res
+    my $json = shift;
+    my $res;
+    if ($json->[0][0][0]) {
+        $res->{_} = $json->[0][0][0];
+    }
+    my $cur_partofspeach;
+    for my $item (@{$json->[1]}) {
+        $cur_partofspeach = $item->[0];
+        $res->{$cur_partofspeach} = [map { {word => $_} } @{$item->[1]}];
+    }
+    $res;
 }
 
 sub translate {
-  my $class = shift;
-  my ($from, $to, $text) = @_;
-  my $res = $class->SUPER::http_request(
-    GET => sprintf URL, $from, $to, uri_escape_utf8( $text )
-  );
-  return if $res->{code} < 0;
-  $res->{content} =~ s/,{2,}/,/g;
-  my $json = from_json( $res->{content}, { utf8  => 1 });
-  { I => parse_result($json) }
+    my $class = shift;
+    my ($from, $to, $text) = @_;
+    my $res = $class->SUPER::http_request(
+        GET => sprintf URL,
+        $from, $to, uri_escape_utf8($text)
+    );
+    return if $res->{code} < 0;
+    $res->{content} =~ s/,{2,}/,/g;
+    my $json = from_json($res->{content}, {utf8 => 1});
+    {I => parse_result($json)};
 }
 
 1;
