@@ -68,7 +68,7 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =head1 AUTHOR
 
-Taras Yagniuk, C<< <mrtaryk at gmail.com> >>
+Taras Iagniuk, C<< <mrtaryk at gmail.com> >>
 
 =head1 BUGS
 
