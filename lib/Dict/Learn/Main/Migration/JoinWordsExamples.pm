@@ -1,15 +1,18 @@
 package Dict::Learn::Main::Migration::JoinWordsExamples;
 
-use common::sense;
-
 use Data::Printer;
+
+use common::sense;
 
 sub down {
     my $data_up;
+
+    ## no critic (ValuesAndExpressions::ProhibitLongChainsOfMethodCalls)
     my $max_word_id
         = 1 + $main::ioc->lookup('db')->schema->resultset('Word')
         ->search({}, {select => [{max => 'word_id', -as => 'max_word_id'}]})
         ->first->get_column('max_word_id');
+    ## use critic
 
     for my $e (
         $main::ioc->lookup('db')->schema->resultset('Example')->export_data())
@@ -61,13 +64,13 @@ sub down {
 
 sub up {
     my $data_up = shift;
-    say "Import into Word... "
+    say 'Import into Word... '
         . ($main::ioc->lookup('db')->schema->resultset('Word')
-            ->import_data($data_up->{word}) ? "ok" : "failed");
+            ->import_data($data_up->{word}) ? 'ok' : 'failed');
 
-    say "Import into Words... "
+    say 'Import into Words... '
         . ($main::ioc->lookup('db')->schema->resultset('Words')
-            ->import_data($data_up->{word_xref}) ? "ok" : "failed");
+            ->import_data($data_up->{word_xref}) ? 'ok' : 'failed');
 }
 
 1;

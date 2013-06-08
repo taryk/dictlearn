@@ -123,7 +123,7 @@ sub fill_result {
         $self->lb_result->SetItem($id, 0, $item->{word}[0]);
         $self->lb_result->SetItem($id, 1, $item->{user}[1][0]);
         $self->lb_result->SetItem($id, 2, $item->{user}[2][0]);
-        my @color = ();
+        my @color;
         if ($item->{score} == 0) {
             $res->{wrong} += 1;
             @color = (247, 183, 176);

@@ -1,15 +1,13 @@
 package Dict::Learn::Import 0.1;
 
-use JSON;
+use Data::Printer;
 use IO::File;
+use JSON;
 
 use common::sense;
 
-use Data::Printer;
-
-use constant {
-    TABLE_MAP => {
-        words      => 'Word',
+sub TABLE_MAP {
+    {   words      => 'Word',
         words_xref => 'Words',
 
         # examples            => 'Example',
@@ -18,7 +16,7 @@ use constant {
         test_session      => 'TestSession',
         test_session_data => 'TestSessionData'
     }
-};
+}
 
 sub new {
     my $class = shift;

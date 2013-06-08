@@ -5,9 +5,9 @@ use Wx::Grid;
 use Wx::Event qw[:everything];
 
 use base 'Wx::Frame';
+use common::sense;
 
 use Data::Printer;
-
 use File::Basename 'dirname';
 use lib dirname(__FILE__) . '/../lib/';
 
@@ -23,8 +23,6 @@ use Dict::Learn::Frame::IrregularVerbsTest;
 use Dict::Learn::Frame::TestSummary;
 use Dict::Learn::Frame::TranslationTest;
 
-use common::sense;
-
 use Class::XSAccessor accessors => [
     qw| parent
         vbox menu_bar menu_dicts menu_db menu_trans
@@ -38,7 +36,7 @@ use Class::XSAccessor accessors => [
       |
 ];
 
-use constant DICT_OFFSET => 100;
+sub DICT_OFFSET { 100 }
 
 sub new {
     my ($class, $parent) = @_;
@@ -88,7 +86,7 @@ sub new {
             wxDefaultSize, wxTAB_TRAVERSAL
         )
     );
-    $self->notebook->AddPage($self->p_search, "Search", 1);
+    $self->notebook->AddPage($self->p_search, 'Search', 1);
 
     # panel addword
 
@@ -100,7 +98,7 @@ sub new {
         )
     );
 
-    $self->notebook->AddPage($self->p_addword, "Word", 0);
+    $self->notebook->AddPage($self->p_addword, 'Word', 0);
 
     # panel addexample
 
@@ -112,7 +110,7 @@ sub new {
         )
     );
 
-    $self->notebook->AddPage($self->p_addexample, "Example", 0);
+    $self->notebook->AddPage($self->p_addexample, 'Example', 0);
 
     # panel: table of words
 
@@ -123,7 +121,7 @@ sub new {
             wxDefaultSize, wxTAB_TRAVERSAL
         )
     );
-    $self->notebook->AddPage($self->p_gridwords, "Words", 0);
+    $self->notebook->AddPage($self->p_gridwords, 'Words', 0);
 
     # panel: table of examples
 
@@ -134,7 +132,7 @@ sub new {
             wxDefaultSize, wxTAB_TRAVERSAL
         )
     );
-    $self->notebook->AddPage($self->p_gridexamples, "Examples", 0);
+    $self->notebook->AddPage($self->p_gridexamples, 'Examples', 0);
 
     # Irregular Verbs test
     $self->pt_irrverbs(
@@ -144,7 +142,7 @@ sub new {
             wxDefaultSize, wxTAB_TRAVERSAL
         )
     );
-    $self->notebook->AddPage($self->pt_irrverbs, "Irregular Verbs Test", 0);
+    $self->notebook->AddPage($self->pt_irrverbs, 'Irregular Verbs Test', 0);
 
     # Test Summary
     $self->pts_irrverbs(
@@ -154,7 +152,7 @@ sub new {
             wxDefaultSize, wxTAB_TRAVERSAL
         )
     );
-    $self->notebook->AddPage($self->pts_irrverbs, "TestSummary", 0);
+    $self->notebook->AddPage($self->pts_irrverbs, 'TestSummary', 0);
 
     # Translation Test
     $self->pt_trans(
@@ -164,7 +162,7 @@ sub new {
             wxDefaultSize, wxTAB_TRAVERSAL
         )
     );
-    $self->notebook->AddPage($self->pt_trans, "Translation Test", 0);
+    $self->notebook->AddPage($self->pt_trans, 'Translation Test', 0);
 
     # tell we want automatic layout
     # $self->SetAutoLayout( 1 );
@@ -217,7 +215,7 @@ sub dictionary_check {
     # my $menu = $event->GetEventObject();
     my $menu_item = $self->menu_dicts->FindItem($event->GetId);
     $self->status_bar->SetStatusText(
-        "Dictionary '" . $menu_item->GetLabel . "' selected");
+        'Dictionary "' . $menu_item->GetLabel . '" selected');
     Dict::Learn::Dictionary->set(_DICT_ID($event->GetId));
     $self->set_frame_title(_DICT_ID($event->GetId));
 }
@@ -226,7 +224,7 @@ sub set_tran_backend {
     my ($self, $event) = @_;
     my $menu_item = $self->menu_trans->FindItem($event->GetId);
     $self->status_bar->SetStatusText(
-        "Use '" . $menu_item->GetLabel . "' translator");
+        'Use "' . $menu_item->GetLabel . '" translator');
     $self->tran->using($menu_item->GetLabel);
 }
 
@@ -256,10 +254,10 @@ sub on_close {
 sub db_export {
     my ($self) = @_;
     if (my $fn = Dict::Learn::Export->new->do()) {
-        say "export [" . $fn . "]: successfully";
+        say "export [$fn]: successfully";
     }
     else {
-        say "export failed";
+        say 'export failed';
     }
 }
 
@@ -277,12 +275,12 @@ sub db_import {
     );
     if ($fileopen->ShowModal == wxID_OK) {
         my $filename = $fileopen->GetPath();
-        say "open filename: " . $filename;
+        say "open filename: $filename";
         if (Dict::Learn::Import->new->do($filename)) {
-            say "import successfully";
+            say 'import successfully';
         }
         else {
-            say "import failed";
+            say 'import failed';
         }
     }
 }

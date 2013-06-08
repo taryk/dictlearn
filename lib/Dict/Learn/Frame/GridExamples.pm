@@ -10,14 +10,12 @@ use Data::Printer;
 
 use common::sense;
 
-use constant {
-    COL_EXAMPLE => [0, 'example'],
-    COL_REL_E   => [1, 'rel_examples'],
-    COL_REL_W   => [2, 'rel_words'],
-    COL_INTEST  => [3, 'in_test'],
-    COL_CDATE   => [4, 'cdate'],
-    COL_MDATE   => [5, 'mdate'],
-};
+sub COL_EXAMPLE { [0, 'example'] }
+sub COL_REL_E   { [1, 'rel_examples'] }
+sub COL_REL_W   { [2, 'rel_words'] }
+sub COL_INTEST  { [3, 'in_test'] }
+sub COL_CDATE   { [4, 'cdate'] }
+sub COL_MDATE   { [5, 'mdate'] }
 
 use Class::XSAccessor accessors => [
     qw| parent
@@ -112,12 +110,15 @@ sub new {
 
 sub update_examples {
     my ($self, $obj) = @_;
+    
     printf "%s %d %d\n",
         $self->grid->GetCellValue($obj->GetRow(), $obj->GetCol()),
         $obj->GetRow(),
         $obj->GetCol();
+    
     my %upd_example
         = (example_id => $self->grid->GetRowLabelValue($obj->GetRow()));
+
     for ($obj->GetCol()) {
         when (COL_EXAMPLE->[0]) {
             $upd_example{text}
@@ -128,6 +129,7 @@ sub update_examples {
                 = $self->grid->GetCellValue($obj->GetRow(), COL_INTEST->[0]);
         }
     }
+
     $main::ioc->lookup('db')->schema->resultset('Example')
         ->update_one(%upd_example);
 }

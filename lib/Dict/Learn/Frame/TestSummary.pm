@@ -8,9 +8,10 @@ use base 'Wx::Panel';
 
 use Dict::Learn::Dictionary;
 
-use common::sense;
 use Carp qw[croak confess];
 use Data::Printer;
+
+use common::sense;
 
 use Class::XSAccessor accessors => [
     qw| parent
@@ -19,16 +20,12 @@ use Class::XSAccessor accessors => [
       |
 ];
 
-use constant {
-    TEST_ID   => 0,
-    RES_COUNT => 10,
-
-    COL_DATE  => 0,
-    COL_SCORE => 1,
-
-    COL_LB_WORD  => 0,
-    COL_LB_SCORE => 1,
-};
+sub RES_COUNT    { 10 }
+sub TEST_ID      { 0 }
+sub COL_DATE     { 0 }
+sub COL_SCORE    { 1 }
+sub COL_LB_WORD  { 0 }
+sub COL_LB_SCORE { 1 }
 
 sub new {
     my $class = shift;
@@ -112,7 +109,7 @@ sub select_data {
                 $k = -1;
             }
             my $cell_value = $data->{data};
-            my @color      = ();
+            my @color;
             given ($data->{score}) {
                 when (0) {
                     @color = (247, 183, 176);
@@ -135,7 +132,7 @@ sub select_data {
         }
         $self->grid->SetCellValue(
             $i, COL_SCORE,
-            sprintf "%d%% (%d/%d)",
+            sprintf '%d%% (%d/%d)',
             $r->{correct} * 100 / RES_COUNT,
             $r->{correct}, RES_COUNT
         );
@@ -157,7 +154,7 @@ sub select_words_stats {
         my $id = $self->lb_word_score->InsertItem(Wx::ListItem->new);
         $self->lb_word_score->SetItem($id, COL_LB_WORD, $stat->{word});
         $self->lb_word_score->SetItem($id, COL_LB_SCORE,
-            sprintf "%d%% (%d/%d)",
+            sprintf '%d%% (%d/%d)',
             $stat->{perc}, $stat->{sumscore}, $stat->{wcount});
     }
 }

@@ -24,7 +24,7 @@ sub new {
             $self, wxID_ANY, wxDefaultPosition, wxDefaultSize
         )
     );
-    $self->html->SetPage("Dict::Learn");
+    $self->html->SetPage('Dict::Learn');
 
     $self->btn_refresh(
         Wx::Button->new(
@@ -87,8 +87,8 @@ sub gen_html {
 
     # translation
     for my $partofspeach (keys %{$params{translate}}) {
-        $translate .= "<font size='-1'>" . $partofspeach . ".:</font>";
-        $translate .= "<ol>";
+        $translate .= "<font size='-1'>$partofspeach</font>";
+        $translate .= '<ol>';
         for my $word (@{$params{translate}{$partofspeach}}) {
             $translate
                 .= '<li>'

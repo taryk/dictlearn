@@ -1,18 +1,15 @@
-package Dict::Learn::Translate::Google;
-
+package Dict::Learn::Translate::Google 0.01;
 use base qw[ Dict::Learn::Translate ];
 
-use URI::Escape qw[ uri_escape_utf8 ];
-use JSON qw[ decode_json from_json ];
-
 use Data::Printer;
+use JSON qw[ decode_json from_json ];
+use URI::Escape qw[ uri_escape_utf8 ];
 
 use common::sense;
 
-use constant URL =>
-    "http://translate.google.com/translate_a/t?client=t&sl=%s&tl=%s&text=%s";
-
-our $VERSION = '0.01';
+sub URL {
+  'http://translate.google.com/translate_a/t?client=t&sl=%s&tl=%s&text=%s'
+}
 
 sub parse_result {
     my $json = shift;

@@ -40,7 +40,7 @@ sub cb {
     my ($self, $cb) = @_;
     $self = $self->singleton unless ref $self;
     unless (ref $cb eq 'CODE') {
-        warn "Wrong `cb` type";
+        warn 'Wrong "cb" type';
         return;
     }
     push @{$self->{cb}} => $cb;

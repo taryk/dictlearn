@@ -1,18 +1,16 @@
 package Dict::Learn::Export 0.1;
 
-use JSON;
+use Data::Printer;
 use IO::File;
+use JSON;
 use POSIX qw(strftime);
 
 use common::sense;
 
-use Data::Printer;
+sub EXPORT_FILENAME { 'export.%d.json' }
 
-use constant EXPORT_FILENAME => 'export.%d.json';
-
-use constant {
-    TABLE_MAP => {
-        words               => 'Word',
+sub TABLE_MAP {
+    {   words               => 'Word',
         words_xref          => 'Words',
         examples            => 'Example',
         examples_xref       => 'Examples',
@@ -20,7 +18,7 @@ use constant {
         test_session        => 'TestSession',
         test_session_data   => 'TestSessionData'
     }
-};
+}
 
 sub new {
     my $class = shift;

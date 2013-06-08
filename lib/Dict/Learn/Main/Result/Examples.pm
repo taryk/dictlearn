@@ -1,5 +1,6 @@
 package Dict::Learn::Main::Result::Examples 0.2;
 use base qw[ DBIx::Class::Core ];
+
 __PACKAGE__->table('example_xref');
 __PACKAGE__->add_columns(
     qw[ example1_id example2_id dictionary_id
@@ -34,4 +35,5 @@ __PACKAGE__->has_one(
         cascade_update => 0
     }
 );
+
 1;

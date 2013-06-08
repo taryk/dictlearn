@@ -1,5 +1,6 @@
 package Dict::Learn::Main::Result::WordExample 0.2;
 use base qw[ DBIx::Class::Core ];
+
 __PACKAGE__->table('word_example_xref');
 __PACKAGE__->add_columns(
     qw[ word_id example_id wordclass_id

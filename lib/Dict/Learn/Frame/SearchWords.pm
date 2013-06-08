@@ -11,12 +11,10 @@ use Data::Printer;
 
 use common::sense;
 
-use constant {
-    COL_LANG1   => 1,
-    COL_LANG2   => 3,
-    COL_E_LANG1 => 1,
-    COL_E_LANG2 => 2,
-};
+sub COL_LANG1   { 1 }
+sub COL_LANG2   { 3 }
+sub COL_E_LANG1 { 1 }
+sub COL_E_LANG2 { 2 }
 
 use Class::XSAccessor accessors => [
     qw| parent hbox
@@ -40,7 +38,7 @@ sub new {
     ### lookup
     $self->combobox(
         Wx::ComboBox->new(
-            $self, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, [], 0,
+            $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, [], 0,
             wxDefaultValidator
         )
     );

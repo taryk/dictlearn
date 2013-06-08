@@ -1,5 +1,6 @@
 package Dict::Learn::Main::Result::Dictionary 0.1;
 use base qw[ DBIx::Class::Core ];
+
 __PACKAGE__->table('dictionary');
 __PACKAGE__->add_columns(
     qw[ dictionary_id dictionary_name language_orig_id language_tr_id

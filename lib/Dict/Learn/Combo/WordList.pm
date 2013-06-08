@@ -26,12 +26,12 @@ sub Create {
         Wx::Panel->new(
             $parent,           wxID_ANY,
             wxDefaultPosition, wxDefaultSize,
-            wxCAPTION,         "words"
+            wxCAPTION,         'words'
         )
     );
 
-# $self->search( Wx::TextCtrl->new( $self->panel, wxID_ANY, 'test', wxDefaultPosition, wxDefaultSize ) );
-# $self->search->SetEditable(1);
+    # $self->search( Wx::TextCtrl->new( $self->panel, wxID_ANY, 'test', wxDefaultPosition, wxDefaultSize ) );
+    # $self->search->SetEditable(1);
     $self->lb_words(
         Wx::ListCtrl->new(
             $self->panel,      wxID_ANY,

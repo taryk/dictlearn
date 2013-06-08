@@ -5,14 +5,15 @@ use Wx::Event qw[:everything];
 use Exporter qw[import];
 use base qw[Wx::Button];
 
+use Data::Printer;
+
 use Dict::Learn::Combo::ExamplesList;
 
-our @EXPORT = qw[ EVT_SELECTED ];
+use common::sense;
 
-use Data::Printer;
 use Class::XSAccessor accessors => [qw| parent popup_window button vbox |];
 
-use common::sense;
+our @EXPORT = qw[ EVT_SELECTED ];
 
 sub new {
     my $class = shift;

@@ -11,15 +11,13 @@ use Data::Printer;
 
 use common::sense;
 
-use constant {
-    COL_WORD      => [0, 'word'],
-    COL_REL_W     => [1, 'rel_words'],
-    COL_REL_E     => [2, 'rel_examples'],
-    COL_WORDCLASS => [3, 'wordclass'],
-    COL_INTEST    => [4, 'in_test'],
-    COL_CDATE     => [5, 'cdate'],
-    COL_MDATE     => [6, 'mdate'],
-};
+sub COL_WORD      { [0, 'word'] }
+sub COL_REL_W     { [1, 'rel_words'] }
+sub COL_REL_E     { [2, 'rel_examples'] }
+sub COL_WORDCLASS { [3, 'wordclass'] }
+sub COL_INTEST    { [4, 'in_test'] }
+sub COL_CDATE     { [5, 'cdate'] }
+sub COL_MDATE     { [6, 'mdate'] }
 
 use Class::XSAccessor accessors => [
     qw| parent
@@ -117,14 +115,17 @@ sub update_word {
     my $self = shift;
     my $obj  = shift;
     my @cols = qw[ word_orig word_tr ];
+
     printf "%s %d %d\n",
         $self->grid->GetCellValue($obj->GetRow(), $obj->GetCol()),
         $obj->GetRow(),
         $obj->GetCol();
+
     my %upd_word = (word_id => $self->grid->GetRowLabelValue($obj->GetRow()));
+
     for ($obj->GetCol()) {
         when (COL_WORD->[0]) {
-            my @words = split /\s*[\/\\\|]+\s*/ =>
+            my @words = split qr{\s*[\/\\\|]+\s*} =>
                 $self->grid->GetCellValue($obj->GetRow(), COL_WORD->[0]);
             $upd_word{irregular} = @words > 1 ? 1 : 0;
             $upd_word{word}  = $words[0] if $words[0];
@@ -136,6 +137,7 @@ sub update_word {
                 = $self->grid->GetCellValue($obj->GetRow(), COL_INTEST->[0]);
         }
     }
+
     $main::ioc->lookup('db')->schema->resultset('Word')
         ->update_one(%upd_word);
 }

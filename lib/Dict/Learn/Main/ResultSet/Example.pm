@@ -63,7 +63,7 @@ sub add_one {
 sub update_one {
     my $self   = shift;
     my %params = @_;
-    my %update = ();
+    my %update;
     $update{example} = $params{text}    if defined $params{text};
     $update{note}    = $params{note}    if defined $params{note};
     $update{lang_id} = $params{lang_id} if defined $params{lang_id};

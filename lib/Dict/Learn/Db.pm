@@ -1,22 +1,22 @@
 package Dict::Learn::Db 0.1;
 
-use DBIx::Class::QueryLog;
 use DBIx::Class::QueryLog::Analyzer;
-
+use DBIx::Class::QueryLog;
+use Data::Printer;
 use Term::ANSIColor ':constants';
+use List::MoreUtils 'any';
 
 use common::sense;
 use namespace::autoclean;
 
-use Data::Printer;
-
-use constant REQ_TABLES => [
-    qw| word word_xref example example_xref word_example_xref
-        dictionary wordclass language test test_session test_session_data
-      |
-];
-
 use Class::XSAccessor accessors => [qw| schema querylog |];
+
+sub REQ_TABLES {
+    [   qw| word word_xref example example_xref word_example_xref
+            dictionary wordclass language test test_session test_session_data
+          |
+    ];
+}
 
 sub new {
     my $class = shift;
@@ -35,11 +35,11 @@ sub analyze {
     my $analyzer
         = DBIx::Class::QueryLog::Analyzer->new({querylog => $self->querylog});
     for my $query (@{$analyzer->get_sorted_queries}) {
-        printf "%s sec | %d | %s\n",
+        printf '%s sec | %d | %s\n',
             RED . ($query->time_elapsed) . RESET,
             $query->count,
             GREEN . $query->sql . RESET;
-        say "[ " . YELLOW . join(", " => @{$query->params}) . RESET . " ]";
+        say '[ ' . YELLOW . join(', ' => @{$query->params}) . RESET . ' ]';
     }
     $self->querylog->reset;
 }
@@ -51,19 +51,19 @@ sub reset_analyzer {
 
 sub check_tables {
     my $self = shift;
-    say "Checking DB...";
+    say 'Checking DB...';
     my @tables = grep { $_->[0] eq 'main' }
-        map { [(/^\"(\w+)\"\.\"(\w+)\"$/)] }
+        map { [(/^["](\w+)["][.]["](\w+)["]$/x)] }
         $self->schema->storage->dbh->tables();
     for my $req_table (@{+REQ_TABLES}) {
-        return unless grep { $req_table eq $_->[1] } @tables;
+        return unless any { $req_table eq $_->[1] } @tables;
     }
     1;
 }
 
 sub install_schema {
     my $self = shift;
-    say "Install schema and initial data";
+    say 'Install schema and initial data';
     my $sql = join ' ' => <DATA>;
     for (split ';' => $sql) {
         $self->schema->storage->dbh->do($_);
@@ -73,10 +73,8 @@ sub install_schema {
 
 sub clear_data {
     my $self = shift;
-    for (
-        qw[Word Words Example Examples WordExample
-        TestSession TestSessionData]
-        )
+    for ( qw[Word Words Example Examples WordExample
+             TestSession TestSessionData] )
     {
         $self->schema->resultset($_)->clear_data();
     }

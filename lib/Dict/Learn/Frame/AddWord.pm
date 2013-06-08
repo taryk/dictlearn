@@ -185,7 +185,7 @@ sub make_dst_item {
         # word    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [], wxCB_DROPDOWN, wxDefaultValidator  ),
         word => Wx::ComboCtrl->new(
             $self,         wxID_ANY,
-            "",            wxDefaultPosition,
+            '',            wxDefaultPosition,
             wxDefaultSize, wxCB_DROPDOWN,
             wxDefaultValidator
         ),
@@ -381,7 +381,7 @@ sub add {
 
                 # `GetLabel` returns "" or value
                 my $word_id = $word_dst_item->{word}->GetLabel();
-                $word_id = undef if $word_id eq "";
+                $word_id = undef if $word_id eq '';
                 if (defined $word_id and int $word_id >= 0) {
                     $push_item->{word_id} = $word_id;
                     $push_item->{word}    = 0;
@@ -411,7 +411,7 @@ sub add {
     }
     $self->clear_fields;
     $self->remove_all_dst;
-    $self->parent->notebook->SetPageText(1 => "Word");
+    $self->parent->notebook->SetPageText(1 => 'Word');
     $self->btn_add_word->SetLabel('Add');
     $self->parent->p_search->lookup;
 
@@ -444,7 +444,7 @@ sub clear_fields {
             my $word_dst_item = pop;
             return unless defined $word_dst_item->{word};
             $word_dst_item->{cbox}->SetSelection(0);
-            $word_dst_item->{word}->SetText("");
+            $word_dst_item->{word}->SetText('');
         }
     );
     $self->word_note->Clear;
@@ -509,7 +509,7 @@ sub fill_fields {
     $self->word_note->SetValue($params{note});
 
     $self->parent->notebook->SetPageText(
-        1 => "Edit item id#" . $self->item_id);
+        1 => 'Edit item id#' . $self->item_id);
 }
 
 sub dst_count { scalar @{$_[0]->word_dst} }
@@ -604,7 +604,7 @@ sub cancel {
     my $self = shift;
     $self->clear_fields();
     $self->remove_all_dst();
-    $self->parent->notebook->SetPageText(1 => "Word");
+    $self->parent->notebook->SetPageText(1 => 'Word');
 }
 
 1;

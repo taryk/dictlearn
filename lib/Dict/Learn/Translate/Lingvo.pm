@@ -7,13 +7,14 @@ use Encode qw(encode decode);
 use JSON qw[ decode_json from_json ];
 use Mojo::DOM;
 use URI::Escape qw[ uri_escape_utf8 ];
+use List::MoreUtils 'any';
 
 use common::sense;
 
-use constant {
-    URL           => "http://www.lingvo.ua/ru/Translate/%s-%s/%s",
-    PARTSOFSPEACH => {
-        n    => 'noun',          # іменник
+sub URL { 'http://www.lingvo.ua/ru/Translate/%s-%s/%s' }
+
+sub PARTSOFSPEACH {
+    {   n    => 'noun',          # іменник
         a    => 'adjective',     # прикметник
         num  => 'numeral',       # числівник
         pron => 'pronoun',       # займенник
@@ -23,8 +24,8 @@ use constant {
         cj   => 'conjunction',   # сполучник
         int  => 'interjection',  # вигук
         'p. p.' => 'participle', # дієприкметник (past participle)
-    },
-};
+    }
+}
 
 {
     my $curr = {
@@ -47,7 +48,7 @@ use constant {
 
                 given ($span->attrs->{class}) {
                     when ('Bold') {
-                        if ($text =~ /^(?<variant>[IVXLMC]+)\s*$/) {
+                        if ($text =~ /^(?<variant>[IVXLMC]+)\s*$/x) {
                             $curr->{variant} = $+{variant};
                         }
                     }
@@ -64,25 +65,25 @@ use constant {
                     and $_[0]->find('span.l-article__abbrev')->size >= 1)
                 {
                     my $text = $_[0]->span->all_text;
-                    if (grep { $text eq $_ } keys %{+PARTSOFSPEACH}) {
+                    if (any { $text eq $_ } keys %{+PARTSOFSPEACH}) {
                         $curr->{partofspeach} = PARTSOFSPEACH->{$text};
                         return;
                     }
                 }
-                my $words_line = $_[0]->all_text =~ s/^\d+\)\s+//r;
+                my $words_line = $_[0]->all_text =~ s/^\d+[)]\s+//r;
                 my $words;
                 for my $word (split /\s*;\s*/ => $words_line) {
                     my $word_entry;
                     if ($word
-                        =~ s/^\s*\(\s*(?<preposition>[^\)]+)\s*\)\s*//ius)
+                        =~ s/^\s*[(]\s*(?<preposition>[^)]+)\s*[)]\s*//iusx)
                     {
                         $word_entry->{prep}
                             = [split /\s*,\s*/ => $+{preposition}];
                     }
-                    if ($word =~ s/^\s*(?<category>[^\. ]+)\.\s*//ius) {
+                    if ($word =~ s/^\s*(?<category>[^. ]+)[.]\s*//iusx) {
                         $word_entry->{category} = $+{category};
                     }
-                    if ($word =~ s/\s*\(\s*(?<note>[^\)]+)\s*\)\s*$//ius) {
+                    if ($word =~ s/\s*[(]\s*(?<note>[^)]+)\s*[)]\s*$//iusx) {
                         $word_entry->{note} = $+{note};
                         chomp($word_entry->{note});
                     }
@@ -97,7 +98,7 @@ use constant {
             }
         }
     }
-};
+}
 
 sub translate {
     my $class = shift;
@@ -121,7 +122,6 @@ sub translate {
     my $dom = Mojo::DOM->new(decode('UTF-8', $res->{content}));
     my $tr_res;
     if (my $res = $dom->at('div.js-article-html')) {
-
         # p($res->to_xml);
         # $res->all_text(0);
         given ($res->find('p')->size) {

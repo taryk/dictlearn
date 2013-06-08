@@ -1,14 +1,14 @@
 package Dict::Learn::Translate;
 
+use Data::Printer;
 use HTTP::Request;
-use LWP::UserAgent;
 use JSON qw[ encode_json to_json decode_json from_json ];
+use LWP::UserAgent;
+use List::MoreUtils 'any';
 
 use common::sense;
 
-use Data::Printer;
-
-use constant USERAGENT => 'Mozilla/5.0';
+sub USERAGENT { 'Mozilla/5.0' }
 
 sub new {
     my $class = shift;
@@ -28,7 +28,7 @@ sub preload_tplugins {
     my $path = substr $INC{'Dict/Learn/Translate.pm'},
         0, length($INC{'Dict/Learn/Translate.pm'}) - 3;
     for my $tplugin (glob $path . '/*') {
-        next unless $tplugin =~ m[/(?<tplugin>\w+)\.pm$]i;
+        next unless $tplugin =~ m{/(?<tplugin>\w+)[.]pm$}ix;
         eval {
             require $tplugin;
             1;
@@ -49,8 +49,8 @@ sub do {
     my $self = shift;
     my ($from, $to, $text) = @_;
     $self->from($from)->to($to);
-    my $tr_class = __PACKAGE__ . "::" . $self->{using};
-    unless (grep { $_ eq $self->{using} } @{$self->{tplugins}}) {
+    my $tr_class = __PACKAGE__ . '::' . $self->{using};
+    unless (any { $_ eq $self->{using} } @{$self->{tplugins}}) {
         printf "'%s' undef translate engine\n" => $self->{using};
         return;
     }

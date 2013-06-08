@@ -82,7 +82,7 @@ sub new {
     );
     $self->btn_addexisting(
         Dict::Learn::Combo::Button->new(
-            $self, wxID_ANY, "++", wxDefaultPosition, wxDefaultSize
+            $self, wxID_ANY, '++', wxDefaultPosition, wxDefaultSize
         )
     );
 
@@ -166,7 +166,6 @@ sub make_dst_item {
     my ($self, $example_id, $ro) = @_;
     push @{$self->hbox_dst_item} => Wx::BoxSizer->new(wxHORIZONTAL);
     my $id = $#{$self->hbox_dst_item};
-    my $text;
     $self->text_dst->[$id] = {
         example_id => $example_id,
         id         => $id,
@@ -309,7 +308,7 @@ sub add {
         $params{example_id} = $self->item_id;
         $main::ioc->lookup('db')->schema->resultset('Example')
             ->update_one(%params);
-        $self->parent->notebook->SetPageText(2 => "Example");
+        $self->parent->notebook->SetPageText(2 => 'Example');
     }
     else {
         $main::ioc->lookup('db')->schema->resultset('Example')
@@ -378,7 +377,7 @@ sub fill_fields {
         $el->{text}->SetValue($text_tr->{text});
     }
     $self->parent->notebook->SetPageText(
-        2 => "Edit example id#" . $self->item_id);
+        2 => 'Edit example id#' . $self->item_id);
 }
 
 sub load_words {
@@ -391,10 +390,10 @@ sub load_words {
         )
     {
         $self->search_words->Append(
-            $item->{word} . " (" . $item->{wordclass} . ")",
+            $item->{word} . ' (' . $item->{wordclass} . ')',
             $item->{id});
         $self->linked_words->Append(
-            $item->{word} . " (" . $item->{wordclass} . ")",
+            $item->{word} . ' (' . $item->{wordclass} . ')',
             $item->{id});
     }
 }
@@ -431,7 +430,7 @@ sub cancel {
     my $self = shift;
     $self->clear_fields();
     $self->remove_all_dst();
-    $self->parent->notebook->SetPageText(2 => "Example");
+    $self->parent->notebook->SetPageText(2 => 'Example');
 }
 
 1;

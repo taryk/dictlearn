@@ -35,7 +35,7 @@ has btn_ok => (
     default => sub {
         Wx::Button->new($_[0], wxID_OK, 'OK', wxDefaultPosition,
             wxDefaultSize);
-    }
+    },
 );
 
 has btn_cancel => (
@@ -44,7 +44,7 @@ has btn_cancel => (
     default => sub {
         Wx::Button->new($_[0], wxID_CANCEL, 'Cancel', wxDefaultPosition,
             wxDefaultSize);
-    }
+    },
 );
 
 has listbox => (
@@ -54,7 +54,7 @@ has listbox => (
         Wx::SimpleHtmlListBox->new($_[0], wxID_ANY, wxDefaultPosition,
             [350, 300],
             [], wxLB_MULTIPLE);
-    }
+    },
 );
 
 sub FOREIGNBUILDARGS {

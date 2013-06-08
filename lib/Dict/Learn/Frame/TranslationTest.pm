@@ -20,7 +20,7 @@ use common::sense;
 
 # use warnings FATAL => "all";
 
-use constant TEST_ID => 1;
+sub TEST_ID { 1 }
 
 has STEPS => (is => 'ro', default => sub {3});
 has min   => (is => 'ro', default => sub {1});
@@ -34,13 +34,13 @@ has max   => (
             return unless $new_index >= $last_index;
             $self->fetch_exercises($last_index, $new_index);
         }
-    }
+    },
 );
 
 has total_score => (
     is      => 'rw',
     default => sub {0},
-    clearer => 'clear_score'
+    clearer => 'clear_score',
 );
 
 has exercise => (
@@ -79,7 +79,7 @@ has pos => (
     trigger => sub {
         my ($self, $pos) = @_;
         $self->set_position($pos);
-    }
+    },
 );
 
 has position => (
@@ -89,7 +89,7 @@ has position => (
         my ($self) = @_;
         Wx::StaticText->new($self, wxID_ANY, $self->min . '/',
             wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE);
-    }
+    },
 );
 
 has spin => (
@@ -98,7 +98,7 @@ has spin => (
     default => sub {
         Wx::SpinCtrl->new($_[0], wxID_ANY, 0, wxDefaultPosition,
             wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP);
-    }
+    },
 );
 
 has text => (
@@ -107,7 +107,7 @@ has text => (
     default => sub {
         Wx::StaticText->new($_[0], wxID_ANY, '', wxDefaultPosition,
             wxDefaultSize, wxALIGN_CENTRE);
-    }
+    },
 );
 
 has input => (
@@ -116,7 +116,7 @@ has input => (
     default => sub {
         Wx::TextCtrl->new($_[0], wxID_ANY, '', wxDefaultPosition,
             wxDefaultSize, wxTE_LEFT);
-    }
+    },
 );
 
 has btn_prev => (
@@ -125,7 +125,7 @@ has btn_prev => (
     default => sub {
         Wx::Button->new($_[0], wxID_ANY, 'Prev', wxDefaultPosition,
             wxDefaultSize);
-    }
+    },
 );
 
 has btn_next => (
@@ -134,7 +134,7 @@ has btn_next => (
     default => sub {
         Wx::Button->new($_[0], wxID_ANY, 'Next', wxDefaultPosition,
             wxDefaultSize);
-    }
+    },
 );
 
 has btn_reset => (
@@ -143,7 +143,7 @@ has btn_reset => (
     default => sub {
         Wx::Button->new($_[0], wxID_ANY, 'Reset', wxDefaultPosition,
             wxDefaultSize);
-    }
+    },
 );
 
 has result => (
@@ -372,10 +372,10 @@ sub reset_session {
 
 sub strip_string {
     my ($string) = @_;
-    $string =~ s/\([^\)]+\)//g;    # remove all characters between parentheses
+    $string =~ s/[(][^)]+[)]//g;    # remove all characters between parentheses
     $string =~ s/\W/ /g;
     $string =~ s/_/ /g;
-    $string =~ s/\ {2,}/ /g;
+    $string =~ s/[ ]{2,}/ /g;
     $string =~ s/\s+$//;
     $string =~ s/^\s+//;
     lc $string;
@@ -388,7 +388,7 @@ sub compare_strings {
     if (length $got > 0) {
         for my $expected_item (@{$expected}) {
             unless ($expected_item->[1]) {
-                push @e, [0, $got, ""];
+                push @e, [0, $got, ''];
                 last;
             }
             my $string = $expected_item->[1];
@@ -412,7 +412,7 @@ sub compare_strings {
             my $plus = (reduce { $a + $b }
                 map { length $_ } ($a[0] =~ /\[([^\]]+)\]/g)) // 0;
             my $minus = (reduce { $a + $b }
-                map { length $_ } ($a[0] =~ /\{([^\}]+)\}/g)) // 0;
+                map { length $_ } ($a[0] =~ /[{]([^}]+)[}]/g)) // 0;
             my $total_perc = 100 - (
                   $plus > $minus
                 ? $plus / length($got_stripped)

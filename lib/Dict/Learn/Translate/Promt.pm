@@ -8,37 +8,39 @@ use common::sense;
 
 use Data::Printer;
 
-use constant {
-    URL =>
-        "http://www.translate.ru/services/TranslationService.asmx/GetTranslation",
-    PARTSOFSPEACH => {
-        noun      => 'существительное',  # іменник
-        adjective => 'прилагательное',    # прикметник
-        numeral   => 'числительное',        # числівник
-        pronoun   => 'местоимение',          # займенник
-        verb      => 'глагол',                    # дієслово
-        adverb    => 'наречие',                  # прислівник
-        preposition  => 'предлог',         # прийменник
-        conjunction  => 'союз',               # сполучник
-        participle   => 'причастие',     # дієприкметник
-        interjection => 'междометие',   # вигук
-    },
+sub URL {
+    'http://www.translate.ru/services/TranslationService.asmx/GetTranslation'
+}
 
-    # @TODO: implement categories support
-    CATEGORIES => {
-        auto  => "Автомобильный",
-        cable => "Кабельная промышленность",
+sub PARTSOFSPEACH {
+    {   noun      => 'существительное', # іменник
+        adjective => 'прилагательное',  # прикметник
+        numeral   => 'числительное',    # числівник
+        pronoun   => 'местоимение',     # займенник
+        verb      => 'глагол',          # дієслово
+        adverb    => 'наречие',         # прислівник
+        preposition  => 'предлог',      # прийменник
+        conjunction  => 'союз',         # сполучник
+        participle   => 'причастие',    # дієприкметник
+        interjection => 'междометие',   # вигук
+    };
+}
+
+# @TODO: implement categories support
+sub CATEGORIES {
+    {   auto  => 'Автомобильный',
+        cable => 'Кабельная промышленность',
     }
-};
+}
 
 sub parse_result {
     my $json = shift;
     my $res;
-    my $pos_re = qr[(,\s(?<unknown>\w))?,\s(?<partofspeach>\w+)$]ius;
+    my $pos_re = qr/(,\s(?<unknown>\w))?,\s(?<partofspeach>\w+)$/iusx;
     if ($json->{isWord} == 1 and $json->{resultNoTags}) {
         my $cur_partofspeach;
         for my $line (split "\r\n" => $json->{resultNoTags}) {
-            next if $line =~ /^(\-+|GENERATED_FROM)$/;
+            next if $line =~ /^(\-+|GENERATED_FROM)$/x;
             if (0 == index $line => "\n") {
                 if ($line =~ $pos_re) {
 
@@ -48,10 +50,12 @@ sub parse_result {
                 }
             }
             elsif (
-                $line =~ /^\s\-\s(?<word>[\w\/\-\ ]+)
-                        (,\s\w)?
-                        (\s\((?<word_category>[\w\ ]*)\))?
-                        $/iux
+                $line =~ m{^
+                           \s\-\s(?<word>[\w/\- ]+)
+                           (,\s\w)?
+                           (\s[(](?<word_category>[\w\ ]*)[)])?
+                           $
+                          }iux
                 )
             {
                 push @{$res->{$cur_partofspeach}} => {

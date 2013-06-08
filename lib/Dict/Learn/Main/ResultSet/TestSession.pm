@@ -83,11 +83,11 @@ sub get_words_stats {
         );
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
 
-    # TODO: find out how to do this using DBIx::Class
+    # TODO find out how to do this using DBIx::Class
     my @a = sort { $b->{perc} <=> $a->{perc} } map {
         $_->{word}
-            = $_->{word_id}{word} . " / "
-            . $_->{word_id}{word2} . " / "
+            = $_->{word_id}{word} . ' / '
+            . $_->{word_id}{word2} . ' / '
             . $_->{word_id}{word3};
         $_->{sumscore} *= 2;
         $_->{perc} = $_->{sumscore} * 100 / $_->{wcount};

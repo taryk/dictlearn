@@ -7,7 +7,7 @@ use Data::Printer;
 use namespace::autoclean;
 use common::sense;
 
-use constant {MIN_SCORE => 0.43,};
+sub MIN_SCORE { 0.43 }
 
 sub export_data {
     my ($self) = @_;
@@ -68,7 +68,7 @@ sub add_one {
 sub update_one {
     my $self     = shift;
     my %params   = @_;
-    my %upd_word = ();
+    my %upd_word;
     $upd_word{word}    = $params{word}    if defined $params{word};
     $upd_word{note}    = $params{note}    if defined $params{note};
     $upd_word{lang_id} = $params{lang_id} if defined $params{lang_id};
@@ -144,7 +144,7 @@ sub unlink_one {
 sub find_ones {
     my $self         = shift;
     my %params       = @_;
-    my $word_pattern = "%" . $params{word} . "%";
+    my $word_pattern = '%' . $params{word} . '%';
     my $rs           = $self->search(
         {   -and => [
                 'me.lang_id' => $params{lang_id},
@@ -160,7 +160,9 @@ sub find_ones {
             select => [
                 'me.word_id', 'me.word',
                 'me.word2',   'me.word3',
+                ## no critic (ValuesAndExpressions::ProhibitInterpolationOfLiterals)
                 'me.irregular', {group_concat => ['word2_id.word', "', '"]},
+                ## use critic
                 'me.mdate', 'me.cdate',
                 'me.note',  'wordclass.abbr',
                 'me.in_test'
@@ -267,6 +269,7 @@ sub get_irregular_verbs {
     my @words = $self->result_source->schema->resultset('TestSessionData')
         ->get_words();
 
+    ## no critic (Subroutines::ProhibitNestedSubs)
     sub search_irregular_verbs {
         my $self = shift;
         $self->search(
@@ -279,6 +282,7 @@ sub get_irregular_verbs {
             }
         );
     }
+    ## use critic
 
     # select untested words
     my $rs_untested = $self->search_irregular_verbs(
