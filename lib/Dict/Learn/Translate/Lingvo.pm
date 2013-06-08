@@ -38,15 +38,17 @@ use constant {
 
     given ($_[0]->attrs->{class}) {
       when('P') {
-        return unless $_[0]->can('span');
-        my $text = $_[0]->span->all_text;
-        given ($_[0]->span->attrs->{class}) {
+        my $span = $_[0]->find('span')->first;
+        return unless $span;
+        my $text = $span->all_text;
+
+        given ($span->attrs->{class}) {
           when('Bold') {
             if ($text =~ /^(?<variant>[IVXLMC]+)\s*$/) {
               $curr->{variant} = $+{variant};
             }
           }
-          when('g-article__abbrev') {
+          when('l-article__abbrev') {
             # if ($text =~ /^(n|v|)$/)
             say "unknown: '$text'" unless PARTSOFSPEACH->{$text};
             $curr->{partofspeach} = PARTSOFSPEACH->{$text} // 'noun';
@@ -55,7 +57,7 @@ use constant {
       }
       when('P1') {
         if (    $_[0]->find('span.translation')->size == 0
-            and $_[0]->find('span.g-article__abbrev')->size >= 1)
+            and $_[0]->find('span.l-article__abbrev')->size >= 1)
         {
           my $text = $_[0]->span->all_text;
           if (grep { $text eq $_ } keys %{ +PARTSOFSPEACH }) {
