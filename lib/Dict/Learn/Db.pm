@@ -10,94 +10,98 @@ use namespace::autoclean;
 
 use Data::Printer;
 
-use constant REQ_TABLES =>
-  [qw| word word_xref example example_xref word_example_xref
-       dictionary wordclass language test test_session test_session_data
-     |];
+use constant REQ_TABLES => [
+    qw| word word_xref example example_xref word_example_xref
+        dictionary wordclass language test test_session test_session_data
+      |
+];
 
-use Class::XSAccessor
-    accessors => [ qw| schema querylog | ];
+use Class::XSAccessor accessors => [qw| schema querylog |];
 
 sub new {
-  my $class = shift;
-  my $self = bless {} => $class;
-  $self->schema( shift );
-  # adding QueryLog
-  $self->schema->storage->debugobj(
-    $self->querylog(DBIx::Class::QueryLog->new)
-  );
-  $self->schema->storage->debug(1);
-  $self
+    my $class = shift;
+    my $self = bless {} => $class;
+    $self->schema(shift);
+
+    # adding QueryLog
+    $self->schema->storage->debugobj(
+        $self->querylog(DBIx::Class::QueryLog->new));
+    $self->schema->storage->debug(1);
+    $self;
 }
 
 sub analyze {
-  my ($self) = @_;
-  my $analyzer = DBIx::Class::QueryLog::Analyzer->new({ querylog => $self->querylog });
-  for my $query ( @{ $analyzer->get_sorted_queries } ) {
-    printf "%s sec | %d | %s\n",
-      RED.($query->time_elapsed).RESET,
-      $query->count,
-      GREEN.$query->sql.RESET;
-    say "[ ".YELLOW.join(", " => @{ $query->params }).RESET." ]";
-  }
-  $self->querylog->reset;
+    my ($self) = @_;
+    my $analyzer
+        = DBIx::Class::QueryLog::Analyzer->new({querylog => $self->querylog});
+    for my $query (@{$analyzer->get_sorted_queries}) {
+        printf "%s sec | %d | %s\n",
+            RED . ($query->time_elapsed) . RESET,
+            $query->count,
+            GREEN . $query->sql . RESET;
+        say "[ " . YELLOW . join(", " => @{$query->params}) . RESET . " ]";
+    }
+    $self->querylog->reset;
 }
 
 sub reset_analyzer {
-  my ($self) = @_;
-  $self->querylog->reset;
+    my ($self) = @_;
+    $self->querylog->reset;
 }
 
 sub check_tables {
-  my $self = shift;
-  say "Checking DB...";
-  my @tables = grep { $_->[0] eq 'main' }
-    map { [ (/^\"(\w+)\"\.\"(\w+)\"$/) ] }
-    $self->schema->storage->dbh->tables();
-  for my $req_table (@{ +REQ_TABLES }) {
-    return unless grep { $req_table eq $_->[1]  } @tables;
-  }
-  1
+    my $self = shift;
+    say "Checking DB...";
+    my @tables = grep { $_->[0] eq 'main' }
+        map { [(/^\"(\w+)\"\.\"(\w+)\"$/)] }
+        $self->schema->storage->dbh->tables();
+    for my $req_table (@{+REQ_TABLES}) {
+        return unless grep { $req_table eq $_->[1] } @tables;
+    }
+    1;
 }
 
 sub install_schema {
-  my $self = shift;
-  say "Install schema and initial data";
-  my $sql = join ' ' => <DATA>;
-  for (split ';' => $sql) {
-    $self->schema->storage->dbh->do($_);
-  }
-  1
+    my $self = shift;
+    say "Install schema and initial data";
+    my $sql = join ' ' => <DATA>;
+    for (split ';' => $sql) {
+        $self->schema->storage->dbh->do($_);
+    }
+    1;
 }
 
 sub clear_data {
-  my $self = shift;
-  for (qw[Word Words Example Examples WordExample
-          TestSession TestSessionData])
-  {
-    $self->schema->resultset($_)->clear_data();
-  }
-  1
+    my $self = shift;
+    for (
+        qw[Word Words Example Examples WordExample
+        TestSession TestSessionData]
+        )
+    {
+        $self->schema->resultset($_)->clear_data();
+    }
+    1;
 }
 
 sub clear_test_results {
-  my $self = shift;
-  for (qw[TestSession TestSessionData])
-  {
-    $self->schema->resultset($_)->clear_data();
-  }
-  1
+    my $self = shift;
+    for (qw[TestSession TestSessionData]) {
+        $self->schema->resultset($_)->clear_data();
+    }
+    1;
 }
 
 sub clear_all {
-  my $self = shift;
-  for (qw[Word Words Example Examples WordExample
-          Language Wordclass Dictionary
-          Test TestSession TestSessionData])
-  {
-    $self->schema->resultset($_)->clear_data();
-  }
-  1
+    my $self = shift;
+    for (
+        qw[Word Words Example Examples WordExample
+        Language Wordclass Dictionary
+        Test TestSession TestSessionData]
+        )
+    {
+        $self->schema->resultset($_)->clear_data();
+    }
+    1;
 }
 
 1;
