@@ -1,119 +1,108 @@
 #!/usr/bin/env perl
 
-use common::sense;
-
-use IOC::Slinky::Container;
-
 use File::Basename 'dirname';
 use File::Path 'make_path';
 use Getopt::Long;
+use IOC::Slinky::Container;
 
-use lib dirname(__FILE__).'/../lib/';
+use common::sense;
+use lib dirname(__FILE__) . '/../lib/';
 
-my $dbfile = $ENV{HOME}."/.config/dictlearn/dictlearn.db";
+my $dbfile = $ENV{HOME} . "/.config/dictlearn/dictlearn.db";
 
 my $debug = 0;
 
 GetOptions(
-  'debug'       => \$debug,
-  'import=s'    => \my $import,
-  'export=s'    => \my $export,
-  'clear-all'   => \my $clear_all,
-  'clear-data'  => \my $clear_data,
-  'clear-tests' => \my $clear_tests,
-  'reset'       => \my $reset,
-  'migration=s' => \my $migration,
-  'db=s'        => \$dbfile,
+    'debug'       => \$debug,
+    'import=s'    => \my $import,
+    'export=s'    => \my $export,
+    'clear-all'   => \my $clear_all,
+    'clear-data'  => \my $clear_data,
+    'clear-tests' => \my $clear_tests,
+    'reset'       => \my $reset,
+    'migration=s' => \my $migration,
+    'db=s'        => \$dbfile,
 );
 
 unless (-e $dbfile) {
-  my $config_dir = dirname $dbfile;
-  make_path($config_dir) unless -d $config_dir;
+    my $config_dir = dirname $dbfile;
+    make_path($config_dir) unless -d $config_dir;
 }
 
 our $ioc = IOC::Slinky::Container->new(
-  config => {
-    container => {
+    config => {
+        container => {
+            schema => {
+                _class            => 'Dict::Learn::Main',
+                _constructor      => 'connect',
+                _constructor_args => [
+                    "dbi:SQLite:" . $dbfile,
+                    '', '',
+                    {   sqlite_unicode => 1,
+                        loader_options => {
+                            debug => $ENV{DBIC_TRACE} //= $debug,
+                            use_namespaces => 1
+                        }
+                    }
+                ]
+            },
+            db => {
+                _class            => 'Dict::Learn::Db',
+                _constructor      => 'new',
+                _constructor_args => [{_ref => 'schema'},],
+            },
+            dictionary => {
+                _class            => 'Dict::Learn::Dictionary',
+                _constructor      => 'new',
+                _constructor_args => [{_ref => 'db'},]
+            },
 
-      schema => {
-        _class            => 'Dict::Learn::Main',
-        _constructor      => 'connect',
-        _constructor_args => [
-          "dbi:SQLite:".$dbfile, '', '',
-          { sqlite_unicode => 1,
-            loader_options => {
-              debug => $ENV{DBIC_TRACE} //= $debug,
-              use_namespaces => 1
-          } }
-      ] },
-
-      db => {
-        _class            => 'Dict::Learn::Db',
-        _constructor      => 'new',
-        _constructor_args => [
-          { _ref => 'schema' },
-        ],
-      },
-
-      dictionary => {
-        _class => 'Dict::Learn::Dictionary',
-        _constructor => 'new',
-        _constructor_args => [
-          { _ref => 'db' },
-        ]
-      },
-
-    },
-});
+        },
+    }
+);
 
 if ($import) {
-  require Dict::Learn::Import;
-  exit !Dict::Learn::Import->new->do($import)
+    require Dict::Learn::Import;
+    exit !Dict::Learn::Import->new->do($import);
 }
-
 elsif ($export) {
-  require Dict::Learn::Export;
-  exit !Dict::Learn::Export->new->do($export)
+    require Dict::Learn::Export;
+    exit !Dict::Learn::Export->new->do($export);
 }
-
 elsif ($clear_all) {
-  exit !$ioc->lookup('db')->clear_all()
+    exit !$ioc->lookup('db')->clear_all();
 }
-
 elsif ($clear_data) {
-  exit !$ioc->lookup('db')->clear_data()
+    exit !$ioc->lookup('db')->clear_data();
 }
-
 elsif ($clear_tests) {
-  exit !$ioc->lookup('db')->clear_test_results()
+    exit !$ioc->lookup('db')->clear_test_results();
 }
-
 elsif ($reset) {
-  if ($ioc->lookup('db')->clear_all()) {
-    $ioc->lookup('db')->install_schema();
-  } else { exit 1 }
-  exit 0
+    if ($ioc->lookup('db')->clear_all()) {
+        $ioc->lookup('db')->install_schema();
+    }
+    else { exit 1 }
+    exit 0;
 }
-
 elsif ($migration) {
-  eval {
-    my $class = 'Dict::Learn::Main::Migration::'.$migration;
-    require ($class =~ s/::/\//rg).".pm";
-    my $data = $class->down();
-    say "down...";
-    $class->up($data);
-    say "up...";
-    1
-  } || do {
-    say "something went wrong $@";
-  }
+    eval {
+        my $class = 'Dict::Learn::Main::Migration::' . $migration;
+        require($class =~ s/::/\//rg) . ".pm";
+        my $data = $class->down();
+        say "down...";
+        $class->up($data);
+        say "up...";
+        1;
+    } || do {
+        say "something went wrong $@";
+    }
 }
-
 else {
-  unless ($ioc->lookup('db')->check_tables()) {
-    $ioc->lookup('db')->install_schema();
-  }
-  require Dict::Learn;
-  my $app = Dict::Learn->new;
-  $app->MainLoop;
+    unless ($ioc->lookup('db')->check_tables()) {
+        $ioc->lookup('db')->install_schema();
+    }
+    require Dict::Learn;
+    my $app = Dict::Learn->new;
+    $app->MainLoop;
 }
