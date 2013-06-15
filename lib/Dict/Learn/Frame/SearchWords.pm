@@ -166,7 +166,8 @@ sub new {
     $self->hbox->Fit($self);
 
     # events
-    EVT_TEXT($self, $self->combobox, \&lookup);
+    # TODO do searching on fly
+    EVT_TEXT_ENTER($self, $self->combobox, \&lookup);
     EVT_BUTTON($self, $self->btn_lookup,         \&lookup);
     EVT_BUTTON($self, $self->btn_edit_word,      \&edit_word);
     EVT_BUTTON($self, $self->btn_unlink_word,    \&unlink_word);
