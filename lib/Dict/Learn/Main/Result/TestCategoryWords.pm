@@ -1,7 +1,7 @@
 package Dict::Learn::Main::Result::TestCategoryWords 0.1;
 use base qw[ DBIx::Class::Core ];
 
-__PACKAGE__->table('test_category_words');
+__PACKAGE__->table('test_category_word_xref');
 __PACKAGE__->add_columns(
     qw[ test_category_id word_id wordclass_id cdate mdate ]
 );
