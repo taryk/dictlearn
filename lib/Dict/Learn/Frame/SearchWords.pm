@@ -46,15 +46,16 @@ has btn_lookup => (
 has lookup_hbox => (
     is => 'ro',
     isa => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-        $hbox->Add($self->combobox, 1, wxTOP | wxGROW, 0);
-        $hbox->Add($self->btn_lookup, 0);
-        return $hbox;
-    },
+    lazy_build => 1,
 );
+
+sub _build_lookup_hbox {
+    my $self = shift;
+    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox->Add($self->combobox, 1, wxTOP | wxGROW, 0);
+    $hbox->Add($self->btn_lookup, 0);
+    return $hbox;
+}
 
 has btn_edit_word => (
     is      => 'ro',
@@ -91,50 +92,53 @@ has btn_delete_word => (
 has vbox_btn_words => (
     is => 'ro',
     isa => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-        $vbox->Add($self->btn_edit_word);
-        $vbox->Add($self->btn_unlink_word);
-        $vbox->Add($self->btn_delete_word);
-        return $vbox;
-    },
+    lazy_build => 1,  
 );
+
+sub _build_vbox_btn_words {
+    my $self = shift;
+    my $vbox = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox->Add($self->btn_edit_word);
+    $vbox->Add($self->btn_unlink_word);
+    $vbox->Add($self->btn_delete_word);
+    return $vbox;
+}
 
 has lb_words => (
     is => 'ro',
     isa => 'Wx::ListCtrl',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $lb_words = Wx::ListCtrl->new(
-            $self,             wxID_ANY,
-            wxDefaultPosition, wxDefaultSize,
-            wxLC_REPORT | wxLC_HRULES | wxLC_VRULES
-        );
-        $lb_words->InsertColumn(0,         'id',   wxLIST_FORMAT_LEFT, 50);
-        $lb_words->InsertColumn(COL_LANG1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
-        $lb_words->InsertColumn(2,         'wc',   wxLIST_FORMAT_LEFT, 35);
-        $lb_words->InsertColumn(COL_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
-        $lb_words->InsertColumn(4,         'note', wxLIST_FORMAT_LEFT, 200);
-        $lb_words->InsertColumn(5, 'created', wxLIST_FORMAT_LEFT, 150);
-        return $lb_words;
-    },
+    lazy_build => 1,
 );
+
+sub _build_lb_words {
+    my $self = shift;
+    my $lb_words = Wx::ListCtrl->new(
+        $self,             wxID_ANY,
+        wxDefaultPosition, wxDefaultSize,
+        wxLC_REPORT | wxLC_HRULES | wxLC_VRULES
+    );
+    $lb_words->InsertColumn(0,         'id',   wxLIST_FORMAT_LEFT, 50);
+    $lb_words->InsertColumn(COL_LANG1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
+    $lb_words->InsertColumn(2,         'wc',   wxLIST_FORMAT_LEFT, 35);
+    $lb_words->InsertColumn(COL_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
+    $lb_words->InsertColumn(4,         'note', wxLIST_FORMAT_LEFT, 200);
+    $lb_words->InsertColumn(5, 'created', wxLIST_FORMAT_LEFT, 150);
+    return $lb_words;
+}
 
 has hbox_words => (
     is => 'ro',
     isa => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-        $hbox->Add($self->vbox_btn_words, 0, wxRIGHT, 5);
-        $hbox->Add($self->lb_words, 2, wxALL | wxGROW | wxEXPAND, 0);
-        return $hbox;
-    },
+    lazy_build => 1,
 );
+
+sub _build_hbox_words {
+    my $self = shift;
+    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox->Add($self->vbox_btn_words, 0, wxRIGHT, 5);
+    $hbox->Add($self->lb_words, 2, wxALL | wxGROW | wxEXPAND, 0);
+    return $hbox;
+}
 
 has btn_add_example => (
     is => 'ro',
@@ -183,52 +187,55 @@ has btn_delete_example => (
 has vbox_btn_examples => (
     is => 'ro',
     isa => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-        $vbox->Add($self->btn_add_example);
-        $vbox->Add($self->btn_edit_example);
-        $vbox->Add($self->btn_unlink_example);
-        $vbox->Add($self->btn_delete_example);
-        return $vbox;
-    },
+    lazy_build => 1,
 );
+
+sub _build_vbox_btn_examples {
+    my $self = shift;
+    my $vbox = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox->Add($self->btn_add_example);
+    $vbox->Add($self->btn_edit_example);
+    $vbox->Add($self->btn_unlink_example);
+    $vbox->Add($self->btn_delete_example);
+    return $vbox;
+}
 
 has lb_examples => (
     is => 'ro',
     isa => 'Wx::ListCtrl',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $lb_examples = Wx::ListCtrl->new(
-            $self,             wxID_ANY,
-            wxDefaultPosition, wxDefaultSize,
-            wxLC_REPORT | wxLC_HRULES | wxLC_VRULES
-        );
-        $lb_examples->InsertColumn(0, 'id', wxLIST_FORMAT_LEFT, 50);
-        $lb_examples->InsertColumn(COL_E_LANG1, 'Eng', wxLIST_FORMAT_LEFT,
-            200);
-        $lb_examples->InsertColumn(COL_E_LANG2, 'Ukr', wxLIST_FORMAT_LEFT,
-            200);
-        $lb_examples->InsertColumn(3, 'Note', wxLIST_FORMAT_LEFT, 150);
-        return $lb_examples;
-    },
+    lazy_build => 1,
 );
+
+sub _build_lb_examples {
+    my $self = shift;
+    my $lb_examples = Wx::ListCtrl->new(
+        $self,             wxID_ANY,
+        wxDefaultPosition, wxDefaultSize,
+        wxLC_REPORT | wxLC_HRULES | wxLC_VRULES
+    );
+    $lb_examples->InsertColumn(0, 'id', wxLIST_FORMAT_LEFT, 50);
+    $lb_examples->InsertColumn(COL_E_LANG1, 'Eng', wxLIST_FORMAT_LEFT,
+        200);
+    $lb_examples->InsertColumn(COL_E_LANG2, 'Ukr', wxLIST_FORMAT_LEFT,
+        200);
+    $lb_examples->InsertColumn(3, 'Note', wxLIST_FORMAT_LEFT, 150);
+    return $lb_examples;
+}
 
 has hbox_examples => (
     is => 'ro',
     isa => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-        $hbox->Add($self->vbox_btn_examples, 0, wxRIGHT, 5);
-        $hbox->Add($self->lb_examples, 2,
-            wxALL | wxGROW | wxEXPAND, 0);
-        return $hbox;
-    },
+    lazy_build => 1,
 );
+
+sub _build_hbox_examples {
+    my $self = shift;
+    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox->Add($self->vbox_btn_examples, 0, wxRIGHT, 5);
+    $hbox->Add($self->lb_examples, 2,
+        wxALL | wxGROW | wxEXPAND, 0);
+    return $hbox;
+}
 
 has sidebar => (
     is => 'ro',
@@ -244,29 +251,31 @@ has sidebar => (
 has vbox => (
     is      => 'ro',
     isa     => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-        $vbox->Add($self->lookup_hbox,   0, wxTOP | wxGROW,            5);
-        $vbox->Add($self->hbox_words,    2, wxALL | wxGROW | wxEXPAND, 0);
-        $vbox->Add($self->hbox_examples, 1, wxALL | wxGROW | wxEXPAND, 0);
-        return $vbox;
-    },
+    lazy_build => 1,
 );
+
+sub _build_vbox {
+    my $self = shift;
+    my $vbox = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox->Add($self->lookup_hbox,   0, wxTOP | wxGROW,            5);
+    $vbox->Add($self->hbox_words,    2, wxALL | wxGROW | wxEXPAND, 0);
+    $vbox->Add($self->hbox_examples, 1, wxALL | wxGROW | wxEXPAND, 0);
+    return $vbox;
+}
 
 has hbox => (
     is      => 'ro',
     isa     => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-        $hbox->Add($self->vbox,    3, wxALL | wxGROW | wxEXPAND, 0);
-        $hbox->Add($self->sidebar, 1, wxGROW | wxEXPAND | wxALL, 0);
-        return $hbox;
-    },
+    lazy_build => 1,
 );
+
+sub _build_hbox {
+    my $self = shift;
+    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox->Add($self->vbox,    3, wxALL | wxGROW | wxEXPAND, 0);
+    $hbox->Add($self->sidebar, 1, wxGROW | wxEXPAND | wxALL, 0);
+    return $hbox;
+}
 
 sub lookup {
     my ($self, $event) = @_;
