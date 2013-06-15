@@ -19,10 +19,18 @@ sub COL_LANG2   {3}
 sub COL_E_LANG1 {1}
 sub COL_E_LANG2 {2}
 
+=item parent
+
+=cut
+
 has parent => (
     is  => 'ro',
     isa => 'Dict::Learn::Frame',
 );
+
+=item combobox
+
+=cut
 
 has combobox => (
     is         => 'ro',
@@ -40,6 +48,10 @@ sub _build_combobox {
     return $combobox;
 }
 
+=item btn_lookup
+
+=cut
+
 has btn_lookup => (
     is         => 'ro',
     isa        => 'Wx::Button',
@@ -54,6 +66,10 @@ sub _build_btn_lookup {
 
     return $btn_lookup;
 }
+
+=item lookup_hbox
+
+=cut
 
 has lookup_hbox => (
     is         => 'ro',
@@ -70,6 +86,10 @@ sub _build_lookup_hbox {
 
     return $hbox;
 }
+
+=item btn_edit_word
+
+=cut
 
 has btn_edit_word => (
     is         => 'ro',
@@ -88,6 +108,10 @@ sub _build_btn_edit_word {
     return $btn_edit_word;
 }
 
+=item btn_unlink_word
+
+=cut
+
 has btn_unlink_word => (
     is         => 'ro',
     isa        => 'Wx::Button',
@@ -104,6 +128,10 @@ sub _build_btn_unlink_word {
 
     return $btn_unlink_word;
 }
+
+=item btn_delete_word
+
+=cut
 
 has btn_delete_word => (
     is         => 'ro',
@@ -122,6 +150,10 @@ sub _build_btn_delete_word {
     return $btn_delete_word;
 }
 
+=item vbox_btn_words
+
+=cut
+
 has vbox_btn_words => (
     is         => 'ro',
     isa        => 'Wx::BoxSizer',
@@ -138,6 +170,10 @@ sub _build_vbox_btn_words {
 
     return $vbox;
 }
+
+=item lb_words
+
+=cut
 
 has lb_words => (
     is         => 'ro',
@@ -162,6 +198,10 @@ sub _build_lb_words {
     return $lb_words;
 }
 
+=item hbox_words
+
+=cut
+
 has hbox_words => (
     is         => 'ro',
     isa        => 'Wx::BoxSizer',
@@ -177,6 +217,10 @@ sub _build_hbox_words {
 
     return $hbox;
 }
+
+=item btn_add_example
+
+=cut
 
 has btn_add_example => (
     is         => 'ro',
@@ -195,6 +239,10 @@ sub _build_btn_add_example {
     return $btn_add_example;
 }
 
+=item btn_edit_example
+
+=cut
+
 has btn_edit_example => (
     is         => 'ro',
     isa        => 'Wx::Button',
@@ -211,6 +259,10 @@ sub _build_btn_edit_example {
 
     return $btn_edit_example;
 }
+
+=item btn_unlink_example
+
+=cut
 
 has btn_unlink_example => (
     is         => 'ro',
@@ -229,6 +281,10 @@ sub _build_btn_unlink_example {
     return $btn_unlink_example;
 }
 
+=item btn_delete_example
+
+=cut
+
 has btn_delete_example => (
     is         => 'ro',
     isa        => 'Wx::Button',
@@ -245,6 +301,10 @@ sub _build_btn_delete_example {
 
     return $btn_delete_example;
 }
+
+=item vbox_btn_examples
+
+=cut
 
 has vbox_btn_examples => (
     is         => 'ro',
@@ -263,6 +323,10 @@ sub _build_vbox_btn_examples {
 
     return $vbox;
 }
+
+=item lb_examples
+
+=cut
 
 has lb_examples => (
     is         => 'ro',
@@ -284,6 +348,10 @@ sub _build_lb_examples {
     return $lb_examples;
 }
 
+=item hbox_examples
+
+=cut
+
 has hbox_examples => (
     is         => 'ro',
     isa        => 'Wx::BoxSizer',
@@ -300,6 +368,10 @@ sub _build_hbox_examples {
     return $hbox;
 }
 
+=item sidebar
+
+=cut
+
 has sidebar => (
     is      => 'ro',
     isa     => 'Dict::Learn::Frame::Sidebar',
@@ -309,6 +381,10 @@ has sidebar => (
             wxDefaultSize);
     },
 );
+
+=item vbox
+
+=cut
 
 has vbox => (
     is         => 'ro',
@@ -326,6 +402,10 @@ sub _build_vbox {
 
     return $vbox;
 }
+
+=item hbox
+
+=cut
 
 has hbox => (
     is         => 'ro',
