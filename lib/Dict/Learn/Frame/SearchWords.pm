@@ -27,21 +27,31 @@ has parent => (
 has combobox => (
     is => 'ro',
     isa => 'Wx::ComboBox',
-    lazy    => 1,
-    default => sub {
-        Wx::ComboBox->new(
-            $_[0], wxID_ANY, '', wxDefaultPosition, wxDefaultSize, [], 0,
-            wxDefaultValidator
-        )
-    }
+    lazy_build => 1,
 );
+
+sub _build_combobox {
+    my $self = shift;
+    my $combobox = Wx::ComboBox->new(
+        $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize, [], 0,
+        wxDefaultValidator
+    );
+    EVT_TEXT_ENTER($self, $combobox, \&lookup);
+    return $combobox;
+}
 
 has btn_lookup => (
     is => 'ro',
     isa => 'Wx::Button',
-    lazy    => 1,
-    default => sub { Wx::Button->new($_[0], wxID_ANY, '#', [20, 20]) },
+    lazy_build => 1,
 );
+
+sub _build_btn_lookup {
+    my $self = shift;
+    my $btn_lookup = Wx::Button->new($self, wxID_ANY, '#', [20, 20]);
+    EVT_BUTTON($self, $btn_lookup, \&lookup);
+    return $btn_lookup;    
+}
 
 has lookup_hbox => (
     is => 'ro',
@@ -60,34 +70,46 @@ sub _build_lookup_hbox {
 has btn_edit_word => (
     is      => 'ro',
     isa     => 'Wx::Button',
-    lazy    => 1,
-    default => sub {
-        Wx::Button->new($_[0], wxID_ANY, 'Edit', wxDefaultPosition,
-            wxDefaultSize);
-    },
+    lazy_build => 1,
 );
+
+sub _build_btn_edit_word {
+    my $self = shift;
+    my $btn_edit_word = Wx::Button->new($self, wxID_ANY, 'Edit', wxDefaultPosition,
+        wxDefaultSize);
+    EVT_BUTTON($self, $btn_edit_word, \&edit_word);
+    return $btn_edit_word;
+}
 
 has btn_unlink_word => (
     is => 'ro',
     isa => 'Wx::Button',
-    lazy    => 1,
-    default => sub {
-        Wx::Button->new(
-            $_[0], wxID_ANY, 'Unlink', wxDefaultPosition, wxDefaultSize
-        )
-    },
+    lazy_build => 1,
 );
+
+sub _build_btn_unlink_word {
+    my $self = shift;
+    my $btn_unlink_word = Wx::Button->new(
+        $self, wxID_ANY, 'Unlink', wxDefaultPosition, wxDefaultSize
+    );
+    EVT_BUTTON($self, $btn_unlink_word, \&unlink_word);
+    return $btn_unlink_word;
+}
 
 has btn_delete_word => (
     is => 'ro',
     isa => 'Wx::Button',
-    lazy    => 1,
-    default => sub {
-        Wx::Button->new(
-            $_[0], wxID_ANY, 'Del', wxDefaultPosition, wxDefaultSize
-        )
-    }
+    lazy_build => 1,
 );
+
+sub _build_btn_delete_word {
+    my $self = shift;
+    my $btn_delete_word = Wx::Button->new(
+        $self, wxID_ANY, 'Del', wxDefaultPosition, wxDefaultSize
+    );
+    EVT_BUTTON($self, $btn_delete_word,    \&delete_word);
+    return $btn_delete_word;
+}
 
 has vbox_btn_words => (
     is => 'ro',
@@ -122,7 +144,8 @@ sub _build_lb_words {
     $lb_words->InsertColumn(2,         'wc',   wxLIST_FORMAT_LEFT, 35);
     $lb_words->InsertColumn(COL_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
     $lb_words->InsertColumn(4,         'note', wxLIST_FORMAT_LEFT, 200);
-    $lb_words->InsertColumn(5, 'created', wxLIST_FORMAT_LEFT, 150);
+    $lb_words->InsertColumn(5, 'created', wxLIST_FORMAT_LEFT, 150);  
+    EVT_LIST_ITEM_SELECTED($self, $lb_words, \&load_examples);    
     return $lb_words;
 }
 
@@ -143,46 +166,62 @@ sub _build_hbox_words {
 has btn_add_example => (
     is => 'ro',
     isa => 'Wx::Button',
-    lazy    => 1,
-    default => sub {
-        Wx::Button->new(
-            $_[0], wxID_ANY, 'Add', wxDefaultPosition, wxDefaultSize
-        )
-    },
+    lazy_build => 1,
 );
+
+sub _build_btn_add_example {
+    my $self = shift;
+    my $btn_add_example = Wx::Button->new(
+        $self, wxID_ANY, 'Add', wxDefaultPosition, wxDefaultSize
+    );
+    EVT_BUTTON($self, $btn_add_example, \&add_example);
+    return $btn_add_example;    
+}
 
 has btn_edit_example => (
     is => 'ro',
     isa => 'Wx::Button',
-    lazy    => 1,
-    default => sub {
-        Wx::Button->new(
-            $_[0], wxID_ANY, 'Edit', wxDefaultPosition, wxDefaultSize
-        )
-    },
+    lazy_build => 1,
 );
+
+sub _build_btn_edit_example {
+    my $self = shift;
+    my $btn_edit_example = Wx::Button->new(
+        $self, wxID_ANY, 'Edit', wxDefaultPosition, wxDefaultSize
+    );
+    EVT_BUTTON($self, $btn_edit_example, \&edit_example);
+    return $btn_edit_example;
+}
 
 has btn_unlink_example => (
     is => 'ro',
     isa => 'Wx::Button',
-    lazy    => 1,
-    default => sub {
-        Wx::Button->new(
-            $_[0], wxID_ANY, 'Unlink', wxDefaultPosition, wxDefaultSize
-        )
-    },
+    lazy_build => 1,
 );
+
+sub _build_btn_unlink_example {
+    my $self = shift;
+    my $btn_unlink_example = Wx::Button->new(
+        $self, wxID_ANY, 'Unlink', wxDefaultPosition, wxDefaultSize
+    );
+    EVT_BUTTON($self, $btn_unlink_example, \&unlink_example);
+    return $btn_unlink_example;
+}
 
 has btn_delete_example => (
     is => 'ro',
     isa => 'Wx::Button',
-    lazy    => 1,
-    default => sub {
-        Wx::Button->new(
-            $_[0], wxID_ANY, 'Del', wxDefaultPosition, wxDefaultSize
-        )
-    },
+    lazy_build => 1,
 );
+
+sub _build_btn_delete_example {
+    my $self = shift;
+    my $btn_delete_example = Wx::Button->new(
+        $self, wxID_ANY, 'Del', wxDefaultPosition, wxDefaultSize
+    );
+    EVT_BUTTON($self, $btn_delete_example, \&delete_example);
+    return $btn_delete_example;
+}
 
 has vbox_btn_examples => (
     is => 'ro',
@@ -422,19 +461,6 @@ sub BUILD {
     $self->hbox->Fit($self);
     $self->Layout();
 
-    # events
-    # TODO do searching on fly
-    EVT_TEXT_ENTER($self, $self->combobox, \&lookup);
-    EVT_BUTTON($self, $self->btn_lookup,         \&lookup);
-    EVT_BUTTON($self, $self->btn_edit_word,      \&edit_word);
-    EVT_BUTTON($self, $self->btn_unlink_word,    \&unlink_word);
-    EVT_BUTTON($self, $self->btn_delete_word,    \&delete_word);
-    EVT_BUTTON($self, $self->btn_add_example,    \&add_example);
-    EVT_BUTTON($self, $self->btn_edit_example,   \&edit_example);
-    EVT_BUTTON($self, $self->btn_unlink_example, \&unlink_example);
-    EVT_BUTTON($self, $self->btn_delete_example, \&delete_example);
-    EVT_LIST_ITEM_SELECTED($self, $self->lb_words, \&load_examples);
-
     Dict::Learn::Dictionary->cb(
         sub {
             my $dict = shift;
@@ -448,7 +474,6 @@ sub BUILD {
             $self->lookup;
         }
     );
-
 }
 
 no Moose;
