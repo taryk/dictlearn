@@ -141,6 +141,8 @@ sub unlink_one {
         ->search({word1_id => [@_]})->delete;
 }
 
+memoize('find_ones', INSTALL => 'find_ones_cached');
+
 sub find_ones {
     my $self         = shift;
     my %params       = @_;
@@ -177,7 +179,14 @@ sub find_ones {
         }
     );
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+    say "find_ones uncached";
     $rs->all();
+}
+
+sub find_ones_flushcashe {
+    my $self = shift;
+    flush_cache('find_ones_cached');
+    $self;
 }
 
 sub match {
@@ -187,6 +196,7 @@ sub match {
             word    => $word,
         }
     );
+    say "match uncached";
     $rs;
 }
 
@@ -203,14 +213,16 @@ sub select {
         }
     );
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+    say "select uncached";
     $rs->all();
 }
 
 sub select_one {
     my ($self, $word_id) = @_;
     my $rs = $self->search({'me.word_id' => $word_id,},
-        {prefetch => {'rel_words' => ['word2_id']},});
+        {prefetch => {'rel_words' => ['word2_id']}});
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+    say "select_one uncached";
     $rs->first();
 }
 
@@ -242,6 +254,7 @@ sub select_words_grid {
         }
     );
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+    say "select_words_grid uncached";
     $rs->all();
 }
 

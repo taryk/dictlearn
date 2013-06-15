@@ -178,7 +178,6 @@ sub new {
     EVT_BUTTON($self, $self->btn_delete_example, \&delete_example);
     EVT_LIST_ITEM_SELECTED($self, $self->lb_words, \&load_examples);
 
-    # $self->lookup;
     Dict::Learn::Dictionary->cb(
         sub {
             my $dict = shift;
@@ -200,7 +199,7 @@ sub lookup {
     my ($self, $event) = @_;
     $self->lb_words->DeleteAllItems();
     for my $item (
-        $main::ioc->lookup('db')->schema->resultset('Word')->find_ones(
+        $main::ioc->lookup('db')->schema->resultset('Word')->find_ones_cached(
             word => $self->combobox->GetValue,
             lang_id =>
                 Dict::Learn::Dictionary->curr->{language_orig_id}{language_id}
