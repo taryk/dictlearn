@@ -663,6 +663,29 @@ sub select_first_item {
 
 sub add_to_test {
     my ($self) = @_;
+
+    my $test_category_id = $self->cb_add_to_test->GetClientData(
+        $self->cb_add_to_test->GetSelection());
+
+    my $row_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+    
+    my $word_id = $self->get_word_id($row_id);
+
+    $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->create(
+        {
+            test_category_id => $test_category_id,
+            word_id => $word_id,
+            wordclass_id => 0,
+        }
+    );
+
+    my $word = $self->lb_words->GetItem($row_id, 1)->GetText;
+
+    $self->parent->status_bar->SetStatusText(
+        sprintf 'Word "%s" has been added to "%s" test',
+        $word, $self->cb_add_to_test->GetValue()
+    );
 }
 
 sub FOREIGNBUILDARGS {
