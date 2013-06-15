@@ -110,6 +110,24 @@ CREATE TABLE IF NOT EXISTS test_session_data (
   `mdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP 
 );
 
+CREATE TABLE IF NOT EXISTS test_category (
+  `test_category_id`     INTEGER  PRIMARY KEY ASC AUTOINCREMENT,
+  `test_id`              INTEGER  NOT NULL DEFAULT 0,
+  `dictionary_id`        INTEGER  NOT NULL DEFAULT 0,
+  `name`                 VARCHAR,
+  `note`                 VARCHAR,
+  `cdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP  
+);
+
+CREATE TABLE IF NOT EXISTS test_category_word_xref (
+  `test_category_id`     INTEGER  NOT NULL DEFAULT 0,
+  `word_id`              INTEGER  NOT NULL DEFAULT 0,
+  `wordclass_id`         INTEGER  NOT NULL DEFAULT 0,
+  `cdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP  
+);
+
 INSERT INTO language (language_id, language_name) VALUES (0, 'English');
 INSERT INTO language (language_id, language_name) VALUES (1, 'Ukrainian');
 
