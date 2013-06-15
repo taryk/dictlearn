@@ -390,6 +390,95 @@ sub _build_hbox_examples {
     return $hbox;
 }
 
+=item st_add_to_test
+
+=cut
+
+has st_add_to_test => (
+    is      => 'ro',
+    isa     => 'Wx::StaticText',
+    default => sub {
+        Wx::StaticText->new($_[0], wxID_ANY, 'Add to test', wxDefaultPosition,
+            [90,20], wxALIGN_CENTER);
+    },
+);
+
+=item cb_add_to_test
+
+=cut
+
+has cb_add_to_test => (
+    is      => 'ro',
+    isa     => 'Wx::ComboBox',
+    lazy_build => 1,
+);
+
+sub _build_cb_add_to_test {
+    my $self = shift;  
+    
+    my $cb
+        = Wx::ComboBox->new($self, wxID_ANY, '', wxDefaultPosition,
+        wxDefaultSize, [],
+        wxCB_DROPDOWN|wxCB_READONLY, wxDefaultValidator);
+
+    Dict::Learn::Dictionary->cb(
+        sub {
+            my $dict = shift;
+            my $test_categories_rs
+                = $main::ioc->lookup('db')->schema->resultset('TestCategory')
+                ->search({dictionary_id => $dict->curr_id});
+            $cb->Clear();
+            for ($test_categories_rs->all()) {
+                $cb->Append($_->name, $_->test_category_id);
+            }
+            $cb->SetSelection(0);
+        }
+    );
+    
+    return $cb;
+}
+
+=item btn_add_to_test
+
+=cut
+
+has btn_add_to_test => (
+    is         => 'ro',
+    isa        => 'Wx::Button',
+    lazy_build => 1,
+);
+
+sub _build_btn_add_to_test {
+    my $self = shift;
+
+    my $btn_add_to_test = Wx::Button->new($self, wxID_ANY, 'Add', [20, 20]);
+    EVT_BUTTON($self, $btn_add_to_test, \&add_to_test);
+
+    return $btn_add_to_test;
+}
+
+=item hbox_add_to_test
+
+=cut
+
+has hbox_add_to_test => (
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
+);
+
+sub _build_hbox_add_to_test {
+    my $self = shift;
+
+    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox->Add($self->st_add_to_test,  0, wxTOP | wxBOTTOM, 5);
+    $hbox->Add($self->cb_add_to_test,  0, wxTOP | wxBOTTOM, 5);
+    $hbox->Add($self->btn_add_to_test, 0, wxTOP | wxBOTTOM, 5);
+
+    return $hbox;
+}
+
+
 =item sidebar
 
 =cut
@@ -418,9 +507,10 @@ sub _build_vbox {
     my $self = shift;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->lookup_hbox,   0, wxTOP | wxGROW,            5);
-    $vbox->Add($self->hbox_words,    2, wxALL | wxGROW | wxEXPAND, 0);
-    $vbox->Add($self->hbox_examples, 1, wxALL | wxGROW | wxEXPAND, 0);
+    $vbox->Add($self->lookup_hbox,      0, wxTOP | wxGROW,            5);
+    $vbox->Add($self->hbox_words,       2, wxALL | wxGROW | wxEXPAND, 0);
+    $vbox->Add($self->hbox_add_to_test, 0, wxALL | wxGROW | wxEXPAND, 0);
+    $vbox->Add($self->hbox_examples,    1, wxALL | wxGROW | wxEXPAND, 0);
 
     return $vbox;
 }
@@ -569,6 +659,10 @@ sub select_first_item {
         wxLIST_STATE_SELECTED,
         wxLIST_STATE_SELECTED
     );
+}
+
+sub add_to_test {
+    my ($self) = @_;
 }
 
 sub FOREIGNBUILDARGS {
