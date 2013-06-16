@@ -40,8 +40,10 @@ has max   => (
 
         my $spin_value = $self->spin->GetValue;
         $self->spin->SetValue($new_index) if $new_index != int $spin_value;
+        say "setting max value $new_index";
         unless (defined $self->exercise->[$new_index]) {
             my $last_index = $#{$self->exercise} + 1;
+            say "last index - $last_index";
             return unless $new_index >= $last_index;
             $self->fetch_exercises($last_index, $new_index);
         }
@@ -391,14 +393,11 @@ sub predefined_categories {
 
         my $curr_category = $self->test_category->GetClientData(
             $self->test_category->GetSelection());
-        p($curr_category);
-        
+
         my ($category_settings) = grep {
             $_->[1][0] == $curr_category
         } @{ $self->predefined_categories };
 
-        p($category_settings);
-        
         # let's get all ids
         my $id_rs
             = $main::ioc->lookup('db')->schema->resultset('Word')->search(
@@ -415,9 +414,9 @@ sub predefined_categories {
             );
         # $id_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
 
-        @ids = shuffle map { $_->word_id } ($id_rs->all());
-        
-        $self->max(scalar @ids) if scalar(@ids) < $self->max;
+        my $count = scalar(@ids = shuffle map { $_->word_id } ($id_rs->all()));
+        say "Fetched $count words. [".join(' ', @ids)."]";
+        $self->max($count) if $count < $self->max;
     }
 
     sub fetch_exercises {
