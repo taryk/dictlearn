@@ -20,6 +20,7 @@ The tool for improving and expanding your vocabulary
 * [IO::File](https://metacpan.org/module/IO::File)
 * [URI::Escape](https://metacpan.org/module/URI::Escape)
 * [List::Util](https://metacpan.org/module/List::Util)
+* [DateTime::Format::SQLite](https://metacpan.org/module/DateTime::Format::SQLite)
 
 ## Install
 
