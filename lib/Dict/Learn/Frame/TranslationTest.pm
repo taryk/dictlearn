@@ -400,14 +400,12 @@ sub predefined_categories {
         my $id_rs
             = $main::ioc->lookup('db')->schema->resultset('Word')->search(
             {   'me.in_test'       => 1,
-                'word2_id.in_test' => 1,
                 'me.lang_id' =>
                     Dict::Learn::Dictionary->curr->{language_orig_id}
                     {language_id},
                 %{ $category_settings->[1][1]||{} },
             },
             {   select => ['word_id'],
-                join   => {'rel_words' => ['word2_id']},
                 order_by => {-desc => 'me.word_id'},
                 %{ $category_settings->[1][2]||{} },
             }
