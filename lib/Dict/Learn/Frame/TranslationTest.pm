@@ -9,17 +9,16 @@ use Moose;
 use MooseX::NonMoose;
 extends 'Wx::Panel';
 
-use Dict::Learn::Dictionary;
-use Dict::Learn::Frame::TranslationTest::Result;
-
-use List::Util qw[ shuffle reduce sum ];
 use Carp qw[ croak confess ];
 use DateTime;
+use List::Util qw[ shuffle reduce sum ];
 use String::Diff qw[ diff_fully diff diff_merge ];
 
 use common::sense;
-
 # use warnings FATAL => "all";
+
+use Dict::Learn::Dictionary;
+use Dict::Learn::Frame::TranslationTest::Result;
 
 sub TEST_ID { 1 }
 
