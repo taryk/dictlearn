@@ -340,14 +340,16 @@ sub spin_max_step {
 
 sub predefined_categories {
     my $dtf = $main::ioc->lookup('db')->schema->storage->datetime_parser;
-    [   ['All' => [-1, {}, {}]],
-        ["Today's" => [-2, {'me.cdate' => {
+    [   ['Recent 10'  => [-1, {}, {rows => 10, page => 1}]],
+        ['Recent 50'  => [-2, {}, {rows => 50, page => 1}]],
+        ['Recent 100' => [-3, {}, {rows => 100, page => 1}]],
+        ["Today's" => [-4, {'me.cdate' => {
             -between => [
                 $dtf->format_datetime(DateTime->today),
                 $dtf->format_datetime(DateTime->now),
              ]}}]],
         ["Yesterday's" => [
-                -3,
+                -5,
                 {   'me.cdate' => {
                         -between => [
                             $dtf->format_datetime(DateTime->now->subtract(days => 1)
@@ -360,7 +362,7 @@ sub predefined_categories {
             ],
         ],
         ["This week" => [
-                -4,
+                -6,
                 {   'me.cdate' => {
                         -between => [
                             $dtf->format_datetime(DateTime->now->subtract(days => 7)
@@ -372,9 +374,7 @@ sub predefined_categories {
                 {},
             ]
         ],
-        ['Recent 10'  => [-5, {}, {rows => 10, page => 1}]],
-        ['Recent 50'  => [-6, {}, {rows => 50, page => 1}]],
-        ['Recent 100' => [-7, {}, {rows => 100, page => 1}]],
+        ['All' => [-7, {}, {}]],
     ];
 }
 
