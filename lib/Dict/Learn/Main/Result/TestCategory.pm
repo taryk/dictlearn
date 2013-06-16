@@ -1,5 +1,6 @@
 package Dict::Learn::Main::Result::TestCategory;
 use base qw[ DBIx::Class::Core ];
+# __PACKAGE__->load_components(qw/InflateColumn::DateTime/);
 
 __PACKAGE__->table('test_category');
 __PACKAGE__->add_columns(qw[ test_category_id test_id dictionary_id name cdate mdate ]);

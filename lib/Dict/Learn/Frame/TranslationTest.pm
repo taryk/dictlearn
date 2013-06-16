@@ -13,7 +13,7 @@ use Dict::Learn::Dictionary;
 use Dict::Learn::Frame::TranslationTest::Result;
 
 use List::Util qw[ shuffle reduce sum ];
-
+use DateTime;
 use String::Diff qw[ diff_fully diff diff_merge ];
 
 use common::sense;
@@ -151,6 +151,44 @@ has spin => (
     },
 );
 
+=item
+
+=cut
+
+has test_category => (
+    is => 'ro',
+    isa => 'Wx::ComboBox',
+    lazy_build => 1,
+);
+
+sub _build_test_category {
+    my $self = shift;
+
+    my $combobox = Wx::ComboBox->new($self, wxID_ANY, '', wxDefaultPosition,
+        wxDefaultSize, [], 0, wxDefaultValidator);
+
+    $combobox->Clear();
+    for my $category (@{ $self->predefined_categories }) {
+        my $id = $category->[1][0];
+        $combobox->Append($category->[0], $id);
+    }
+    $combobox->SetSelection(0);
+    
+    Dict::Learn::Dictionary->cb(
+        sub {
+            my $dict = shift;
+            my $test_categories_rs
+                = $main::ioc->lookup('db')->schema->resultset('TestCategory')
+                ->search({dictionary_id => $dict->curr_id});
+            for ($test_categories_rs->all()) {
+                $combobox->Append($_->name, $_->test_category_id);
+            }
+        }
+    );
+    
+    return $combobox;
+}
+
 =item text
 
 =cut
@@ -252,6 +290,8 @@ sub BUILD {
 
     $self->hbox_position->Add($self->position, 0, wxGROW, 0);
     $self->hbox_position->Add($self->spin,     0, wxGROW, 0);
+    $self->hbox_position->Add($self->test_category, 0, wxGROW, 0);
+    
     $self->spin->SetRange(2, 100);
     $self->spin->SetValue(3);
 
@@ -264,6 +304,8 @@ sub BUILD {
     $self->vbox->Fit($self);
 
     # events
+    EVT_COMBOBOX($self, $self->test_category, \&reset_session);
+    
     EVT_BUTTON($self, $self->btn_prev,  \&prev_step);
     EVT_BUTTON($self, $self->btn_next,  \&next_step);
     EVT_BUTTON($self, $self->btn_reset, \&reset_session);
@@ -302,12 +344,64 @@ sub spin_max_step {
     $self->max($event->GetInt);
 }
 
+sub predefined_categories {
+    my $dtf = $main::ioc->lookup('db')->schema->storage->datetime_parser;
+    [   ['All' => [-1, {}, {}]],
+        ["Today's" => [-2, {'me.cdate' => {
+            -between => [
+                $dtf->format_datetime(DateTime->today),
+                $dtf->format_datetime(DateTime->now),
+             ]}}]],
+        ["Yesterday's" => [
+                -3,
+                {   'me.cdate' => {
+                        -between => [
+                            $dtf->format_datetime(DateTime->now->subtract(days => 1)
+                                    ->truncate(to => 'day')),
+                            $dtf->format_datetime(DateTime->today),
+                        ],
+                    },
+                },
+                {},
+            ],
+        ],
+        ["This week" => [
+                -4,
+                {   'me.cdate' => {
+                        -between => [
+                            $dtf->format_datetime(DateTime->now->subtract(days => 7)
+                                                      ->truncate(to => 'day')),
+                            $dtf->format_datetime(DateTime->now),
+                        ],
+                    },
+                },
+                {},
+            ]
+        ],
+        ['Recent 10'  => [-5, {}, {rows => 10, page => 1}]],
+        ['Recent 50'  => [-6, {}, {rows => 50, page => 1}]],
+        ['Recent 100' => [-7, {}, {rows => 100, page => 1}]],
+    ];
+}
+
 {
     my @ids;
 
+    sub set_ids { @ids = @_ }
+    
     sub load_exercise_ids {
         my ($self) = @_;
 
+        my $curr_category = $self->test_category->GetClientData(
+            $self->test_category->GetSelection());
+        p($curr_category);
+        
+        my ($category_settings) = grep {
+            $_->[1][0] == $curr_category
+        } @{ $self->predefined_categories };
+
+        p($category_settings);
+        
         # let's get all ids
         my $id_rs
             = $main::ioc->lookup('db')->schema->resultset('Word')->search(
@@ -316,14 +410,19 @@ sub spin_max_step {
                 'me.lang_id' =>
                     Dict::Learn::Dictionary->curr->{language_orig_id}
                     {language_id},
+                %{ $category_settings->[1][1]||{} },
             },
             {   select => ['word_id'],
-                join   => {'rel_words' => ['word2_id']}
+                join   => {'rel_words' => ['word2_id']},
+                order_by => {-desc => 'me.word_id'},
+                %{ $category_settings->[1][2]||{} },
             }
             );
-        $id_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+        # $id_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
 
-        @ids = shuffle map { $_->{word_id} } ($id_rs->all());
+        @ids = shuffle map { $_->word_id } ($id_rs->all());
+        
+        $self->max(scalar @ids) if scalar(@ids) < $self->max;
     }
 
     sub fetch_exercises {
