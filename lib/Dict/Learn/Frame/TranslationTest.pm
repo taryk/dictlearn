@@ -13,6 +13,7 @@ use Dict::Learn::Dictionary;
 use Dict::Learn::Frame::TranslationTest::Result;
 
 use List::Util qw[ shuffle reduce sum ];
+use Carp qw[ croak confess ];
 use DateTime;
 use String::Diff qw[ diff_fully diff diff_merge ];
 
@@ -430,6 +431,17 @@ sub predefined_categories {
                 $word->word_id, $word->word, undef,
                 [map { [$_->word_id, $_->word] } $word->words]
                 ];
+        }
+        $self->check_exercise_consistency();
+    }
+
+    sub check_exercise_consistency {
+        my ($self) = @_;
+        for ( 0 .. $self->max-1 ) {
+            my $item = $self->exercise->[$_];
+            next if defined $item && ref $item eq 'ARRAY';
+            p($self->exercise);
+            confess "${_}th of ".($self->max-1)." element is wrong";
         }
     }
 }
