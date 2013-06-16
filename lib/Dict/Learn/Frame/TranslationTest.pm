@@ -22,8 +22,22 @@ use common::sense;
 
 sub TEST_ID { 1 }
 
+=item STEPS
+
+=cut
+
 has STEPS => (is => 'ro', default => sub {3});
+
+=item min
+
+=cut
+
 has min   => (is => 'ro', default => sub {1});
+
+=item max
+
+=cut
+
 has max   => (
     is      => 'rw',
     default => sub { $_[0]->STEPS },
@@ -37,11 +51,19 @@ has max   => (
     },
 );
 
+=item total_score
+
+=cut
+
 has total_score => (
     is      => 'rw',
     default => sub {0},
     clearer => 'clear_score',
 );
+
+=item exercise
+
+=cut
 
 has exercise => (
     is      => 'rw',
@@ -49,10 +71,18 @@ has exercise => (
     clearer => 'clear_exercise',
 );
 
+=item parent
+
+=cut
+
 has parent => (
     is  => 'ro',
     isa => 'Dict::Learn::Frame',
 );
+
+=item hbox
+
+=cut
 
 has hbox => (
     is      => 'ro',
@@ -60,17 +90,29 @@ has hbox => (
     default => sub { Wx::BoxSizer->new(wxHORIZONTAL) },
 );
 
+=item hbox_position
+
+=cut
+
 has hbox_position => (
     is      => 'ro',
     isa     => 'Wx::BoxSizer',
     default => sub { Wx::BoxSizer->new(wxHORIZONTAL) },
 );
 
+=item vbox
+
+=cut
+
 has vbox => (
     is      => 'ro',
     isa     => 'Wx::BoxSizer',
     default => sub { Wx::BoxSizer->new(wxVERTICAL) },
 );
+
+=item pos
+
+=cut
 
 has pos => (
     is      => 'rw',
@@ -82,6 +124,10 @@ has pos => (
     },
 );
 
+=item position
+
+=cut
+
 has position => (
     is      => 'ro',
     isa     => 'Wx::StaticText',
@@ -92,6 +138,10 @@ has position => (
     },
 );
 
+=item spin
+
+=cut
+
 has spin => (
     is      => 'ro',
     isa     => 'Wx::SpinCtrl',
@@ -100,6 +150,10 @@ has spin => (
             wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP);
     },
 );
+
+=item text
+
+=cut
 
 has text => (
     is      => 'ro',
@@ -110,6 +164,10 @@ has text => (
     },
 );
 
+=item input
+
+=cut
+
 has input => (
     is      => 'ro',
     isa     => 'Wx::TextCtrl',
@@ -118,6 +176,10 @@ has input => (
             wxDefaultSize, wxTE_LEFT);
     },
 );
+
+=item btn_prev
+
+=cut
 
 has btn_prev => (
     is      => 'ro',
@@ -128,6 +190,10 @@ has btn_prev => (
     },
 );
 
+=item btn_next
+
+=cut
+
 has btn_next => (
     is      => 'ro',
     isa     => 'Wx::Button',
@@ -137,6 +203,10 @@ has btn_next => (
     },
 );
 
+=item btn_reset
+
+=cut
+
 has btn_reset => (
     is      => 'ro',
     isa     => 'Wx::Button',
@@ -145,6 +215,10 @@ has btn_reset => (
             wxDefaultSize);
     },
 );
+
+=item result
+
+=cut
 
 has result => (
     is         => 'ro',
