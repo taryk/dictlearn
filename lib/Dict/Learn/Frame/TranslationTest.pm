@@ -37,6 +37,9 @@ has max   => (
     default => sub { 3 },
     trigger => sub {
         my ($self, $new_index, $prev_index) = @_;
+
+        my $spin_value = $self->spin->GetValue;
+        $self->spin->SetValue($new_index) if $new_index != int $spin_value;
         unless (defined $self->exercise->[$new_index]) {
             my $last_index = $#{$self->exercise} + 1;
             return unless $new_index >= $last_index;
