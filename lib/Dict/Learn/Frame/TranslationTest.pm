@@ -22,12 +22,6 @@ use common::sense;
 
 sub TEST_ID { 1 }
 
-=item STEPS
-
-=cut
-
-has STEPS => (is => 'ro', default => sub {3});
-
 =item min
 
 =cut
@@ -40,7 +34,7 @@ has min   => (is => 'ro', default => sub {1});
 
 has max   => (
     is      => 'rw',
-    default => sub { $_[0]->STEPS },
+    default => sub { 3 },
     trigger => sub {
         my ($self, $new_index, $prev_index) = @_;
         unless (defined $self->exercise->[$new_index]) {
