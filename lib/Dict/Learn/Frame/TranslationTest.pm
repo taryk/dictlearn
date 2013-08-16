@@ -345,20 +345,33 @@ sub spin_max_step {
 
 sub predefined_categories {
     my $dtf = $main::ioc->lookup('db')->schema->storage->datetime_parser;
-    [   ['Recent 10'  => [-1, {}, {rows => 10, page => 1}]],
-        ['Recent 50'  => [-2, {}, {rows => 50, page => 1}]],
-        ['Recent 100' => [-3, {}, {rows => 100, page => 1}]],
-        ["Today's" => [-4, {'me.cdate' => {
-            -between => [
-                $dtf->format_datetime(DateTime->today),
-                $dtf->format_datetime(DateTime->now),
-             ]}}]],
-        ["Yesterday's" => [
-                -5,
-                {   'me.cdate' => {
+    [
+        ['Recent 10'  => [-1, {}, { rows => 10,  page => 1 }]],
+        ['Recent 50'  => [-2, {}, { rows => 50,  page => 1 }]],
+        ['Recent 100' => [-3, {}, { rows => 100, page => 1 }]],
+        [
+            "Today's" => [
+                -4,
+                {
+                    'me.cdate' => {
                         -between => [
-                            $dtf->format_datetime(DateTime->now->subtract(days => 1)
-                                    ->truncate(to => 'day')),
+                            $dtf->format_datetime(DateTime->today),
+                            $dtf->format_datetime(DateTime->now),
+                        ]
+                    }
+                }
+            ]
+        ],
+        [
+            "Yesterday's" => [
+                -5,
+                {
+                    'me.cdate' => {
+                        -between => [
+                            $dtf->format_datetime(
+                                DateTime->now->subtract(days => 1)
+                                    ->truncate(to => 'day')
+                            ),
                             $dtf->format_datetime(DateTime->today),
                         ],
                     },
@@ -366,12 +379,16 @@ sub predefined_categories {
                 {},
             ],
         ],
-        ["This week" => [
+        [
+            "This week" => [
                 -6,
-                {   'me.cdate' => {
+                {
+                    'me.cdate' => {
                         -between => [
-                            $dtf->format_datetime(DateTime->now->subtract(days => 7)
-                                                      ->truncate(to => 'day')),
+                            $dtf->format_datetime(
+                                DateTime->now->subtract(days => 7)
+                                    ->truncate(to => 'day')
+                            ),
                             $dtf->format_datetime(DateTime->now),
                         ],
                     },
@@ -471,17 +488,20 @@ sub predefined_categories {
         # let's get all ids
         my $id_rs
             = $main::ioc->lookup('db')->schema->resultset('Word')->search(
-            {   'me.in_test'       => 1,
+            {
+                'me.in_test' => 1,
                 'me.lang_id' =>
                     Dict::Learn::Dictionary->curr->{language_orig_id}
                     {language_id},
-                %{ $category_settings->[1][1]||{} },
+                %{ $category_settings->[1][1] || {} },
             },
-            {   select => ['word_id'],
-                order_by => {-desc => 'me.word_id'},
-                %{ $category_settings->[1][2]||{} },
+            {
+                select   => ['me.word_id'],
+                order_by => { -desc => 'me.word_id' },
+                %{ $category_settings->[1][2] || {} },
             }
             );
+
         # $id_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
 
         my $count = scalar(@ids = shuffle map { $_->word_id } ($id_rs->all()));
@@ -491,6 +511,7 @@ sub predefined_categories {
 
     sub fetch_exercises {
         my ($self, $from, $to) = @_;
+
         say "fetching exercises from $from to $to";
         my $words
             = $main::ioc->lookup('db')->schema->resultset('Word')
@@ -499,8 +520,8 @@ sub predefined_categories {
         while (my $word = $words->next) {
             push @{$self->exercise},
                 [
-                $word->word_id, $word->word, undef,
-                [map { [$_->word_id, $_->word] } $word->words]
+                    $word->word_id, $word->word, undef,
+                    [map { [$_->word_id, $_->word] } $word->words]
                 ];
         }
         $self->check_exercise_consistency();
