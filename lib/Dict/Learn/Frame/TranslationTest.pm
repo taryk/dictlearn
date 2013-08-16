@@ -379,7 +379,77 @@ sub predefined_categories {
                 {},
             ]
         ],
-        ['All' => [-7, {}, {}]],
+        [
+            "Tested within last 12 hours" => [
+                -7,
+                {
+                    'last_test.cdate' => {
+                        -between => [
+                            $dtf->format_datetime(
+                                DateTime->now->subtract(hours => 12)
+                            ),
+                            $dtf->format_datetime(DateTime->now),
+                        ]
+                    }
+                },
+                {
+                    join     => ['last_test'],
+                    group_by => ['me.word_id']
+                }
+            ],
+        ],
+        [
+            "Tested within last 24 hours" => [
+                -8,
+                {
+                    'last_test.cdate' => {
+                        -between => [
+                            $dtf->format_datetime(
+                                DateTime->now->subtract(hours => 24)
+                            ),
+                            $dtf->format_datetime(DateTime->now),
+                        ]
+                    }
+                },
+                {
+                    join => ['last_test'],
+                    group_by => ['me.word_id'],
+                },
+            ],
+        ],
+        [
+            "Tested more than 12 hours ago" => [
+                -9,
+                {
+                    'last_test.cdate' => {
+                        ">" => $dtf->format_datetime(
+                            DateTime->now->subtract(hours => 24)
+                        ),
+                    }
+                },
+                {
+                    join => ['last_test'],
+                    group_by => ['me.word_id']
+                },
+            ]
+        ],
+        [
+            "Tested more than 24 hours ago" => [
+                -10,
+                {
+                    'last_test.cdate' => {
+                        ">" => $dtf->format_datetime(
+                            DateTime->now->subtract(hours => 24)
+                        ),
+                    }
+                },
+                {
+                    join => ['last_test'],
+                    group_by => ['me.word_id']
+                },
+            ],
+        ],
+        ['All' => [-11, {}, {}]],
     ];
 }
 
