@@ -2,10 +2,11 @@ package Dict::Learn::Frame::GridWords 0.1;
 
 use Wx qw[:everything];
 use Wx::Grid;
-
 use Wx::Event qw[:everything];
 
-use base 'Wx::Panel';
+use Moose;
+use MooseX::NonMoose;
+extends 'Wx::Panel';
 
 use Data::Printer;
 
@@ -19,101 +20,156 @@ sub COL_INTEST    { [4, 'in_test'] }
 sub COL_CDATE     { [5, 'cdate'] }
 sub COL_MDATE     { [6, 'mdate'] }
 
-use Class::XSAccessor accessors => [
-    qw| parent
-        grid panel2_vbox panel2_hbox_btn btn_delete_item btn_clear_all
-        btn_refresh
-      |
-];
+=item parent
 
-sub new {
-    my $class = shift;
-    my $self = $class->SUPER::new(splice @_ => 1);
-    $self->parent(shift);
+=cut
 
-    $self->panel2_vbox(Wx::BoxSizer->new(wxVERTICAL));
-    $self->SetSizer($self->panel2_vbox);
+has parent => (
+    is  => 'ro',
+    isa => 'Dict::Learn::Frame',
+);
 
-    $self->grid(
-        Wx::Grid->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0));
-    $self->panel2_vbox->Add($self->grid, 1, wxALL | wxGROW, 5);
-    $self->grid->CreateGrid(0, COL_MDATE->[0] + 1);
-    $self->grid->SetColSize(COL_WORD->[0],      300);
-    $self->grid->SetColSize(COL_REL_W->[0],     20);
-    $self->grid->SetColSize(COL_REL_E->[0],     20);
-    $self->grid->SetColSize(COL_WORDCLASS->[0], 30);
-    $self->grid->SetColSize(COL_INTEST->[0],    20);
-    $self->grid->SetColSize(COL_CDATE->[0],     140);
-    $self->grid->SetColSize(COL_MDATE->[0],     140);
-    $self->grid->EnableEditing(1);
-    $self->grid->EnableGridLines(1);
-    $self->grid->EnableDragGridSize(0);
-    $self->grid->SetMargins(0, 0);
+=item vbox
 
-    $self->grid->EnableDragColMove(0);
-    $self->grid->EnableDragColSize(1);
-    $self->grid->SetColLabelSize(30);
-    $self->grid->SetColLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
+=cut
 
-    $self->grid->EnableDragRowSize(1);
-    $self->grid->SetRowLabelSize(45);
-    $self->grid->SetRowLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
-    $self->grid->SetColLabelValue(COL_WORD->[0],      'Word');
-    $self->grid->SetColLabelValue(COL_REL_W->[0],     'W');
-    $self->grid->SetColLabelValue(COL_REL_E->[0],     'E');
-    $self->grid->SetColLabelValue(COL_WORDCLASS->[0], 'wc');
-    $self->grid->SetColLabelValue(COL_INTEST->[0],    't');
-    $self->grid->SetColLabelValue(COL_CDATE->[0],     'Created');
-    $self->grid->SetColLabelValue(COL_MDATE->[0],     'Modified');
+has vbox => (
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
+);
 
-    # $self->select_words();
+sub _build_vbox {
+    my $self = shift;
 
-    $self->panel2_hbox_btn(Wx::BoxSizer->new(wxHORIZONTAL));
-    $self->btn_delete_item(
-        Wx::Button->new(
-            $self, wxID_ANY, 'Delete', wxDefaultPosition, wxDefaultSize
-        )
-    );
-    $self->btn_clear_all(
-        Wx::Button->new(
-            $self, wxID_ANY, 'Clear All', wxDefaultPosition, wxDefaultSize
-        )
-    );
-    $self->btn_refresh(
-        Wx::Button->new(
-            $self, wxID_ANY, 'Refresh', wxDefaultPosition, wxDefaultSize
-        )
-    );
-    $self->panel2_hbox_btn->Add($self->btn_delete_item, 0,
-        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-    $self->panel2_hbox_btn->Add($self->btn_clear_all, 0,
-        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-    $self->panel2_hbox_btn->Add($self->btn_refresh, 0,
-        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-    $self->panel2_vbox->Add($self->panel2_hbox_btn, 0,
-        wxALL | wxGROW | wxEXPAND, 5);
-    $self->Layout();
-    $self->panel2_vbox->Fit($self);
+    my $vbox = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox->Add($self->grid,            1, wxALL | wxGROW,            5);
+    $vbox->Add($self->panel2_hbox_btn, 0, wxALL | wxGROW | wxEXPAND, 5);
 
-    # events
-    EVT_GRID_CMD_CELL_CHANGE($self, $self->grid, \&update_word);
-    EVT_BUTTON($self, $self->btn_refresh,     \&refresh_words);
-    EVT_BUTTON($self, $self->btn_delete_item, \&delete_word);
-
-    Dict::Learn::Dictionary->cb(
-        sub {
-            my $dict = shift;
-            $self->refresh_words;
-        }
-    );
-
-    $self
-
+    return $vbox;
 }
 
-sub update_word {
+=item grid
+
+=cut
+
+has grid => (
+    is         => 'ro',
+    isa        => 'Wx::Grid',
+    lazy_build => 1,
+);
+
+sub _build_grid {
     my $self = shift;
-    my $obj  = shift;
+
+    my $grid
+        = Wx::Grid->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
+    $grid->CreateGrid(0, COL_MDATE->[0] + 1);
+    $grid->SetColSize(COL_WORD->[0],      300);
+    $grid->SetColSize(COL_REL_W->[0],     20);
+    $grid->SetColSize(COL_REL_E->[0],     20);
+    $grid->SetColSize(COL_WORDCLASS->[0], 30);
+    $grid->SetColSize(COL_INTEST->[0],    20);
+    $grid->SetColSize(COL_CDATE->[0],     140);
+    $grid->SetColSize(COL_MDATE->[0],     140);
+    $grid->EnableEditing(1);
+    $grid->EnableGridLines(1);
+    $grid->EnableDragGridSize(0);
+    $grid->SetMargins(0, 0);
+
+    $grid->EnableDragColMove(0);
+    $grid->EnableDragColSize(1);
+    $grid->SetColLabelSize(30);
+    $grid->SetColLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
+
+    $grid->EnableDragRowSize(1);
+    $grid->SetRowLabelSize(45);
+    $grid->SetRowLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
+    $grid->SetColLabelValue(COL_WORD->[0],      'Word');
+    $grid->SetColLabelValue(COL_REL_W->[0],     'W');
+    $grid->SetColLabelValue(COL_REL_E->[0],     'E');
+    $grid->SetColLabelValue(COL_WORDCLASS->[0], 'wc');
+    $grid->SetColLabelValue(COL_INTEST->[0],    't');
+    $grid->SetColLabelValue(COL_CDATE->[0],     'Created');
+    $grid->SetColLabelValue(COL_MDATE->[0],     'Modified');
+
+    return $grid;
+}
+
+=item panel2_hbox_btn
+
+=cut
+
+has panel2_hbox_btn => (
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
+);
+
+sub _build_panel2_hbox_btn {
+    my $self = shift;
+
+    my $panel2_hbox_btn = Wx::BoxSizer->new(wxHORIZONTAL);
+    $panel2_hbox_btn->Add($self->btn_delete_item, 0,
+        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+    $panel2_hbox_btn->Add($self->btn_clear_all, 0,
+        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+    $panel2_hbox_btn->Add($self->btn_refresh, 0,
+        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+
+    return $panel2_hbox_btn;
+}
+
+
+=item btn_delete_item
+
+=cut
+
+has btn_delete_item => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    lazy    => 1,
+    default => sub {
+        Wx::Button->new(
+            shift, wxID_ANY, 'Delete', wxDefaultPosition, wxDefaultSize
+        )
+    },
+);
+
+
+=item btn_clear_all
+
+=cut
+
+has btn_clear_all => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    lazy    => 1,
+    default => sub {
+        Wx::Button->new(
+            shift, wxID_ANY, 'Clear All', wxDefaultPosition, wxDefaultSize
+        )
+    },
+);
+
+=item btn_refresh
+
+=cut
+
+has btn_refresh => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    lazy    => 1,
+    default => sub {
+        Wx::Button->new(
+            shift, wxID_ANY, 'Refresh', wxDefaultPosition, wxDefaultSize
+        )
+    },
+);
+
+sub update_word {
+    my ($self, $obj) = @_;
+
     my @cols = qw[ word_orig word_tr ];
 
     printf "%s %d %d\n",
@@ -125,7 +181,7 @@ sub update_word {
 
     for ($obj->GetCol()) {
         when (COL_WORD->[0]) {
-            my @words = split qr{\s*[\/\\\|]+\s*} =>
+            my @words = split qr{ \s* [\/\\\|]+ \s* }x =>
                 $self->grid->GetCellValue($obj->GetRow(), COL_WORD->[0]);
             $upd_word{irregular} = @words > 1 ? 1 : 0;
             $upd_word{word}  = $words[0] if $words[0];
@@ -144,6 +200,7 @@ sub update_word {
 
 sub delete_word {
     my $self = shift;
+
     my @rows = $self->grid->GetSelectedRows();
     my @ids;
     for (@rows) {
@@ -165,6 +222,7 @@ sub clear_db {
 
 sub select_words {
     my $self = shift;
+
     my $i    = 0;
     my @items
         = $main::ioc->lookup('db')->schema->resultset('Word')
@@ -206,9 +264,45 @@ sub select_words {
 
 sub refresh_words {
     my $self = shift;
+
     $self->grid->ClearGrid();
     $self->grid->DeleteRows(0, $self->grid->GetNumberRows());
     $self->select_words();
 }
 
+sub FOREIGNBUILDARGS {
+    my ($class, $parent, @args) = @_;
+
+    return @args;
+}
+
+sub BUILDARGS {
+    my ($class, $parent) = @_;
+
+    return {parent => $parent};
+}
+
+sub BUILD {
+    my ($self, @args) = @_;
+
+    $self->SetSizer($self->vbox);
+    $self->Layout();
+    $self->vbox->Fit($self);
+
+    # events
+    EVT_GRID_CMD_CELL_CHANGE($self, $self->grid, \&update_word);
+    EVT_BUTTON($self, $self->btn_refresh,     \&refresh_words);
+    EVT_BUTTON($self, $self->btn_delete_item, \&delete_word);
+
+    Dict::Learn::Dictionary->cb(
+        sub {
+            my $dict = shift;
+            $self->refresh_words;
+        }
+    );
+}
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
 1;
+
