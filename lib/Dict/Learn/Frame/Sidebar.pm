@@ -4,47 +4,77 @@ use Wx qw[:everything];
 use Wx::Event qw[:everything];
 use Wx::Html;
 
-use base 'Wx::Panel';
+use Moose;
+use MooseX::NonMoose;
+extends 'Wx::Panel';
 
-use common::sense;
 use Carp qw[croak confess];
 use Data::Printer;
 
-use Class::XSAccessor accessors => [
-    qw| parent vbox html btn_refresh |
-];
+use common::sense;
 
-sub new {
-    my $class = shift;
-    my $self  = $class->SUPER::new(@_);
-    $self->parent(shift);
+=item parent
 
-    $self->html(
-        Wx::HtmlWindow->new(
-            $self, wxID_ANY, wxDefaultPosition, wxDefaultSize
-        )
-    );
-    $self->html->SetPage('Dict::Learn');
+=cut
 
-    $self->btn_refresh(
-        Wx::Button->new(
-            $self, wxID_ANY, 'Refresh', wxDefaultPosition, wxDefaultSize
-        )
-    );
+has parent => (
+    is  => 'ro',
+    isa => 'Dict::Learn::Frame::SearchWords',
+);
 
-    ### main layout
-    $self->vbox(Wx::BoxSizer->new(wxVERTICAL));
-    $self->vbox->Add($self->html,        1, wxEXPAND | wxALL, 0);
-    $self->vbox->Add($self->btn_refresh, 0, wxTOP,            5);
-    $self->SetSizer($self->vbox);
-    $self->Layout();
-    $self->vbox->Fit($self);
+=item html
 
-    $self;
-}
+=cut
+
+has html => (
+    is      => 'ro',
+    isa     => 'Wx::HtmlWindow',
+    lazy    => 1,
+    default => sub {
+        my $html = Wx::HtmlWindow->new(shift, wxID_ANY, wxDefaultPosition,
+            wxDefaultSize);
+        $html->SetPage('Dict::Learn');
+
+        $html
+    }
+);
+
+=item btn_refresh
+
+=cut
+
+has btn_refresh => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    lazy    => 1,
+    default => sub {
+        Wx::Button->new(shift, wxID_ANY, 'Refresh', wxDefaultPosition,
+            wxDefaultSize)
+    },
+);
+
+=item vbox
+
+=cut
+
+has vbox => (
+    is      => 'ro',
+    isa     => 'Wx::BoxSizer',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+
+        my $vbox = Wx::BoxSizer->new(wxVERTICAL);
+        $vbox->Add($self->html,        1, wxEXPAND | wxALL, 0);
+        $vbox->Add($self->btn_refresh, 0, wxTOP,            5);
+
+        $vbox
+    }
+);
 
 sub load_word {
     my ($self, %params) = @_;
+
     my $word = $main::ioc->lookup('db')->schema->resultset('Word')->search(
         {'me.word_id' => $params{word_id}},
         {prefetch     => {rel_words => ['word2_id']}}
@@ -75,6 +105,7 @@ sub load_word {
 
 sub gen_html {
     my ($self, %params) = @_;
+
     my ($word_line, $translate, $note);
 
     # word line
@@ -106,4 +137,28 @@ sub gen_html {
     $word_line . '<br><br>' . $translate . '<br><br>' . $note // '';
 }
 
+sub FOREIGNBUILDARGS {
+    my ($class, @args) = @_;
+
+    return @args;
+}
+
+sub BUILDARGS {
+    my ($class, $parent) = @_;
+
+    return {parent => $parent};
+}
+
+sub BUILD {
+    my ($self, @args) = @_;
+
+    $self->SetSizer($self->vbox);
+    $self->Layout();
+    $self->vbox->Fit($self);
+
+    $self;
+}
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
 1;
