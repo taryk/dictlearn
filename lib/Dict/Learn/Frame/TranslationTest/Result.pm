@@ -11,11 +11,19 @@ use Data::Printer;
 
 use common::sense;
 
+=item parent
+
+=cut
+
 has parent => (
     is       => 'ro',
     isa      => 'Dict::Learn::Frame::TranslationTest',
     required => 1,
 );
+
+=item hbox
+
+=cut
 
 has hbox => (
     is      => 'ro',
@@ -23,11 +31,19 @@ has hbox => (
     default => sub { Wx::BoxSizer->new(wxHORIZONTAL) },
 );
 
+=item vbox
+
+=cut
+
 has vbox => (
     is      => 'ro',
     isa     => 'Wx::BoxSizer',
     default => sub { Wx::BoxSizer->new(wxVERTICAL) },
 );
+
+=item btn_ok
+
+=cut
 
 has btn_ok => (
     is      => 'ro',
@@ -38,6 +54,10 @@ has btn_ok => (
     },
 );
 
+=item btn_cancel
+
+=cut
+
 has btn_cancel => (
     is      => 'ro',
     isa     => 'Wx::Button',
@@ -46,6 +66,10 @@ has btn_cancel => (
             wxDefaultSize);
     },
 );
+
+=item listbox
+
+=cut
 
 has listbox => (
     is      => 'ro',
