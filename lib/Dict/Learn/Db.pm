@@ -20,6 +20,7 @@ sub REQ_TABLES {
 
 sub new {
     my $class = shift;
+
     my $self = bless {} => $class;
     $self->schema(shift);
 
@@ -32,6 +33,7 @@ sub new {
 
 sub analyze {
     my ($self) = @_;
+
     my $analyzer
         = DBIx::Class::QueryLog::Analyzer->new({querylog => $self->querylog});
     for my $query (@{$analyzer->get_sorted_queries}) {
@@ -46,11 +48,13 @@ sub analyze {
 
 sub reset_analyzer {
     my ($self) = @_;
+
     $self->querylog->reset;
 }
 
 sub check_tables {
     my $self = shift;
+
     say 'Checking DB...';
     my @tables = grep { $_->[0] eq 'main' }
         map { [(/^["](\w+)["][.]["](\w+)["]$/x)] }
@@ -58,39 +62,47 @@ sub check_tables {
     for my $req_table (@{+REQ_TABLES}) {
         return unless any { $req_table eq $_->[1] } @tables;
     }
+
     1;
 }
 
 sub install_schema {
     my $self = shift;
+
     say 'Install schema and initial data';
     my $sql = join ' ' => <DATA>;
     for (split ';' => $sql) {
         $self->schema->storage->dbh->do($_);
     }
+
     1;
 }
 
 sub clear_data {
     my $self = shift;
+
     for ( qw[Word Words Example Examples WordExample
              TestSession TestSessionData] )
     {
         $self->schema->resultset($_)->clear_data();
     }
+
     1;
 }
 
 sub clear_test_results {
     my $self = shift;
+
     for (qw[TestSession TestSessionData]) {
         $self->schema->resultset($_)->clear_data();
     }
+
     1;
 }
 
 sub clear_all {
     my $self = shift;
+
     for (
         qw[Word Words Example Examples WordExample
         Language Wordclass Dictionary
@@ -99,6 +111,7 @@ sub clear_all {
     {
         $self->schema->resultset($_)->clear_data();
     }
+
     1;
 }
 

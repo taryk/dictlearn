@@ -14,16 +14,18 @@ use common::sense;
 sub URL { 'http://www.lingvo.ua/ru/Translate/%s-%s/%s' }
 
 sub PARTSOFSPEACH {
-    {   n    => 'noun',          # іменник
-        a    => 'adjective',     # прикметник
-        num  => 'numeral',       # числівник
-        pron => 'pronoun',       # займенник
-        v    => 'verb',          # дієслово
-        adv  => 'adverb',        # прислівник
-        prep => 'preposition',   # прийменник
-        cj   => 'conjunction',   # сполучник
-        int  => 'interjection',  # вигук
-        'p. p.' => 'participle', # дієприкметник (past participle)
+    {
+        n    => 'noun',            # іменник
+        a    => 'adjective',       # прикметник
+        num  => 'numeral',         # числівник
+        pron => 'pronoun',         # займенник
+        v    => 'verb',            # дієслово
+        adv  => 'adverb',          # прислівник
+        prep => 'preposition',     # прийменник
+        cj   => 'conjunction',     # сполучник
+        int  => 'interjection',    # вигук
+        'p. p.' =>
+            'participle',    # дієприкметник (past participle)
     }
 }
 
@@ -102,6 +104,7 @@ sub PARTSOFSPEACH {
 
 sub translate {
     my $class = shift;
+
     my ($from, $to, $text) = @_;
     my $res = $class->SUPER::http_request(
         GET => sprintf(URL, $from, $to, uri_escape_utf8($text)),
@@ -143,7 +146,8 @@ sub translate {
             }
         }
     }
-    $tr_res;
+
+    return $tr_res;
 }
 
 1;

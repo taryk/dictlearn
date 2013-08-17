@@ -12,6 +12,7 @@ sub USERAGENT { 'Mozilla/5.0' }
 
 sub new {
     my $class = shift;
+
     my $self  = bless {
         using    => 'Google',
         from     => 'en',
@@ -20,11 +21,13 @@ sub new {
         @_
     } => $class;
     $self->preload_tplugins;
+
     $self;
 }
 
 sub preload_tplugins {
     my $self = shift;
+
     my $path = substr $INC{'Dict/Learn/Translate.pm'},
         0, length($INC{'Dict/Learn/Translate.pm'}) - 3;
     for my $tplugin (glob $path . '/*') {
@@ -42,11 +45,13 @@ sub preload_tplugins {
 
 sub get_backends_list {
     my $self = shift;
+
     $self->{tplugins};
 }
 
 sub do {
     my $self = shift;
+
     my ($from, $to, $text) = @_;
     $self->from($from)->to($to);
     my $tr_class = __PACKAGE__ . '::' . $self->{using};
@@ -59,24 +64,31 @@ sub do {
 
 sub from {
     my $self = shift;
+
     $self->{from} = shift;
+
     $self;
 }
 
 sub to {
     my $self = shift;
+
     $self->{to} = shift;
+
     $self;
 }
 
 sub using {
     my $self = shift;
+
     $self->{using} = shift;
+
     $self;
 }
 
 sub http_request {
     my ($self, $method, $url, $headers, $content) = @_;
+
     my $h = HTTP::Headers->new();
     $h->header(%$headers)
         if $headers and ref $headers eq 'HASH';
@@ -87,12 +99,13 @@ sub http_request {
     my $req = HTTP::Request->new($method => $url, $h, $json || $content);
     my $res = LWP::UserAgent->new(agent => USERAGENT)->request($req);
     if ($res->is_success) {
-        {   code    => $res->code,
+        {
+            code    => $res->code,
             content => $res->content
         };
-    }
-    else {
-        {   code    => -1,
+    } else {
+        {
+            code    => -1,
             content => $res->status_line
         };
     }

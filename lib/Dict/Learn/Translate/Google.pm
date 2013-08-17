@@ -13,6 +13,7 @@ sub URL {
 
 sub parse_result {
     my $json = shift;
+
     my $res;
     if ($json->[0][0][0]) {
         $res->{_} = $json->[0][0][0];
@@ -22,11 +23,13 @@ sub parse_result {
         $cur_partofspeach = $item->[0];
         $res->{$cur_partofspeach} = [map { {word => $_} } @{$item->[1]}];
     }
-    $res;
+
+    return $res;
 }
 
 sub translate {
     my $class = shift;
+
     my ($from, $to, $text) = @_;
     my $res = $class->SUPER::http_request(
         GET => sprintf URL,
@@ -35,7 +38,8 @@ sub translate {
     return if $res->{code} < 0;
     $res->{content} =~ s/,{2,}/,/g;
     my $json = from_json($res->{content}, {utf8 => 1});
-    {I => parse_result($json)};
+
+    return { I => parse_result($json) };
 }
 
 1;

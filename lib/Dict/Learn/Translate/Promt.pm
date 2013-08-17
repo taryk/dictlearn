@@ -13,28 +13,31 @@ sub URL {
 }
 
 sub PARTSOFSPEACH {
-    {   noun      => 'существительное', # іменник
-        adjective => 'прилагательное',  # прикметник
-        numeral   => 'числительное',    # числівник
-        pronoun   => 'местоимение',     # займенник
-        verb      => 'глагол',          # дієслово
-        adverb    => 'наречие',         # прислівник
-        preposition  => 'предлог',      # прийменник
-        conjunction  => 'союз',         # сполучник
-        participle   => 'причастие',    # дієприкметник
+    {
+        noun      => 'существительное',  # іменник
+        adjective => 'прилагательное',    # прикметник
+        numeral   => 'числительное',        # числівник
+        pronoun   => 'местоимение',          # займенник
+        verb      => 'глагол',                    # дієслово
+        adverb    => 'наречие',                  # прислівник
+        preposition  => 'предлог',         # прийменник
+        conjunction  => 'союз',               # сполучник
+        participle   => 'причастие',     # дієприкметник
         interjection => 'междометие',   # вигук
     };
 }
 
 # @TODO: implement categories support
 sub CATEGORIES {
-    {   auto  => 'Автомобильный',
+    {
+        auto  => 'Автомобильный',
         cable => 'Кабельная промышленность',
     }
 }
 
 sub parse_result {
     my $json = shift;
+
     my $res;
     my $pos_re = qr/(,\s(?<unknown>\w))?,\s(?<partofspeach>\w+)$/iusx;
     if ($json->{isWord} == 1 and $json->{resultNoTags}) {
@@ -73,11 +76,12 @@ sub parse_result {
     }
 
     # p($res);
-    $res;
+    return $res;
 }
 
 sub partofspeach_tr($) {
     my $original = shift;
+
     for my $item (keys %{+PARTSOFSPEACH}) {
         return $item
             if lc $original eq lc +PARTSOFSPEACH->{$item};
@@ -85,8 +89,7 @@ sub partofspeach_tr($) {
 }
 
 sub translate {
-    my $class = shift;
-    my ($from, $to, $text) = @_;
+    my ($class, $from, $to, $text) = @_;
 
     # `translate.ru` doesn't support ukrainian :-(
     $from = 'ru' if $from eq 'uk';
@@ -118,7 +121,7 @@ sub translate {
     my $json = from_json($res->{content}, {utf8 => 1});
 
     # p($json);
-    {I => parse_result($json)};
+    return { I => parse_result($json) };
 }
 
 1;
