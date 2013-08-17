@@ -15,9 +15,7 @@ use Dict::Learn::Db;
 use Dict::Learn::Export;
 use Dict::Learn::Import;
 use Dict::Learn::Frame::AddWord;
-use Dict::Learn::Frame::AddExample;
 use Dict::Learn::Frame::GridWords;
-use Dict::Learn::Frame::GridExamples;
 use Dict::Learn::Frame::SearchWords;
 use Dict::Learn::Frame::IrregularVerbsTest;
 use Dict::Learn::Frame::TestSummary;
@@ -27,8 +25,7 @@ use Class::XSAccessor accessors => [
     qw| parent
         vbox menu_bar menu_dicts menu_db menu_trans
         status_bar notebook
-        p_additem p_addword p_addexample p_gridwords p_search
-        p_gridexamples
+        p_additem p_addword p_gridwords p_search
         pt_irrverbs
         pts_irrverbs
         pt_trans
@@ -100,18 +97,6 @@ sub new {
 
     $self->notebook->AddPage($self->p_addword, 'Word', 0);
 
-    # panel addexample
-
-    $self->p_addexample(
-        Dict::Learn::Frame::AddExample->new(
-            $self,         $self->notebook,
-            wxID_ANY,      wxDefaultPosition,
-            wxDefaultSize, wxTAB_TRAVERSAL
-        )
-    );
-
-    $self->notebook->AddPage($self->p_addexample, 'Example', 0);
-
     # panel: table of words
 
     $self->p_gridwords(
@@ -122,17 +107,6 @@ sub new {
         )
     );
     $self->notebook->AddPage($self->p_gridwords, 'Words', 0);
-
-    # panel: table of examples
-
-    $self->p_gridexamples(
-        Dict::Learn::Frame::GridExamples->new(
-            $self,         $self->notebook,
-            wxID_ANY,      wxDefaultPosition,
-            wxDefaultSize, wxTAB_TRAVERSAL
-        )
-    );
-    $self->notebook->AddPage($self->p_gridexamples, 'Examples', 0);
 
     # Irregular Verbs test
     $self->pt_irrverbs(
