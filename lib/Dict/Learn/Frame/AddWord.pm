@@ -3,173 +3,359 @@ package Dict::Learn::Frame::AddWord 0.1;
 use Wx qw[:everything];
 use Wx::Event qw[:everything];
 
-use base 'Wx::Panel';
+use Moose;
+use MooseX::NonMoose;
+extends 'Wx::Panel';
 
 use Carp qw[croak confess];
 use Data::Printer;
 use LWP::UserAgent;
 use List::Util qw[first];
 
-use Dict::Learn::Translate;
 use Dict::Learn::Combo::WordList;
 use Dict::Learn::Dictionary;
+use Dict::Learn::Translate;
 
 use common::sense;
 
-use Class::XSAccessor accessors => [
-    qw| parent
-        word_note wordclass
-        word_src word2_src word3_src word_dst
-        vbox hbox_words vbox_dst hbox_dst_item
-        vbox_src cb_irregular
+=item item_id
 
-        hbox_btn
+=cut
 
-        item_id
+has item_id => (
+    is      => 'rw',
+    isa     => 'Int',
+    clearer => 'clear_item_id',
+);
 
-        hbox_add btn_additem
+=item enable
 
-        btn_add_word btn_clear btn_tran btn_cancel
-        enable
-        edit_origin
-      |
-];
+=cut
 
-sub new {
-    my $class = shift;
-    my $self = $class->SUPER::new(splice @_ => 1);
-    $self->parent(shift);
+has enable => (
+    is      => 'rw',
+    isa     => 'Bool',
+    default => sub { 1 },
+);
 
-    ### src
-    $self->word_src(
-        Wx::TextCtrl->new(
-            $self,         wxID_ANY,
-            '',            wxDefaultPosition,
-            wxDefaultSize, wxTE_MULTILINE
-        )
-    );
-    $self->word2_src(
-        Wx::TextCtrl->new(
-            $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize
-        )
-    );
-    $self->word3_src(
-        Wx::TextCtrl->new(
-            $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize
-        )
-    );
-    $self->word2_src->Enable(0);
-    $self->word3_src->Enable(0);
-    $self->cb_irregular(
-        Wx::CheckBox->new(
-            $self,            wxID_ANY,
-            'Irregular verb', wxDefaultPosition,
-            wxDefaultSize,    wxCHK_2STATE,
-            wxDefaultValidator
-        )
-    );
-    $self->word_note(
-        Wx::TextCtrl->new(
-            $self,         wxID_ANY,
-            '',            wxDefaultPosition,
-            wxDefaultSize, wxTE_MULTILINE
-        )
-    );
+=item edit_origin
 
-    # layout
-    $self->vbox_src(Wx::BoxSizer->new(wxVERTICAL));
-    $self->vbox_src->Add($self->word_src, 2, wxGROW | wxEXPAND | wxBOTTOM, 5);
-    $self->vbox_src->Add($self->cb_irregular, 1, wxALIGN_LEFT | wxBOTTOM, 5);
-    $self->vbox_src->Add($self->word2_src,    1, wxGROW | wxBOTTOM,       5);
-    $self->vbox_src->Add($self->word3_src,    1, wxGROW | wxBOTTOM,       5);
+=cut
 
-    ### dst
-    $self->word_dst([]);
-    $self->btn_additem(
-        Wx::Button->new(
-            $self, wxID_ANY, '+', wxDefaultPosition, wxDefaultSize
-        )
-    );
+has edit_origin => (
+    is        => 'rw',
+    isa       => 'HashRef',
+    predicate => 'has_edit_origin',
+    clearer   => 'clear_edit_origin',
+);
 
-    # layout
-    $self->hbox_dst_item([]);
-    $self->vbox_dst(Wx::BoxSizer->new(wxVERTICAL));
-    $self->hbox_add(Wx::BoxSizer->new(wxHORIZONTAL));
-    $self->hbox_add->Add($self->btn_additem, wxALIGN_LEFT | wxRIGHT, 5);
-    $self->vbox_dst->Add($self->hbox_add, 0, wxALIGN_LEFT | wxRIGHT, 5);
+=item parent
 
-    ### hbox_words layout
-    $self->hbox_words(Wx::BoxSizer->new(wxHORIZONTAL));
-    $self->hbox_words->Add($self->vbox_src, 2, wxALL | wxTOP,    5);
-    $self->hbox_words->Add($self->vbox_dst, 4, wxALL | wxEXPAND, 5);
+=cut
 
-    ### btn
-    $self->btn_add_word(
-        Wx::Button->new(
-            $self, wxID_ANY, 'Add', wxDefaultPosition, wxDefaultSize
-        )
-    );
-    $self->btn_tran(
-        Wx::Button->new(
-            $self, wxID_ANY, 'Translate', wxDefaultPosition, wxDefaultSize
-        )
-    );
-    $self->btn_clear(
-        Wx::Button->new(
-            $self, wxID_ANY, 'Clear', wxDefaultPosition, wxDefaultSize
-        )
-    );
-    $self->btn_cancel(
-        Wx::Button->new(
-            $self, wxID_ANY, 'Cancel', wxDefaultPosition, wxDefaultSize
-        )
-    );
+has parent => (
+    is  => 'ro',
+    isa => 'Dict::Learn::Frame',
+);
 
-    # layout
-    $self->hbox_btn(Wx::BoxSizer->new(wxHORIZONTAL));
-    $self->hbox_btn->Add($self->btn_add_word, 0,
-        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-    $self->hbox_btn->Add($self->btn_tran, 0,
-        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-    $self->hbox_btn->Add($self->btn_clear, 0,
-        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-    $self->hbox_btn->Add($self->btn_cancel, 0,
-        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+=item word_note
 
-    ### main layout
-    $self->vbox(Wx::BoxSizer->new(wxVERTICAL));
-    $self->vbox->Add($self->hbox_words, 3, wxALL | wxEXPAND | wxGROW, 0);
-    $self->vbox->Add($self->word_note,  1, wxALL | wxEXPAND | wxGROW, 5);
-    $self->vbox->Add($self->hbox_btn,   0, wxALL | wxGROW,            5);
-    $self->SetSizer($self->vbox);
-    $self->Layout();
-    $self->vbox->Fit($self);
+=cut
 
-    # mode: undef - add, other - edit
-    $self->item_id(undef);
-    $self->enable(1);
+has word_note => (
+    is      => 'ro',
+    isa     => 'Wx::TextCtrl',
+    default => sub {
+        Wx::TextCtrl->new(shift, wxID_ANY, '', wxDefaultPosition,
+            wxDefaultSize, wxTE_MULTILINE)
+    },
+);
 
-    # events
-    EVT_BUTTON($self, $self->btn_add_word, \&add);
-    EVT_BUTTON($self, $self->btn_additem,  sub { $self->add_dst_item });
-    EVT_BUTTON($self, $self->btn_clear,    \&clear_fields);
-    EVT_BUTTON($self, $self->btn_tran,     \&translate_word);
-    EVT_BUTTON($self, $self->btn_cancel,   \&cancel);
-    EVT_CHECKBOX($self, $self->cb_irregular, \&toggle_irregular);
-    EVT_TEXT($self, $self->word_src, \&check_word);
+=item word_src
 
-    EVT_KEY_UP($self, sub { $self->keybind($_[1]) });
-    $self;
-}
+=cut
+
+has word_src => (
+    is      => 'ro',
+    isa     => 'Wx::TextCtrl',
+    lazy    => 1,
+    default => sub {
+        Wx::TextCtrl->new(shift, wxID_ANY, '', wxDefaultPosition,
+            wxDefaultSize, wxTE_MULTILINE)
+    },
+);
+
+=item word2_src
+
+=cut
+
+has word2_src => (
+    is      => 'ro',
+    isa     => 'Wx::TextCtrl',
+    lazy    => 1,
+    default => sub {
+        my $word2 = Wx::TextCtrl->new(shift, wxID_ANY, '', wxDefaultPosition,
+            wxDefaultSize);
+        $word2->Enable(0);
+
+        $word2
+    },
+);
+
+=item word3_src
+
+=cut
+
+has word3_src => (
+    is      => 'ro',
+    isa     => 'Wx::TextCtrl',
+    lazy    => 1,
+    default => sub {
+        my $word3 = Wx::TextCtrl->new(shift, wxID_ANY, '', wxDefaultPosition,
+            wxDefaultSize);
+        $word3->Enable(0);
+
+        $word3
+    },
+);
+
+=item word_dst
+
+=cut
+
+has word_dst => (
+    is      => 'ro',
+    isa     => 'ArrayRef',
+    lazy    => 1,
+    default => sub { [] },
+);
+
+=item cb_irregular
+
+=cut
+
+has cb_irregular => (
+    is      => 'ro',
+    isa     => 'Wx::CheckBox',
+    lazy    => 1,
+    default => sub {
+        Wx::CheckBox->new(shift, wxID_ANY, 'Irregular verb',
+            wxDefaultPosition, wxDefaultSize, wxCHK_2STATE,
+            wxDefaultValidator)
+    },
+);
+
+=item vbox_src
+
+=cut
+
+has vbox_src => (
+    is      => 'ro',
+    isa     => 'Wx::BoxSizer',
+    lazy    => 1,
+    default => sub {
+        my $self     = shift;
+
+        my $vbox_src = Wx::BoxSizer->new(wxVERTICAL);
+        $vbox_src->Add($self->word_src, 2, wxGROW | wxEXPAND | wxBOTTOM, 5);
+        $vbox_src->Add($self->cb_irregular, 1, wxALIGN_LEFT | wxBOTTOM, 5);
+        $vbox_src->Add($self->word2_src,    1, wxGROW | wxBOTTOM,       5);
+        $vbox_src->Add($self->word3_src,    1, wxGROW | wxBOTTOM,       5);
+
+        $vbox_src
+    },
+);
+
+
+=item btn_additem
+
+=cut
+
+has btn_additem => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    lazy    => 1,
+    default => sub {
+        Wx::Button->new(shift, wxID_ANY, '+', wxDefaultPosition,
+            wxDefaultSize)
+    },
+);
+
+=item hbox_dst_item
+
+=cut
+
+has hbox_dst_item => (
+    is      => 'ro',
+    isa     => 'ArrayRef',
+    lazy    => 1,
+    default => sub { [] },
+);
+
+=item hbox_add
+
+=cut
+
+has hbox_add => (
+    is      => 'ro',
+    isa     => 'Wx::BoxSizer',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+
+        my $hbox_add = Wx::BoxSizer->new(wxHORIZONTAL);
+        $hbox_add->Add($self->btn_additem, wxALIGN_LEFT | wxRIGHT, 5);
+
+        $hbox_add
+    },
+);
+
+=item vbox_dst
+
+=cut
+
+has vbox_dst => (
+    is      => 'ro',
+    isa     => 'Wx::BoxSizer',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+
+        my $vbox_dst = Wx::BoxSizer->new(wxVERTICAL);
+        $vbox_dst->Add($self->hbox_add, 0, wxALIGN_LEFT | wxRIGHT, 5);
+
+        $vbox_dst
+    },
+);
+
+=item hbox_words
+
+=cut
+
+has hbox_words => (
+    is      => 'ro',
+    isa     => 'Wx::BoxSizer',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+
+        my $hbox_words = Wx::BoxSizer->new(wxHORIZONTAL);
+        $hbox_words->Add($self->vbox_src, 2, wxALL | wxTOP,    5);
+        $hbox_words->Add($self->vbox_dst, 4, wxALL | wxEXPAND, 5);
+
+        $hbox_words
+    },
+);
+
+=item btn_add_word
+
+=cut
+
+has btn_add_word => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    lazy    => 1,
+    default => sub {
+        Wx::Button->new(shift, wxID_ANY, 'Add', wxDefaultPosition,
+            wxDefaultSize)
+    },
+);
+
+=item btn_tran
+
+=cut
+
+has btn_tran => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    lazy    => 1,
+    default => sub {
+        Wx::Button->new(shift, wxID_ANY, 'Translate', wxDefaultPosition,
+            wxDefaultSize)
+    },
+);
+
+=item btn_clear
+
+=cut
+
+has btn_clear => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    lazy    => 1,
+    default => sub {
+        Wx::Button->new(shift, wxID_ANY, 'Clear', wxDefaultPosition,
+            wxDefaultSize)
+    },
+);
+
+=item btn_cancel
+
+=cut
+
+has btn_cancel => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    lazy    => 1,
+    default => sub {
+        Wx::Button->new(shift, wxID_ANY, 'Cancel', wxDefaultPosition,
+            wxDefaultSize)
+    },
+);
+
+=item hbox_btn
+
+=cut
+
+has hbox_btn => (
+    is      => 'ro',
+    isa     => 'Wx::BoxSizer',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+
+        my $hbox_btn = Wx::BoxSizer->new(wxHORIZONTAL);
+        $hbox_btn->Add($self->btn_add_word, 0,
+            wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+        $hbox_btn->Add($self->btn_tran, 0,
+            wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+        $hbox_btn->Add($self->btn_clear, 0,
+            wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+        $hbox_btn->Add($self->btn_cancel, 0,
+            wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+
+        $hbox_btn
+    },
+);
+
+=item vbox
+
+=cut
+
+has vbox => (
+    is      => 'ro',
+    isa     => 'Wx::BoxSizer',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+
+        my $vbox = Wx::BoxSizer->new(wxVERTICAL);
+        $vbox->Add($self->hbox_words, 3, wxALL | wxEXPAND | wxGROW, 0);
+        $vbox->Add($self->word_note,  1, wxALL | wxEXPAND | wxGROW, 5);
+        $vbox->Add($self->hbox_btn,   0, wxALL | wxGROW,            5);
+
+        $vbox
+    },
+);
 
 sub keybind {
     my ($self, $event) = @_;
 
     given ($event->GetKeyCode()) {
-        when([WXK_ADD, WXK_NUMPAD_ADD]) {
+        when ([WXK_ADD, WXK_NUMPAD_ADD]) {
             $self->add_dst_item();
         }
-        when([WXK_SUBTRACT,WXK_NUMPAD_SUBTRACT]) {
+        when ([WXK_SUBTRACT, WXK_NUMPAD_SUBTRACT]) {
             if (my $last_word_obj
                 = first { defined $_->{cbox} } reverse @{ $self->word_dst })
             {
@@ -181,15 +367,18 @@ sub keybind {
 
 sub select_word {
     my ($self, $event) = @_;
+
     my $el = $self->add_dst_item($event->GetClientData(), 1);
     $el->{word}->SetValue($event->GetString);
+
     $self;
 }
 
 sub make_dst_item {
     my ($self, $word_id, $ro) = @_;
-    push @{$self->hbox_dst_item} => Wx::BoxSizer->new(wxHORIZONTAL);
-    my $id = $#{$self->hbox_dst_item};
+
+    push @{ $self->hbox_dst_item } => Wx::BoxSizer->new(wxHORIZONTAL);
+    my $id = $#{ $self->hbox_dst_item };
     $self->word_dst->[$id] = {
         word_id => $word_id,
         id      => $id,
@@ -230,8 +419,7 @@ sub make_dst_item {
     # EVT_TEXT(   $self, $self->word_dst->[$id]{word}, sub { $self->query_words($id); } );
     my $part_of_speach_selection = 0;
     if ($id > 0 and my $prev_item = $self->word_dst->[$id - 1]) {
-        return
-                unless defined $prev_item->{cbox}
+        return unless defined $prev_item->{cbox}
             and ref $prev_item->{cbox} eq 'Wx::ComboBox'
             and $prev_item->{cbox}->GetSelection >= 0;
 
@@ -253,6 +441,7 @@ sub make_dst_item {
         $self->word_dst->[$id]{edit}
             = Wx::Button->new($self, wxID_ANY, 'e', wxDefaultPosition,
             [40, -1]);
+
         EVT_BUTTON(
             $self,
             $self->word_dst->[$id]{edit},
@@ -262,11 +451,12 @@ sub make_dst_item {
             ->Add($self->word_dst->[$id]{edit}, 0, wxALL, 0);
     }
 
-    $self->word_dst->[$id];
+    return $self->word_dst->[$id];
 }
 
 sub query_words {
     my ($self, $id) = @_;
+
     my $cb = $self->word_dst->[$id]{word};
     my @words
         = $main::ioc->lookup('db')->schema->resultset('Word')
@@ -280,6 +470,7 @@ sub query_words {
 
 sub check_word {
     my ($self, $event) = @_;
+
     my $word;
     unless (
         defined(
@@ -299,7 +490,7 @@ sub check_word {
     else {
         if ($self->item_id >= 0) {
             return
-                if $self->edit_origin
+                if $self->has_edit_origin
                 and $self->edit_origin->{word} eq $event->GetString;
         }
         if ((my $word_id = $word->word_id) >= 0) {
@@ -327,19 +518,20 @@ sub check_word {
 
 sub add_dst_item {
     my ($self, $word_id, $ro) = @_;
-    my $el = $self->make_dst_item($word_id, $ro);
 
+    my $el = $self->make_dst_item($word_id, $ro);
     # $self->vbox_dst->Add( $el->{parent_hbox}, 1, wxALL|wxGROW, 0 );
     my @children = $self->vbox_dst->GetChildren;
     $self->vbox_dst->Insert($#children || 0,
         $el->{parent_hbox}, 1, wxALL | wxGROW, 0);
     $self->Layout();
-    $el;
+
+    return $el;
 }
 
 sub del_dst_item {
-    my $self = shift;
-    my $id   = shift;
+    my ($self, $id) = @_;
+
     for (qw[ cbox word btnm btnp edit ]) {
         next unless defined $self->word_dst->[$id]{$_};
         $self->word_dst->[$id]{$_}->Destroy();
@@ -350,7 +542,8 @@ sub del_dst_item {
     $self->Layout();
     delete $self->hbox_dst_item->[$id];
     delete $self->word_dst->[$id]{parent_hbox};
-    $self;
+
+    return $self;
 }
 
 sub edit_word_as_new {
@@ -367,11 +560,13 @@ sub edit_word_as_new {
     $self->word_dst->[$word_id]{parent_hbox}
         ->Remove($self->word_dst->[$word_id]{edit});
     delete $self->word_dst->[$word_id]{edit};
-    $self;
+
+    return $self;
 }
 
 sub do_word_dst($$) {
     my ($self, $cb) = @_;
+
     for my $word_dst_item (grep {defined} @{$self->word_dst}) {
         $cb->($self, $word_dst_item);
     }
@@ -435,11 +630,12 @@ sub add {
     $self->btn_add_word->SetLabel('Add');
     $self->parent->p_search->lookup;
 
-    $self;
+    return $self;
 }
 
 sub import_wordclass {
     my $self = shift;
+
     map { $_->{name_orig} }
         $main::ioc->lookup('db')->schema->resultset('Wordclass')->select();
 }
@@ -447,8 +643,8 @@ sub import_wordclass {
 sub clear_fields {
     my $self = shift;
 
-    $self->item_id(undef);
-    $self->edit_origin(undef);
+    $self->clear_item_id;
+    $self->clear_edit_origin;
     $self->enable(1);
     $self->enable_controls($self->enable);
 
@@ -472,6 +668,7 @@ sub clear_fields {
 
 sub remove_all_dst {
     my $self = shift;
+
     for (@{$self->word_dst}) {
         $self->del_dst_item($_->{id});
         delete $self->word_dst->[$_->{id}];
@@ -479,8 +676,8 @@ sub remove_all_dst {
 }
 
 sub load_word {
-    my $self   = shift;
-    my %params = @_;
+    my ($self, %params) = @_;
+
     my $word   = $main::ioc->lookup('db')->schema->resultset('Word')
         ->select_one($params{word_id});
     my @translate;
@@ -507,8 +704,8 @@ sub load_word {
 }
 
 sub fill_fields {
-    my $self   = shift;
-    my %params = @_;
+    my ($self, %params) = @_;
+
     $self->clear_fields;
     $self->edit_origin(\%params);
     $self->item_id($params{word_id});
@@ -536,6 +733,7 @@ sub dst_count { scalar @{$_[0]->word_dst} }
 
 sub get_partofspeach_index {
     my $self = shift;
+
     my $name = shift;
     for ($main::ioc->lookup('db')->schema->resultset('Wordclass')
         ->select(name => $name))
@@ -546,6 +744,7 @@ sub get_partofspeach_index {
 
 sub translate_word {
     my $self = shift;
+
     my $res  = $self->parent->tran->do(
         'en' => 'uk',
         $self->word_src->GetValue()
@@ -590,6 +789,7 @@ sub translate_word {
 
 sub enable_irregular {
     my ($self, $is_checked) = @_;
+
     $self->cb_irregular->SetValue($is_checked);
     $self->word2_src->Enable($is_checked);
     $self->word3_src->Enable($is_checked);
@@ -597,11 +797,13 @@ sub enable_irregular {
 
 sub toggle_irregular {
     my ($self, $event) = @_;
+
     $self->enable_irregular($event->IsChecked);
 }
 
 sub enable_controls($$) {
     my ($self, $en) = @_;
+
     $self->btn_additem->Enable($en);
 
     # $self->btn_add_word->Enable($en);
@@ -622,9 +824,43 @@ sub enable_controls($$) {
 
 sub cancel {
     my $self = shift;
+
     $self->clear_fields();
     $self->remove_all_dst();
     $self->parent->notebook->SetPageText(1 => 'Word');
 }
 
+sub FOREIGNBUILDARGS {
+    my ($class, $parent, @args) = @_;
+    return @args;
+}
+
+sub BUILDARGS {
+    my ($class, $parent) = @_;
+    return { parent => $parent };
+}
+
+sub BUILD {
+    my ($self, @args) = @_;
+
+    ### main layout  
+    $self->SetSizer($self->vbox);
+    $self->Layout();
+    $self->vbox->Fit($self);
+
+    # events
+    EVT_BUTTON($self, $self->btn_add_word, \&add);
+    EVT_BUTTON($self, $self->btn_additem,  sub { $self->add_dst_item });
+    EVT_BUTTON($self, $self->btn_clear,    \&clear_fields);
+    EVT_BUTTON($self, $self->btn_tran,     \&translate_word);
+    EVT_BUTTON($self, $self->btn_cancel,   \&cancel);
+    EVT_CHECKBOX($self, $self->cb_irregular, \&toggle_irregular);
+    EVT_TEXT($self, $self->word_src, \&check_word);
+
+    EVT_KEY_UP($self, sub { $self->keybind($_[1]) });
+    $self;
+}
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
 1;
