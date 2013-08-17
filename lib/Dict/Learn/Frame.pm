@@ -448,14 +448,11 @@ sub BUILDARGS {
 sub BUILD {
     my ($self, @args) = @_;
 
-    # FIXME: get rid of it
-    Dict::Learn::Dictionary->all;
+    # main menu
+    $self->SetMenuBar($self->menu_bar);
 
     $self->SetIcon(Wx::GetWxPerlIcon());
     $self->vbox->Add($self->notebook, 1, wxALL | wxEXPAND, 5);
-
-    # main menu
-    $self->SetMenuBar($self->menu_bar);
 
     $self->make_pages();
 
