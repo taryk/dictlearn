@@ -527,6 +527,7 @@ has hbox => (
 
 sub _build_hbox {
     my $self = shift;
+
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
     $hbox->Add($self->vbox,    3, wxALL | wxGROW | wxEXPAND, 0);
     $hbox->Add($self->sidebar, 1, wxGROW | wxEXPAND | wxALL, 0);
@@ -563,6 +564,7 @@ sub lookup {
 
 sub edit_word {
     my $self    = shift;
+
     my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
 
@@ -574,6 +576,7 @@ sub edit_word {
 
 sub edit_example {
     my $self    = shift;
+
     my $curr_id = $self->lb_examples->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
 
@@ -584,8 +587,8 @@ sub edit_example {
 }
 
 sub load_examples {
-    my $self = shift;
-    my $obj  = shift;
+    my ($self, $obj) = @_;
+
     my $id   = $obj->GetLabel();
     $self->lb_examples->DeleteAllItems();
     my @items
@@ -606,16 +609,19 @@ sub load_examples {
 
 sub get_word_id {
     my ($self, $rowid) = @_;
+
     $self->lb_words->GetItem($rowid, 0)->GetText;
 }
 
 sub get_example_id {
     my ($self, $rowid) = @_;
+
     $self->lb_examples->GetItem($rowid, 0)->GetText;
 }
 
 sub delete_word {
     my $self    = shift;
+
     my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
     $main::ioc->lookup('db')->schema->resultset('Word')
@@ -625,6 +631,7 @@ sub delete_word {
 
 sub unlink_word {
     my $self    = shift;
+
     my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
     $main::ioc->lookup('db')->schema->resultset('Word')
@@ -634,6 +641,7 @@ sub unlink_word {
 
 sub delete_example {
     my $self    = shift;
+
     my $curr_id = $self->lb_examples->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
     $main::ioc->lookup('db')->schema->resultset('Example')
@@ -643,6 +651,7 @@ sub delete_example {
 
 sub unlink_example {
     my $self    = shift;
+
     my $curr_id = $self->lb_examples->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
     $main::ioc->lookup('db')->schema->resultset('Example')
@@ -652,6 +661,7 @@ sub unlink_example {
 
 sub select_first_item {
     my $self = shift;
+
     $self->lb_words->SetItemState(
         $self->lb_words->GetNextItem(
             -1, wxLIST_NEXT_ALL, wxLIST_STATE_DONTCARE
@@ -690,11 +700,13 @@ sub add_to_test {
 
 sub FOREIGNBUILDARGS {
     my ($class, $parent, @args) = @_;
+
     return @args;
 }
 
 sub BUILDARGS {
     my ($class, $parent) = @_;
+
     return {parent => $parent};
 }
 
@@ -712,5 +724,4 @@ sub BUILD {
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
-
 1;
