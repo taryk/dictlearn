@@ -32,7 +32,7 @@ has min   => (is => 'ro', default => sub {1});
 
 =cut
 
-has max   => (
+has max => (
     is      => 'rw',
     default => sub { 3 },
     trigger => sub {
@@ -42,7 +42,7 @@ has max   => (
         $self->spin->SetValue($new_index) if $new_index != int $spin_value;
         say "setting max value $new_index";
         unless (defined $self->exercise->[$new_index]) {
-            my $last_index = $#{$self->exercise} + 1;
+            my $last_index = $#{ $self->exercise } + 1;
             say "last index - $last_index";
             return unless $new_index >= $last_index;
             $self->fetch_exercises($last_index, $new_index);
@@ -56,7 +56,7 @@ has max   => (
 
 has total_score => (
     is      => 'rw',
-    default => sub {0},
+    default => sub { 0 },
     clearer => 'clear_score',
 );
 
@@ -119,6 +119,7 @@ has pos => (
     default => sub { shift->min },
     trigger => sub {
         my ($self, $pos) = @_;
+
         $self->set_position($pos);
     },
 );
@@ -131,7 +132,8 @@ has position => (
     is      => 'ro',
     isa     => 'Wx::StaticText',
     default => sub {
-        my ($self) = @_;
+        my $self = shift;
+
         Wx::StaticText->new($self, wxID_ANY, $self->min . '/',
             wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE);
     },
@@ -145,7 +147,7 @@ has spin => (
     is      => 'ro',
     isa     => 'Wx::SpinCtrl',
     default => sub {
-        Wx::SpinCtrl->new($_[0], wxID_ANY, 0, wxDefaultPosition,
+        Wx::SpinCtrl->new(shift, wxID_ANY, 0, wxDefaultPosition,
             wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP);
     },
 );
@@ -196,7 +198,7 @@ has text => (
     is      => 'ro',
     isa     => 'Wx::StaticText',
     default => sub {
-        Wx::StaticText->new($_[0], wxID_ANY, '', wxDefaultPosition,
+        Wx::StaticText->new(shift, wxID_ANY, '', wxDefaultPosition,
             wxDefaultSize, wxALIGN_CENTRE);
     },
 );
@@ -209,7 +211,7 @@ has input => (
     is      => 'ro',
     isa     => 'Wx::TextCtrl',
     default => sub {
-        Wx::TextCtrl->new($_[0], wxID_ANY, '', wxDefaultPosition,
+        Wx::TextCtrl->new(shift, wxID_ANY, '', wxDefaultPosition,
             wxDefaultSize, wxTE_LEFT);
     },
 );
@@ -222,7 +224,7 @@ has btn_prev => (
     is      => 'ro',
     isa     => 'Wx::Button',
     default => sub {
-        Wx::Button->new($_[0], wxID_ANY, 'Prev', wxDefaultPosition,
+        Wx::Button->new(shift, wxID_ANY, 'Prev', wxDefaultPosition,
             wxDefaultSize);
     },
 );
@@ -235,7 +237,7 @@ has btn_next => (
     is      => 'ro',
     isa     => 'Wx::Button',
     default => sub {
-        Wx::Button->new($_[0], wxID_ANY, 'Next', wxDefaultPosition,
+        Wx::Button->new(shift, wxID_ANY, 'Next', wxDefaultPosition,
             wxDefaultSize);
     },
 );
@@ -248,7 +250,7 @@ has btn_reset => (
     is      => 'ro',
     isa     => 'Wx::Button',
     default => sub {
-        Wx::Button->new($_[0], wxID_ANY, 'Reset', wxDefaultPosition,
+        Wx::Button->new(shift, wxID_ANY, 'Reset', wxDefaultPosition,
             wxDefaultSize);
     },
 );
@@ -258,31 +260,33 @@ has btn_reset => (
 =cut
 
 has result => (
-    is         => 'ro',
-    isa        => 'Dict::Learn::Frame::TranslationTest::Result',
-    lazy_build => 1,
+    is      => 'ro',
+    isa     => 'Dict::Learn::Frame::TranslationTest::Result',
+    lazy    => 1,
+    default => sub {
+        Dict::Learn::Frame::TranslationTest::Result->new(
+            shift, wxID_ANY, 'Result', wxDefaultPosition,
+            [800, 600],
+            wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxSTAY_ON_TOP
+        )
+    }
 );
-
-sub _build_result {
-    Dict::Learn::Frame::TranslationTest::Result->new(
-        $_[0], wxID_ANY, 'Result', wxDefaultPosition,
-        [800, 600],
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxSTAY_ON_TOP
-    );
-}
 
 sub FOREIGNBUILDARGS {
     my ($class, $parent, @args) = @_;
+
     return @args;
 }
 
 sub BUILDARGS {
     my ($class, $parent) = @_;
-    return {parent => $parent};
+
+    return { parent => $parent };
 }
 
 sub BUILD {
     my ($self, @args) = @_;
+
     $self->hbox->Add($self->btn_prev,  0, wxALL | wxGROW,  0);
     $self->hbox->Add($self->btn_next,  0, wxALL | wxGROW,  0);
     $self->hbox->Add($self->btn_reset, 0, wxLEFT | wxGROW, 40);
@@ -323,12 +327,14 @@ sub BUILD {
 
 sub keybind {
     my ($self, $event) = @_;
+
     $self->next_step()
         if $event->GetKeyCode() == WXK_RETURN;
 }
 
 sub keybind2 {
     my ($self, $event) = @_;
+
     my $key = $event->GetKeyCode();
     if ($key == WXK_RETURN) {
         $self->next_step();
@@ -340,6 +346,7 @@ sub keybind2 {
 
 sub spin_max_step {
     my ($self, $event) = @_;
+
     $self->max($event->GetInt);
 }
 
@@ -540,6 +547,7 @@ sub predefined_categories {
 
 sub init {
     my ($self) = @_;
+
     $self->clear_fields();
     $self->clear_score();
     $self->exercise([]);
@@ -553,6 +561,7 @@ sub init {
 
 sub clear_fields {
     my ($self) = @_;
+
     $self->input->Clear();
     $self->text->SetLabel('');
     $self->Layout();
@@ -560,6 +569,7 @@ sub clear_fields {
 
 sub load_fields {
     my ($self, %args) = @_;
+
     $self->text->SetLabel($args{text});
     $self->input->SetValue($args{input}) if $args{input};
     $self->input->SetFocus();
@@ -568,17 +578,20 @@ sub load_fields {
 
 sub set_position {
     my ($self, $pos) = @_;
+
     $self->position->SetLabel($pos . '/');
 }
 
 sub get_step {
     my ($self, $id) = @_;
+
     return $self->exercise->[$id - 1]
         if defined $self->exercise->[$id - 1];
 }
 
 sub load_step {
     my ($self, $id) = @_;
+
     my $step = $self->get_step($id);
     $self->load_fields(
         text  => $step->[1],
@@ -589,6 +602,7 @@ sub load_step {
 # next step
 sub next_step {
     my ($self) = @_;
+
     $self->exercise->[$self->pos - 1][2] = $self->input->GetValue
         unless defined $self->exercise->[$self->pos - 1][2];
     if ($self->pos >= $self->max) {
@@ -627,6 +641,7 @@ sub next_step {
 # one step back
 sub prev_step {
     my ($self) = @_;
+
     return unless $self->pos > $self->min;
     $self->clear_fields;
     $self->pos($self->pos - 1);
@@ -636,17 +651,20 @@ sub prev_step {
 
 sub reset_session {
     my ($self) = @_;
+
     $self->init();
 }
 
 sub strip_string {
     my ($string) = @_;
+
     $string =~ s/[(][^)]+[)]//g;    # remove all characters between parentheses
     $string =~ s/\W/ /g;
     $string =~ s/_/ /g;
     $string =~ s/[ ]{2,}/ /g;
     $string =~ s/\s+$//;
     $string =~ s/^\s+//;
+
     lc $string;
 }
 
@@ -698,10 +716,10 @@ sub compare_strings {
         = (@e == 1 ? $e[0] : reduce { $a->[0] > $b->[0] ? $a : $b } @e);
     push @{$matched_most},
         grep { $matched_most->[2] ne $_->[1] } @{$expected};
+
     $matched_most;
 }
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
-
 1;

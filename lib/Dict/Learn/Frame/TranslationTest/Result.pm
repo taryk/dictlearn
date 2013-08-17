@@ -33,7 +33,7 @@ has btn_ok => (
     is      => 'ro',
     isa     => 'Wx::Button',
     default => sub {
-        Wx::Button->new($_[0], wxID_OK, 'OK', wxDefaultPosition,
+        Wx::Button->new(shift, wxID_OK, 'OK', wxDefaultPosition,
             wxDefaultSize);
     },
 );
@@ -42,7 +42,7 @@ has btn_cancel => (
     is      => 'ro',
     isa     => 'Wx::Button',
     default => sub {
-        Wx::Button->new($_[0], wxID_CANCEL, 'Cancel', wxDefaultPosition,
+        Wx::Button->new(shift, wxID_CANCEL, 'Cancel', wxDefaultPosition,
             wxDefaultSize);
     },
 );
@@ -51,7 +51,7 @@ has listbox => (
     is      => 'ro',
     isa     => 'Wx::SimpleHtmlListBox',
     default => sub {
-        Wx::SimpleHtmlListBox->new($_[0], wxID_ANY, wxDefaultPosition,
+        Wx::SimpleHtmlListBox->new(shift, wxID_ANY, wxDefaultPosition,
             [350, 300],
             [], wxLB_MULTIPLE);
     },
@@ -59,16 +59,19 @@ has listbox => (
 
 sub FOREIGNBUILDARGS {
     my ($class, @args) = @_;
+
     return @args;
 }
 
 sub BUILDARGS {
     my ($class, $parent) = @_;
-    return {parent => $parent};
+
+    return { parent => $parent };
 }
 
 sub BUILD {
     my ($self, @args) = @_;
+
     $self->hbox->Add($self->btn_ok,     0, wxEXPAND, 0);
     $self->hbox->Add($self->btn_cancel, 0, wxEXPAND, 0);
 
@@ -82,6 +85,7 @@ sub BUILD {
 
 sub fill_result {
     my ($self, @res) = @_;
+
     $self->listbox->Clear();
     for my $item (@res) {
 
@@ -101,10 +105,10 @@ sub fill_result {
             @{$item->{other}}
         );
     }
+
     $self;
 }
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
-
 1;
