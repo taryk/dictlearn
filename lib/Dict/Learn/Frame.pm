@@ -338,51 +338,6 @@ has pt_trans => (
     },
 );
 
-sub FOREIGNBUILDARGS {
-    my ($class, @args) = @_;
-
-    return @args;
-}
-
-sub BUILDARGS {
-    my ($class, $parent) = @_;
-
-    return { parent => $parent };
-}
-
-sub BUILD {
-    my ($self, @args) = @_;
-
-    # FIXME: get rid of it
-    Dict::Learn::Dictionary->all;
-
-    $self->SetIcon(Wx::GetWxPerlIcon());
-    $self->vbox->Add($self->notebook, 1, wxALL | wxEXPAND, 5);
-
-    # main menu
-    $self->SetMenuBar($self->menu_bar);
-
-    $self->make_pages();
-
-    # tell we want automatic layout
-    # $self->SetAutoLayout( 1 );
-    $self->SetSizer($self->vbox);
-
-    # size the window optimally and set its minimal size
-    $self->Layout();
-    $self->vbox->Fit( $self );
-    # $self->vbox->SetSizeHints( $self );
-
-    Dict::Learn::Dictionary->set(0);
-
-    # set a frame title based on current dictionary
-    # like 'DictLearn - [English-Ukrainian]'
-    $self->set_frame_title();
-
-    # events
-    EVT_CLOSE($self, \&on_close);
-}
-
 sub dictionary_check {
     my ($self, $event) = @_;
 
@@ -476,6 +431,51 @@ sub reset_analyzer {
     my ($self) = @_;
 
     $main::ioc->lookup('db')->reset_analyzer();
+}
+
+sub FOREIGNBUILDARGS {
+    my ($class, @args) = @_;
+
+    return @args;
+}
+
+sub BUILDARGS {
+    my ($class, $parent) = @_;
+
+    return { parent => $parent };
+}
+
+sub BUILD {
+    my ($self, @args) = @_;
+
+    # FIXME: get rid of it
+    Dict::Learn::Dictionary->all;
+
+    $self->SetIcon(Wx::GetWxPerlIcon());
+    $self->vbox->Add($self->notebook, 1, wxALL | wxEXPAND, 5);
+
+    # main menu
+    $self->SetMenuBar($self->menu_bar);
+
+    $self->make_pages();
+
+    # tell we want automatic layout
+    # $self->SetAutoLayout( 1 );
+    $self->SetSizer($self->vbox);
+
+    # size the window optimally and set its minimal size
+    $self->Layout();
+    $self->vbox->Fit( $self );
+    # $self->vbox->SetSizeHints( $self );
+
+    Dict::Learn::Dictionary->set(0);
+
+    # set a frame title based on current dictionary
+    # like 'DictLearn - [English-Ukrainian]'
+    $self->set_frame_title();
+
+    # events
+    EVT_CLOSE($self, \&on_close);
 }
 
 no Moose;
