@@ -11,30 +11,65 @@ extends 'Wx::Frame';
 use Carp qw[ croak confess ];
 use Data::Printer;
 use File::Basename 'dirname';
-use lib dirname(__FILE__) . '/../lib/';
 
 use common::sense;
 
 use Dict::Learn::Db;
+use Dict::Learn::Dictionary;
 use Dict::Learn::Export;
-use Dict::Learn::Import;
 use Dict::Learn::Frame::AddWord;
 use Dict::Learn::Frame::GridWords;
-use Dict::Learn::Frame::SearchWords;
 use Dict::Learn::Frame::IrregularVerbsTest;
+use Dict::Learn::Frame::SearchWords;
 use Dict::Learn::Frame::TestSummary;
 use Dict::Learn::Frame::TranslationTest;
-use Dict::Learn::Dictionary;
+use Dict::Learn::Import;
+
+=item DICT_OFFSET
+
+A hardcoded offset to distinguish dictionaries IDs from other IDs
+
+=cut
 
 sub DICT_OFFSET { 100 }
+
+=item _MENU_ID
+
+ In: $menu_id
+ Out: $menu_id_including_offset
+
+=cut
+
+sub _MENU_ID { int(shift) + DICT_OFFSET }
+
+=item _DICT_ID
+
+ In: $dict_id
+ Out: $dict_id_including_offset
+
+=cut
+
+sub _DICT_ID { int(shift) - DICT_OFFSET }
+
+=item next_menu_id
+
+Get id for next menu element
+
+=cut
+
+{
+    my $menu_id = 0;
+
+    sub next_menu_id {
+        $menu_id++
+    }
+}
 
 =item parent
 
 =cut
 
-has parent => (
-    is  => 'ro',
-);
+has parent => ( is => 'ro' );
 
 =item vbox
 
@@ -43,15 +78,9 @@ has parent => (
 has vbox => (
     is      => 'ro',
     isa     => 'Wx::BoxSizer',
+    lazy    => 1,
     default => sub { Wx::BoxSizer->new(wxVERTICAL) },
 );
-
-{   my $menu_id=0;
-    
-    sub next_menu_id {
-        $menu_id++
-    }
-}
 
 =item menu_bar
 
@@ -65,12 +94,13 @@ has menu_bar => (
 
 sub _build_menu_bar {
     my ($self) = @_;
+
     my $menubar = Wx::MenuBar->new(0);
 
     my @menu = (
         [ Dictionaries => $self->menu_dicts ],
         [ DB => $self->menu_db ],
-        [ Translate => $self->menu_trans ], 
+        [ Translate => $self->menu_trans ],
     );
 
     for my $menu_item (@menu) {
@@ -93,11 +123,12 @@ has menu_dicts => (
 
 sub _build_menu_dicts {
     my ($self) = @_;
+
     my $menu_dicts = Wx::Menu->new;
 
-    # Wx::MenuItem->new( $self->menu_dicts, wxID_ANY, "Test", "", wxITEM_NORMAL)
+    # Wx::MenuItem->new( $menu_dicts, wxID_ANY, "Test", "", wxITEM_NORMAL)
     for (sort { $a->{dictionary_id} <=> $b->{dictionary_id} }
-        values %{Dict::Learn::Dictionary->all})
+        values %{ Dict::Learn::Dictionary->all })
     {
         $menu_dicts->AppendRadioItem(_MENU_ID($_->{dictionary_id}),
             $_->{dictionary_name});
@@ -172,7 +203,7 @@ sub _build_menu_trans {
 has status_bar => (
     is      => 'ro',
     lazy    => 1,
-    default => sub { shift->CreateStatusBar(1, wxST_SIZEGRIP, wxID_ANY) }
+    default => sub { shift->CreateStatusBar(1, wxST_SIZEGRIP, wxID_ANY) },
 );
 
 =item notebook
@@ -186,7 +217,7 @@ has notebook => (
     default => sub {
         Wx::Notebook->new(shift, wxID_ANY,
             wxDefaultPosition, wxDefaultSize, 0),
-    }
+    },
 );
 
 sub make_pages {
@@ -214,7 +245,7 @@ has tran => (
     is      => 'ro',
     isa     => 'Dict::Learn::Translate',
     lazy    => 1,
-    default => sub { Dict::Learn::Translate->new() }
+    default => sub { Dict::Learn::Translate->new() },
 );
 
 =item p_search
@@ -229,7 +260,7 @@ has p_search => (
         my $self = shift;
         Dict::Learn::Frame::SearchWords->new($self, $self->notebook,
             wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    }
+    },
 );
 
 =item p_addword
@@ -244,7 +275,7 @@ has p_addword => (
         my $self = shift;
         Dict::Learn::Frame::AddWord->new($self, $self->notebook,
             wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    }
+    },
 );
 
 =item p_gridwords
@@ -259,7 +290,7 @@ has p_gridwords => (
         my $self = shift;
         Dict::Learn::Frame::GridWords->new($self, $self->notebook,
             wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    }
+    },
 );
 
 =item pt_irrverbs
@@ -274,7 +305,7 @@ has pt_irrverbs => (
         my $self = shift;
         Dict::Learn::Frame::IrregularVerbsTest->new($self, $self->notebook,
             wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    }
+    },
 );
 
 =item pts_irrverbs
@@ -289,7 +320,7 @@ has pts_irrverbs => (
         my $self = shift;
         Dict::Learn::Frame::TestSummary->new($self, $self->notebook,
             wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    }
+    },
 );
 
 =item pt_trans
@@ -309,12 +340,14 @@ has pt_trans => (
 
 sub FOREIGNBUILDARGS {
     my ($class, @args) = @_;
+
     return @args;
 }
 
 sub BUILDARGS {
     my ($class, $parent) = @_;
-    return {parent => $parent};
+
+    return { parent => $parent };
 }
 
 sub BUILD {
@@ -322,7 +355,7 @@ sub BUILD {
 
     # FIXME: get rid of it
     Dict::Learn::Dictionary->all;
-    
+
     $self->SetIcon(Wx::GetWxPerlIcon());
     $self->vbox->Add($self->notebook, 1, wxALL | wxEXPAND, 5);
 
@@ -363,6 +396,7 @@ sub dictionary_check {
 
 sub set_tran_backend {
     my ($self, $event) = @_;
+
     my $menu_item = $self->menu_trans->FindItem($event->GetId);
     $self->status_bar->SetStatusText(
         'Use "' . $menu_item->GetLabel . '" translator');
@@ -371,29 +405,22 @@ sub set_tran_backend {
 
 sub set_frame_title {
     my ($self, $id) = @_;
+
     $id ||= Dict::Learn::Dictionary->curr_id;
     $self->SetTitle(sprintf 'DictLearn - [%s]',
         Dict::Learn::Dictionary->get($id)->{dictionary_name});
 }
 
-sub _MENU_ID {
-    my ($dict_id) = @_;
-    int($dict_id) + DICT_OFFSET;
-}
-
-sub _DICT_ID {
-    my ($menu_id) = @_;
-    int($menu_id) - DICT_OFFSET;
-}
-
 sub on_close {
     my ($self, $event) = @_;
+
     print "exit\n";
     $self->Destroy;
 }
 
 sub db_export {
     my ($self) = @_;
+
     if (my $fn = Dict::Learn::Export->new->do()) {
         say "export [$fn]: successfully";
     }
@@ -404,6 +431,7 @@ sub db_export {
 
 sub db_import {
     my ($self) = @_;
+
     my $fileopen = Wx::FileDialog->new(
         $self,
         'Select a file',
@@ -428,21 +456,25 @@ sub db_import {
 
 sub db_clear {
     my ($self) = @_;
+
     $main::ioc->lookup('db')->clear_data();
 }
 
 sub db_clear_test_results {
     my ($self) = @_;
+
     $main::ioc->lookup('db')->clear_test_results();
 }
 
 sub analyze {
     my ($self) = @_;
+
     $main::ioc->lookup('db')->analyze();
 }
 
 sub reset_analyzer {
     my ($self) = @_;
+
     $main::ioc->lookup('db')->reset_analyzer();
 }
 
