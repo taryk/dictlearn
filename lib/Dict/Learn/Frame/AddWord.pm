@@ -8,6 +8,7 @@ use base 'Wx::Panel';
 use Carp qw[croak confess];
 use Data::Printer;
 use LWP::UserAgent;
+use List::Util qw[first];
 
 use Dict::Learn::Translate;
 use Dict::Learn::Combo::WordList;
@@ -156,7 +157,26 @@ sub new {
     EVT_BUTTON($self, $self->btn_cancel,   \&cancel);
     EVT_CHECKBOX($self, $self->cb_irregular, \&toggle_irregular);
     EVT_TEXT($self, $self->word_src, \&check_word);
+
+    EVT_KEY_UP($self, sub { $self->keybind($_[1]) });
     $self;
+}
+
+sub keybind {
+    my ($self, $event) = @_;
+
+    given ($event->GetKeyCode()) {
+        when([WXK_ADD, WXK_NUMPAD_ADD]) {
+            $self->add_dst_item();
+        }
+        when([WXK_SUBTRACT,WXK_NUMPAD_SUBTRACT]) {
+            if (my $last_word_obj
+                = first { defined $_->{cbox} } reverse @{ $self->word_dst })
+            {
+                $self->del_dst_item($last_word_obj->{id});
+            }
+        }
+    }
 }
 
 sub select_word {
