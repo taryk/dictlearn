@@ -4,21 +4,16 @@ use Wx qw[:everything];
 use Wx::Grid;
 use Wx::Event qw[:everything];
 
-use base 'Wx::Panel';
-
-use Dict::Learn::Dictionary;
+use Moose;
+use MooseX::NonMoose;
+extends 'Wx::Panel';
 
 use Carp qw[croak confess];
 use Data::Printer;
 
-use common::sense;
+use Dict::Learn::Dictionary;
 
-use Class::XSAccessor accessors => [
-    qw| parent
-        vbox hbox
-        grid lb_word_score
-      |
-];
+use common::sense;
 
 sub RES_COUNT    { 10 }
 sub TEST_ID      { 0 }
@@ -27,70 +22,117 @@ sub COL_SCORE    { 1 }
 sub COL_LB_WORD  { 0 }
 sub COL_LB_SCORE { 1 }
 
-sub new {
-    my $class = shift;
-    my $self = $class->SUPER::new(splice @_ => 1);
-    $self->parent(shift);
+=item parent
 
-    ### grid
-    $self->grid(
-        Wx::Grid->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0));
-    $self->grid->CreateGrid(0, RES_COUNT * 3 + 2);
-    $self->grid->SetColSize(COL_DATE,  140);
-    $self->grid->SetColSize(COL_SCORE, 100);
-    $self->grid->EnableGridLines(1);
-    $self->grid->EnableDragGridSize(0);
-    $self->grid->SetMargins(0, 0);
-    $self->grid->EnableDragColMove(0);
-    $self->grid->EnableDragColSize(1);
-    $self->grid->SetColLabelSize(30);
-    $self->grid->SetColLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
-    $self->grid->EnableDragRowSize(1);
-    $self->grid->SetRowLabelSize(30);
-    $self->grid->SetRowLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
+=cut
 
-    $self->grid->SetColLabelValue(0, 'Date');
-    $self->grid->SetColLabelValue(1, 'Score');
+has parent => (
+    is  => 'ro',
+    isa => 'Dict::Learn::Frame',
+);
 
-    ### lb word
-    $self->lb_word_score(
-        Wx::ListCtrl->new(
-            $self,             wxID_ANY,
-            wxDefaultPosition, wxDefaultSize,
-            wxLC_REPORT | wxLC_HRULES | wxLC_VRULES
-        )
-    );
-    $self->lb_word_score->InsertColumn(COL_LB_WORD, 'Word',
+
+=item lb_word_score
+
+=cut
+
+has lb_word_score => (
+    is         => 'ro',
+    isa        => 'Wx::ListCtrl',
+    lazy_build => 1,
+);
+
+sub _build_lb_word_score {
+    my $self = shift;
+
+    my $lb_word_score
+        = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+        wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
+    $lb_word_score->InsertColumn(COL_LB_WORD, 'Word',
         wxLIST_FORMAT_LEFT, 120);
-    $self->lb_word_score->InsertColumn(COL_LB_SCORE, 'Score',
+    $lb_word_score->InsertColumn(COL_LB_SCORE, 'Score',
         wxLIST_FORMAT_LEFT, 90);
 
-    # layouts
-    $self->hbox(Wx::BoxSizer->new(wxHORIZONTAL));
-    $self->hbox->Add($self->grid,          3, wxRIGHT | wxEXPAND, 5);
-    $self->hbox->Add($self->lb_word_score, 1, wxALL | wxGROW,     0);
-
-    # panel layout
-    $self->vbox(Wx::BoxSizer->new(wxVERTICAL));
-    $self->vbox->Add($self->hbox, 1, wxALL | wxGROW, 0);
-    $self->SetSizer($self->vbox);
-
-    $self->Layout();
-    $self->vbox->Fit($self);
-
-    Dict::Learn::Dictionary->cb(
-        sub {
-            my $dict = shift;
-            $self->refresh_data();
-        }
-    );
-
-    $self;
+    return $lb_word_score;
 }
 
 
+=item grid
+
+=cut
+
+has grid => (
+    is         => 'ro',
+    isa        => 'Wx::Grid',
+    lazy_build => 1,
+);
+
+sub _build_grid {
+    my $self = shift;
+
+    my $grid = Wx::Grid->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
+    $grid->CreateGrid(0, RES_COUNT * 3 + 2);
+    $grid->SetColSize(COL_DATE,  140);
+    $grid->SetColSize(COL_SCORE, 100);
+    $grid->EnableGridLines(1);
+    $grid->EnableDragGridSize(0);
+    $grid->SetMargins(0, 0);
+    $grid->EnableDragColMove(0);
+    $grid->EnableDragColSize(1);
+    $grid->SetColLabelSize(30);
+    $grid->SetColLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
+    $grid->EnableDragRowSize(1);
+    $grid->SetRowLabelSize(30);
+    $grid->SetRowLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
+
+    $grid->SetColLabelValue(0, 'Date');
+    $grid->SetColLabelValue(1, 'Score');
+
+    return $grid;
+}
+
+=item vbox
+
+=cut
+
+has vbox => (
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
+);
+
+sub _build_vbox {
+    my $self = shift;
+
+    my $vbox = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox->Add($self->hbox, 1, wxALL | wxGROW, 0);
+    
+    return $vbox;
+}
+
+=item hbox
+
+=cut
+
+has hbox => (
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
+);
+
+sub _build_hbox {
+    my $self = shift;
+
+    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox->Add($self->grid,          3, wxRIGHT | wxEXPAND, 5);
+    $hbox->Add($self->lb_word_score, 1, wxALL | wxGROW,     0);
+
+    return $hbox;
+}
+
 sub select_data {
     my $self     = shift;
+
     my $i        = 0;
     my @sessions = $main::ioc->lookup('db')->schema->resultset('TestSession')
         ->get_all(TEST_ID);
@@ -147,7 +189,8 @@ sub select_data {
 }
 
 sub select_words_stats {
-    my ($self) = shift;
+    my $self = shift;
+
     my @stats = $main::ioc->lookup('db')->schema->resultset('TestSession')
         ->get_words_stats(TEST_ID);
     for my $stat (@stats) {
@@ -161,10 +204,41 @@ sub select_words_stats {
 
 sub refresh_data {
     my $self = shift;
+
     $self->grid->ClearGrid();
     $self->grid->DeleteRows(0, $self->grid->GetNumberRows());
     $self->select_data();
     $self->select_words_stats();
 }
 
+sub FOREIGNBUILDARGS {
+    my ($class, $parent, @args) = @_;
+
+    return @args;
+}
+
+sub BUILDARGS {
+    my ($class, $parent) = @_;
+
+    return { parent => $parent };
+}
+
+sub BUILD {
+    my ($self, @args) = @_;
+
+    $self->SetSizer($self->vbox);
+
+    $self->Layout();
+    $self->vbox->Fit($self);
+
+    Dict::Learn::Dictionary->cb(
+        sub {
+            my $dict = shift;
+            $self->refresh_data();
+        }
+    );
+}
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
 1;
