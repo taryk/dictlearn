@@ -732,9 +732,8 @@ sub fill_fields {
 sub dst_count { scalar @{$_[0]->word_dst} }
 
 sub get_partofspeach_index {
-    my $self = shift;
+    my ($self, $name) = @_;
 
-    my $name = shift;
     for ($main::ioc->lookup('db')->schema->resultset('Wordclass')
         ->select(name => $name))
     {
