@@ -8,7 +8,7 @@ use URI::Escape qw[ uri_escape_utf8 ];
 use common::sense;
 
 sub URL {
-  'http://translate.google.com/translate_a/t?client=t&sl=%s&tl=%s&text=%s'
+    'http://translate.google.com/translate_a/t?client=t&sl=%s&tl=%s&text=%s'
 }
 
 sub parse_result {
