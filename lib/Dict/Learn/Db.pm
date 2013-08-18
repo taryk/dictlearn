@@ -3,32 +3,59 @@ package Dict::Learn::Db 0.1;
 use DBIx::Class::QueryLog::Analyzer;
 use DBIx::Class::QueryLog;
 use Data::Printer;
-use Term::ANSIColor ':constants';
 use List::MoreUtils 'any';
+use Term::ANSIColor ':constants';
+
+use Moose;
 
 use common::sense;
 use namespace::autoclean;
 
-use Class::XSAccessor accessors => [qw| schema querylog |];
+=item REQ_TABLES
 
-sub REQ_TABLES {
-    [   qw| word word_xref example example_xref word_example_xref
-            dictionary wordclass language test test_session test_session_data
-          |
-    ];
-}
+=cut
 
-sub new {
-    my $class = shift;
+has REQ_TABLES => (
+    is      => 'ro',
+    isa     => 'ArrayRef',
+    default => sub {
+        [
+            qw(
+                  word word_xref example example_xref word_example_xref
+                  dictionary wordclass language test test_session
+                  test_session_data
+             )
+        ]
+    },
+);
 
-    my $self = bless {} => $class;
-    $self->schema(shift);
+=item schema
+
+=cut
+
+has schema => (
+    is       => 'ro',
+    isa      => 'DBIx::Class::Schema',
+    required => 1,
+);
+
+=item querylog
+
+=cut
+
+has querylog => (
+    is      => 'ro',
+    isa     => 'DBIx::Class::QueryLog',
+    lazy    => 1,
+    default => sub { DBIx::Class::QueryLog->new },
+);
+
+sub BUILD {
+    my ($self, @args) = @_;
 
     # adding QueryLog
-    $self->schema->storage->debugobj(
-        $self->querylog(DBIx::Class::QueryLog->new));
+    $self->schema->storage->debugobj($self->querylog);
     $self->schema->storage->debug(1);
-    $self;
 }
 
 sub analyze {
@@ -59,7 +86,7 @@ sub check_tables {
     my @tables = grep { $_->[0] eq 'main' }
         map { [(/^["](\w+)["][.]["](\w+)["]$/x)] }
         $self->schema->storage->dbh->tables();
-    for my $req_table (@{+REQ_TABLES}) {
+    for my $req_table (@{ $self->REQ_TABLES }) {
         return unless any { $req_table eq $_->[1] } @tables;
     }
 
@@ -71,7 +98,7 @@ sub install_schema {
 
     say 'Install schema and initial data';
     my $sql = join ' ' => <DATA>;
-    for (split ';' => $sql) {
+    for (split /;/, $sql) {
         $self->schema->storage->dbh->do($_);
     }
 
@@ -115,6 +142,8 @@ sub clear_all {
     1;
 }
 
+no Moose;
+__PACKAGE__->meta->make_immutable;
 1;
 
 __DATA__
