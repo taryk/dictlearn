@@ -21,6 +21,7 @@ use Dict::Learn::Frame::AddWord;
 use Dict::Learn::Frame::GridWords;
 use Dict::Learn::Frame::IrregularVerbsTest;
 use Dict::Learn::Frame::SearchWords;
+use Dict::Learn::Frame::TestEditor;
 use Dict::Learn::Frame::TestSummary;
 use Dict::Learn::Frame::TranslationTest;
 use Dict::Learn::Import;
@@ -229,6 +230,7 @@ sub make_pages {
         [ 'Irregular Verbs Test' => $self->pt_irrverbs,  0 ],
         [ 'TestSummary'          => $self->pts_irrverbs, 0 ],
         [ 'Translation Test'     => $self->pt_trans,     0 ],
+        [ 'Test Editor'          => $self->p_testeditor, 0 ],
     );
 
     for my $page_item (@pages) {
@@ -334,6 +336,21 @@ has pt_trans => (
     default => sub {
         my $self = shift;
         Dict::Learn::Frame::TranslationTest->new($self, $self->notebook,
+            wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+    },
+);
+
+=item p_testeditor
+
+=cut
+
+has p_testeditor => (
+    is      => 'ro',
+    isa     => 'Dict::Learn::Frame::TestEditor',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+        Dict::Learn::Frame::TestEditor->new($self, $self->notebook,
             wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
     },
 );
