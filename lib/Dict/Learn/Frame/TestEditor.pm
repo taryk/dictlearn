@@ -192,20 +192,34 @@ sub BUILDARGS {
 
 sub BUILD {
     my ($self, @args) = @_;
- 
+
     # layout
     $self->SetSizer($self->hbox);
     $self->hbox->Fit($self);
     $self->Layout();
 
-    Dict::Learn::Dictionary->cb(
-        sub {
-            $self->init();
-        }
-    );
+    EVT_BUTTON($self, $self->btn_move_left,  \&move_left);
+    EVT_BUTTON($self, $self->btn_move_right, \&move_right);
+    EVT_BUTTON($self, $self->btn_reload,     \&reload);
+
+    Dict::Learn::Dictionary->cb(sub { $self->init() });
 }
 
 sub init {
+    my ($self) = @_;
+
+    
+}
+
+sub move_left {
+    my ($self) = @_;
+}
+
+sub move_right {
+    my ($self) = @_;
+}
+
+sub reload {
     my ($self) = @_;
 }
 
