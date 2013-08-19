@@ -99,6 +99,20 @@ has btn_move_right => (
     },
 );
 
+=item btn_reload
+
+=cut
+
+has btn_reload => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    lazy    => 1,
+    default => sub {
+        Wx::Button->new(shift, wxID_ANY, 'Reload', wxDefaultPosition,
+            wxDefaultSize)
+    },
+);
+
 =item vbox_btn
 
 =cut
@@ -115,6 +129,7 @@ sub _build_vbox_btn {
     my $vbox_btn = Wx::BoxSizer->new(wxVERTICAL);
     $vbox_btn->Add($self->btn_move_left,  0, wxLEFT, 5);
     $vbox_btn->Add($self->btn_move_right, 0, wxLEFT, 5);
+    $vbox_btn->Add($self->btn_reload,     0, wxLEFT, 5);
 
     return $vbox_btn;
 }
