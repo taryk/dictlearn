@@ -45,6 +45,8 @@ sub _build_test_groups {
     # score: taken (correct/wrong) percentage
     $test_groups->InsertColumn(3, 'score', wxLIST_FORMAT_LEFT, 60  );
 
+    EVT_LIST_ITEM_SELECTED($self, $test_groups, \&load_words);
+    
     return $test_groups;
 }
 
@@ -251,6 +253,31 @@ sub init {
         $self->word_list->SetItem($id, 0, $word->get_column('word_id'));      # id
         $self->word_list->SetItem($id, 1, $word->get_column('word'));         # word original
         $self->word_list->SetItem($id, 2, $word->get_column('translations')); # word tr
+    }
+}
+
+sub load_words {
+    my ($self, $obj) = @_;
+
+    $self->test_words->DeleteAllItems();
+    my $category_id = $obj->GetLabel();
+    my $words
+        = $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')
+        ->search(
+        {
+            test_category_id => $category_id,
+        },
+        {
+            join     => 'word_id',
+            order_by => { -desc => 'test_category_id' },
+        }
+        );
+    while (my $word = $words->next) {
+        my $id = $self->test_words->InsertItem(Wx::ListItem->new);
+        $self->test_words->SetItem($id, 0,
+            $word->test_category_id->test_category_id);    # id
+        $self->test_words->SetItem($id, 1, $word->word_id->word);    # name
+           # $self->test_words->SetItem($id, 2, $word->word_id->word);  # score
     }
 }
 
