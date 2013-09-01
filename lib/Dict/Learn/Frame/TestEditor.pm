@@ -335,6 +335,29 @@ sub move_left {
 
 sub move_right {
     my ($self) = @_;
+
+    # selected row id
+    my $test_words_row_id = $self->test_words->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+
+    my $test_groups_row_id = $self->test_groups->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+
+    $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->search(
+        {
+            test_category_id => $self->test_groups->GetItem($test_groups_row_id, 0)->GetText,
+            word_id          => $self->test_words->GetItem($test_words_row_id, 0)->GetText,
+        },
+    )->delete;
+
+    # check current test group
+    $self->test_groups->SetItemState(
+        $self->test_groups->GetNextItem(
+            -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
+        ),
+        wxLIST_STATE_SELECTED,
+        wxLIST_STATE_SELECTED
+    );
 }
 
 sub reload {
