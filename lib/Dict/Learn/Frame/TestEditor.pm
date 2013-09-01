@@ -256,6 +256,8 @@ sub init {
         $self->word_list->SetItem($id, 2, $word->get_column('partofspeach')); # word original
         $self->word_list->SetItem($id, 3, $word->get_column('translations')); # word tr
     }
+
+    $self->select_first_item();
 }
 
 sub load_words {
@@ -293,6 +295,17 @@ sub move_right {
 
 sub reload {
     my ($self) = @_;
+sub select_first_item {
+    my ($self) = @_;
+
+    $self->test_groups->SetItemState(
+        $self->test_groups->GetNextItem(
+            -1, wxLIST_NEXT_ALL, wxLIST_STATE_DONTCARE
+        ),
+        wxLIST_STATE_SELECTED,
+        wxLIST_STATE_SELECTED
+    );
+}
 }
 
 no Moose;
