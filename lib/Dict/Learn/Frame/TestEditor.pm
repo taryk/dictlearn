@@ -278,8 +278,7 @@ sub load_words {
         );
     while (my $word = $words->next) {
         my $id = $self->test_words->InsertItem(Wx::ListItem->new);
-        $self->test_words->SetItem($id, 0,
-            $word->test_category_id->test_category_id);    # id
+        $self->test_words->SetItem($id, 0, $word->word_id->word_id); # id
         $self->test_words->SetItem($id, 1, $word->word_id->word);    # name
            # $self->test_words->SetItem($id, 2, $word->word_id->word);  # score
     }
