@@ -153,7 +153,8 @@ sub _build_word_list {
         wxDefaultSize, wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
     $word_list->InsertColumn(0, '#',    wxLIST_FORMAT_LEFT, 50  );
     $word_list->InsertColumn(1, 'word', wxLIST_FORMAT_LEFT, 200 );
-    $word_list->InsertColumn(2, 'tr',   wxLIST_FORMAT_LEFT, 50  );
+    $word_list->InsertColumn(2, 'pos',  wxLIST_FORMAT_LEFT, 30  );
+    $word_list->InsertColumn(3, 'tr',   wxLIST_FORMAT_LEFT, 200 );
 
     return $word_list;
 }
@@ -237,13 +238,13 @@ sub init {
         },
         {
             select => [
-                'word1_id.word_id', 'word1_id.word',
-                { group_concat => 'word2_id.word' }
+                'word1_id.word_id', 'word1_id.word', 'wordclass.abbr',
+                { group_concat => 'word2_id.word' },
             ],
-            as       => [qw(word_id word translations)],
-            join     => [qw(word1_id word2_id)],
+            as       => [qw(word_id word partofspeach translations)],
+            join     => [qw(word1_id word2_id wordclass)],
             group_by => [qw(me.word1_id me.wordclass_id)],
-            order_by => { -desc => 'me.word1_id' }
+            order_by => { -asc => 'me.word1_id' }
         }
         );
 
@@ -252,7 +253,8 @@ sub init {
         my $id = $self->word_list->InsertItem(Wx::ListItem->new);
         $self->word_list->SetItem($id, 0, $word->get_column('word_id'));      # id
         $self->word_list->SetItem($id, 1, $word->get_column('word'));         # word original
-        $self->word_list->SetItem($id, 2, $word->get_column('translations')); # word tr
+        $self->word_list->SetItem($id, 2, $word->get_column('partofspeach')); # word original
+        $self->word_list->SetItem($id, 3, $word->get_column('translations')); # word tr
     }
 }
 
