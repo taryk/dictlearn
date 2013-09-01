@@ -307,6 +307,30 @@ sub load_words {
 
 sub move_left {
     my ($self) = @_;
+
+    # selected row id
+    my $word_list_row_id = $self->word_list->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+
+    my $test_groups_row_id = $self->test_groups->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+    
+    $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->create(
+        {
+            test_category_id => $self->test_groups->GetItem($test_groups_row_id, 0)->GetText,
+            word_id          => $self->get_word_id($word_list_row_id),
+            wordclass_id     => $self->get_wordclass_id($word_list_row_id),
+        },
+    );
+
+    # check current test group
+    $self->test_groups->SetItemState(
+        $self->test_groups->GetNextItem(
+            -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
+        ),
+        wxLIST_STATE_SELECTED,
+        wxLIST_STATE_SELECTED
+    );
 }
 
 sub move_right {
@@ -330,6 +354,18 @@ sub select_first_item {
         wxLIST_STATE_SELECTED
     );
 }
+
+sub get_word_id {
+    my ($self, $rowid) = @_;
+
+    return $self->word_list->GetItem($rowid, 0)->GetText;
+}
+
+sub get_wordclass_id {
+    my ($self, $rowid) = @_;
+
+    return
+        $self->partofspeach->{$self->word_list->GetItem($rowid, 2)->GetText};
 }
 
 no Moose;
