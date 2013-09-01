@@ -208,7 +208,25 @@ sub BUILD {
 sub init {
     my ($self) = @_;
 
-    
+    my $categories
+        = $main::ioc->lookup('db')->schema->resultset('TestCategory')
+        ->search(
+        {
+            dictionary_id => Dict::Learn::Dictionary->curr_id,
+        },
+        {
+            order_by => { -desc => 'test_category_id' },
+        }
+        );
+
+    $self->test_groups->DeleteAllItems();
+    while (my $category = $categories->next()) {
+        my $id = $self->test_groups->InsertItem(Wx::ListItem->new);
+        $self->test_groups->SetItem($id, 0, $category->test_category_id); # id
+        $self->test_groups->SetItem($id, 1, $category->name);             # name
+        # $self->test_groups->SetItem($id, 2, $category->name);           # number of words
+        # $self->test_groups->SetItem($id, 3, $category->name);           # scrore
+    }
 }
 
 sub move_left {
