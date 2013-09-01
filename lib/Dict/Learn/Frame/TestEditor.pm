@@ -227,6 +227,31 @@ sub init {
         # $self->test_groups->SetItem($id, 2, $category->name);           # number of words
         # $self->test_groups->SetItem($id, 3, $category->name);           # scrore
     }
+
+    my $all_words
+        = $main::ioc->lookup('db')->schema->resultset('Words')->search(
+        {
+            'me.dictionary_id' => Dict::Learn::Dictionary->curr_id,
+        },
+        {
+            select => [
+                'word1_id.word_id', 'word1_id.word',
+                { group_concat => 'word2_id.word' }
+            ],
+            as       => [qw(word_id word translations)],
+            join     => [qw(word1_id word2_id)],
+            group_by => [qw(me.word1_id me.wordclass_id)],
+            order_by => { -desc => 'me.word1_id' }
+        }
+        );
+
+    $self->word_list->DeleteAllItems();
+    while (my $word = $all_words->next) {
+        my $id = $self->word_list->InsertItem(Wx::ListItem->new);
+        $self->word_list->SetItem($id, 0, $word->get_column('word_id'));      # id
+        $self->word_list->SetItem($id, 1, $word->get_column('word'));         # word original
+        $self->word_list->SetItem($id, 2, $word->get_column('translations')); # word tr
+    }
 }
 
 sub move_left {
