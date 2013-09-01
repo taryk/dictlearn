@@ -159,6 +159,46 @@ sub _build_word_list {
     return $word_list;
 }
 
+=item btn_move_right
+
+=cut
+
+has cb_lookup => (
+    is         => 'ro',
+    isa        => 'Wx::ComboBox',
+    lazy_build => 1,
+);
+
+sub _build_cb_lookup {
+    my ($self) = @_;
+
+    my $cb_lookup = Wx::ComboBox->new($self, wxID_ANY, '', wxDefaultPosition,
+        wxDefaultSize, [], 0, wxDefaultValidator);
+    EVT_TEXT_ENTER($self, $cb_lookup, \&lookup);
+
+    return $cb_lookup;
+}
+
+=item vbox_word_list
+
+=cut
+
+has vbox_word_list => (
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
+);
+
+sub _build_vbox_word_list {
+    my $self = shift;
+
+    my $vbox_word_list = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox_word_list->Add($self->cb_lookup, 0, wxEXPAND, 0 );
+    $vbox_word_list->Add($self->word_list, 1, wxEXPAND, 0 );
+
+    return $vbox_word_list;
+}
+
 =item hbox
 
 =cut
@@ -173,10 +213,10 @@ sub _build_hbox {
     my $self = shift;
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->test_groups, 1,          wxEXPAND, 0  );
-    $hbox->Add($self->test_words,  1, wxLEFT | wxEXPAND, 5  );
-    $hbox->Add($self->vbox_btn,    0, wxTOP,             25 );
-    $hbox->Add($self->word_list,   1, wxLEFT | wxEXPAND, 5  );
+    $hbox->Add($self->test_groups,    1,          wxEXPAND, 0  );
+    $hbox->Add($self->test_words,     1, wxLEFT | wxEXPAND, 5  );
+    $hbox->Add($self->vbox_btn,       0, wxTOP,             25 );
+    $hbox->Add($self->vbox_word_list, 1, wxLEFT | wxEXPAND, 5  );
 
     return $hbox;
 }
@@ -252,10 +292,31 @@ sub init {
         # $self->test_groups->SetItem($id, 3, $category->name);           # scrore
     }
 
+    $self->lookup();
+}
+
+sub lookup {
+    my ($self, $event) = @_;
+
+    my %options = ();
+
+    if ($self->cb_lookup->GetValue) {
+        my $word_pattern = '%' . $self->cb_lookup->GetValue . '%';
+        %options      = (
+            -or => [
+                'word1_id.word'  => { like => $word_pattern },
+                'word1_id.word2' => { like => $word_pattern },
+                'word1_id.word3' => { like => $word_pattern },
+                'word2_id.word'  => { like => $word_pattern },
+            ]
+        );
+    }
+
     my $all_words
         = $main::ioc->lookup('db')->schema->resultset('Words')->search(
         {
             'me.dictionary_id' => Dict::Learn::Dictionary->curr_id,
+            %options
         },
         {
             select => [
