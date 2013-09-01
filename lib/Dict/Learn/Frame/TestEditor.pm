@@ -181,6 +181,27 @@ sub _build_hbox {
     return $hbox;
 }
 
+has partofspeach => (
+    is         => 'ro',
+    isa        => 'HashRef',
+    lazy_build => 1,
+);
+
+sub _build_partofspeach {
+    my $self = shift;
+
+    my $partofspeach_rs
+        = $main::ioc->lookup('db')->schema->resultset('Wordclass')
+        ->search({}, { select => [qw(wordclass_id abbr)] });
+    my $partofspeach_hashref;
+    while (my $partofspeach = $partofspeach_rs->next) {
+        $partofspeach_hashref->{ $partofspeach->abbr }
+            = $partofspeach->wordclass_id;
+    }
+    return $partofspeach_hashref;
+
+}
+
 sub FOREIGNBUILDARGS {
     my ($class, $parent, @args) = @_;
 
