@@ -589,11 +589,11 @@ sub edit_example {
 sub load_examples {
     my ($self, $obj) = @_;
 
-    my $id   = $obj->GetLabel();
+    my $word_id = $obj->GetLabel();
     $self->lb_examples->DeleteAllItems();
     my @items
         = $main::ioc->lookup('db')->schema->resultset('Example')->select(
-            word_id       => $id,
+            word_id       => $word_id,
             dictionary_id => Dict::Learn::Dictionary->curr_id,
         );
     for my $item (@items) {
@@ -604,7 +604,7 @@ sub load_examples {
         $self->lb_examples->SetItem($id, 3,           $item->{note});
     }
 
-    $self->sidebar->load_word(word_id => $id);
+    $self->sidebar->load_word(word_id => $word_id);
 }
 
 sub get_word_id {
