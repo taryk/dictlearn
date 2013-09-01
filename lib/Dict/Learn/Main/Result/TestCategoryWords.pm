@@ -21,7 +21,7 @@ __PACKAGE__->belongs_to(
     }
 );
 __PACKAGE__->belongs_to(
-    word_id => 'Dict::Learn::Main::Result::Wordclass',
+    wordclass_id => 'Dict::Learn::Main::Result::Wordclass',
     'wordclass_id',
     {   cascade_delete => 0,
         cascade_update => 0
