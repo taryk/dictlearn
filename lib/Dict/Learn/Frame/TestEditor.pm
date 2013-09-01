@@ -295,6 +295,10 @@ sub move_right {
 
 sub reload {
     my ($self) = @_;
+
+    $self->init();
+}
+
 sub select_first_item {
     my ($self) = @_;
 
