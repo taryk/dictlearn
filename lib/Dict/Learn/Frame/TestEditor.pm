@@ -45,7 +45,7 @@ sub _build_test_groups {
     # score: taken (correct/wrong) percentage
     $test_groups->InsertColumn(3, 'score', wxLIST_FORMAT_LEFT, 60  );
 
-    EVT_LIST_ITEM_SELECTED($self, $test_groups, \&load_words);
+    EVT_LIST_ITEM_SELECTED($self, $test_groups, \&on_category_select);
     
     return $test_groups;
 }
@@ -266,7 +266,12 @@ sub BUILD {
     EVT_BUTTON($self, $self->btn_move_right, \&move_right);
     EVT_BUTTON($self, $self->btn_reload,     \&reload);
 
-    Dict::Learn::Dictionary->cb(sub { $self->init() });
+    Dict::Learn::Dictionary->cb(
+        sub {
+            $self->init();
+            $self->select_first_item();
+        }
+    );
 }
 
 sub init {
@@ -338,20 +343,23 @@ sub lookup {
         $self->word_list->SetItem($id, 2, $word->get_column('partofspeach')); # word original
         $self->word_list->SetItem($id, 3, $word->get_column('translations')); # word tr
     }
+}
 
-    $self->select_first_item();
+sub on_category_select {
+    my ($self, $obj) = @_;
+
+    $self->load_words(category_id => $obj->GetLabel());
 }
 
 sub load_words {
-    my ($self, $obj) = @_;
+    my ($self, %params) = @_;
 
     $self->test_words->DeleteAllItems();
-    my $category_id = $obj->GetLabel();
     my $words
         = $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')
         ->search(
         {
-            test_category_id => $category_id,
+            test_category_id => $params{category_id},
         },
         {
             join     => 'word_id',
@@ -375,23 +383,20 @@ sub move_left {
 
     my $test_groups_row_id = $self->test_groups->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
+
+    my $category_id
+        = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
     
     $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->create(
         {
-            test_category_id => $self->test_groups->GetItem($test_groups_row_id, 0)->GetText,
+            test_category_id => $category_id,
             word_id          => $self->get_word_id($word_list_row_id),
             wordclass_id     => $self->get_wordclass_id($word_list_row_id),
         },
     );
 
     # check current test group
-    $self->test_groups->SetItemState(
-        $self->test_groups->GetNextItem(
-            -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
-        ),
-        wxLIST_STATE_SELECTED,
-        wxLIST_STATE_SELECTED
-    );
+    $self->load_words(category_id => $category_id);
 }
 
 sub move_right {
@@ -404,21 +409,17 @@ sub move_right {
     my $test_groups_row_id = $self->test_groups->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
 
+    my $category_id = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
+
     $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->search(
         {
-            test_category_id => $self->test_groups->GetItem($test_groups_row_id, 0)->GetText,
+            test_category_id => $category_id,
             word_id          => $self->test_words->GetItem($test_words_row_id, 0)->GetText,
         },
     )->delete;
 
     # check current test group
-    $self->test_groups->SetItemState(
-        $self->test_groups->GetNextItem(
-            -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED
-        ),
-        wxLIST_STATE_SELECTED,
-        wxLIST_STATE_SELECTED
-    );
+    $self->load_words(category_id => $category_id);
 }
 
 sub reload {
