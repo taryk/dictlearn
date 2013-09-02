@@ -488,30 +488,43 @@ sub predefined_categories {
         my $curr_category = $self->test_category->GetClientData(
             $self->test_category->GetSelection());
 
-        my ($category_settings) = grep {
-            $_->[1][0] == $curr_category
-        } @{ $self->predefined_categories };
-
-        # let's get all ids
-        my $id_rs
-            = $main::ioc->lookup('db')->schema->resultset('Word')->search(
+        if ($curr_category > 0) {
+            my $id_rs = $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')
+            ->search(
             {
-                'me.in_test' => 1,
-                'me.lang_id' =>
-                    Dict::Learn::Dictionary->curr->{language_orig_id}
-                    {language_id},
-                %{ $category_settings->[1][1] || {} },
+                test_category_id => $curr_category,
             },
             {
-                select   => ['me.word_id'],
-                order_by => { -desc => 'me.word_id' },
-                %{ $category_settings->[1][2] || {} },
+                join     => 'word_id',
+                order_by => { -desc => 'test_category_id' },
             }
             );
+            @ids = shuffle map { $_->word_id->word_id } ($id_rs->all());
+        } else {
+            my ($category_settings) = grep {
+                $_->[1][0] == $curr_category
+            } @{ $self->predefined_categories };
 
-        # $id_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-
-        my $count = scalar(@ids = shuffle map { $_->word_id } ($id_rs->all()));
+            # let's get all ids
+            my $id_rs
+                = $main::ioc->lookup('db')->schema->resultset('Word')->search(
+                {
+                    'me.in_test' => 1,
+                    'me.lang_id' =>
+                        Dict::Learn::Dictionary->curr->{language_orig_id}
+                        {language_id},
+                    %{ $category_settings->[1][1] || {} },
+                },
+                {
+                    select   => ['me.word_id'],
+                    order_by => { -desc => 'me.word_id' },
+                    %{ $category_settings->[1][2] || {} },
+                }
+                );
+            # $id_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+            @ids = shuffle map { $_->word_id } ($id_rs->all());
+        }
+        my $count = scalar(@ids);
         say "Fetched $count words. [".join(' ', @ids)."]";
         $self->max($count) if $count < $self->max;
     }
@@ -629,7 +642,7 @@ sub next_step {
                 ->add(TEST_ID, sum(map { $_->{score} } @res), \@res);
         }
         $self->result->Destroy();
-        $self->clear_result();
+        # $self->clear_result();
         $self->reset_session();
         return;
     }
