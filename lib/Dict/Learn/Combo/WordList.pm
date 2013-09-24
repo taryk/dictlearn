@@ -12,8 +12,9 @@ use Class::XSAccessor accessors => [qw| parent vbox panel search lb_words |];
 
 sub Init {
     my $self = shift;
-    $self->{item_index} = undef;
-    $self->{cb}         = undef;
+    $self->{item_index}  = undef;
+    $self->{cb}          = undef;
+    $self->{initialized} = undef;
     $self;
 }
 
@@ -41,7 +42,6 @@ sub Create {
     );
     $self->lb_words->InsertColumn(0, 'id',   wxLIST_FORMAT_LEFT, 35);
     $self->lb_words->InsertColumn(1, 'word', wxLIST_FORMAT_LEFT, 200);
-    $self->initialize_words();
 
     # layout
     $self->vbox(Wx::BoxSizer->new(wxVERTICAL));
@@ -71,6 +71,11 @@ sub GetControl {
 sub OnPopup {
     my $self = shift;
     $self->SUPER::OnPopup();
+
+    unless ($self->{initialized}) {
+        $self->initialize_words();
+        $self->{initialized} = 1;
+    }
 
     # Wx::LogMessage( "Popping up" );
 }
@@ -115,11 +120,11 @@ sub on_select {
 
 sub initialize_words {
     my $self = shift;
+    $self->lb_words->DeleteAllItems();
     my @words
         = $main::ioc->lookup('db')->schema->resultset('Word')
         ->get_all_cached(
         Dict::Learn::Dictionary->curr->{language_tr_id}{language_id});
-    $self->lb_words->DeleteAllItems();
     for (@words) {
         my $id = $self->lb_words->InsertItem(Wx::ListItem->new);
         $self->lb_words->SetItem($id, 0, $_->{word_id});
