@@ -90,34 +90,40 @@ has word_src => (
 =cut
 
 has word2_src => (
-    is      => 'ro',
-    isa     => 'Wx::TextCtrl',
-    lazy    => 1,
-    default => sub {
-        my $word2 = Wx::TextCtrl->new(shift, wxID_ANY, '', wxDefaultPosition,
-            wxDefaultSize);
-        $word2->Enable(0);
-
-        $word2
-    },
+    is         => 'ro',
+    isa        => 'Wx::TextCtrl',
+    lazy_build => 1,
 );
+
+sub _build_word2_src {
+    my $self = shift;
+
+    my $word2 = Wx::TextCtrl->new($self, wxID_ANY, '', wxDefaultPosition,
+        wxDefaultSize);
+    $word2->Enable(0);
+
+    return $word2;
+}
 
 =item word3_src
 
 =cut
 
 has word3_src => (
-    is      => 'ro',
-    isa     => 'Wx::TextCtrl',
-    lazy    => 1,
-    default => sub {
-        my $word3 = Wx::TextCtrl->new(shift, wxID_ANY, '', wxDefaultPosition,
-            wxDefaultSize);
-        $word3->Enable(0);
-
-        $word3
-    },
+    is         => 'ro',
+    isa        => 'Wx::TextCtrl',
+    lazy_build => 1,
 );
+
+sub _build_word3_src {
+    my $self = shift;
+
+    my $word3 = Wx::TextCtrl->new($self, wxID_ANY, '', wxDefaultPosition,
+        wxDefaultSize);
+    $word3->Enable(0);
+
+    return $word3;
+}
 
 =item word_dst
 
@@ -150,22 +156,22 @@ has cb_irregular => (
 =cut
 
 has vbox_src => (
-    is      => 'ro',
-    isa     => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self     = shift;
-
-        my $vbox_src = Wx::BoxSizer->new(wxVERTICAL);
-        $vbox_src->Add($self->word_src, 2, wxGROW | wxEXPAND | wxBOTTOM, 5);
-        $vbox_src->Add($self->cb_irregular, 1, wxALIGN_LEFT | wxBOTTOM, 5);
-        $vbox_src->Add($self->word2_src,    1, wxGROW | wxBOTTOM,       5);
-        $vbox_src->Add($self->word3_src,    1, wxGROW | wxBOTTOM,       5);
-
-        $vbox_src
-    },
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
 );
 
+sub _build_vbox_src {
+    my $self = shift;
+
+    my $vbox_src = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox_src->Add($self->word_src,     2, wxGROW | wxEXPAND | wxBOTTOM, 5);
+    $vbox_src->Add($self->cb_irregular, 1, wxALIGN_LEFT | wxBOTTOM,      5);
+    $vbox_src->Add($self->word2_src,    1, wxGROW | wxBOTTOM,            5);
+    $vbox_src->Add($self->word3_src,    1, wxGROW | wxBOTTOM,            5);
+
+    return $vbox_src;
+}
 
 =item btn_additem
 
@@ -197,55 +203,58 @@ has hbox_dst_item => (
 =cut
 
 has hbox_add => (
-    is      => 'ro',
-    isa     => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-
-        my $hbox_add = Wx::BoxSizer->new(wxHORIZONTAL);
-        $hbox_add->Add($self->btn_additem, wxALIGN_LEFT | wxRIGHT, 5);
-
-        $hbox_add
-    },
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
 );
+
+sub _build_hbox_add {
+    my $self = shift;
+
+    my $hbox_add = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox_add->Add($self->btn_additem, wxALIGN_LEFT | wxRIGHT, 5);
+
+    return $hbox_add;
+}
 
 =item vbox_dst
 
 =cut
 
 has vbox_dst => (
-    is      => 'ro',
-    isa     => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-
-        my $vbox_dst = Wx::BoxSizer->new(wxVERTICAL);
-        $vbox_dst->Add($self->hbox_add, 0, wxALIGN_LEFT | wxRIGHT, 5);
-
-        $vbox_dst
-    },
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
 );
+
+sub _build_vbox_dst {
+    my $self = shift;
+
+    my $vbox_dst = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox_dst->Add($self->hbox_add, 0, wxALIGN_LEFT | wxRIGHT, 5);
+
+    return $vbox_dst;
+}
 
 =item hbox_words
 
 =cut
 
 has hbox_words => (
-    is      => 'ro',
-    isa     => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-
-        my $hbox_words = Wx::BoxSizer->new(wxHORIZONTAL);
-        $hbox_words->Add($self->vbox_src, 2, wxALL | wxTOP,    5);
-        $hbox_words->Add($self->vbox_dst, 4, wxALL | wxEXPAND, 5);
-
-        $hbox_words
-    },
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
 );
+
+sub _build_hbox_words {
+    my $self = shift;
+
+    my $hbox_words = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox_words->Add($self->vbox_src, 2, wxALL | wxTOP,    5);
+    $hbox_words->Add($self->vbox_dst, 4, wxALL | wxEXPAND, 5);
+
+    return $hbox_words;
+}
 
 =item btn_add_word
 
@@ -308,45 +317,44 @@ has btn_cancel => (
 =cut
 
 has hbox_btn => (
-    is      => 'ro',
-    isa     => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-
-        my $hbox_btn = Wx::BoxSizer->new(wxHORIZONTAL);
-        $hbox_btn->Add($self->btn_add_word, 0,
-            wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-        $hbox_btn->Add($self->btn_tran, 0,
-            wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-        $hbox_btn->Add($self->btn_clear, 0,
-            wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-        $hbox_btn->Add($self->btn_cancel, 0,
-            wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-
-        $hbox_btn
-    },
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
 );
+
+sub _build_hbox_btn {
+    my $self = shift;
+
+    my $hbox_btn = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox_btn->Add($self->btn_add_word, 0,
+        wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+    $hbox_btn->Add($self->btn_tran,   0, wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+    $hbox_btn->Add($self->btn_clear,  0, wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+    $hbox_btn->Add($self->btn_cancel, 0, wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+
+    return $hbox_btn;
+}
 
 =item vbox
 
 =cut
 
 has vbox => (
-    is      => 'ro',
-    isa     => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-
-        my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-        $vbox->Add($self->hbox_words, 3, wxALL | wxEXPAND | wxGROW, 0);
-        $vbox->Add($self->word_note,  1, wxALL | wxEXPAND | wxGROW, 5);
-        $vbox->Add($self->hbox_btn,   0, wxALL | wxGROW,            5);
-
-        $vbox
-    },
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
 );
+
+sub _build_vbox {
+    my $self = shift;
+
+    my $vbox = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox->Add($self->hbox_words, 3, wxALL | wxEXPAND | wxGROW, 0);
+    $vbox->Add($self->word_note,  1, wxALL | wxEXPAND | wxGROW, 5);
+    $vbox->Add($self->hbox_btn,   0, wxALL | wxGROW,            5);
+
+    return $vbox;
+}
 
 sub keybind {
     my ($self, $event) = @_;
