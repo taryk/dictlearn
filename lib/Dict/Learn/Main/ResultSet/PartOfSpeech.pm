@@ -1,4 +1,4 @@
-package Dict::Learn::Main::ResultSet::Wordclass 0.1;
+package Dict::Learn::Main::ResultSet::PartOfSpeech 0.1;
 use base 'DBIx::Class::ResultSet';
 
 use namespace::autoclean;
@@ -33,7 +33,7 @@ sub select {
             name_tr   => {-like => $params{name}},
         ];
     }
-    my $rs = $self->search($args, {order_by => {-asc => 'wordclass_id'}});
+    my $rs = $self->search($args, {order_by => {-asc => 'partofspeech_id'}});
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
     $rs->all();
 }
