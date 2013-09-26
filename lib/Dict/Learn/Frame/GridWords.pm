@@ -12,13 +12,13 @@ use Data::Printer;
 
 use common::sense;
 
-sub COL_WORD      { [0, 'word'] }
-sub COL_REL_W     { [1, 'rel_words'] }
-sub COL_REL_E     { [2, 'rel_examples'] }
-sub COL_WORDCLASS { [3, 'wordclass'] }
-sub COL_INTEST    { [4, 'in_test'] }
-sub COL_CDATE     { [5, 'cdate'] }
-sub COL_MDATE     { [6, 'mdate'] }
+sub COL_WORD         { [0, 'word'] }
+sub COL_REL_W        { [1, 'rel_words'] }
+sub COL_REL_E        { [2, 'rel_examples'] }
+sub COL_PARTOFSPEECH { [3, 'partofspeech'] }
+sub COL_INTEST       { [4, 'in_test'] }
+sub COL_CDATE        { [5, 'cdate'] }
+sub COL_MDATE        { [6, 'mdate'] }
 
 =item parent
 
@@ -65,13 +65,13 @@ sub _build_grid {
     my $grid
         = Wx::Grid->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
     $grid->CreateGrid(0, COL_MDATE->[0] + 1);
-    $grid->SetColSize(COL_WORD->[0],      300);
-    $grid->SetColSize(COL_REL_W->[0],     20);
-    $grid->SetColSize(COL_REL_E->[0],     20);
-    $grid->SetColSize(COL_WORDCLASS->[0], 30);
-    $grid->SetColSize(COL_INTEST->[0],    20);
-    $grid->SetColSize(COL_CDATE->[0],     140);
-    $grid->SetColSize(COL_MDATE->[0],     140);
+    $grid->SetColSize(COL_WORD->[0],         300);
+    $grid->SetColSize(COL_REL_W->[0],        20);
+    $grid->SetColSize(COL_REL_E->[0],        20);
+    $grid->SetColSize(COL_PARTOFSPEECH->[0], 30);
+    $grid->SetColSize(COL_INTEST->[0],       20);
+    $grid->SetColSize(COL_CDATE->[0],        140);
+    $grid->SetColSize(COL_MDATE->[0],        140);
     $grid->EnableEditing(1);
     $grid->EnableGridLines(1);
     $grid->EnableDragGridSize(0);
@@ -85,13 +85,13 @@ sub _build_grid {
     $grid->EnableDragRowSize(1);
     $grid->SetRowLabelSize(45);
     $grid->SetRowLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
-    $grid->SetColLabelValue(COL_WORD->[0],      'Word');
-    $grid->SetColLabelValue(COL_REL_W->[0],     'W');
-    $grid->SetColLabelValue(COL_REL_E->[0],     'E');
-    $grid->SetColLabelValue(COL_WORDCLASS->[0], 'wc');
-    $grid->SetColLabelValue(COL_INTEST->[0],    't');
-    $grid->SetColLabelValue(COL_CDATE->[0],     'Created');
-    $grid->SetColLabelValue(COL_MDATE->[0],     'Modified');
+    $grid->SetColLabelValue(COL_WORD->[0],         'Word');
+    $grid->SetColLabelValue(COL_REL_W->[0],        'W');
+    $grid->SetColLabelValue(COL_REL_E->[0],        'E');
+    $grid->SetColLabelValue(COL_PARTOFSPEECH->[0], 'pos');
+    $grid->SetColLabelValue(COL_INTEST->[0],       't');
+    $grid->SetColLabelValue(COL_CDATE->[0],        'Created');
+    $grid->SetColLabelValue(COL_MDATE->[0],        'Modified');
 
     return $grid;
 }
@@ -239,8 +239,8 @@ sub select_words {
             : $item->{word};
         $self->grid->SetRowLabelValue($i => $item->{word_id});
         $self->grid->SetCellValue($i, COL_WORD->[0], $word);
-        $self->grid->SetCellValue($i, COL_WORDCLASS->[0],
-            $item->{COL_WORDCLASS->[1]});
+        $self->grid->SetCellValue($i, COL_PARTOFSPEECH->[0],
+            $item->{COL_PARTOFSPEECH->[1]});
         $self->grid->SetCellValue($i, COL_REL_W->[0],
             $item->{COL_REL_W->[1]});
         $self->grid->SetReadOnly($i, COL_REL_W->[0], 1);

@@ -3,9 +3,9 @@ use base qw[ DBIx::Class::Core ];
 
 __PACKAGE__->table('test_category_word_xref');
 __PACKAGE__->add_columns(
-    qw[ test_category_id word_id wordclass_id cdate mdate ]
+    qw[ test_category_id word_id partofspeech_id cdate mdate ]
 );
-__PACKAGE__->set_primary_key(qw[ test_category_id word_id wordclass_id ]);
+__PACKAGE__->set_primary_key(qw[ test_category_id word_id partofspeech_id ]);
 __PACKAGE__->belongs_to(
     test_category_id => 'Dict::Learn::Main::Result::TestCategory',
     'test_category_id',
@@ -21,8 +21,8 @@ __PACKAGE__->belongs_to(
     }
 );
 __PACKAGE__->belongs_to(
-    wordclass_id => 'Dict::Learn::Main::Result::Wordclass',
-    'wordclass_id',
+    partofspeech_id => 'Dict::Learn::Main::Result::PartOfSpeech',
+    'partofspeech_id',
     {   cascade_delete => 0,
         cascade_update => 0
     }

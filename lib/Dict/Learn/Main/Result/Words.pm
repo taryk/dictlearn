@@ -3,7 +3,7 @@ use base qw[ DBIx::Class::Core ];
 
 __PACKAGE__->table('word_xref');
 __PACKAGE__->add_columns(
-    qw[ word1_id word2_id dictionary_id wordclass_id rel_type category_id
+    qw[ word1_id word2_id dictionary_id partofspeech_id rel_type category_id
         note cdate mdate ]
 );
 __PACKAGE__->set_primary_key(qw[ word1_id word2_id rel_type ]);
@@ -29,8 +29,8 @@ __PACKAGE__->belongs_to(
     }
 );
 __PACKAGE__->has_one(
-    wordclass => 'Dict::Learn::Main::Result::Wordclass',
-    {'foreign.wordclass_id' => 'self.wordclass_id'},
+    partofspeech => 'Dict::Learn::Main::Result::PartOfSpeech',
+    {'foreign.partofspeech_id' => 'self.partofspeech_id'},
     {   cascade_delete => 0,
         cascade_update => 0
     }

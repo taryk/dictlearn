@@ -82,23 +82,23 @@ sub load_word {
     my $translate;
     for my $rel_word ($word->rel_words) {
         next unless $rel_word->word2_id or $rel_word->word2_id->word_id;
-        push @{$translate->{$rel_word->wordclass->abbr}} => {
-            word_id   => $rel_word->word2_id->word_id,
-            word      => $rel_word->word2_id->word,
-            wordclass => $rel_word->wordclass->abbr,
-            note      => $rel_word->note,
+        push @{ $translate->{ $rel_word->partofspeech->abbr } } => {
+            word_id      => $rel_word->word2_id->word_id,
+            word         => $rel_word->word2_id->word,
+            partofspeech => $rel_word->partofspeech->abbr,
+            note         => $rel_word->note,
         };
     }
     $self->html->SetPage(
         $self->gen_html(
-            word_id   => $word->word_id,
-            word      => $word->word,
-            word2     => $word->word2,
-            word3     => $word->word3,
-            irregular => $word->irregular,
-            wordclass => $word->wordclass->abbr,
-            note      => $word->note,
-            translate => $translate,
+            word_id      => $word->word_id,
+            word         => $word->word,
+            word2        => $word->word2,
+            word3        => $word->word3,
+            irregular    => $word->irregular,
+            partofspeech => $word->partofspeech->abbr,
+            note         => $word->note,
+            translate    => $translate,
         )
     );
 }
@@ -117,10 +117,10 @@ sub gen_html {
         if $params{word3};
 
     # translation
-    for my $partofspeach (keys %{$params{translate}}) {
-        $translate .= "<font size='-1'>$partofspeach</font>";
+    for my $partofspeech (keys %{$params{translate}}) {
+        $translate .= "<font size='-1'>$partofspeech</font>";
         $translate .= '<ol>';
-        for my $word (@{$params{translate}{$partofspeach}}) {
+        for my $word (@{$params{translate}{$partofspeech}}) {
             $translate
                 .= '<li>'
                 . $word->{word}

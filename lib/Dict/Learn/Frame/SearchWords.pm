@@ -189,7 +189,7 @@ sub _build_lb_words {
         wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
     $lb_words->InsertColumn(0,         'id',      wxLIST_FORMAT_LEFT, 50);
     $lb_words->InsertColumn(COL_LANG1, 'Eng',     wxLIST_FORMAT_LEFT, 200);
-    $lb_words->InsertColumn(2,         'wc',      wxLIST_FORMAT_LEFT, 35);
+    $lb_words->InsertColumn(2,         'pos',     wxLIST_FORMAT_LEFT, 35);
     $lb_words->InsertColumn(COL_LANG2, 'Ukr',     wxLIST_FORMAT_LEFT, 200);
     $lb_words->InsertColumn(4,         'note',    wxLIST_FORMAT_LEFT, 200);
     $lb_words->InsertColumn(5,         'created', wxLIST_FORMAT_LEFT, 150);
@@ -554,7 +554,7 @@ sub lookup {
             : $item->{word_orig};
         $self->lb_words->SetItem($id, 0,         $item->{word_id});
         $self->lb_words->SetItem($id, COL_LANG1, $word);
-        $self->lb_words->SetItem($id, 2,         $item->{wordclass});
+        $self->lb_words->SetItem($id, 2,         $item->{partofspeech});
         $self->lb_words->SetItem($id, COL_LANG2, $item->{word_tr});
         $self->lb_words->SetItem($id, 4,         $item->{note});
         $self->lb_words->SetItem($id, 5,         $item->{cdate});
@@ -685,8 +685,8 @@ sub add_to_test {
     $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->create(
         {
             test_category_id => $test_category_id,
-            word_id => $word_id,
-            wordclass_id => 0,
+            word_id          => $word_id,
+            partofspeech_id  => 0,
         }
     );
 

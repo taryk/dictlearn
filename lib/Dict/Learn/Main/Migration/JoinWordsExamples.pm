@@ -32,31 +32,31 @@ sub down {
         $main::ioc->lookup('db')->schema->resultset('Examples')->export_data()
         )
     {
-        push @{$data_up->{words}} => {
-            word1_id      => $max_word_id + int($es->{example1_id}),
-            word2_id      => $max_word_id + int($es->{example2_id}),
-            rel_type      => 0,
-            category_id   => 0,
-            wordclass_id  => 0,
-            dictionary_id => $es->{dictionary_id},
-            note          => $es->{note},
-            cdate         => $es->{cdate},
-            mdate         => $es->{mdate},
+        push @{ $data_up->{words} } => {
+            word1_id        => $max_word_id + int($es->{example1_id}),
+            word2_id        => $max_word_id + int($es->{example2_id}),
+            rel_type        => 0,
+            category_id     => 0,
+            partofspeech_id => 0,
+            dictionary_id   => $es->{dictionary_id},
+            note            => $es->{note},
+            cdate           => $es->{cdate},
+            mdate           => $es->{mdate},
         };
     }
     for my $ew ($main::ioc->lookup('db')->schema->resultset('WordExample')
         ->export_data())
     {
-        push @{$data_up->{words}} => {
-            word1_id      => $ew->{word_id},
-            word2_id      => $max_word_id + int($ew->{example_id}),
-            rel_type      => 1,
-            category_id   => 0,
-            wordclass_id  => $ew->{wordclass_id},
-            dictionary_id => 0,
-            note          => $ew->{note},
-            cdate         => $ew->{cdate},
-            mdate         => $ew->{mdate},
+        push @{ $data_up->{words} } => {
+            word1_id        => $ew->{word_id},
+            word2_id        => $max_word_id + int($ew->{example_id}),
+            rel_type        => 1,
+            category_id     => 0,
+            partofspeech_id => $ew->{partofspeech_id},
+            dictionary_id   => 0,
+            note            => $ew->{note},
+            cdate           => $ew->{cdate},
+            mdate           => $ew->{mdate},
         };
     }
     $data_up;

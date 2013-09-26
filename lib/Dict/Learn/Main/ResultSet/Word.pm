@@ -49,15 +49,15 @@ sub add_one {
         else {
             next unless defined $word->{word};
             $fields = {
-                word         => $word->{word},
-                wordclass_id => $word->{wordclass},
-                lang_id      => $word->{lang_id},
+                word            => $word->{word},
+                partofspeech_id => $word->{partofspeech},
+                lang_id         => $word->{lang_id},
             };
         }
         $new_word->add_to_words(
             $fields => {
-                dictionary_id => $params{dictionary_id},
-                wordclass_id  => $word->{wordclass},
+                dictionary_id   => $params{dictionary_id},
+                partofspeech_id => $word->{partofspeech},
             }
         );
     }
@@ -95,8 +95,8 @@ sub update_one {
                     note    => $_->{note},
                     lang_id => $_->{lang_id},
                 },
-                {   dictionary_id => $params{dictionary_id},
-                    wordclass_id  => $_->{wordclass},
+                {   dictionary_id   => $params{dictionary_id},
+                    partofspeech_id => $_->{partofspeech},
                 }
             );
             next;
@@ -112,7 +112,7 @@ sub update_one {
             );
         if (defined $_->{word}) {
             next if $_->{word} == 0;
-            $word_xref->first->update({wordclass_id => $_->{wordclass}})
+            $word_xref->first->update({partofspeech_id => $_->{partofspeech}})
                 ->word2_id->update(
                 {   word    => $_->{word},
                     note    => $_->{note},
@@ -158,7 +158,7 @@ sub find_ones {
                 ]
             ]
         },
-        {   join   => {'rel_words' => ['word2_id', 'wordclass']},
+        {   join   => {'rel_words' => ['word2_id', 'partofspeech']},
             select => [
                 'me.word_id', 'me.word',
                 'me.word2',   'me.word3',
@@ -166,15 +166,15 @@ sub find_ones {
                 'me.irregular', {group_concat => ['word2_id.word', "', '"]},
                 ## use critic
                 'me.mdate', 'me.cdate',
-                'me.note',  'wordclass.abbr',
+                'me.note',  'partofspeech.abbr',
                 'me.in_test'
             ],
             as => [
                 qw| word_id word_orig word2 word3 is_irregular word_tr
-                    mdate cdate note wordclass in_test
+                    mdate cdate note partofspeech in_test
                     |
             ],
-            group_by => ['me.word_id', 'rel_words.wordclass_id'],
+            group_by => ['me.word_id', 'rel_words.partofspeech_id'],
             order_by => {-asc => 'me.cdate'},
         }
     );
@@ -207,9 +207,9 @@ sub select {
     my $rs = $self->search(
         $params,
         {   distinct => 1,
-            select   => [qw| me.word_id me.word wordclass.abbr |],
-            as       => [qw| id word wordclass |],
-            join     => ['wordclass'],
+            select   => [qw| me.word_id me.word partofspeech.abbr |],
+            as       => [qw| id word partofspeech |],
+            join     => ['partofspeech'],
         }
     );
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
@@ -231,14 +231,14 @@ sub select_words_grid {
     my %params = @_;
     my $rs     = $self->search(
         {'me.lang_id' => $params{lang1_id}},
-        {   join   => ['rel_words', 'examples', 'wordclass'],
+        {   join   => ['rel_words', 'examples', 'partofspeech'],
             select => [
                 'me.word_id',
                 'me.word',
                 'me.word2',
                 'me.word3',
                 'me.irregular',
-                'wordclass.abbr',
+                'partofspeech.abbr',
                 'me.in_test',
                 {count => ['rel_words.word2_id']},
                 {count => ['examples.example_id']},
@@ -246,7 +246,7 @@ sub select_words_grid {
                 'me.mdate'
             ],
             as => [
-                qw|word_id word word2 word3 is_irregular wordclass in_test
+                qw|word_id word word2 word3 is_irregular partofspeech in_test
                     rel_words rel_examples cdate mdate|
             ],
             group_by => ['me.word_id'],

@@ -393,7 +393,7 @@ sub make_dst_item {
         cbox    => Wx::ComboBox->new(
             $self, wxID_ANY,
             undef, wxDefaultPosition,
-            [110, -1], [$self->import_wordclass],
+            [110, -1], [$self->import_partofspeech],
             wxCB_DROPDOWN | wxCB_READONLY, wxDefaultValidator
         ),
         popup => Dict::Learn::Combo::WordList->new(),
@@ -599,7 +599,7 @@ sub add {
             my $word_dst_item = pop;
             my $push_item = {word_id => $word_dst_item->{word_id}};
             if ($word_dst_item->{word}) {
-                $push_item->{wordclass}
+                $push_item->{partofspeech}
                     = int($word_dst_item->{cbox}->GetSelection());
 
                 # `GetLabel` returns "" or value
@@ -641,11 +641,11 @@ sub add {
     return $self;
 }
 
-sub import_wordclass {
+sub import_partofspeech {
     my $self = shift;
 
     map { $_->{name_orig} }
-        $main::ioc->lookup('db')->schema->resultset('Wordclass')->select();
+        $main::ioc->lookup('db')->schema->resultset('PartOfSpeech')->select();
 }
 
 sub clear_fields {
@@ -692,21 +692,21 @@ sub load_word {
     for my $rel_word (@{$word->{rel_words}}) {
         next unless $rel_word->{word2_id} or $rel_word->{word2_id}{word_id};
         push @translate => {
-            word_id   => $rel_word->{word2_id}{word_id},
-            word      => $rel_word->{word2_id}{word},
-            wordclass => $rel_word->{wordclass_id},
-            note      => $rel_word->{note},
+            word_id      => $rel_word->{word2_id}{word_id},
+            word         => $rel_word->{word2_id}{word},
+            partofspeech => $rel_word->{partofspeech_id},
+            note         => $rel_word->{note},
         };
     }
     $self->fill_fields(
-        word_id   => $word->{word_id},
-        word      => $word->{word},
-        word2     => $word->{word2},
-        word3     => $word->{word3},
-        irregular => $word->{irregular},
-        wordclass => $word->{wordclass_id},
-        note      => $word->{note},
-        translate => \@translate,
+        word_id      => $word->{word_id},
+        word         => $word->{word},
+        word2        => $word->{word2},
+        word3        => $word->{word3},
+        irregular    => $word->{irregular},
+        partofspeech => $word->{partofspeech_id},
+        note         => $word->{note},
+        translate    => \@translate,
     );
     $self->btn_add_word->SetLabel('Save');
 }
@@ -729,7 +729,7 @@ sub fill_fields {
         my $el = $self->add_dst_item($word_tr->{word_id} => 1);
         $el->{word}->SetValue($word_tr->{word});
         $el->{word}->SetLabel($word_tr->{word_id});
-        $el->{cbox}->SetSelection($word_tr->{wordclass});
+        $el->{cbox}->SetSelection($word_tr->{partofspeech});
     }
     $self->word_note->SetValue($params{note});
 
@@ -739,13 +739,13 @@ sub fill_fields {
 
 sub dst_count { scalar @{$_[0]->word_dst} }
 
-sub get_partofspeach_index {
+sub get_partofspeech_index {
     my ($self, $name) = @_;
 
-    for ($main::ioc->lookup('db')->schema->resultset('Wordclass')
+    for ($main::ioc->lookup('db')->schema->resultset('PartOfSpeech')
         ->select(name => $name))
     {
-        return $_->{wordclass_id};
+        return $_->{partofspeech_id};
     }
 }
 
@@ -761,18 +761,18 @@ sub translate_word {
     if (keys %$res >= 1) {
         my $i = 0;
         for my $meaning_group (keys %$res) {
-            for my $partofspeach (keys %$res->{$meaning_group}) {
+            for my $partofspeech (keys %$res->{$meaning_group}) {
                 next
-                    if $partofspeach eq '_'
-                    and ref $res->{$meaning_group}{$partofspeach} eq '';
-                for my $words (@{$res->{$meaning_group}{$partofspeach}}) {
+                    if $partofspeech eq '_'
+                    and ref $res->{$meaning_group}{$partofspeech} eq '';
+                for my $words (@{$res->{$meaning_group}{$partofspeech}}) {
                     given (ref $words) {
                         when ('ARRAY') {
                             for my $word (@$words) {
                                 $self->add_dst_item;
                                 $self->word_dst->[$i]{cbox}->SetSelection(
-                                    $self->get_partofspeach_index(
-                                        $partofspeach)
+                                    $self->get_partofspeech_index(
+                                        $partofspeech)
                                 );
                                 $self->word_dst->[$i]{word}
                                     ->SetValue($word->{word});
@@ -782,7 +782,7 @@ sub translate_word {
                         when ('HASH') {
                             $self->add_dst_item;
                             $self->word_dst->[$i]{cbox}->SetSelection(
-                                $self->get_partofspeach_index($partofspeach));
+                                $self->get_partofspeech_index($partofspeech));
                             $self->word_dst->[$i]{word}
                                 ->SetValue($words->{word});
                             $i++;

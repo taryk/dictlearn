@@ -221,24 +221,24 @@ sub _build_hbox {
     return $hbox;
 }
 
-has partofspeach => (
+has partofspeech => (
     is         => 'ro',
     isa        => 'HashRef',
     lazy_build => 1,
 );
 
-sub _build_partofspeach {
+sub _build_partofspeech {
     my $self = shift;
 
-    my $partofspeach_rs
-        = $main::ioc->lookup('db')->schema->resultset('Wordclass')
-        ->search({}, { select => [qw(wordclass_id abbr)] });
-    my $partofspeach_hashref;
-    while (my $partofspeach = $partofspeach_rs->next) {
-        $partofspeach_hashref->{ $partofspeach->abbr }
-            = $partofspeach->wordclass_id;
+    my $partofspeech_rs
+        = $main::ioc->lookup('db')->schema->resultset('Partofspeech')
+        ->search({}, { select => [qw(partofspeech_id abbr)] });
+    my $partofspeech_hashref;
+    while (my $partofspeech = $partofspeech_rs->next) {
+        $partofspeech_hashref->{ $partofspeech->abbr }
+            = $partofspeech->partofspeech_id;
     }
-    return $partofspeach_hashref;
+    return $partofspeech_hashref;
 
 }
 
@@ -325,12 +325,12 @@ sub lookup {
         },
         {
             select => [
-                'word1_id.word_id', 'word1_id.word', 'wordclass.abbr',
+                'word1_id.word_id', 'word1_id.word', 'partofspeech.abbr',
                 { group_concat => 'word2_id.word' },
             ],
-            as       => [qw(word_id word partofspeach translations)],
-            join     => [qw(word1_id word2_id wordclass)],
-            group_by => [qw(me.word1_id me.wordclass_id)],
+            as       => [qw(word_id word partofspeech translations)],
+            join     => [qw(word1_id word2_id partofspeech)],
+            group_by => [qw(me.word1_id me.partofspeech_id)],
             order_by => { -asc => 'me.word1_id' }
         }
         );
@@ -340,7 +340,7 @@ sub lookup {
         my $id = $self->word_list->InsertItem(Wx::ListItem->new);
         $self->word_list->SetItem($id, 0, $word->get_column('word_id'));      # id
         $self->word_list->SetItem($id, 1, $word->get_column('word'));         # word original
-        $self->word_list->SetItem($id, 2, $word->get_column('partofspeach')); # word original
+        $self->word_list->SetItem($id, 2, $word->get_column('partofspeech')); # word original
         $self->word_list->SetItem($id, 3, $word->get_column('translations')); # word tr
     }
 }
@@ -391,7 +391,7 @@ sub move_left {
         {
             test_category_id => $category_id,
             word_id          => $self->get_word_id($word_list_row_id),
-            wordclass_id     => $self->get_wordclass_id($word_list_row_id),
+            partofspeech_id  => $self->get_partofspeech_id($word_list_row_id),
         },
     );
 
@@ -446,11 +446,11 @@ sub get_word_id {
     return $self->word_list->GetItem($rowid, 0)->GetText;
 }
 
-sub get_wordclass_id {
+sub get_partofspeech_id {
     my ($self, $rowid) = @_;
 
     return
-        $self->partofspeach->{$self->word_list->GetItem($rowid, 2)->GetText};
+        $self->partofspeech->{$self->word_list->GetItem($rowid, 2)->GetText};
 }
 
 no Moose;
