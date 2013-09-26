@@ -18,10 +18,10 @@ sub parse_result {
     if ($json->[0][0][0]) {
         $res->{_} = $json->[0][0][0];
     }
-    my $cur_partofspeach;
+    my $cur_partofspeech;
     for my $item (@{$json->[1]}) {
-        $cur_partofspeach = $item->[0];
-        $res->{$cur_partofspeach} = [map { {word => $_} } @{$item->[1]}];
+        $cur_partofspeech = $item->[0];
+        $res->{$cur_partofspeech} = [map { {word => $_} } @{$item->[1]}];
     }
 
     return $res;

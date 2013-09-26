@@ -31,14 +31,14 @@ sub PARTSOFSPEACH {
 
 {
     my $curr = {
-        partofspeach => '_',
+        partofspeech => '_',
         variant      => 'I'
     };
 
     sub parse_item {
         my $res = {
             variant      => undef,
-            partofspeach => undef,
+            partofspeech => undef,
             words        => []
         };
 
@@ -57,7 +57,7 @@ sub PARTSOFSPEACH {
                     when ('l-article__abbrev') {
                         # if ($text =~ /^(n|v|)$/)
                         say "unknown: '$text'" unless PARTSOFSPEACH->{$text};
-                        $curr->{partofspeach} = PARTSOFSPEACH->{$text}
+                        $curr->{partofspeech} = PARTSOFSPEACH->{$text}
                             // 'noun';
                     }
                 }
@@ -68,7 +68,7 @@ sub PARTSOFSPEACH {
                 {
                     my $text = $_[0]->span->all_text;
                     if (any { $text eq $_ } keys %{+PARTSOFSPEACH}) {
-                        $curr->{partofspeach} = PARTSOFSPEACH->{$text};
+                        $curr->{partofspeech} = PARTSOFSPEACH->{$text};
                         return;
                     }
                 }
@@ -94,7 +94,7 @@ sub PARTSOFSPEACH {
                 }
                 $res = {
                     variant      => $curr->{variant},
-                    partofspeach => $curr->{partofspeach},
+                    partofspeech => $curr->{partofspeech},
                     words        => $words,
                 };
             }
@@ -131,7 +131,7 @@ sub translate {
             when (1) {
                 if (my $parsed_item = parse_item $res->p) {
                     push @{$tr_res->{$parsed_item->{variant}}
-                            {$parsed_item->{partofspeach}}},
+                            {$parsed_item->{partofspeech}}},
                         $parsed_item->{words};
                 }
             }
@@ -139,7 +139,7 @@ sub translate {
                 for my $item ($res->p->each) {
                     if (my $parsed_item = parse_item $item) {
                         push @{$tr_res->{$parsed_item->{variant}}
-                                {$parsed_item->{partofspeach}}},
+                                {$parsed_item->{partofspeech}}},
                             $parsed_item->{words};
                     }
                 }

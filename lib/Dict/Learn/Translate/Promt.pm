@@ -39,17 +39,17 @@ sub parse_result {
     my $json = shift;
 
     my $res;
-    my $pos_re = qr/(,\s(?<unknown>\w))?,\s(?<partofspeach>\w+)$/iusx;
+    my $pos_re = qr/(,\s(?<unknown>\w))?,\s(?<partofspeech>\w+)$/iusx;
     if ($json->{isWord} == 1 and $json->{resultNoTags}) {
-        my $cur_partofspeach;
+        my $cur_partofspeech;
         for my $line (split "\r\n" => $json->{resultNoTags}) {
             next if $line =~ /^(\-+|GENERATED_FROM)$/x;
             if (0 == index $line => "\n") {
                 if ($line =~ $pos_re) {
 
                     # $res->{unknown} = $+{unknown};
-                    $cur_partofspeach = partofspeach_tr($+{partofspeach});
-                    $res->{$cur_partofspeach} = [];
+                    $cur_partofspeech = partofspeech_tr($+{partofspeech});
+                    $res->{$cur_partofspeech} = [];
                 }
             }
             elsif (
@@ -61,12 +61,12 @@ sub parse_result {
                           }iux
                 )
             {
-                push @{$res->{$cur_partofspeach}} => {
+                push @{$res->{$cur_partofspeech}} => {
                     word     => $+{word},
                     category => $+{word_category}
                 };
             }
-            elsif (not defined $cur_partofspeach) {
+            elsif (not defined $cur_partofspeech) {
                 $res->{_} = $line;
             }
         }
@@ -79,7 +79,7 @@ sub parse_result {
     return $res;
 }
 
-sub partofspeach_tr($) {
+sub partofspeech_tr($) {
     my $original = shift;
 
     for my $item (keys %{+PARTSOFSPEACH}) {
