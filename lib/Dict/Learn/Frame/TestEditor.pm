@@ -231,7 +231,7 @@ sub _build_partofspeech {
     my $self = shift;
 
     my $partofspeech_rs
-        = $main::ioc->lookup('db')->schema->resultset('Partofspeech')
+        = $main::ioc->lookup('db')->schema->resultset('PartOfSpeech')
         ->search({}, { select => [qw(partofspeech_id abbr)] });
     my $partofspeech_hashref;
     while (my $partofspeech = $partofspeech_rs->next) {
