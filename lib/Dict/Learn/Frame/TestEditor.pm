@@ -50,6 +50,105 @@ sub _build_test_groups {
     return $test_groups;
 }
 
+
+=item btn_add_group
+
+=cut
+
+has btn_add_group => (
+    is         => 'ro',
+    isa        => 'Wx::Button',
+    lazy_build => 1,
+);
+
+sub _build_btn_add_group {
+    my $self = shift;
+
+    my $btn_add_group = Wx::Button->new($self, wxID_ANY, '+', [20, 20]);
+    EVT_BUTTON($self, $btn_add_group, \&add_group);
+
+    return $btn_add_group;
+}
+
+=item btn_del_group
+
+=cut
+
+has btn_del_group => (
+    is         => 'ro',
+    isa        => 'Wx::Button',
+    lazy_build => 1,
+);
+
+sub _build_btn_del_group {
+    my $self = shift;
+
+    my $btn_del_group = Wx::Button->new($self, wxID_ANY, '-', [20, 20]);
+    EVT_BUTTON($self, $btn_del_group, \&del_group);
+
+    return $btn_del_group;
+}
+
+=item btn_update_group
+
+=cut
+
+has btn_update_group => (
+    is         => 'ro',
+    isa        => 'Wx::Button',
+    lazy_build => 1,
+);
+
+sub _build_btn_update_group {
+    my $self = shift;
+
+    my $btn_update_group = Wx::Button->new($self, wxID_ANY, '*', [20, 20]);
+    EVT_BUTTON($self, $btn_update_group, \&update_group);
+
+    return $btn_update_group;
+}
+
+=item hbox_test_groups
+
+=cut
+
+has hbox_test_groups => (
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
+);
+
+sub _build_hbox_test_groups {
+    my $self = shift;
+
+    my $hbox_test_groups = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox_test_groups->Add($self->btn_add_group,    0, wxRIGHT | wxGROW, 5);
+    $hbox_test_groups->Add($self->btn_del_group,    0, wxRIGHT | wxGROW, 5);
+    $hbox_test_groups->Add($self->btn_update_group, 0, wxRIGHT | wxGROW, 5);
+
+    return $hbox_test_groups;
+}
+
+=item vbox_test_groups
+
+=cut
+
+has vbox_test_groups => (
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
+);
+
+sub _build_vbox_test_groups {
+    my $self = shift;
+    
+    my $vbox_test_groups = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox_test_groups->Add($self->test_groups, 1, wxEXPAND, 0);
+    $vbox_test_groups->Add($self->hbox_test_groups, 0, wxTOP, 5);
+    
+    return $vbox_test_groups;
+}
+
 =item test_words
 
 =cut
@@ -213,10 +312,10 @@ sub _build_hbox {
     my $self = shift;
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->test_groups,    1,          wxEXPAND, 0  );
-    $hbox->Add($self->test_words,     1, wxLEFT | wxEXPAND, 5  );
-    $hbox->Add($self->vbox_btn,       0, wxTOP,             25 );
-    $hbox->Add($self->vbox_word_list, 1, wxLEFT | wxEXPAND, 5  );
+    $hbox->Add($self->vbox_test_groups, 1,          wxEXPAND, 0  );
+    $hbox->Add($self->test_words,       1, wxLEFT | wxEXPAND, 5  );
+    $hbox->Add($self->vbox_btn,         0, wxTOP,             25 );
+    $hbox->Add($self->vbox_word_list,   1, wxLEFT | wxEXPAND, 5  );
 
     return $hbox;
 }
@@ -231,7 +330,7 @@ sub _build_partofspeech {
     my $self = shift;
 
     my $partofspeech_rs
-        = $main::ioc->lookup('db')->schema->resultset('Partofspeech')
+        = $main::ioc->lookup('db')->schema->resultset('PartOfSpeech')
         ->search({}, { select => [qw(partofspeech_id abbr)] });
     my $partofspeech_hashref;
     while (my $partofspeech = $partofspeech_rs->next) {
@@ -451,6 +550,24 @@ sub get_partofspeech_id {
 
     return
         $self->partofspeech->{$self->word_list->GetItem($rowid, 2)->GetText};
+}
+
+sub add_group {
+    my ($self) = @_;
+
+    
+}
+
+sub rem_group {
+    my ($self) = @_;
+
+   
+}
+
+sub update_group {
+    my ($self) = @_;
+
+   
 }
 
 no Moose;
