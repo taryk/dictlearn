@@ -538,15 +538,58 @@ sub _build_hbox {
 sub lookup {
     my ($self, $event) = @_;
 
+    my $value = $self->combobox->GetValue;
+    my $lang_id
+        = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
+
+    my @result;
+    if ($value =~ m{^ / (?<command> \w+ ) $}x) {
+        given ($+{command}) {
+            when('untranslated') {
+                my $rs
+                    = $main::ioc->lookup('db')->schema->resultset('Word')
+                    ->search(
+                    {
+                        'me.lang_id'         => $lang_id,
+                        'rel_words.word2_id' => undef,
+                    },
+                    {
+                        join   => ['rel_words'],
+                        select => [
+                            'me.word_id',   'me.word',
+                            'me.word2',     'me.word3',
+                            'me.irregular', 'me.mdate',
+                            'me.cdate',     'me.note',
+                            'me.in_test',
+                        ],
+                        as => [
+                            qw[
+                                word_id word_orig word2 word3
+                                is_irregular mdate cdate
+                                note in_test
+                                ]
+                        ],
+                        order_by => { -asc => 'me.cdate' },
+                    }
+                    );
+                $rs->result_class(
+                    'DBIx::Class::ResultClass::HashRefInflator');
+                @result = $rs->all();
+            }
+            default {
+            }
+        }
+    } else {
+        @result
+            = $main::ioc->lookup('db')->schema->resultset('Word')
+            ->find_ones_cached(
+                word    => $value,
+                lang_id => $lang_id,
+            );
+    }
+
     $self->lb_words->DeleteAllItems();
-    for my $item (
-        $main::ioc->lookup('db')->schema->resultset('Word')
-        ->find_ones_cached(
-            word => $self->combobox->GetValue,
-            lang_id =>
-                Dict::Learn::Dictionary->curr->{language_orig_id}{language_id}
-        ))
-    {
+    for my $item (@result) {
         my $id = $self->lb_words->InsertItem(Wx::ListItem->new);
         my $word
             = $item->{is_irregular}
@@ -554,8 +597,8 @@ sub lookup {
             : $item->{word_orig};
         $self->lb_words->SetItem($id, 0,         $item->{word_id});
         $self->lb_words->SetItem($id, COL_LANG1, $word);
-        $self->lb_words->SetItem($id, 2,         $item->{partofspeech});
-        $self->lb_words->SetItem($id, COL_LANG2, $item->{word_tr});
+        $self->lb_words->SetItem($id, 2,         $item->{partofspeech} // '');
+        $self->lb_words->SetItem($id, COL_LANG2, $item->{word_tr} // '');
         $self->lb_words->SetItem($id, 4,         $item->{note});
         $self->lb_words->SetItem($id, 5,         $item->{cdate});
     }
