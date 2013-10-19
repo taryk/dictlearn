@@ -576,6 +576,47 @@ sub lookup {
                     'DBIx::Class::ResultClass::HashRefInflator');
                 @result = $rs->all();
             }
+            when('irregular') {
+                my $rs
+                    = $main::ioc->lookup('db')->schema->resultset('Word')
+                    ->search(
+                    {
+                        -and => [
+                            'me.lang_id'   => $lang_id,
+                            'me.irregular' => 1,
+                        ]
+                    },
+                    {
+                        join =>
+                            { 'rel_words' => ['word2_id', 'partofspeech'] },
+                        select => [
+                            'me.word_id', 'me.word',
+                            'me.word2',   'me.word3',
+
+                            ## no critic (ValuesAndExpressions::ProhibitInterpolationOfLiterals)
+                            'me.irregular',
+                            { group_concat => ['word2_id.word', "', '"] },
+
+                            ## use critic
+                            'me.mdate', 'me.cdate',
+                            'me.note',  'partofspeech.abbr',
+                            'me.in_test'
+                        ],
+                        as => [
+                            qw{
+                                word_id word_orig word2 word3 is_irregular word_tr
+                                mdate cdate note partofspeech in_test
+                              }
+                        ],
+                        group_by =>
+                            ['me.word_id', 'rel_words.partofspeech_id'],
+                        order_by => { -asc => 'me.cdate' },
+                    }
+                    );
+                $rs->result_class(
+                    'DBIx::Class::ResultClass::HashRefInflator');
+                @result = $rs->all();
+            }
             default {
             }
         }
