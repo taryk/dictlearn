@@ -644,6 +644,11 @@ sub lookup {
         $self->lb_words->SetItem($id, 5,         $item->{cdate});
     }
     $self->select_first_item;
+
+    my $records_count = scalar @result;
+    $self->parent->status_bar->SetStatusText($records_count > 0
+        ? "$records_count records selected"
+        : 'No records selected');
 }
 
 sub edit_word {
