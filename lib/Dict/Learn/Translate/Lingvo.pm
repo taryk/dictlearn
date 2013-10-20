@@ -42,13 +42,13 @@ sub PARTSOFSPEACH {
             words        => []
         };
 
-        given ($_[0]->attrs->{class}) {
+        given ($_[0]->attr->{class}) {
             when ('P') {
                 my $span = $_[0]->find('span')->first;
                 return unless $span;
                 my $text = $span->all_text;
 
-                given ($span->attrs->{class}) {
+                given ($span->attr->{class}) {
                     when ('Bold') {
                         if ($text =~ /^(?<variant>[IVXLMC]+)\s*$/x) {
                             $curr->{variant} = $+{variant};
