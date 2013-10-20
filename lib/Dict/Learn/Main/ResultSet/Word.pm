@@ -333,4 +333,34 @@ sub get_irregular_verbs {
     @res;
 }
 
+sub find_untranslated_words {
+    my ($self, %params) = @_;
+
+    my $rs = $self->search(
+        {
+            'me.lang_id'         => $params{lang_id},
+            'rel_words.word2_id' => undef,
+        },
+        {
+            join   => ['rel_words'],
+            select => [
+                'me.word_id',   'me.word',  'me.word2', 'me.word3',
+                'me.irregular', 'me.mdate', 'me.cdate', 'me.note',
+                'me.in_test',
+            ],
+            as => [
+                qw[
+                    word_id word_orig word2 word3
+                    is_irregular mdate cdate
+                    note in_test
+                    ]
+            ],
+            order_by => { -asc => 'me.cdate' },
+        }
+    );
+    $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+    my @result = $rs->all();
+    return @result;
+}
+
 1;

@@ -546,35 +546,9 @@ sub lookup {
     if ($value =~ m{^ / (?<command> \w+ ) $}x) {
         given ($+{command}) {
             when('untranslated') {
-                my $rs
+                @result
                     = $main::ioc->lookup('db')->schema->resultset('Word')
-                    ->search(
-                    {
-                        'me.lang_id'         => $lang_id,
-                        'rel_words.word2_id' => undef,
-                    },
-                    {
-                        join   => ['rel_words'],
-                        select => [
-                            'me.word_id',   'me.word',
-                            'me.word2',     'me.word3',
-                            'me.irregular', 'me.mdate',
-                            'me.cdate',     'me.note',
-                            'me.in_test',
-                        ],
-                        as => [
-                            qw[
-                                word_id word_orig word2 word3
-                                is_irregular mdate cdate
-                                note in_test
-                                ]
-                        ],
-                        order_by => { -asc => 'me.cdate' },
-                    }
-                    );
-                $rs->result_class(
-                    'DBIx::Class::ResultClass::HashRefInflator');
-                @result = $rs->all();
+                    ->find_untranslated_words(lang_id => $lang_id);
             }
             when('irregular') {
                 my $rs
