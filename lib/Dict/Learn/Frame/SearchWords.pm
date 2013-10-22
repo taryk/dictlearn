@@ -543,7 +543,7 @@ sub lookup {
         = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
 
     my @result;
-    if ($value =~ m{^ / (?<command> \w+ ) $}x) {
+    if ($value =~ m{^ / (?<command> \!? \w+ ) $}x) {
         given ($+{command}) {
             when('untranslated') {
                 @result
