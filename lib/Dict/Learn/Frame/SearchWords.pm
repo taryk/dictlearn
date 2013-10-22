@@ -550,6 +550,11 @@ sub lookup {
                     = $main::ioc->lookup('db')->schema->resultset('Word')
                     ->find_untranslated_words(lang_id => $lang_id);
             }
+            when(['!untranslated','translated']) {
+                @result
+                    = $main::ioc->lookup('db')->schema->resultset('Word')
+                    ->find_ones(lang_id => $lang_id, only_translated => 1);
+            }
             when('irregular') {
                 @result
                     = $main::ioc->lookup('db')->schema->resultset('Word')

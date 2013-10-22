@@ -146,38 +146,50 @@ memoize('find_ones', INSTALL => 'find_ones_cached');
 sub find_ones {
     my $self         = shift;
     my %params       = @_;
-    my $word_pattern = '%' . $params{word} . '%';
-    my $rs           = $self->search(
-        {   -and => [
+    my %where;
+    if ($params{only_translated}) {
+        $where{'rel_words.word2_id'} = { '!=' => undef };
+    } else {
+        my $word_pattern = '%' . $params{word} . '%';
+        $where{-or} = [
+            'me.word'       => { like => $word_pattern },
+            'me.word2'      => { like => $word_pattern },
+            'me.word3'      => { like => $word_pattern },
+            'word2_id.word' => { like => $word_pattern },
+        ];
+    }
+    my $rs = $self->search(
+        {
+            -and => [
                 'me.lang_id' => $params{lang_id},
-                -or          => [
-                    'me.word'       => {like => $word_pattern},
-                    'me.word2'      => {like => $word_pattern},
-                    'me.word3'      => {like => $word_pattern},
-                    'word2_id.word' => {like => $word_pattern},
-                ]
-            ]
+                %where,
+            ],
         },
-        {   join   => {'rel_words' => ['word2_id', 'partofspeech']},
+        {
+            join   => { 'rel_words' => ['word2_id', 'partofspeech'] },
             select => [
                 'me.word_id', 'me.word',
                 'me.word2',   'me.word3',
+
                 ## no critic (ValuesAndExpressions::ProhibitInterpolationOfLiterals)
-                'me.irregular', {group_concat => ['word2_id.word', "', '"]},
+                'me.irregular', { group_concat => ['word2_id.word', "', '"] },
+
                 ## use critic
                 'me.mdate', 'me.cdate',
                 'me.note',  'partofspeech.abbr',
                 'me.in_test'
             ],
             as => [
-                qw| word_id word_orig word2 word3 is_irregular word_tr
+                qw[
+                    word_id word_orig word2 word3 is_irregular word_tr
                     mdate cdate note partofspeech in_test
-                    |
+                  ]
             ],
             group_by => ['me.word_id', 'rel_words.partofspeech_id'],
-            order_by => {-asc => 'me.cdate'},
+            order_by => { -asc => 'me.cdate' },
         }
     );
+
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
     say "find_ones uncached";
     $rs->all();
@@ -353,7 +365,7 @@ sub find_untranslated_words {
                     word_id word_orig word2 word3
                     is_irregular mdate cdate
                     note in_test
-                    ]
+                  ]
             ],
             order_by => { -asc => 'me.cdate' },
         }
