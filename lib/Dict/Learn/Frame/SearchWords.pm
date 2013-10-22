@@ -555,6 +555,22 @@ sub lookup {
                     = $main::ioc->lookup('db')->schema->resultset('Word')
                     ->find_irregular_verbs(lang_id => $lang_id);
             }
+            when('words') {
+                # TODO return only words
+                # it requires to have some kind of tags, which can be filtered by
+            }
+            when('phrases') {
+                # TODO return only phrases
+                # it requires to have some kind of tags, which can be filtered by
+            }
+            when('phrasal_verbs') {
+                # TODO return only phrasal verbs
+                # it requires to have some kind of tags, which can be filtered by
+            }
+            when('idioms') {
+                # TODO return only idioms
+                # it requires to have some kind of tags, which can be filtered by
+            }
             default {
             }
         }
