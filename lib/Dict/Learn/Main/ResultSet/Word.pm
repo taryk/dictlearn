@@ -151,12 +151,9 @@ sub find_ones {
         $where{'rel_words.word2_id'} = { '!=' => undef };
     } else {
         my $word_pattern = '%' . $params{word} . '%';
-        $where{-or} = [
-            'me.word'       => { like => $word_pattern },
-            'me.word2'      => { like => $word_pattern },
-            'me.word3'      => { like => $word_pattern },
-            'word2_id.word' => { like => $word_pattern },
-        ];
+        for my $column ('me.word', 'me.word2', 'me.word3', 'word2_id.word') {
+            push @{ $where{-or} }, ($column => { like => $word_pattern });
+        }
     }
     my $rs = $self->search(
         {
