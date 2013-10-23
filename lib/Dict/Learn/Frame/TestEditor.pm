@@ -404,16 +404,52 @@ sub lookup {
 
     my %options = ();
 
-    if ($self->cb_lookup->GetValue) {
-        my $word_pattern = '%' . $self->cb_lookup->GetValue . '%';
-        %options      = (
-            -or => [
-                'word1_id.word'  => { like => $word_pattern },
-                'word1_id.word2' => { like => $word_pattern },
-                'word1_id.word3' => { like => $word_pattern },
-                'word2_id.word'  => { like => $word_pattern },
-            ]
-        );
+    if (my $value = $self->cb_lookup->GetValue) {
+        my $word_pattern = "%$value%";
+
+        # TODO Basically, lookup tables in Dict::Learn::Frame::SearchWords and
+        # Dict::Learn::Frame::TestEditor are almost the same (except that the
+        # later don't have translated words column).
+        # Thus, in order to not duplicate code, they can be easily merged into
+        # one class.
+        if ($value =~ m{^ / (?<command> \!? \w+ ) $}x) {
+            given ($+{command}) {
+                when('irregular') {
+                    %options = ( 'word1_id.irregular' => 1 );
+                }
+                when('words') {
+                    # TODO return only words
+                    # it requires to have some kind of tags, which can be
+                    # filtered by
+                }
+                when('phrases') {
+                    # TODO return only phrases
+                    # it requires to have some kind of tags, which can be
+                    # filtered by
+                }
+                when('phrasal_verbs') {
+                    # TODO return only phrasal verbs
+                    # it requires to have some kind of tags, which can be
+                    # filtered by
+                }
+                when('idioms') {
+                    # TODO return only idioms
+                    # it requires to have some kind of tags, which can be
+                    # filtered by
+                }
+                default {
+                }
+            }
+        } else {
+            for my $column (
+                'word1_id.word',  'word1_id.word2',
+                'word1_id.word3', 'word2_id.word'
+                )
+            {
+                push @{ $options{-or} },
+                    ($column => { like => $word_pattern });
+            }
+        }
     }
 
     my $all_words
