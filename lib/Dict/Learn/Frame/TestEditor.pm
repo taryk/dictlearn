@@ -591,19 +591,19 @@ sub get_partofspeech_id {
 sub add_group {
     my ($self) = @_;
 
-    
+    # TODO add a new test group
 }
 
 sub rem_group {
     my ($self) = @_;
 
-   
+    # TODO remove a selected test group
 }
 
 sub update_group {
     my ($self) = @_;
 
-   
+    # TODO change name of a selected test group
 }
 
 no Moose;
