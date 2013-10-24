@@ -412,8 +412,8 @@ sub lookup {
         # later don't have translated words column).
         # Thus, in order to not duplicate code, they can be easily merged into
         # one class.
-        if ($value =~ m{^ / (?<command> \!? \w+ ) $}x) {
-            given ($+{command}) {
+        if ($value =~ m{^ / (?<filter> \!? \w+ ) $}x) {
+            given ($+{filter}) {
                 when('irregular') {
                     %options = ( 'word1_id.irregular' => 1 );
                 }
