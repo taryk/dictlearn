@@ -144,11 +144,21 @@ sub unlink_one {
 memoize('find_ones', INSTALL => 'find_ones_cached');
 
 sub find_ones {
-    my $self         = shift;
-    my %params       = @_;
+    my ($self, %params) = @_;
+
     my %where;
-    if ($params{only_translated}) {
-        $where{'rel_words.word2_id'} = { '!=' => undef };
+    if ($params{filter}) {
+        given ($params{filter}) {
+            when('translated') {
+                $where{'rel_words.word2_id'} = { '!=' => undef };
+            }
+            when('untranslated') {
+                $where{'rel_words.word2_id'} =  undef;
+            }
+            when('irregular') {
+                $where{'me.irregular'} = 1;
+            }
+        }
     } else {
         my $word_pattern = '%' . $params{word} . '%';
         for my $column ('me.word', 'me.word2', 'me.word3', 'word2_id.word') {
@@ -340,76 +350,6 @@ sub get_irregular_verbs {
     }
 
     @res;
-}
-
-sub find_untranslated_words {
-    my ($self, %params) = @_;
-
-    my $rs = $self->search(
-        {
-            'me.lang_id'         => $params{lang_id},
-            'rel_words.word2_id' => undef,
-        },
-        {
-            join   => ['rel_words'],
-            select => [
-                'me.word_id',   'me.word',  'me.word2', 'me.word3',
-                'me.irregular', 'me.mdate', 'me.cdate', 'me.note',
-                'me.in_test',
-            ],
-            as => [
-                qw[
-                    word_id word_orig word2 word3
-                    is_irregular mdate cdate
-                    note in_test
-                  ]
-            ],
-            order_by => { -asc => 'me.cdate' },
-        }
-    );
-    $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-    my @result = $rs->all();
-    return @result;
-}
-
-sub find_irregular_verbs {
-    my ($self, %params) = @_;
-
-    my $rs = $self->search(
-        {
-            -and => [
-                'me.lang_id'   => $params{lang_id},
-                'me.irregular' => 1,
-            ]
-        },
-        {
-            join   => { 'rel_words' => ['word2_id', 'partofspeech'] },
-            select => [
-                'me.word_id', 'me.word',
-                'me.word2',   'me.word3',
-
-                ## no critic (ValuesAndExpressions::ProhibitInterpolationOfLiterals)
-                'me.irregular',
-                { group_concat => ['word2_id.word', "', '"] },
-
-                ## use critic
-                'me.mdate', 'me.cdate',
-                'me.note',  'partofspeech.abbr',
-                'me.in_test'
-            ],
-            as => [
-                qw{
-                    word_id word_orig word2 word3 is_irregular word_tr
-                    mdate cdate note partofspeech in_test
-                  }
-            ],
-            group_by => ['me.word_id', 'rel_words.partofspeech_id'],
-            order_by => { -asc => 'me.cdate' },
-        }
-    );
-    $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-    my @result = $rs->all();
-    return @result;
 }
 
 1;

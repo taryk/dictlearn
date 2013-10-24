@@ -543,22 +543,14 @@ sub lookup {
         = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
 
     my @result;
-    if ($value =~ m{^ / (?<command> \!? \w+ ) $}x) {
-        given ($+{command}) {
-            when('untranslated') {
+    if ($value =~ m{^ / (?<filter> \!? \w+ ) $}x) {
+        given ($+{filter}) {
+            when([qw(untranslated !untranslated translated irregular)]) {
+                my $filter = $+{filter};
+                $filter = 'translated' if $filter eq '!untranslated';
                 @result
                     = $main::ioc->lookup('db')->schema->resultset('Word')
-                    ->find_untranslated_words(lang_id => $lang_id);
-            }
-            when(['!untranslated','translated']) {
-                @result
-                    = $main::ioc->lookup('db')->schema->resultset('Word')
-                    ->find_ones(lang_id => $lang_id, only_translated => 1);
-            }
-            when('irregular') {
-                @result
-                    = $main::ioc->lookup('db')->schema->resultset('Word')
-                    ->find_irregular_verbs(lang_id => $lang_id);
+                    ->find_ones(filter => $filter, lang_id => $lang_id);
             }
             when('words') {
                 # TODO return only words
