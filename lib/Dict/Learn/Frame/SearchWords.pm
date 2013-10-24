@@ -593,6 +593,8 @@ sub lookup {
     $self->select_first_item;
 
     my $records_count = scalar @result;
+
+    # Show how many records have been selected
     $self->parent->status_bar->SetStatusText($records_count > 0
         ? "$records_count records selected"
         : 'No records selected');

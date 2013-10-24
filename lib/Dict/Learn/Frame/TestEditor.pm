@@ -465,13 +465,20 @@ sub lookup {
         );
 
     $self->word_list->DeleteAllItems();
+    my $records_count = 0;
     while (my $word = $all_words->next) {
         my $id = $self->word_list->InsertItem(Wx::ListItem->new);
         $self->word_list->SetItem($id, 0, $word->get_column('word_id'));      # id
         $self->word_list->SetItem($id, 1, $word->get_column('word'));         # word original
         $self->word_list->SetItem($id, 2, $word->get_column('partofspeech')); # word original
         $self->word_list->SetItem($id, 3, $word->get_column('translations')); # word tr
+        $records_count++;
     }
+
+    # Show how many records have been selected
+    $self->parent->status_bar->SetStatusText($records_count > 0
+        ? "$records_count records selected"
+        : 'No records selected');
 }
 
 sub on_category_select {
