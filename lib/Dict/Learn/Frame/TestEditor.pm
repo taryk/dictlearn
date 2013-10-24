@@ -514,15 +514,15 @@ sub move_left {
     my ($self) = @_;
 
     # selected row id
-    my $word_list_row_id = $self->word_list->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
+    my $word_list_row_id = $self->word_list->GetNextItem(
+        -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
-    my $test_groups_row_id = $self->test_groups->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
+    my $test_groups_row_id = $self->test_groups->GetNextItem(
+        -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
     my $category_id
         = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
-    
+
     $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->create(
         {
             test_category_id => $category_id,
@@ -539,18 +539,22 @@ sub move_right {
     my ($self) = @_;
 
     # selected row id
-    my $test_words_row_id = $self->test_words->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
+    my $test_words_row_id
+        = $self->test_words->GetNextItem(
+            -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
-    my $test_groups_row_id = $self->test_groups->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
+    my $test_groups_row_id
+        = $self->test_groups->GetNextItem(
+            -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
-    my $category_id = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
+    my $category_id
+        = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
 
     $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->search(
         {
             test_category_id => $category_id,
-            word_id          => $self->test_words->GetItem($test_words_row_id, 0)->GetText,
+            word_id =>
+                $self->test_words->GetItem($test_words_row_id, 0)->GetText,
         },
     )->delete;
 
