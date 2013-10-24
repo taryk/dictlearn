@@ -552,23 +552,19 @@ sub lookup {
                     = $main::ioc->lookup('db')->schema->resultset('Word')
                     ->find_ones(filter => $filter, lang_id => $lang_id);
             }
-            when('words') {
+            when([qw(words phrases phrasal_verbs idioms)]) {
                 # TODO return only words
                 # it requires to have some kind of tags, which can be filtered by
-            }
-            when('phrases') {
-                # TODO return only phrases
-                # it requires to have some kind of tags, which can be filtered by
-            }
-            when('phrasal_verbs') {
-                # TODO return only phrasal verbs
-                # it requires to have some kind of tags, which can be filtered by
-            }
-            when('idioms') {
-                # TODO return only idioms
-                # it requires to have some kind of tags, which can be filtered by
+                $self->parent->status_bar->SetStatusText(
+                    sprintf 'Filter "/%s" is not implemented at the moment ',
+                    $+{filter}
+                );
+                return;
             }
             default {
+                $self->parent->status_bar->SetStatusText(
+                    sprintf 'Unknown filter: "/%s"', $+{filter});
+                return;
             }
         }
     } else {
