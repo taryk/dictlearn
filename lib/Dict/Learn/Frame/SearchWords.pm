@@ -606,10 +606,10 @@ sub edit_word {
     my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
 
-    $self->parent->p_addword->load_word(
-        word_id => $self->get_word_id($curr_id));
-
-    $self->parent->notebook->ChangeSelection(1);
+    my $add_word_page = $self->parent->p_addword;
+    my $word_id = $self->get_word_id($curr_id);
+    $add_word_page->load_word(word_id => $word_id);
+    $self->parent->notebook->AddPage($add_word_page, "Edit Word #$word_id", 1);
 }
 
 sub edit_example {

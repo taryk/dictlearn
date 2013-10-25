@@ -84,17 +84,6 @@ has manager => (
     default => sub { Wx::AuiManager->new },
 );
 
-=item vbox
-
-=cut
-
-has vbox => (
-    is      => 'ro',
-    isa     => 'Wx::BoxSizer',
-    lazy    => 1,
-    default => sub { Wx::BoxSizer->new(wxVERTICAL) },
-);
-
 =item menu_bar
 
 =cut
@@ -112,8 +101,10 @@ sub _build_menu_bar {
 
     my @menu = (
         [ Dictionaries => $self->menu_dicts ],
-        [ DB => $self->menu_db ],
-        [ Translate => $self->menu_trans ],
+        [ Word         => $self->menu_word  ],
+        [ Test         => $self->menu_test  ],
+        [ DB           => $self->menu_db    ],
+        [ Translate    => $self->menu_trans ],
     );
 
     for my $menu_item (@menu) {
@@ -151,6 +142,68 @@ sub _build_menu_dicts {
     }
 
     $menu_dicts
+}
+
+=item menu_word
+
+=cut
+
+has menu_word => (
+    is         => 'ro',
+    isa        => 'Wx::Menu',
+    lazy_build => 1,
+);
+
+sub _build_menu_word {
+    my ($self) = @_;
+    my $menu_word = Wx::Menu->new;
+
+    my @menu = (
+        [ 'Add'  => sub { $self->p_addword   } ],
+        [ 'Grid' => sub { $self->p_gridwords } ],
+    );
+
+    for my $menu_item (@menu) {
+        my ($caption, $coderef) = @$menu_item;
+        my $menu_id = $self->next_menu_id;
+        $menu_word->Append($menu_id, $caption);
+        EVT_MENU($self, $menu_id,
+                 sub { $self->notebook->AddPage($coderef->(), $caption, 0) });
+    }
+
+    return $menu_word;
+}
+
+=item menu_test
+
+=cut
+
+has menu_test => (
+    is         => 'ro',
+    isa        => 'Wx::Menu',
+    lazy_build => 1,
+);
+
+sub _build_menu_test {
+    my ($self) = @_;
+    my $menu_test = Wx::Menu->new;
+
+    my @menu = (
+        [ 'Irregular Verbs Test' => sub { $self->pt_irrverbs  } ],
+        [ 'Test Summary'         => sub { $self->pts_irrverbs } ],
+        [ 'Translation Test'     => sub { $self->pt_trans     } ],
+        [ 'Test Editor'          => sub { $self->p_testeditor } ],
+    );
+
+    for my $menu_item (@menu) {
+        my ($caption, $coderef) = @$menu_item;
+        my $menu_id = $self->next_menu_id;
+        $menu_test->Append($menu_id, $caption);
+        EVT_MENU($self, $menu_id,
+                sub { $self->notebook->AddPage($coderef->(), $caption, 0) });
+    }
+
+    return $menu_test;
 }
 
 =item menu_db
@@ -238,14 +291,15 @@ has notebook => (
 
 sub make_pages {
     my ($self) = @_;
+
     my @pages = (
         [ 'Search'               => $self->p_search,     1 ],
-        [ 'Word'                 => $self->p_addword,    0 ],
-        [ 'Words'                => $self->p_gridwords,  0 ],
-        [ 'Irregular Verbs Test' => $self->pt_irrverbs,  0 ],
-        [ 'TestSummary'          => $self->pts_irrverbs, 0 ],
-        [ 'Translation Test'     => $self->pt_trans,     0 ],
-        [ 'Test Editor'          => $self->p_testeditor, 0 ],
+        # [ 'Word'                 => $self->p_addword,    0 ],
+        # [ 'Words'                => $self->p_gridwords,  0 ],
+        # [ 'Irregular Verbs Test' => $self->pt_irrverbs,  0 ],
+        # [ 'TestSummary'          => $self->pts_irrverbs, 0 ],
+        # [ 'Translation Test'     => $self->pt_trans,     0 ],
+        # [ 'Test Editor'          => $self->p_testeditor, 0 ],
     );
 
     for my $page_item (@pages) {
@@ -269,106 +323,78 @@ has tran => (
 
 =cut
 
-has p_search => (
-    is      => 'ro',
-    isa     => 'Dict::Learn::Frame::SearchWords',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        Dict::Learn::Frame::SearchWords->new($self, $self->notebook,
-            wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    },
-);
+sub p_search {
+    my $self = shift;
+
+    return Dict::Learn::Frame::SearchWords->new($self, $self->notebook,
+        wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+}
 
 =item p_addword
 
 =cut
 
-has p_addword => (
-    is      => 'ro',
-    isa     => 'Dict::Learn::Frame::AddWord',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        Dict::Learn::Frame::AddWord->new($self, $self->notebook,
-            wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    },
-);
+sub p_addword {
+    my $self = shift;
+
+    return Dict::Learn::Frame::AddWord->new($self, $self->notebook,
+        wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+}
 
 =item p_gridwords
 
 =cut
 
-has p_gridwords => (
-    is      => 'ro',
-    isa     => 'Dict::Learn::Frame::GridWords',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        Dict::Learn::Frame::GridWords->new($self, $self->notebook,
-            wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    },
-);
+sub p_gridwords {
+    my $self = shift;
+
+    return Dict::Learn::Frame::GridWords->new($self, $self->notebook,
+        wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+}
 
 =item pt_irrverbs
 
 =cut
 
-has pt_irrverbs => (
-    is      => 'ro',
-    isa     => 'Dict::Learn::Frame::IrregularVerbsTest',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        Dict::Learn::Frame::IrregularVerbsTest->new($self, $self->notebook,
-            wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    },
-);
+sub pt_irrverbs {
+    my $self = shift;
+
+    return Dict::Learn::Frame::IrregularVerbsTest->new($self, $self->notebook,
+        wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+}
 
 =item pts_irrverbs
 
 =cut
 
-has pts_irrverbs => (
-    is      => 'ro',
-    isa     => 'Dict::Learn::Frame::TestSummary',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        Dict::Learn::Frame::TestSummary->new($self, $self->notebook,
-            wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    },
-);
+sub pts_irrverbs {
+    my $self = shift;
+
+    return Dict::Learn::Frame::TestSummary->new($self, $self->notebook,
+        wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+}
 
 =item pt_trans
 
 =cut
 
-has pt_trans => (
-    is      => 'ro',
-    isa     => 'Dict::Learn::Frame::TranslationTest',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        Dict::Learn::Frame::TranslationTest->new($self, $self->notebook,
-            wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    },
-);
+sub pt_trans {
+    my $self = shift;
+
+    return Dict::Learn::Frame::TranslationTest->new($self, $self->notebook,
+        wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+}
 
 =item p_testeditor
 
 =cut
 
-has p_testeditor => (
-    is      => 'ro',
-    isa     => 'Dict::Learn::Frame::TestEditor',
-    lazy    => 1,
-    default => sub {
-        my $self = shift;
-        Dict::Learn::Frame::TestEditor->new($self, $self->notebook,
-            wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
-    },
-);
+sub p_testeditor {
+    my $self = shift;
+
+    return Dict::Learn::Frame::TestEditor->new($self, $self->notebook,
+        wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+}
 
 sub dictionary_check {
     my ($self, $event) = @_;

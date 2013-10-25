@@ -632,11 +632,12 @@ sub add {
     else {
         $main::ioc->lookup('db')->schema->resultset('Word')->add_one(%params);
     }
-    $self->clear_fields;
-    $self->remove_all_dst;
-    $self->parent->notebook->SetPageText(1 => 'Word');
-    $self->btn_add_word->SetLabel('Add');
-    $self->parent->p_search->lookup;
+
+    # Close the page after adding/editing the word
+    $self->close_page();
+
+    # TODO trigger an event informing that word list should be reloaded
+    # $self->parent->p_search->lookup;
 
     return $self;
 }
@@ -732,9 +733,6 @@ sub fill_fields {
         $el->{cbox}->SetSelection($word_tr->{partofspeech});
     }
     $self->word_note->SetValue($params{note});
-
-    $self->parent->notebook->SetPageText(
-        1 => 'Edit item id#' . $self->item_id);
 }
 
 sub dst_count { scalar @{$_[0]->word_dst} }
@@ -829,12 +827,15 @@ sub enable_controls($$) {
     );
 }
 
-sub cancel {
+sub close_page {
     my $self = shift;
 
     $self->clear_fields();
     $self->remove_all_dst();
-    $self->parent->notebook->SetPageText(1 => 'Word');
+
+    $self->parent->notebook->DeletePage(
+        $self->parent->notebook->GetSelection()
+    );
 }
 
 sub FOREIGNBUILDARGS {
@@ -860,7 +861,7 @@ sub BUILD {
     EVT_BUTTON($self, $self->btn_additem,  sub { $self->add_dst_item });
     EVT_BUTTON($self, $self->btn_clear,    \&clear_fields);
     EVT_BUTTON($self, $self->btn_tran,     \&translate_word);
-    EVT_BUTTON($self, $self->btn_cancel,   \&cancel);
+    EVT_BUTTON($self, $self->btn_cancel,   \&close_page);
     EVT_CHECKBOX($self, $self->cb_irregular, \&toggle_irregular);
     EVT_TEXT($self, $self->word_src, \&check_word);
 
