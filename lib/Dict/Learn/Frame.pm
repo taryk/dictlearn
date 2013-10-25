@@ -1,6 +1,7 @@
 package Dict::Learn::Frame 0.1;
 
 use Wx qw[:everything];
+use Wx::AUI;
 use Wx::Grid;
 use Wx::Event qw[:everything];
 
@@ -71,6 +72,17 @@ Get id for next menu element
 =cut
 
 has parent => ( is => 'ro' );
+
+=item manager
+
+=cut
+
+has manager => (
+    is      => 'ro',
+    isa     => 'Wx::AuiManager',
+    lazy    => 1,
+    default => sub { Wx::AuiManager->new },
+);
 
 =item vbox
 
@@ -213,11 +225,14 @@ has status_bar => (
 
 has notebook => (
     is      => 'ro',
-    isa     => 'Wx::Notebook',
+    isa     => 'Wx::AuiNotebook',
     lazy    => 1,
     default => sub {
-        Wx::Notebook->new(shift, wxID_ANY,
-            wxDefaultPosition, wxDefaultSize, 0),
+        Wx::AuiNotebook->new(
+            shift, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+            wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS
+                | wxAUI_NB_CLOSE_ON_ALL_TABS | wxAUI_NB_TOP
+        ),
     },
 );
 
@@ -468,19 +483,14 @@ sub BUILD {
     # main menu
     $self->SetMenuBar($self->menu_bar);
 
+    $self->manager->SetManagedWindow($self);
     $self->SetIcon(Wx::GetWxPerlIcon());
-    $self->vbox->Add($self->notebook, 1, wxALL | wxEXPAND, 5);
 
     $self->make_pages();
 
-    # tell we want automatic layout
-    # $self->SetAutoLayout( 1 );
-    $self->SetSizer($self->vbox);
-
-    # size the window optimally and set its minimal size
-    $self->Layout();
-    $self->vbox->Fit( $self );
-    # $self->vbox->SetSizeHints( $self );
+    $self->manager->AddPane($self->notebook,
+        Wx::AuiPaneInfo->new->Name("notebook")
+            ->CenterPane->Caption("Notebook")->Position(1));
 
     Dict::Learn::Dictionary->set(0);
 
@@ -488,8 +498,16 @@ sub BUILD {
     # like 'DictLearn - [English-Ukrainian]'
     $self->set_frame_title();
 
+    $self->manager->Update;
+
     # events
     EVT_CLOSE($self, \&on_close);
+}
+
+sub DESTROY {
+    my ($self) = @_;
+
+    $self->manager->UnInit;
 }
 
 no Moose;
