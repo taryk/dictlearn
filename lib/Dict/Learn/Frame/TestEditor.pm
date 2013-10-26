@@ -622,7 +622,7 @@ sub add_group {
         wxDefaultPosition
     );
 
-    return if $dialog->ShowModal == wxCANCEL;
+    return if $dialog->ShowModal != wxOK;
 
     my $group_name = $dialog->GetValue;
 
@@ -671,7 +671,7 @@ sub update_group {
         wxDefaultPosition
     );
 
-    return if $dialog->ShowModal == wxCANCEL;
+    return if $dialog->ShowModal != wxOK;
 
     my $group_name = $dialog->GetValue;
 
