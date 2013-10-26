@@ -21,5 +21,13 @@ __PACKAGE__->has_one(
         cascade_update => 0
     }
 );
+__PACKAGE__->has_many(
+    words => 'Dict::Learn::Main::Result::TestCategoryWords',
+    { 'foreign.test_category_id' => 'self.test_category_id' },
+    {
+        cascade_delete => 1,
+        cascade_update => 1
+    }
+);
 
 1;
