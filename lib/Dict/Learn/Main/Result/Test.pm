@@ -18,5 +18,13 @@ __PACKAGE__->has_many(
         cascade_update => 0
     }
 );
+__PACKAGE__->has_many(
+    categories => 'Dict::Learn::Main::Result::TestCategory',
+    { 'foreign.test_id' => 'self.test_id' },
+    {
+        cascade_delete => 0,
+        cascade_update => 0
+    }
+);
 
 1;
