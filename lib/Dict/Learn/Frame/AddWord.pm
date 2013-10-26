@@ -187,11 +187,11 @@ has btn_additem => (
     },
 );
 
-=item hbox_dst_item
+=item vbox_dst_item
 
 =cut
 
-has hbox_dst_item => (
+has vbox_dst_item => (
     is      => 'ro',
     isa     => 'ArrayRef',
     lazy    => 1,
@@ -385,9 +385,13 @@ sub select_word {
 sub make_dst_item {
     my ($self, $word_id, $ro) = @_;
 
-    push @{ $self->hbox_dst_item } => Wx::BoxSizer->new(wxHORIZONTAL);
-    my $id = $#{ $self->hbox_dst_item };
-    $self->word_dst->[$id] = {
+    my $vbox = Wx::BoxSizer->new(wxVERTICAL);
+    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
+    push @{ $self->vbox_dst_item } => $vbox;
+
+    my $id = $#{ $self->vbox_dst_item };
+
+    my %trans_panel = (
         word_id => $word_id,
         id      => $id,
         cbox    => Wx::ComboBox->new(
@@ -397,34 +401,31 @@ sub make_dst_item {
             wxCB_DROPDOWN | wxCB_READONLY, wxDefaultValidator
         ),
         popup => Dict::Learn::Combo::WordList->new(),
-
-        # word    => Wx::TextCtrl->new( $self, wxID_ANY, '', wxDefaultPosition, wxDefaultSize ),
-        # word    => Wx::ComboBox->new( $self, wxID_ANY, undef, wxDefaultPosition, wxDefaultSize, [], wxCB_DROPDOWN, wxDefaultValidator  ),
         word => Wx::ComboCtrl->new(
             $self,         wxID_ANY,
             '',            wxDefaultPosition,
             wxDefaultSize, wxCB_DROPDOWN,
             wxDefaultValidator
         ),
-
-        # btnp => Wx::Button->new( $self, wxID_ANY, '+', wxDefaultPosition, wxDefaultSize ),
+        note => Wx::TextCtrl->new($self, wxID_ANY, '', wxDefaultPosition,
+            wxDefaultSize),
         btnm => Wx::Button->new(
             $self, wxID_ANY, '-', wxDefaultPosition, [40, -1]
         ),
-        parent_hbox => $self->hbox_dst_item->[$id]
-    };
-    $self->word_dst->[$id]{word}
-        ->SetPopupControl($self->word_dst->[$id]{popup});
-
-    # $self->word_dst->[$id]{word}->SetTextCtrlStyle( wxTE_MULTILINE );
-    # EVT_BUTTON( $self, $self->word_dst->[$id]{btnp}, sub { $self->add_dst_item(); } );
-    EVT_BUTTON(
-        $self,
-        $self->word_dst->[$id]{btnm},
-        sub { $self->del_dst_item($id); }
+        parent_vbox => $vbox,
+        parent_hbox => $hbox,
     );
 
-    # EVT_TEXT(   $self, $self->word_dst->[$id]{word}, sub { $self->query_words($id); } );
+    $self->word_dst->[$id] = \%trans_panel;
+
+    $trans_panel{word}
+        ->SetPopupControl($trans_panel{popup});
+
+    EVT_BUTTON(
+        $self, $trans_panel{btnm},
+        sub { $self->del_dst_item($id) }
+    );
+
     my $part_of_speach_selection = 0;
     if ($id > 0 and my $prev_item = $self->word_dst->[$id - 1]) {
         return unless defined $prev_item->{cbox}
@@ -433,33 +434,30 @@ sub make_dst_item {
 
         $part_of_speach_selection = $prev_item->{cbox}->GetSelection;
     }
-    $self->word_dst->[$id]{cbox}->SetSelection($part_of_speach_selection);
+    $trans_panel{cbox}->SetSelection($part_of_speach_selection);
 
-    $self->hbox_dst_item->[$id]
-        ->Add($self->word_dst->[$id]{cbox}, 0, wxALL, 0);
-    $self->hbox_dst_item->[$id]
-        ->Add($self->word_dst->[$id]{word}, 4, wxALL, 0);
-    $self->hbox_dst_item->[$id]
-        ->Add($self->word_dst->[$id]{btnm}, 0, wxALL, 0);
+    $hbox->Add($trans_panel{cbox}, 0, wxALL, 0);
+    $hbox->Add($trans_panel{word}, 4, wxALL, 0);
+    $hbox->Add($trans_panel{btnm}, 0, wxALL, 0);
+
+    $vbox->Add($hbox, 0, wxEXPAND, 0);
+    $vbox->Add($trans_panel{note}, 0, wxEXPAND, 0);
 
     if ($ro) {
-        # $self->word_dst->[$id]{word}->SetEditable(0);
-        $self->word_dst->[$id]{word}->GetTextCtrl->SetEditable(0);
-        $self->word_dst->[$id]{word}->GetPopupWindow->Disable;
-        $self->word_dst->[$id]{edit}
+        $trans_panel{word}->GetTextCtrl->SetEditable(0);
+        $trans_panel{word}->GetPopupWindow->Disable;
+        $trans_panel{edit}
             = Wx::Button->new($self, wxID_ANY, 'e', wxDefaultPosition,
             [40, -1]);
 
         EVT_BUTTON(
-            $self,
-            $self->word_dst->[$id]{edit},
+            $self, $trans_panel{edit},
             sub { $self->edit_word_as_new($id) }
         );
-        $self->hbox_dst_item->[$id]
-            ->Add($self->word_dst->[$id]{edit}, 0, wxALL, 0);
+        $hbox->Add($trans_panel{edit}, 0, wxALL, 0);
     }
 
-    return $self->word_dst->[$id];
+    return \%trans_panel;
 }
 
 sub query_words {
@@ -469,7 +467,7 @@ sub query_words {
     my @words
         = $main::ioc->lookup('db')->schema->resultset('Word')
         ->select(Dict::Learn::Dictionary->curr->{language_tr_id}{language_id},
-        $cb->GetValue(),);
+        $cb->GetValue());
     $cb->Clear;
     for (@words) {
         $cb->Append($_->{word});
@@ -528,10 +526,10 @@ sub add_dst_item {
     my ($self, $word_id, $ro) = @_;
 
     my $el = $self->make_dst_item($word_id, $ro);
-    # $self->vbox_dst->Add( $el->{parent_hbox}, 1, wxALL|wxGROW, 0 );
+    # $self->vbox_dst->Add( $el->{parent_vbox}, 1, wxALL|wxGROW, 0 );
     my @children = $self->vbox_dst->GetChildren;
     $self->vbox_dst->Insert($#children || 0,
-        $el->{parent_hbox}, 1, wxALL | wxGROW, 0);
+        $el->{parent_vbox}, 1, wxALL | wxGROW, 0);
     $self->Layout();
 
     return $el;
@@ -540,15 +538,16 @@ sub add_dst_item {
 sub del_dst_item {
     my ($self, $id) = @_;
 
-    for (qw[ cbox word btnm btnp edit ]) {
+    for (qw[ cbox word btnm btnp edit note ]) {
         next unless defined $self->word_dst->[$id]{$_};
         $self->word_dst->[$id]{$_}->Destroy();
         delete $self->word_dst->[$id]{$_};
     }
-    $self->vbox_dst->Detach($self->hbox_dst_item->[$id])
-        if defined $self->hbox_dst_item->[$id];
+    $self->vbox_dst->Detach($self->vbox_dst_item->[$id])
+        if defined $self->vbox_dst_item->[$id];
     $self->Layout();
-    delete $self->hbox_dst_item->[$id];
+    delete $self->vbox_dst_item->[$id];
+    delete $self->word_dst->[$id]{parent_vbox};
     delete $self->word_dst->[$id]{parent_hbox};
 
     return $self;
@@ -596,30 +595,30 @@ sub add {
     }
     $self->do_word_dst(
         sub {
-            my $word_dst_item = pop;
-            my $push_item = {word_id => $word_dst_item->{word_id}};
-            if ($word_dst_item->{word}) {
-                $push_item->{partofspeech}
-                    = int($word_dst_item->{cbox}->GetSelection());
+            my $trans_panel = pop;
+            my %push_item = ( word_id => $trans_panel->{word_id} );
+            if ($trans_panel->{word}) {
+                $push_item{partofspeech}
+                    = int($trans_panel->{cbox}->GetSelection());
 
                 # `GetLabel` returns "" or value
-                my $word_id = $word_dst_item->{word}->GetLabel();
+                my $word_id = $trans_panel->{word}->GetLabel();
                 $word_id = undef if $word_id eq '';
                 if (defined $word_id and int $word_id >= 0) {
-                    $push_item->{word_id} = $word_id;
-                    $push_item->{word}    = 0;
+                    $push_item{word_id} = $word_id;
+                    $push_item{word}    = 0;
                 }
                 else {
-                    $push_item->{word} = $word_dst_item->{word}->GetValue();
+                    $push_item{word} = $trans_panel->{word}->GetValue();
 
                     # skip empty fields
-                    next unless $push_item->{word} =~ /^.+$/;
+                    next unless $push_item{word} =~ /^.+$/;
                 }
-                $push_item->{lang_id}
-                    = Dict::Learn::Dictionary->curr->{language_tr_id}
-                    {language_id};
+                $push_item{note} = $trans_panel->{note}->GetValue();
+                $push_item{lang_id}
+                = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
             }
-            push @{$params{translate}} => $push_item;
+            push @{$params{translate}} => \%push_item;
         }
     );
     if (defined $self->item_id
@@ -670,6 +669,7 @@ sub clear_fields {
             return unless defined $word_dst_item->{word};
             $word_dst_item->{cbox}->SetSelection(0);
             $word_dst_item->{word}->SetText('');
+            $word_dst_item->{note}->Clear;
         }
     );
     $self->word_note->Clear;
@@ -730,6 +730,7 @@ sub fill_fields {
         my $el = $self->add_dst_item($word_tr->{word_id} => 1);
         $el->{word}->SetValue($word_tr->{word});
         $el->{word}->SetLabel($word_tr->{word_id});
+        $el->{note}->SetValue($word_tr->{note});
         $el->{cbox}->SetSelection($word_tr->{partofspeech});
     }
     $self->word_note->SetValue($params{note});

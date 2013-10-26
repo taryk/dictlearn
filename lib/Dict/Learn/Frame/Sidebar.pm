@@ -124,7 +124,7 @@ sub gen_html {
             $translate
                 .= '<li>'
                 . $word->{word}
-                . ($word->{note} ? '<i>(' . $word->{note} . ')</i>' : '')
+                . ($word->{note} ? ' <i>(' . $word->{note} . ')</i>' : '')
                 . '</li>';
         }
         $translate .= '</ol>';

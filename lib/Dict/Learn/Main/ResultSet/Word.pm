@@ -85,18 +85,21 @@ sub update_one {
     }
     my $updated_word = $self->search({word_id => $params{word_id}})
         ->first->update(\%upd_word);
+
     for (@{$params{translate}}) {
 
         # create new
         unless (defined $_->{word_id}) {
             next unless defined $_->{word};
             $updated_word->add_to_words(
-                {   word    => $_->{word},
-                    note    => $_->{note},
+                {
+                    word    => $_->{word},
                     lang_id => $_->{lang_id},
                 },
-                {   dictionary_id   => $params{dictionary_id},
+                {
+                    dictionary_id   => $params{dictionary_id},
                     partofspeech_id => $_->{partofspeech},
+                    note            => $_->{note},
                 }
             );
             next;
@@ -106,27 +109,38 @@ sub update_one {
         my $word_xref
             = $self->result_source->schema->resultset('Words')
             ->find_or_create(
-            {   word1_id => $params{word_id},
-                word2_id => $_->{word_id},
-            }
+                {
+                    word1_id => $params{word_id},
+                    word2_id => $_->{word_id},
+                    # FIXME there is also third primary column - 'rel_type',
+                    # but it is not implemented ATM
+                }
             );
         if (defined $_->{word}) {
             next if $_->{word} == 0;
-            $word_xref->first->update({partofspeech_id => $_->{partofspeech}})
-                ->word2_id->update(
-                {   word    => $_->{word},
-                    note    => $_->{note},
+            my $first = $word_xref->first;
+            $first->update(
+                {
+                    partofspeech_id => $_->{partofspeech},
+                    note            => $_->{note},
+                }
+            );
+            $first->word2_id->update(
+                {
+                    word    => $_->{word},
                     lang_id => $_->{lang_id},
                 }
-                );
+            );
         }
         else {
             # delete word if `word` is undefined
             $word_xref->delete;
         }
     }
+
     $self->get_all_flushcashe;
-    $self;
+
+    return $self;
 }
 
 sub delete_one {
