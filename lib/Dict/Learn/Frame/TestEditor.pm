@@ -13,6 +13,8 @@ use Carp qw[ croak confess ];
 
 use common::sense;
 
+use Dict::Learn::Dictionary;
+
 sub TEST_ID { 1 }
 
 =item parent
@@ -376,6 +378,13 @@ sub BUILD {
 sub init {
     my ($self) = @_;
 
+    $self->load_categories();
+    $self->lookup();
+}
+
+sub load_categories {
+    my ($self) = @_;
+
     my $categories
         = $main::ioc->lookup('db')->schema->resultset('TestCategory')
         ->search(
@@ -395,8 +404,6 @@ sub init {
         # $self->test_groups->SetItem($id, 2, $category->name);           # number of words
         # $self->test_groups->SetItem($id, 3, $category->name);           # scrore
     }
-
-    $self->lookup();
 }
 
 sub lookup {
@@ -597,6 +604,24 @@ sub add_group {
     my ($self) = @_;
 
     # TODO add a new test group
+    my $dialog = Wx::TextEntryDialog->new(
+        $self, 'Group name', 'Please enter group name',
+        undef, wxOK | wxCANCEL | wxCENTRE,
+        wxDefaultPosition
+    );
+
+    return if $dialog->ShowModal == wxCANCEL;
+
+    my $group_name = $dialog->GetValue;
+
+    $main::ioc->lookup('db')->schema->resultset('TestCategory')->create(
+        {
+            test_id          => TEST_ID,
+            dictionary_id    => Dict::Learn::Dictionary->curr_id,
+            name             => $group_name,
+        },
+    );
+    $self->load_categories();
 }
 
 sub rem_group {

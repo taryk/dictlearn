@@ -49,7 +49,11 @@ sub cb {
         warn 'Wrong "cb" type';
         return;
     }
+
     push @{$self->{cb}} => $cb;
+
+    # Call the coderef immediately if dict_id is already set
+    $cb->($self) if defined $self->{dict_id};
 }
 
 sub get {

@@ -516,7 +516,8 @@ sub BUILD {
 
     $self->manager->AddPane($self->notebook,
         Wx::AuiPaneInfo->new->Name("notebook")
-            ->CenterPane->Caption("Notebook")->Position(1));
+            ->CenterPane->Caption("Notebook")->Position(1)
+    );
 
     Dict::Learn::Dictionary->set(0);
 
