@@ -600,6 +600,12 @@ sub get_partofspeech_id {
         $self->partofspeech->{$self->word_list->GetItem($rowid, 2)->GetText};
 }
 
+sub get_test_group_id {
+    my ($self, $rowid) = @_;
+
+    return $self->test_groups->GetItem($rowid, 0)->GetText;
+}
+
 sub add_group {
     my ($self) = @_;
 
@@ -624,16 +630,31 @@ sub add_group {
     $self->load_categories();
 }
 
-sub rem_group {
+sub del_group {
     my ($self) = @_;
 
-    # TODO remove a selected test group
+    my $selected_rowid = $self->test_groups->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+    my $selected_test_group_id = $self->get_test_group_id($selected_rowid);
+
+    # `delete_all` method deletes all records from `TestCategoryWords` table
+    # related to this category as well
+    $main::ioc->lookup('db')->schema->resultset('TestCategory')->search(
+        {
+            test_category_id => $selected_test_group_id,
+            test_id          => TEST_ID,
+            dictionary_id    => Dict::Learn::Dictionary->curr_id,
+        }
+    )->delete_all;
+
+    $self->load_categories();
 }
 
 sub update_group {
     my ($self) = @_;
 
     # TODO change name of a selected test group
+    
 }
 
 no Moose;
