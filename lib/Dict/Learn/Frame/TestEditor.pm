@@ -606,10 +606,16 @@ sub get_test_group_id {
     return $self->test_groups->GetItem($rowid, 0)->GetText;
 }
 
+sub get_test_group_name {
+    my ($self, $rowid) = @_;
+
+    return $self->test_groups->GetItem($rowid, 1)->GetText;
+}
+
+
 sub add_group {
     my ($self) = @_;
 
-    # TODO add a new test group
     my $dialog = Wx::TextEntryDialog->new(
         $self, 'Group name', 'Please enter group name',
         undef, wxOK | wxCANCEL | wxCENTRE,
@@ -653,8 +659,31 @@ sub del_group {
 sub update_group {
     my ($self) = @_;
 
-    # TODO change name of a selected test group
-    
+    my $selected_rowid = $self->test_groups->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+    my $selected_test_group_id = $self->get_test_group_id($selected_rowid);
+    my $selected_test_group_name
+        = $self->get_test_group_name($selected_rowid);
+
+    my $dialog = Wx::TextEntryDialog->new(
+        $self, 'Group name', 'Please enter group name',
+        $selected_test_group_name, wxOK | wxCANCEL | wxCENTRE,
+        wxDefaultPosition
+    );
+
+    return if $dialog->ShowModal == wxCANCEL;
+
+    my $group_name = $dialog->GetValue;
+
+    $main::ioc->lookup('db')->schema->resultset('TestCategory')->search(
+        {
+            test_category_id => $selected_test_group_id,
+            test_id          => TEST_ID,
+            dictionary_id    => Dict::Learn::Dictionary->curr_id,
+        },
+    )->update({ name => $group_name });
+
+    $self->load_categories();
 }
 
 no Moose;
