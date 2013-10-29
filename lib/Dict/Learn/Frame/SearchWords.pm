@@ -543,7 +543,7 @@ sub lookup {
         = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
 
     my @result;
-    if ($value =~ m{^ / (?<filter> \!? \w+ ) $}x) {
+    if ($value =~ m{^ / (?<filter> \!? [\w=]+ ) $}x) {
         given ($+{filter}) {
             when([qw(untranslated !untranslated translated irregular)]) {
                 my $filter = $+{filter};
@@ -560,6 +560,14 @@ sub lookup {
                     $+{filter}
                 );
                 return;
+            }
+            when(m{^ partofspeech = (?<partofspeech> \w+ ) $}x) {
+                @result
+                    = $main::ioc->lookup('db')->schema->resultset('Word')
+                    ->find_ones(
+                        partofspeech => $+{partofspeech},
+                        lang_id      => $lang_id
+                    );
             }
             default {
                 $self->parent->status_bar->SetStatusText(

@@ -419,7 +419,7 @@ sub lookup {
         # later don't have translated words column).
         # Thus, in order to not duplicate code, they can be easily merged into
         # one class.
-        if ($value =~ m{^ / (?<filter> \!? \w+ ) $}x) {
+        if ($value =~ m{^ / (?<filter> \!? [\w=]+ ) $}x) {
             given ($+{filter}) {
                 when('irregular') {
                     %options = ( 'word1_id.irregular' => 1 );
@@ -434,6 +434,9 @@ sub lookup {
                         $+{filter}
                     );
                     return;
+                }
+                when(m{^ partofspeech = (?<partofspeech> \w+ ) $}x) {
+                    $options{'partofspeech.abbr'} = $+{partofspeech};
                 }
                 default {
                     $self->parent->status_bar->SetStatusText(

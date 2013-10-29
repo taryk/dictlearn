@@ -161,6 +161,9 @@ sub find_ones {
     my ($self, %params) = @_;
 
     my %where;
+    if ($params{partofspeech}) {
+        $where{'partofspeech.abbr'} = $params{partofspeech};
+    }
     if ($params{filter}) {
         given ($params{filter}) {
             when('translated') {
