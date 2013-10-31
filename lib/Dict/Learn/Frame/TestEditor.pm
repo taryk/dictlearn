@@ -436,7 +436,10 @@ sub lookup {
                     return;
                 }
                 when(m{^ partofspeech = (?<partofspeech> \w+ ) $}x) {
-                    $options{'partofspeech.abbr'} = $+{partofspeech};
+                    $options{'-or'} = {
+                        'partofspeech.abbr'      => $+{partofspeech},
+                        'partofspeech.name_orig' => ucfirst($+{partofspeech}),
+                    };
                 }
                 default {
                     $self->parent->status_bar->SetStatusText(

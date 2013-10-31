@@ -162,9 +162,11 @@ sub find_ones {
 
     my %where;
     if ($params{partofspeech}) {
-        $where{'partofspeech.abbr'} = $params{partofspeech};
-    }
-    if ($params{filter}) {
+        $where{'-or'} = [
+            'partofspeech.abbr'      => $params{partofspeech},
+            'partofspeech.name_orig' => ucfirst($params{partofspeech}),
+        ];
+    } elsif ($params{filter}) {
         given ($params{filter}) {
             when('translated') {
                 $where{'rel_words.word2_id'} = { '!=' => undef };
