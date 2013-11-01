@@ -159,16 +159,18 @@ sub _build_menu_word {
     my $menu_word = Wx::Menu->new;
 
     my @menu = (
-        [ 'Add'  => sub { $self->p_addword   } ],
-        [ 'Grid' => sub { $self->p_gridwords } ],
+        [ 'Add'  => \&p_addword   => 'Ctrl+N' ],
+        [ "Grid" => \&p_gridwords => 'Ctrl+G' ],
     );
 
     for my $menu_item (@menu) {
-        my ($caption, $coderef) = @$menu_item;
+        my ($caption, $coderef, $keybind) = @$menu_item;
         my $menu_id = $self->next_menu_id;
-        $menu_word->Append($menu_id, $caption);
+        $menu_word->Append($menu_id,
+            $caption . ($keybind ? "\t" . $keybind : ''));
+
         EVT_MENU($self, $menu_id,
-                 sub { $self->notebook->AddPage($coderef->(), $caption, 0) });
+            sub { $self->notebook->AddPage($self->$coderef(), $caption, 0) });
     }
 
     return $menu_word;
@@ -189,18 +191,20 @@ sub _build_menu_test {
     my $menu_test = Wx::Menu->new;
 
     my @menu = (
-        [ 'Irregular Verbs Test' => sub { $self->pt_irrverbs  } ],
-        [ 'Test Summary'         => sub { $self->pts_irrverbs } ],
-        [ 'Translation Test'     => sub { $self->pt_trans     } ],
-        [ 'Test Editor'          => sub { $self->p_testeditor } ],
+        [ 'Irregular Verbs Test' => \&pt_irrverbs  => 'Ctrl+I' ],
+        [ 'Test Summary'         => \&pts_irrverbs => 'Ctrl+S' ],
+        [ 'Translation Test'     => \&pt_trans     => 'Ctrl+T' ],
+        [ 'Test Editor'          => \&p_testeditor => 'Ctrl+E' ],
     );
 
     for my $menu_item (@menu) {
-        my ($caption, $coderef) = @$menu_item;
+        my ($caption, $coderef, $keybind) = @$menu_item;
         my $menu_id = $self->next_menu_id;
-        $menu_test->Append($menu_id, $caption);
+        $menu_test->Append($menu_id,
+            $caption . ($keybind ? "\t" . $keybind : ''));
+
         EVT_MENU($self, $menu_id,
-                sub { $self->notebook->AddPage($coderef->(), $caption, 0) });
+            sub { $self->notebook->AddPage($self->$coderef(), $caption, 0) });
     }
 
     return $menu_test;
