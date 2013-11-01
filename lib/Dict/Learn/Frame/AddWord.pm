@@ -748,6 +748,23 @@ sub get_partofspeech_index {
     }
 }
 
+sub _add_translation_item {
+    my ($self, $word, $partofspeech) = @_;
+
+    my $trans_item = $self->add_dst_item;
+    $trans_item->{cbox}->SetSelection(
+        $self->get_partofspeech_index(
+            $partofspeech)
+    );
+    $trans_item->{word}->SetValue($word->{word});
+    my $note = '';
+    $note = "( $word->{category} )"
+        if $word->{category};
+    $note .= ($note ? ' ' : '') . $word->{note}
+        if $word->{note};
+    $trans_item->{note}->SetValue($note) if $note;
+}
+
 sub translate_word {
     my $self = shift;
 
@@ -758,7 +775,6 @@ sub translate_word {
     p($res);
     my $limit = $self->dst_count;
     if (keys %$res >= 1) {
-        my $i = 0;
         for my $meaning_group (keys %$res) {
             for my $partofspeech (keys %$res->{$meaning_group}) {
                 next
@@ -768,31 +784,13 @@ sub translate_word {
                     given (ref $words) {
                         when ('ARRAY') {
                             for my $word (@$words) {
-                                my $trans_item = $self->add_dst_item;
-                                $trans_item->{cbox}->SetSelection(
-                                    $self->get_partofspeech_index(
-                                        $partofspeech)
-                                );
-                                $trans_item->{word}->SetValue($word->{word});
-                                my $note = '';
-                                $note = "( $word->{category} )"
-                                    if $word->{category};
-                                $note .= ($note ? ' ' : '') . $word->{note}
-                                    if $word->{note};
-                                $trans_item->{note}->SetValue($note) if $note;
+                                $self->_add_translation_item(
+                                    $word, $partofspeech);
                             }
                         }
                         when ('HASH') {
-                            my $trans_item = $self->add_dst_item;
-                            $trans_item->{cbox}->SetSelection(
-                                $self->get_partofspeech_index($partofspeech));
-                            $trans_item->{word}->SetValue($words->{word});
-                            my $note = '';
-                            $note = "( $words->{category} )"
-                                if $words->{category};
-                            $note .= ($note ? ' ' : '') . $words->{note}
-                                if $words->{note};
-                            $trans_item->{note}->SetValue($note) if $note;
+                            $self->_add_translation_item(
+                                $words, $partofspeech);
                         }
                     }
                 }
