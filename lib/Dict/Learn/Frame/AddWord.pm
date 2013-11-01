@@ -768,23 +768,31 @@ sub translate_word {
                     given (ref $words) {
                         when ('ARRAY') {
                             for my $word (@$words) {
-                                $self->add_dst_item;
-                                $self->word_dst->[$i]{cbox}->SetSelection(
+                                my $trans_item = $self->add_dst_item;
+                                $trans_item->{cbox}->SetSelection(
                                     $self->get_partofspeech_index(
                                         $partofspeech)
                                 );
-                                $self->word_dst->[$i]{word}
-                                    ->SetValue($word->{word});
-                                $i++;
+                                $trans_item->{word}->SetValue($word->{word});
+                                my $note = '';
+                                $note = "( $word->{category} )"
+                                    if $word->{category};
+                                $note .= ($note ? ' ' : '') . $word->{note}
+                                    if $word->{note};
+                                $trans_item->{note}->SetValue($note) if $note;
                             }
                         }
                         when ('HASH') {
-                            $self->add_dst_item;
-                            $self->word_dst->[$i]{cbox}->SetSelection(
+                            my $trans_item = $self->add_dst_item;
+                            $trans_item->{cbox}->SetSelection(
                                 $self->get_partofspeech_index($partofspeech));
-                            $self->word_dst->[$i]{word}
-                                ->SetValue($words->{word});
-                            $i++;
+                            $trans_item->{word}->SetValue($words->{word});
+                            my $note = '';
+                            $note = "( $words->{category} )"
+                                if $words->{category};
+                            $note .= ($note ? ' ' : '') . $words->{note}
+                                if $words->{note};
+                            $trans_item->{note}->SetValue($note) if $note;
                         }
                     }
                 }
