@@ -170,7 +170,7 @@ sub _build_menu_word {
             $caption . ($keybind ? "\t" . $keybind : ''));
 
         EVT_MENU($self, $menu_id,
-            sub { $self->notebook->AddPage($self->$coderef(), $caption, 0) });
+            sub { $self->notebook->AddPage($self->$coderef(), $caption, 1) });
     }
 
     return $menu_word;
@@ -204,7 +204,7 @@ sub _build_menu_test {
             $caption . ($keybind ? "\t" . $keybind : ''));
 
         EVT_MENU($self, $menu_id,
-            sub { $self->notebook->AddPage($self->$coderef(), $caption, 0) });
+            sub { $self->notebook->AddPage($self->$coderef(), $caption, 1) });
     }
 
     return $menu_test;
