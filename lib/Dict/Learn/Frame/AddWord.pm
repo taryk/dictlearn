@@ -365,7 +365,8 @@ sub keybind {
         }
         when ([WXK_SUBTRACT, WXK_NUMPAD_SUBTRACT]) {
             if (my $last_word_obj
-                = first { defined $_->{cbox} } reverse @{ $self->word_translations })
+                = first { defined $_->{cbox} }
+                reverse @{ $self->word_translations })
             {
                 $self->del_trans_item($last_word_obj->{id});
             }
@@ -818,22 +819,20 @@ sub toggle_irregular {
 }
 
 sub enable_controls($$) {
-    my ($self, $en) = @_;
+    my ($self, $is_enabled) = @_;
 
-    $self->btn_additem->Enable($en);
-
-    # $self->btn_add_word->Enable($en);
-    $self->btn_clear->Enable($en);
-    $self->word_note->Enable($en);
-    $self->btn_tran->Enable($en);
+    $self->btn_additem->Enable($is_enabled);
+    $self->btn_clear->Enable($is_enabled);
+    $self->word_note->Enable($is_enabled);
+    $self->btn_tran->Enable($is_enabled);
     $self->for_each_trans_item(
         sub {
             my $trans_item = pop;
             return unless defined $trans_item->{word};
-            $trans_item->{word}->Enable($en);
-            $trans_item->{cbox}->Enable($en);
-            $trans_item->{btnm}->Enable($en);
-            $trans_item->{edit}->Enable($en) if $trans_item->{edit};
+            for my $widget (qw(word note cbox btnm edit)) {
+                next if !$trans_item->{$widget};
+                $trans_item->{$widget}->Enable($is_enabled);
+            }
         }
     );
 }
