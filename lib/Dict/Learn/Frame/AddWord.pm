@@ -373,15 +373,6 @@ sub keybind {
     }
 }
 
-sub select_word {
-    my ($self, $event) = @_;
-
-    my $trans_item = $self->add_trans_item($event->GetClientData(), 1);
-    $trans_item->{word}->SetValue($event->GetString);
-
-    $self;
-}
-
 sub make_trans_item {
     my ($self, $word_id, $ro) = @_;
 
