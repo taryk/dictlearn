@@ -514,14 +514,34 @@ sub check_word {
 }
 
 sub add_trans_item {
-    my ($self, $word_id, $ro) = @_;
+    my ($self, %params) = @_;
 
-    my $trans_item = $self->make_trans_item($word_id, $ro);
-    # $self->vbox_trans->Add( $el->{parent_vbox}, 1, wxALL|wxGROW, 0 );
+    my $trans_item
+        = $self->make_trans_item($params{word_id}, $params{read_only});
+
     my @children = $self->vbox_trans->GetChildren;
     $self->vbox_trans->Insert($#children || 0,
         $trans_item->{parent_vbox}, 1, wxALL | wxGROW, 0);
     $self->Layout();
+
+    # fill out the fields
+
+    my $partofspeech_id;
+    if (defined $params{partofspeech_id}) {
+        $partofspeech_id = $params{partofspeech_id};
+    } elsif ($params{partofspeech}) {
+        $partofspeech_id = $self->get_partofspeech_id($params{partofspeech});
+    }
+    $trans_item->{cbox}->SetSelection($partofspeech_id)
+        if defined $partofspeech_id;
+
+    $trans_item->{word}->SetValue($params{word}) if $params{word};
+    $trans_item->{word}->SetLabel($params{word_id}) if $params{word_id};
+
+    my $note = '';
+    $note = "( $params{category} )" if $params{category};
+    $note .= ($note ? ' ' : '') . $params{note} if $params{note};
+    $trans_item->{note}->SetValue($note) if $note;
 
     return $trans_item;
 }
@@ -684,21 +704,21 @@ sub load_word {
     for my $rel_word (@{$word->{rel_words}}) {
         next unless $rel_word->{word2_id} or $rel_word->{word2_id}{word_id};
         push @translate => {
-            word_id      => $rel_word->{word2_id}{word_id},
-            word         => $rel_word->{word2_id}{word},
-            partofspeech => $rel_word->{partofspeech_id},
-            note         => $rel_word->{note},
+            word_id         => $rel_word->{word2_id}{word_id},
+            word            => $rel_word->{word2_id}{word},
+            partofspeech_id => $rel_word->{partofspeech_id},
+            note            => $rel_word->{note},
         };
     }
     $self->fill_fields(
-        word_id      => $word->{word_id},
-        word         => $word->{word},
-        word2        => $word->{word2},
-        word3        => $word->{word3},
-        irregular    => $word->{irregular},
-        partofspeech => $word->{partofspeech_id},
-        note         => $word->{note},
-        translate    => \@translate,
+        word_id         => $word->{word_id},
+        word            => $word->{word},
+        word2           => $word->{word2},
+        word3           => $word->{word3},
+        irregular       => $word->{irregular},
+        partofspeech_id => $word->{partofspeech_id},
+        note            => $word->{note},
+        translate       => \@translate,
     );
     $self->btn_add_word->SetLabel('Save');
 }
@@ -718,18 +738,20 @@ sub fill_fields {
         $self->word3_src->SetValue($params{word3}) if $params{word3};
     }
     for my $word_tr (@{$params{translate}}) {
-        my $trans_item = $self->add_trans_item($word_tr->{word_id} => 1);
-        $trans_item->{word}->SetValue($word_tr->{word});
-        $trans_item->{word}->SetLabel($word_tr->{word_id});
-        $trans_item->{note}->SetValue($word_tr->{note});
-        $trans_item->{cbox}->SetSelection($word_tr->{partofspeech});
+        $self->add_trans_item(
+            word_id         => $word_tr->{word_id},
+            read_only       => 1,
+            word            => $word_tr->{word},
+            note            => $word_tr->{note},
+            partofspeech_id => $word_tr->{partofspeech_id},
+        );
     }
     $self->word_note->SetValue($params{note});
 }
 
 sub trans_count { scalar @{$_[0]->word_translations} }
 
-sub get_partofspeech_index {
+sub get_partofspeech_id {
     my ($self, $name) = @_;
 
     for ($main::ioc->lookup('db')->schema->resultset('PartOfSpeech')
@@ -739,21 +761,14 @@ sub get_partofspeech_index {
     }
 }
 
-sub _add_translation_item {
+sub _add_translation {
     my ($self, $word, $partofspeech) = @_;
 
-    my $trans_item = $self->add_trans_item;
-    $trans_item->{cbox}->SetSelection(
-        $self->get_partofspeech_index(
-            $partofspeech)
+    $self->add_trans_item(
+        word         => $word->{word},
+        partofspeech => $partofspeech,
+        map { $word->{$_} ? ($_ => $word->{$_}) : () } (qw(category note)),
     );
-    $trans_item->{word}->SetValue($word->{word});
-    my $note = '';
-    $note = "( $word->{category} )"
-        if $word->{category};
-    $note .= ($note ? ' ' : '') . $word->{note}
-        if $word->{note};
-    $trans_item->{note}->SetValue($note) if $note;
 }
 
 sub translate_word {
@@ -775,13 +790,11 @@ sub translate_word {
                     given (ref $words) {
                         when ('ARRAY') {
                             for my $word (@$words) {
-                                $self->_add_translation_item(
-                                    $word, $partofspeech);
+                                $self->_add_translation($word, $partofspeech);
                             }
                         }
                         when ('HASH') {
-                            $self->_add_translation_item(
-                                $words, $partofspeech);
+                            $self->_add_translation($words, $partofspeech);
                         }
                     }
                 }
