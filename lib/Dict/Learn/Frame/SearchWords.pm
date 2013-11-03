@@ -67,6 +67,25 @@ sub _build_btn_lookup {
     return $btn_lookup;
 }
 
+=item btn_reset
+
+=cut
+
+has btn_reset => (
+    is         => 'ro',
+    isa        => 'Wx::Button',
+    lazy_build => 1,
+);
+
+sub _build_btn_reset {
+    my $self = shift;
+
+    my $btn_reset = Wx::Button->new($self, wxID_ANY, 'Reset', [20, 20]);
+    EVT_BUTTON($self, $btn_reset, \&reset);
+
+    return $btn_reset;
+}
+
 =item lookup_hbox
 
 =cut
@@ -81,8 +100,9 @@ sub _build_lookup_hbox {
     my $self = shift;
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->combobox, 1, wxTOP | wxGROW, 0);
+    $hbox->Add($self->combobox, 1, wxGROW, 0);
     $hbox->Add($self->btn_lookup, 0);
+    $hbox->Add($self->btn_reset,  0);
 
     return $hbox;
 }
@@ -606,6 +626,13 @@ sub lookup {
     $self->parent->status_bar->SetStatusText($records_count > 0
         ? "$records_count records selected"
         : 'No records selected');
+}
+
+sub reset {
+    my ($self) = @_;
+
+    $self->combobox->SetValue('');
+    $self->lookup();
 }
 
 sub edit_word {
