@@ -13,6 +13,8 @@ use Data::Printer;
 
 use common::sense;
 
+use Database;
+
 =item parent
 
 =cut
@@ -75,7 +77,7 @@ has vbox => (
 sub load_word {
     my ($self, %params) = @_;
 
-    my $word = $main::ioc->lookup('db')->schema->resultset('Word')->search(
+    my $word = Database->schema->resultset('Word')->search(
         {'me.word_id' => $params{word_id}},
         {prefetch     => {rel_words => ['word2_id']}}
     )->first;

@@ -7,6 +7,7 @@ use Moose;
 use MooseX::NonMoose;
 extends 'Wx::Panel';
 
+use Database;
 use Dict::Learn::Dictionary;
 use Dict::Learn::Frame::Sidebar;
 
@@ -445,7 +446,7 @@ sub _build_cb_add_to_test {
         sub {
             my $dict = shift;
             my $test_categories_rs
-                = $main::ioc->lookup('db')->schema->resultset('TestCategory')
+                = Database->schema->resultset('TestCategory')
                 ->search({dictionary_id => $dict->curr_id});
             $cb->Clear();
             for ($test_categories_rs->all()) {
@@ -569,7 +570,7 @@ sub lookup {
                 my $filter = $+{filter};
                 $filter = 'translated' if $filter eq '!untranslated';
                 @result
-                    = $main::ioc->lookup('db')->schema->resultset('Word')
+                    = Database->schema->resultset('Word')
                     ->find_ones(filter => $filter, lang_id => $lang_id);
             }
             when([qw(words phrases phrasal_verbs idioms)]) {
@@ -583,7 +584,7 @@ sub lookup {
             }
             when(m{^ partofspeech = (?<partofspeech> \w+ ) $}x) {
                 @result
-                    = $main::ioc->lookup('db')->schema->resultset('Word')
+                    = Database->schema->resultset('Word')
                     ->find_ones(
                         partofspeech => $+{partofspeech},
                         lang_id      => $lang_id
@@ -597,7 +598,7 @@ sub lookup {
         }
     } else {
         @result
-            = $main::ioc->lookup('db')->schema->resultset('Word')
+            = Database->schema->resultset('Word')
             ->find_ones_cached(
                 word    => $value,
                 lang_id => $lang_id,
@@ -665,7 +666,7 @@ sub load_examples {
     my $word_id = $obj->GetLabel();
     $self->lb_examples->DeleteAllItems();
     my @items
-        = $main::ioc->lookup('db')->schema->resultset('Example')->select(
+        = Database->schema->resultset('Example')->select(
             word_id       => $word_id,
             dictionary_id => Dict::Learn::Dictionary->curr_id,
         );
@@ -697,7 +698,7 @@ sub delete_word {
 
     my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
-    $main::ioc->lookup('db')->schema->resultset('Word')
+    Database->schema->resultset('Word')
         ->delete_one($self->get_word_id($curr_id));
     $self->lookup;
 }
@@ -707,7 +708,7 @@ sub unlink_word {
 
     my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
-    $main::ioc->lookup('db')->schema->resultset('Word')
+    Database->schema->resultset('Word')
         ->unlink_one($self->get_word_id($curr_id));
     $self->lookup;
 }
@@ -717,7 +718,7 @@ sub delete_example {
 
     my $curr_id = $self->lb_examples->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
-    $main::ioc->lookup('db')->schema->resultset('Example')
+    Database->schema->resultset('Example')
         ->delete_one($self->get_example_id($curr_id));
     $self->lookup;
 }
@@ -727,7 +728,7 @@ sub unlink_example {
 
     my $curr_id = $self->lb_examples->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
-    $main::ioc->lookup('db')->schema->resultset('Example')
+    Database->schema->resultset('Example')
         ->unlink_one($self->get_example_id($curr_id));
     $self->lookup;
 }
@@ -755,7 +756,7 @@ sub add_to_test {
     
     my $word_id = $self->get_word_id($row_id);
 
-    $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->create(
+    Database->schema->resultset('TestCategoryWords')->create(
         {
             test_category_id => $test_category_id,
             word_id          => $word_id,

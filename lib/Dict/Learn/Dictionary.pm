@@ -5,6 +5,8 @@ use Data::Printer;
 use common::sense;
 use namespace::autoclean;
 
+use Database;
+
 my $singleton;
 
 sub new {
@@ -25,12 +27,11 @@ sub all {
 
     $self = $self->singleton unless ref $self;
     $self->{dicts} = {};
-    for ($main::ioc->lookup('db')->schema->resultset('Dictionary')->get_all())
-    {
-        $self->{dicts}{$_->{dictionary_id}} = $_;
+    for (Database->schema->resultset('Dictionary')->get_all()) {
+        $self->{dicts}{ $_->{dictionary_id} } = $_;
     }
 
-    $self->{dicts};
+    return $self->{dicts};
 }
 
 sub set {
@@ -38,7 +39,7 @@ sub set {
 
     $self = $self->singleton unless ref $self;
     $self->{dict_id} = $id;
-    for (@{$self->{cb}}) { $_->($self) }
+    for (@{ $self->{cb} }) { $_->($self) }
 }
 
 sub cb {
@@ -50,7 +51,7 @@ sub cb {
         return;
     }
 
-    push @{$self->{cb}} => $cb;
+    push @{ $self->{cb} } => $cb;
 
     # Call the coderef immediately if dict_id is already set
     $cb->($self) if defined $self->{dict_id};
@@ -67,7 +68,7 @@ sub curr {
     my $self = shift;
 
     $self = $self->singleton unless ref $self;
-    $self->{dicts}{$self->{dict_id}};
+    $self->{dicts}{ $self->{dict_id} };
 }
 
 sub curr_id {

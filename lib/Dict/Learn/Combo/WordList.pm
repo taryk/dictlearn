@@ -8,6 +8,8 @@ extends 'Wx::PlComboPopup';
 
 use common::sense;
 
+use Database;
+
 use Data::Printer;
 
 =item parent
@@ -153,7 +155,7 @@ sub initialize_words {
 
     $self->lb_words->DeleteAllItems();
     my @words
-        = $main::ioc->lookup('db')->schema->resultset('Word')
+        = Database->schema->resultset('Word')
         ->get_all_cached(
         Dict::Learn::Dictionary->curr->{language_tr_id}{language_id});
     for (@words) {

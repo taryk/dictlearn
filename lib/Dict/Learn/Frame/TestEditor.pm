@@ -13,6 +13,7 @@ use Carp qw[ croak confess ];
 
 use common::sense;
 
+use Database;
 use Dict::Learn::Dictionary;
 
 sub TEST_ID { 1 }
@@ -332,7 +333,7 @@ sub _build_partofspeech {
     my $self = shift;
 
     my $partofspeech_rs
-        = $main::ioc->lookup('db')->schema->resultset('PartOfSpeech')
+        = Database->schema->resultset('PartOfSpeech')
         ->search({}, { select => [qw(partofspeech_id abbr)] });
     my $partofspeech_hashref;
     while (my $partofspeech = $partofspeech_rs->next) {
@@ -386,7 +387,7 @@ sub load_categories {
     my ($self) = @_;
 
     my $categories
-        = $main::ioc->lookup('db')->schema->resultset('TestCategory')
+        = Database->schema->resultset('TestCategory')
         ->search(
         {
             dictionary_id => Dict::Learn::Dictionary->curr_id,
@@ -460,7 +461,7 @@ sub lookup {
     }
 
     my $all_words
-        = $main::ioc->lookup('db')->schema->resultset('Words')->search(
+        = Database->schema->resultset('Words')->search(
         {
             'me.dictionary_id' => Dict::Learn::Dictionary->curr_id,
             %options
@@ -505,7 +506,7 @@ sub load_words {
 
     $self->test_words->DeleteAllItems();
     my $words
-        = $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')
+        = Database->schema->resultset('TestCategoryWords')
         ->search(
         {
             test_category_id => $params{category_id},
@@ -536,7 +537,7 @@ sub move_left {
     my $category_id
         = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
 
-    $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->create(
+    Database->schema->resultset('TestCategoryWords')->create(
         {
             test_category_id => $category_id,
             word_id          => $self->get_word_id($word_list_row_id),
@@ -563,7 +564,7 @@ sub move_right {
     my $category_id
         = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
 
-    $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')->search(
+    Database->schema->resultset('TestCategoryWords')->search(
         {
             test_category_id => $category_id,
             word_id =>
@@ -632,7 +633,7 @@ sub add_group {
 
     my $group_name = $dialog->GetValue;
 
-    $main::ioc->lookup('db')->schema->resultset('TestCategory')->create(
+    Database->schema->resultset('TestCategory')->create(
         {
             test_id          => TEST_ID,
             dictionary_id    => Dict::Learn::Dictionary->curr_id,
@@ -651,7 +652,7 @@ sub del_group {
 
     # `delete_all` method deletes all records from `TestCategoryWords` table
     # related to this category as well
-    $main::ioc->lookup('db')->schema->resultset('TestCategory')->search(
+    Database->schema->resultset('TestCategory')->search(
         {
             test_category_id => $selected_test_group_id,
             test_id          => TEST_ID,
@@ -681,7 +682,7 @@ sub update_group {
 
     my $group_name = $dialog->GetValue;
 
-    $main::ioc->lookup('db')->schema->resultset('TestCategory')->search(
+    Database->schema->resultset('TestCategory')->search(
         {
             test_category_id => $selected_test_group_id,
             test_id          => TEST_ID,

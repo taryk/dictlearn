@@ -10,6 +10,7 @@ extends 'Wx::Panel';
 use Data::Printer;
 use List::Util qw[shuffle];
 
+use Database;
 use Dict::Learn::Frame::IrregularVerbsTest::Result;
 
 use common::sense;
@@ -425,7 +426,7 @@ sub init_test {
     $self->clear_fields();
     $self->set_position($self->p_min);
     $self->words(
-        [   shuffle $main::ioc->lookup('db')->schema->resultset('Word')
+        [   shuffle Database->schema->resultset('Word')
                 ->get_irregular_verbs(STEPS)
         ]
     );
@@ -543,7 +544,7 @@ sub result {
         wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxSTAY_ON_TOP);
     if ($result_dialog->fill_result($self->exercise)->ShowModal() == wxID_OK)
     {
-        $main::ioc->lookup('db')->schema->resultset('TestSession')
+        Database->schema->resultset('TestSession')
             ->add(TEST_ID, $self->total_score, $self->exercise);
     }
     $result_dialog->Destroy();

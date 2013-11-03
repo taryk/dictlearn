@@ -10,6 +10,8 @@ use common::sense;
 
 use Class::XSAccessor accessors => [qw| parent vbox search lb_examples cb |];
 
+use Database;
+
 sub new {
     my $class = shift;
     my $self  = $class->SUPER::new(@_);
@@ -58,7 +60,7 @@ sub OnSelect {
 sub initialize_examples {
     my $self = shift;
     my @examples
-        = $main::ioc->lookup('db')->schema->resultset('Example')
+        = Database->schema->resultset('Example')
         ->get_all(
         Dict::Learn::Dictionary->curr->{language_tr_id}{language_id});
     $self->lb_examples->DeleteAllItems();

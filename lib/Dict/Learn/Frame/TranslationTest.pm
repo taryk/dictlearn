@@ -17,6 +17,7 @@ use String::Diff qw[ diff_fully diff diff_merge ];
 use common::sense;
 # use warnings FATAL => "all";
 
+use Database;
 use Dict::Learn::Dictionary;
 use Dict::Learn::Frame::TranslationTest::Result;
 
@@ -179,7 +180,7 @@ sub _build_test_category {
         sub {
             my $dict = shift;
             my $test_categories_rs
-                = $main::ioc->lookup('db')->schema->resultset('TestCategory')
+                = Database->schema->resultset('TestCategory')
                 ->search({dictionary_id => $dict->curr_id});
             for ($test_categories_rs->all()) {
                 $combobox->Append($_->name, $_->test_category_id);
@@ -351,7 +352,7 @@ sub spin_max_step {
 }
 
 sub predefined_categories {
-    my $dtf = $main::ioc->lookup('db')->schema->storage->datetime_parser;
+    my $dtf = Database->schema->storage->datetime_parser;
     [
         ['Recent 10'  => [-1, {}, { rows => 10,  page => 1 }]],
         ['Recent 50'  => [-2, {}, { rows => 50,  page => 1 }]],
@@ -489,7 +490,7 @@ sub predefined_categories {
             $self->test_category->GetSelection());
 
         if ($curr_category > 0) {
-            my $id_rs = $main::ioc->lookup('db')->schema->resultset('TestCategoryWords')
+            my $id_rs = Database->schema->resultset('TestCategoryWords')
             ->search(
             {
                 test_category_id => $curr_category,
@@ -507,7 +508,7 @@ sub predefined_categories {
 
             # let's get all ids
             my $id_rs
-                = $main::ioc->lookup('db')->schema->resultset('Word')->search(
+                = Database->schema->resultset('Word')->search(
                 {
                     'me.in_test' => 1,
                     'me.lang_id' =>
@@ -534,7 +535,7 @@ sub predefined_categories {
 
         say "fetching exercises from $from to $to";
         my $words
-            = $main::ioc->lookup('db')->schema->resultset('Word')
+            = Database->schema->resultset('Word')
             ->search({'me.word_id' => {in => [@ids[$from .. $to]]}},
             {distinct => 1});
         while (my $word = $words->next) {
@@ -638,7 +639,7 @@ sub next_step {
         if ($self->result->fill_result(@res)->ShowModal() == wxID_OK) {
 
             # store results in a DB tables
-            $main::ioc->lookup('db')->schema->resultset('TestSession')
+            Database->schema->resultset('TestSession')
                 ->add(TEST_ID, sum(map { $_->{score} } @res), \@res);
         }
         $self->result->Destroy();

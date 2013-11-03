@@ -12,6 +12,8 @@ use Data::Printer;
 
 use common::sense;
 
+use Database;
+
 sub COL_WORD         { [0, 'word'] }
 sub COL_REL_W        { [1, 'rel_words'] }
 sub COL_REL_E        { [2, 'rel_examples'] }
@@ -194,7 +196,7 @@ sub update_word {
         }
     }
 
-    $main::ioc->lookup('db')->schema->resultset('Word')
+    Database->schema->resultset('Word')
         ->update_one(%upd_word);
 }
 
@@ -210,7 +212,7 @@ sub delete_word {
 
         # $self->grid->DeleteRows($_, 1, -1);
     }
-    $main::ioc->lookup('db')->schema->resultset('Word')->delete_one(@ids);
+    Database->schema->resultset('Word')->delete_one(@ids);
     $self->refresh_words();
 }
 
@@ -225,7 +227,7 @@ sub select_words {
 
     my $i    = 0;
     my @items
-        = $main::ioc->lookup('db')->schema->resultset('Word')
+        = Database->schema->resultset('Word')
         ->select_words_grid(
         lang1_id =>
             Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},

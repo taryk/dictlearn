@@ -11,6 +11,7 @@ extends 'Wx::Panel';
 use Carp qw[croak confess];
 use Data::Printer;
 
+use Database;
 use Dict::Learn::Dictionary;
 
 use common::sense;
@@ -134,7 +135,7 @@ sub select_data {
     my $self     = shift;
 
     my $i        = 0;
-    my @sessions = $main::ioc->lookup('db')->schema->resultset('TestSession')
+    my @sessions = Database->schema->resultset('TestSession')
         ->get_all(TEST_ID);
     $self->grid->InsertRows(0, scalar @sessions);
     for my $session (@sessions) {
@@ -191,7 +192,7 @@ sub select_data {
 sub select_words_stats {
     my $self = shift;
 
-    my @stats = $main::ioc->lookup('db')->schema->resultset('TestSession')
+    my @stats = Database->schema->resultset('TestSession')
         ->get_words_stats(TEST_ID);
     for my $stat (@stats) {
         my $id = $self->lb_word_score->InsertItem(Wx::ListItem->new);

@@ -12,6 +12,7 @@ use Data::Printer;
 use LWP::UserAgent;
 use List::Util qw[first];
 
+use Database;
 use Dict::Learn::Combo::WordList;
 use Dict::Learn::Dictionary;
 use Dict::Learn::Translate;
@@ -457,7 +458,7 @@ sub query_words {
 
     my $cb = $self->word_translations->[$id]{word};
     my @words
-        = $main::ioc->lookup('db')->schema->resultset('Word')
+        = Database->schema->resultset('Word')
         ->select(Dict::Learn::Dictionary->curr->{language_tr_id}{language_id},
         $cb->GetValue());
     $cb->Clear;
@@ -473,7 +474,7 @@ sub check_word {
     unless (
         defined(
             $word
-                = $main::ioc->lookup('db')->schema->resultset('Word')->match(
+                = Database->schema->resultset('Word')->match(
                 Dict::Learn::Dictionary->curr->{language_orig_id}
                     {language_id},
                 $event->GetString
@@ -637,11 +638,11 @@ sub add {
         and $self->item_id >= 0)
     {
         $params{word_id} = $self->item_id;
-        $main::ioc->lookup('db')->schema->resultset('Word')
+        Database->schema->resultset('Word')
             ->update_one(%params);
     }
     else {
-        $main::ioc->lookup('db')->schema->resultset('Word')->add_one(%params);
+        Database->schema->resultset('Word')->add_one(%params);
     }
 
     # Close the page after adding/editing the word
@@ -657,7 +658,7 @@ sub import_partofspeech {
     my $self = shift;
 
     map { $_->{name_orig} }
-        $main::ioc->lookup('db')->schema->resultset('PartOfSpeech')->select();
+        Database->schema->resultset('PartOfSpeech')->select();
 }
 
 sub clear_fields {
@@ -699,7 +700,7 @@ sub remove_all_transations {
 sub load_word {
     my ($self, %params) = @_;
 
-    my $word = $main::ioc->lookup('db')->schema->resultset('Word')
+    my $word = Database->schema->resultset('Word')
         ->select_one($params{word_id});
     my @translate;
     for my $rel_word (@{$word->{rel_words}}) {
@@ -755,7 +756,7 @@ sub trans_count { scalar @{$_[0]->word_translations} }
 sub get_partofspeech_id {
     my ($self, $name) = @_;
 
-    for ($main::ioc->lookup('db')->schema->resultset('PartOfSpeech')
+    for (Database->schema->resultset('PartOfSpeech')
         ->select(name => $name))
     {
         return $_->{partofspeech_id};
