@@ -12,14 +12,14 @@ sub down {
     ## no critic (ValuesAndExpressions::ProhibitLongChainsOfMethodCalls)
     my $max_word_id
         = 1 + Database->schema->resultset('Word')
-        ->search({}, {select => [{max => 'word_id', -as => 'max_word_id'}]})
+        ->search({},
+        { select => [{ max => 'word_id', -as => 'max_word_id' }] })
         ->first->get_column('max_word_id');
+
     ## use critic
 
-    for my $e (
-        Database->schema->resultset('Example')->export_data())
-    {
-        push @{$data_up->{word}} => {
+    for my $e (Database->schema->resultset('Example')->export_data()) {
+        push @{ $data_up->{word} } => {
             word_id => $max_word_id + int($e->{example_id}),
             word    => $e->{example},
             in_test => $e->{in_test},
@@ -30,10 +30,7 @@ sub down {
             mdate   => $e->{mdate},
         };
     }
-    for my $es (
-        Database->schema->resultset('Examples')->export_data()
-        )
-    {
+    for my $es (Database->schema->resultset('Examples')->export_data()) {
         push @{ $data_up->{words} } => {
             word1_id        => $max_word_id + int($es->{example1_id}),
             word2_id        => $max_word_id + int($es->{example2_id}),
@@ -46,9 +43,7 @@ sub down {
             mdate           => $es->{mdate},
         };
     }
-    for my $ew (Database->schema->resultset('WordExample')
-        ->export_data())
-    {
+    for my $ew (Database->schema->resultset('WordExample')->export_data()) {
         push @{ $data_up->{words} } => {
             word1_id        => $ew->{word_id},
             word2_id        => $max_word_id + int($ew->{example_id}),
@@ -67,8 +62,9 @@ sub down {
 sub up {
     my $data_up = shift;
     say 'Import into Word... '
-        . (Database->schema->resultset('Word')
-            ->import_data($data_up->{word}) ? 'ok' : 'failed');
+        . (Database->schema->resultset('Word')->import_data($data_up->{word})
+        ? 'ok'
+        : 'failed');
 
     say 'Import into Words... '
         . (Database->schema->resultset('Words')
