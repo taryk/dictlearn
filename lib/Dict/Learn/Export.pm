@@ -7,6 +7,8 @@ use POSIX qw(strftime);
 
 use common::sense;
 
+use Database;
+
 sub EXPORT_FILENAME { 'export.%d.json' }
 
 sub TABLE_MAP {
@@ -29,11 +31,10 @@ sub new {
 
 sub do {
     my ($self, $filename) = @_;
-    my $db   = $main::ioc->lookup('db');
     my $data = {};
     while (my ($json_key, $rset_name) = each %{+TABLE_MAP}) {
         $data->{$json_key}
-            = [$db->schema->resultset($rset_name)->export_data()];
+            = [Database->schema->resultset($rset_name)->export_data()];
     }
     my $export = encode_json($data);
     $filename //=
