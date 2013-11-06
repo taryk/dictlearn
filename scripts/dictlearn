@@ -3,10 +3,11 @@
 use File::Basename 'dirname';
 use File::Path 'make_path';
 use Getopt::Long;
-use IOC::Slinky::Container;
 
 use common::sense;
 use lib dirname(__FILE__) . '/../lib/';
+
+use Container;
 
 my $dbfile = "$ENV{HOME}/.config/dictlearn/dictlearn.db";
 
@@ -29,38 +30,11 @@ unless (-e $dbfile) {
     make_path($config_dir) unless -d $config_dir;
 }
 
-our $ioc = IOC::Slinky::Container->new(
-    config => {
-        container => {
-            schema => {
-                _class            => 'Dict::Learn::Main',
-                _constructor      => 'connect',
-                _constructor_args => [
-                    "dbi:SQLite:$dbfile",
-                    '', '',
-                    {   sqlite_unicode => 1,
-                        loader_options => {
-                            debug => $ENV{DBIC_TRACE} //= $debug,
-                            use_namespaces => 1
-                        }
-                    }
-                ]
-            },
-            db => {
-                _class            => 'Dict::Learn::Db',
-                _constructor      => 'new',
-                _constructor_args => [
-                    schema => { _ref => 'schema' },
-                ],
-            },
-            dictionary => {
-                _class            => 'Dict::Learn::Dictionary',
-                _constructor      => 'new',
-                _constructor_args => [{_ref => 'db'},]
-            },
+# $ENV{DBIC_TRACE} //= $debug;
 
-        },
-    }
+Container->params(
+    dbfile => $dbfile,
+    debug  => $debug,
 );
 
 if ($import) {
@@ -72,17 +46,17 @@ elsif ($export) {
     exit !Dict::Learn::Export->new->do($export);
 }
 elsif ($clear_all) {
-    exit !$ioc->lookup('db')->clear_all();
+    exit !Container->lookup('db')->clear_all();
 }
 elsif ($clear_data) {
-    exit !$ioc->lookup('db')->clear_data();
+    exit !Container->lookup('db')->clear_data();
 }
 elsif ($clear_tests) {
-    exit !$ioc->lookup('db')->clear_test_results();
+    exit !Container->lookup('db')->clear_test_results();
 }
 elsif ($reset) {
-    exit 1 if !$ioc->lookup('db')->clear_all();
-    $ioc->lookup('db')->install_schema();
+    exit 1 if !Container->lookup('db')->clear_all();
+    Container->lookup('db')->install_schema();
     exit 0;
 }
 elsif ($migration) {
@@ -99,8 +73,8 @@ elsif ($migration) {
     }
 }
 else {
-    unless ($ioc->lookup('db')->check_tables()) {
-        $ioc->lookup('db')->install_schema();
+    unless (Container->lookup('db')->check_tables()) {
+        Container->lookup('db')->install_schema();
     }
     require Dict::Learn;
     my $app = Dict::Learn->new;

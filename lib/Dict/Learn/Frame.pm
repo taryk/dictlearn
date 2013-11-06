@@ -474,25 +474,25 @@ sub db_import {
 sub db_clear {
     my ($self) = @_;
 
-    $main::ioc->lookup('db')->clear_data();
+    Container->lookup('db')->clear_data();
 }
 
 sub db_clear_test_results {
     my ($self) = @_;
 
-    $main::ioc->lookup('db')->clear_test_results();
+    Container->lookup('db')->clear_test_results();
 }
 
 sub analyze {
     my ($self) = @_;
 
-    $main::ioc->lookup('db')->analyze();
+    Container->lookup('db')->analyze();
 }
 
 sub reset_analyzer {
     my ($self) = @_;
 
-    $main::ioc->lookup('db')->reset_analyzer();
+    Container->lookup('db')->reset_analyzer();
 }
 
 sub FOREIGNBUILDARGS {
