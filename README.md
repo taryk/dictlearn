@@ -7,6 +7,10 @@ The tool for improving and expanding your vocabulary
 * [perl 5.14](http://www.perl.org/get.html)
 * [Wx](https://metacpan.org/module/Wx)
 * [DBIx::Class](https://metacpan.org/module/DBIx::Class)
+* [DBIx::Class::QueryLog](https://metacpan.org/module/DBIx::Class::QueryLog)
+* [DBIx::Class::QueryLog::Analyzer](https://metacpan.org/module/DBIx::Class::QueryLog::Analyzer)
+* [Moose](https://metacpan.org/module/Moose)
+* [MooseX::NonMoose](https://metacpan.org/module/MooseX::NonMoose)
 * [LWP::UserAgent](https://metacpan.org/module/LWP::UserAgent)
 * [JSON](https://metacpan.org/module/JSON)
 * [Data::Printer](https://metacpan.org/module/Data::Printer)
@@ -20,7 +24,13 @@ The tool for improving and expanding your vocabulary
 * [IO::File](https://metacpan.org/module/IO::File)
 * [URI::Escape](https://metacpan.org/module/URI::Escape)
 * [List::Util](https://metacpan.org/module/List::Util)
+* [List::MoreUtils](https://metacpan.org/module/List::MoreUtils)
 * [DateTime::Format::SQLite](https://metacpan.org/module/DateTime::Format::SQLite)
+* [String::Diff](https://metacpan.org/module/String::Diff)
+* [DateTime](https://metacpan.org/module/DateTime)
+* [Mojolicious](https://metacpan.org/module/Mojolicious)
+* [Term::ANSIColor](https://metacpan.org/module/Term::ANSIColor)
+* [Memoize](https://metacpan.org/module/Memoize)
 
 ## Install
 
