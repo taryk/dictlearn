@@ -114,7 +114,7 @@ L<http://search.cpan.org/dist/dictlearn/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2012 Taras Yagniuk.
+Copyright 2012 Taras Iagniuk.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published

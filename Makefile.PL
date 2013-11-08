@@ -2,7 +2,7 @@ use inc::Module::Install;
 
 name     'Dict-Learn';
 all_from 'lib/Dict/Learn.pm';
-author   q{Taras Yagniuk <mrtaryk@gmail.net>};
+author   q{Taras Iagniuk <mrtaryk@gmail.net>};
 license  'perl';
 
 perl_version '5.014';
