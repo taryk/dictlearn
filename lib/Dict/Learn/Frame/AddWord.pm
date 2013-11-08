@@ -188,11 +188,11 @@ has btn_additem => (
     },
 );
 
-=item vbox_trans_item
+=item vbox_translation_item
 
 =cut
 
-has vbox_trans_item => (
+has vbox_translation_item => (
     is      => 'ro',
     isa     => 'ArrayRef',
     lazy    => 1,
@@ -218,23 +218,23 @@ sub _build_hbox_add {
     return $hbox_add;
 }
 
-=item vbox_trans
+=item vbox_translations
 
 =cut
 
-has vbox_trans => (
+has vbox_translations => (
     is         => 'ro',
     isa        => 'Wx::BoxSizer',
     lazy_build => 1,
 );
 
-sub _build_vbox_trans {
+sub _build_vbox_translations {
     my $self = shift;
 
-    my $vbox_trans = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox_trans->Add($self->hbox_add, 0, wxALIGN_LEFT | wxRIGHT, 5);
+    my $vbox_translations = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox_translations->Add($self->hbox_add, 0, wxALIGN_LEFT | wxRIGHT, 5);
 
-    return $vbox_trans;
+    return $vbox_translations;
 }
 
 =item hbox_words
@@ -252,7 +252,7 @@ sub _build_hbox_words {
 
     my $hbox_words = Wx::BoxSizer->new(wxHORIZONTAL);
     $hbox_words->Add($self->vbox_src, 2, wxALL | wxTOP,    5);
-    $hbox_words->Add($self->vbox_trans, 4, wxALL | wxEXPAND, 5);
+    $hbox_words->Add($self->vbox_translations, 4, wxALL | wxEXPAND, 5);
 
     return $hbox_words;
 }
@@ -271,11 +271,11 @@ has btn_add_word => (
     },
 );
 
-=item btn_tran
+=item btn_translate
 
 =cut
 
-has btn_tran => (
+has btn_translate => (
     is      => 'ro',
     isa     => 'Wx::Button',
     lazy    => 1,
@@ -329,7 +329,8 @@ sub _build_hbox_btn {
     my $hbox_btn = Wx::BoxSizer->new(wxHORIZONTAL);
     $hbox_btn->Add($self->btn_add_word, 0,
         wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
-    $hbox_btn->Add($self->btn_tran,   0, wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
+    $hbox_btn->Add(
+        $self->btn_translate, 0, wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
     $hbox_btn->Add($self->btn_clear,  0, wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
     $hbox_btn->Add($self->btn_cancel, 0, wxBOTTOM | wxALIGN_LEFT | wxLEFT, 5);
 
@@ -362,29 +363,29 @@ sub keybind {
 
     given ($event->GetKeyCode()) {
         when ([WXK_ADD, WXK_NUMPAD_ADD]) {
-            $self->add_trans_item();
+            $self->add_translation_item();
         }
         when ([WXK_SUBTRACT, WXK_NUMPAD_SUBTRACT]) {
             if (my $last_word_obj
                 = first { defined $_->{cbox} }
                 reverse @{ $self->word_translations })
             {
-                $self->del_trans_item($last_word_obj->{id});
+                $self->del_translation_item($last_word_obj->{id});
             }
         }
     }
 }
 
-sub make_trans_item {
+sub make_translation_item {
     my ($self, $word_id, $ro) = @_;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    push @{ $self->vbox_trans_item } => $vbox;
+    push @{ $self->vbox_translation_item } => $vbox;
 
-    my $id = $#{ $self->vbox_trans_item };
+    my $id = $#{ $self->vbox_translation_item };
 
-    my %trans_item = (
+    my %translation_item = (
         word_id => $word_id,
         id      => $id,
         cbox    => Wx::ComboBox->new(
@@ -409,14 +410,14 @@ sub make_trans_item {
         parent_hbox => $hbox,
     );
 
-    $self->word_translations->[$id] = \%trans_item;
+    $self->word_translations->[$id] = \%translation_item;
 
-    $trans_item{word}
-        ->SetPopupControl($trans_item{popup});
+    $translation_item{word}
+        ->SetPopupControl($translation_item{popup});
 
     EVT_BUTTON(
-        $self, $trans_item{btnm},
-        sub { $self->del_trans_item($id) }
+        $self, $translation_item{btnm},
+        sub { $self->del_translation_item($id) }
     );
 
     my $part_of_speach_selection = 0;
@@ -427,30 +428,30 @@ sub make_trans_item {
 
         $part_of_speach_selection = $prev_item->{cbox}->GetSelection;
     }
-    $trans_item{cbox}->SetSelection($part_of_speach_selection);
+    $translation_item{cbox}->SetSelection($part_of_speach_selection);
 
-    $hbox->Add($trans_item{cbox}, 0, wxALL, 0);
-    $hbox->Add($trans_item{word}, 4, wxALL, 0);
-    $hbox->Add($trans_item{btnm}, 0, wxALL, 0);
+    $hbox->Add($translation_item{cbox}, 0, wxALL, 0);
+    $hbox->Add($translation_item{word}, 4, wxALL, 0);
+    $hbox->Add($translation_item{btnm}, 0, wxALL, 0);
 
     $vbox->Add($hbox, 0, wxEXPAND, 0);
-    $vbox->Add($trans_item{note}, 0, wxEXPAND, 0);
+    $vbox->Add($translation_item{note}, 0, wxEXPAND, 0);
 
     if ($ro) {
-        $trans_item{word}->GetTextCtrl->SetEditable(0);
-        $trans_item{word}->GetPopupWindow->Disable;
-        $trans_item{edit}
+        $translation_item{word}->GetTextCtrl->SetEditable(0);
+        $translation_item{word}->GetPopupWindow->Disable;
+        $translation_item{edit}
             = Wx::Button->new($self, wxID_ANY, 'e', wxDefaultPosition,
             [40, -1]);
 
         EVT_BUTTON(
-            $self, $trans_item{edit},
+            $self, $translation_item{edit},
             sub { $self->edit_word_as_new($id) }
         );
-        $hbox->Add($trans_item{edit}, 0, wxALL, 0);
+        $hbox->Add($translation_item{edit}, 0, wxALL, 0);
     }
 
-    return \%trans_item;
+    return \%translation_item;
 }
 
 sub query_words {
@@ -515,15 +516,15 @@ sub check_word {
     $self->enable_controls($self->enable);
 }
 
-sub add_trans_item {
+sub add_translation_item {
     my ($self, %params) = @_;
 
-    my $trans_item
-        = $self->make_trans_item($params{word_id}, $params{read_only});
+    my $translation_item
+        = $self->make_translation_item($params{word_id}, $params{read_only});
 
-    my @children = $self->vbox_trans->GetChildren;
-    $self->vbox_trans->Insert($#children || 0,
-        $trans_item->{parent_vbox}, 1, wxALL | wxGROW, 0);
+    my @children = $self->vbox_translations->GetChildren;
+    $self->vbox_translations->Insert($#children || 0,
+        $translation_item->{parent_vbox}, 1, wxALL | wxGROW, 0);
     $self->Layout();
 
     # fill out the fields
@@ -534,21 +535,21 @@ sub add_trans_item {
     } elsif ($params{partofspeech}) {
         $partofspeech_id = $self->get_partofspeech_id($params{partofspeech});
     }
-    $trans_item->{cbox}->SetSelection($partofspeech_id)
+    $translation_item->{cbox}->SetSelection($partofspeech_id)
         if defined $partofspeech_id;
 
-    $trans_item->{word}->SetValue($params{word}) if $params{word};
-    $trans_item->{word}->SetLabel($params{word_id}) if $params{word_id};
+    $translation_item->{word}->SetValue($params{word}) if $params{word};
+    $translation_item->{word}->SetLabel($params{word_id}) if $params{word_id};
 
     my $note = '';
     $note = "( $params{category} )" if $params{category};
     $note .= ($note ? ' ' : '') . $params{note} if $params{note};
-    $trans_item->{note}->SetValue($note) if $note;
+    $translation_item->{note}->SetValue($note) if $note;
 
-    return $trans_item;
+    return $translation_item;
 }
 
-sub del_trans_item {
+sub del_translation_item {
     my ($self, $id) = @_;
 
     for (qw[ cbox word btnm btnp edit note ]) {
@@ -556,10 +557,10 @@ sub del_trans_item {
         $self->word_translations->[$id]{$_}->Destroy();
         delete $self->word_translations->[$id]{$_};
     }
-    $self->vbox_trans->Detach($self->vbox_trans_item->[$id])
-        if defined $self->vbox_trans_item->[$id];
+    $self->vbox_translations->Detach($self->vbox_translation_item->[$id])
+        if defined $self->vbox_translation_item->[$id];
     $self->Layout();
-    delete $self->vbox_trans_item->[$id];
+    delete $self->vbox_translation_item->[$id];
     delete $self->word_translations->[$id]{parent_vbox};
     delete $self->word_translations->[$id]{parent_hbox};
 
@@ -584,11 +585,11 @@ sub edit_word_as_new {
     return $self;
 }
 
-sub for_each_trans_item($$) {
+sub for_each_translation_item($$) {
     my ($self, $cb) = @_;
 
-    for my $trans_item (grep { defined } @{ $self->word_translations }) {
-        $cb->($self, $trans_item);
+    for my $translation_item (grep { defined } @{ $self->word_translations }) {
+        $cb->($self, $translation_item);
     }
 }
 
@@ -606,28 +607,28 @@ sub add {
         $params{word2} = $self->word2_src->GetValue();
         $params{word3} = $self->word3_src->GetValue();
     }
-    $self->for_each_trans_item(
+    $self->for_each_translation_item(
         sub {
-            my $trans_panel = pop;
-            my %push_item = ( word_id => $trans_panel->{word_id} );
-            if ($trans_panel->{word}) {
+            my $translation_panel = pop;
+            my %push_item = ( word_id => $translation_panel->{word_id} );
+            if ($translation_panel->{word}) {
                 $push_item{partofspeech}
-                    = int($trans_panel->{cbox}->GetSelection());
+                    = int($translation_panel->{cbox}->GetSelection());
 
                 # `GetLabel` returns "" or value
-                my $word_id = $trans_panel->{word}->GetLabel();
+                my $word_id = $translation_panel->{word}->GetLabel();
                 $word_id = undef if $word_id eq '';
                 if (defined $word_id and int $word_id >= 0) {
                     $push_item{word_id} = $word_id;
                     $push_item{word}    = 0;
                 }
                 else {
-                    $push_item{word} = $trans_panel->{word}->GetValue();
+                    $push_item{word} = $translation_panel->{word}->GetValue();
 
                     # skip empty fields
                     next unless $push_item{word} =~ /^.+$/;
                 }
-                $push_item{note} = $trans_panel->{note}->GetValue();
+                $push_item{note} = $translation_panel->{note}->GetValue();
                 $push_item{lang_id}
                 = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
             }
@@ -676,13 +677,13 @@ sub clear_fields {
     $self->word3_src->Clear;
     $self->enable_irregular(0);
 
-    $self->for_each_trans_item(
+    $self->for_each_translation_item(
         sub {
-            my $trans_item = pop;
-            return unless defined $trans_item->{word};
-            $trans_item->{cbox}->SetSelection(0);
-            $trans_item->{word}->SetText('');
-            $trans_item->{note}->Clear;
+            my $translation_item = pop;
+            return unless defined $translation_item->{word};
+            $translation_item->{cbox}->SetSelection(0);
+            $translation_item->{word}->SetText('');
+            $translation_item->{note}->Clear;
         }
     );
     $self->word_note->Clear;
@@ -692,7 +693,7 @@ sub remove_all_transations {
     my $self = shift;
 
     for (@{$self->word_translations}) {
-        $self->del_trans_item($_->{id});
+        $self->del_translation_item($_->{id});
         delete $self->word_translations->[$_->{id}];
     }
 }
@@ -740,7 +741,7 @@ sub fill_fields {
         $self->word3_src->SetValue($params{word3}) if $params{word3};
     }
     for my $word_tr (@{$params{translate}}) {
-        $self->add_trans_item(
+        $self->add_translation_item(
             word_id         => $word_tr->{word_id},
             read_only       => 1,
             word            => $word_tr->{word},
@@ -751,7 +752,7 @@ sub fill_fields {
     $self->word_note->SetValue($params{note});
 }
 
-sub trans_count { scalar @{$_[0]->word_translations} }
+sub translation_count { scalar @{$_[0]->word_translations} }
 
 sub get_partofspeech_id {
     my ($self, $name) = @_;
@@ -766,7 +767,7 @@ sub get_partofspeech_id {
 sub _add_translation {
     my ($self, $word, $partofspeech) = @_;
 
-    $self->add_trans_item(
+    $self->add_translation_item(
         word         => $word->{word},
         partofspeech => $partofspeech,
         map { $word->{$_} ? ($_ => $word->{$_}) : () } (qw(category note)),
@@ -776,12 +777,12 @@ sub _add_translation {
 sub translate_word {
     my $self = shift;
 
-    my $res  = $self->parent->tran->do(
+    my $res  = $self->parent->translator->do(
         'en' => 'uk',
         $self->word_src->GetValue()
     );
     p($res);
-    my $limit = $self->trans_count;
+    my $limit = $self->translation_count;
     if (keys %$res >= 1) {
         for my $meaning_group (keys %$res) {
             for my $partofspeech (keys %$res->{$meaning_group}) {
@@ -825,14 +826,14 @@ sub enable_controls($$) {
     $self->btn_additem->Enable($is_enabled);
     $self->btn_clear->Enable($is_enabled);
     $self->word_note->Enable($is_enabled);
-    $self->btn_tran->Enable($is_enabled);
-    $self->for_each_trans_item(
+    $self->btn_translate->Enable($is_enabled);
+    $self->for_each_translation_item(
         sub {
-            my $trans_item = pop;
-            return unless defined $trans_item->{word};
+            my $translation_item = pop;
+            return unless defined $translation_item->{word};
             for my $widget (qw(word note cbox btnm edit)) {
-                next if !$trans_item->{$widget};
-                $trans_item->{$widget}->Enable($is_enabled);
+                next if !$translation_item->{$widget};
+                $translation_item->{$widget}->Enable($is_enabled);
             }
         }
     );
@@ -868,13 +869,13 @@ sub BUILD {
     $self->vbox->Fit($self);
 
     # events
-    EVT_BUTTON($self, $self->btn_add_word, \&add);
-    EVT_BUTTON($self, $self->btn_additem,  sub { $self->add_trans_item });
-    EVT_BUTTON($self, $self->btn_clear,    \&clear_fields);
-    EVT_BUTTON($self, $self->btn_tran,     \&translate_word);
-    EVT_BUTTON($self, $self->btn_cancel,   \&close_page);
+    EVT_BUTTON($self, $self->btn_add_word,   \&add);
+    EVT_BUTTON($self, $self->btn_additem, sub { $self->add_translation_item });
+    EVT_BUTTON($self, $self->btn_clear,      \&clear_fields);
+    EVT_BUTTON($self, $self->btn_translate,  \&translate_word);
+    EVT_BUTTON($self, $self->btn_cancel,     \&close_page);
     EVT_CHECKBOX($self, $self->cb_irregular, \&toggle_irregular);
-    EVT_TEXT($self, $self->word_src, \&check_word);
+    EVT_TEXT($self, $self->word_src,         \&check_word);
 
     EVT_KEY_UP($self, sub { $self->keybind($_[1]) });
     $self;

@@ -100,11 +100,11 @@ sub _build_menu_bar {
     my $menubar = Wx::MenuBar->new(0);
 
     my @menu = (
-        [ Dictionaries => $self->menu_dicts ],
-        [ Word         => $self->menu_word  ],
-        [ Test         => $self->menu_test  ],
-        [ DB           => $self->menu_db    ],
-        [ Translate    => $self->menu_trans ],
+        [ Dictionaries => $self->menu_dicts     ],
+        [ Word         => $self->menu_word      ],
+        [ Test         => $self->menu_test      ],
+        [ DB           => $self->menu_db        ],
+        [ Translate    => $self->menu_translate ],
     );
 
     for my $menu_item (@menu) {
@@ -191,10 +191,10 @@ sub _build_menu_test {
     my $menu_test = Wx::Menu->new;
 
     my @menu = (
-        [ 'Irregular Verbs Test' => \&pt_irrverbs  => 'Ctrl+I' ],
-        [ 'Test Summary'         => \&pts_irrverbs => 'Ctrl+S' ],
-        [ 'Translation Test'     => \&pt_trans     => 'Ctrl+T' ],
-        [ 'Test Editor'          => \&p_testeditor => 'Ctrl+E' ],
+        [ 'Irregular Verbs Test' => \&pt_irrverbs    => 'Ctrl+I' ],
+        [ 'Test Summary'         => \&pts_irrverbs   => 'Ctrl+S' ],
+        [ 'Translation Test'     => \&pt_translation => 'Ctrl+T' ],
+        [ 'Test Editor'          => \&p_testeditor   => 'Ctrl+E' ],
     );
 
     for my $menu_item (@menu) {
@@ -243,27 +243,27 @@ sub _build_menu_db {
     $menu_db
 }
 
-=item menu_trans
+=item menu_translate
 
 =cut
 
-has menu_trans => (
+has menu_translate => (
     is         => 'ro',
     isa        => 'Wx::Menu',
     lazy_build => 1,
 );
 
-sub _build_menu_trans {
+sub _build_menu_translate {
     my ($self) = @_;
-    my $menu_trans = Wx::Menu->new;
+    my $menu_translate = Wx::Menu->new;
 
-    for my $tran_backend (@{$self->tran->get_backends_list}) {
+    for my $translator_backend (@{ $self->translator->get_backends_list }) {
         my $menu_id = $self->next_menu_id;
-        $menu_trans->AppendRadioItem($menu_id, $tran_backend);
-        EVT_MENU($self, $menu_id, \&set_tran_backend);
+        $menu_translate->AppendRadioItem($menu_id, $translator_backend);
+        EVT_MENU($self, $menu_id, \&set_translator_backend);
     }
 
-    $menu_trans
+    return $menu_translate
 }
 
 =item status_bar
@@ -298,12 +298,12 @@ sub make_pages {
 
     my @pages = (
         [ 'Search'               => $self->p_search,     1 ],
-        # [ 'Word'                 => $self->p_addword,    0 ],
-        # [ 'Words'                => $self->p_gridwords,  0 ],
-        # [ 'Irregular Verbs Test' => $self->pt_irrverbs,  0 ],
-        # [ 'TestSummary'          => $self->pts_irrverbs, 0 ],
-        # [ 'Translation Test'     => $self->pt_trans,     0 ],
-        # [ 'Test Editor'          => $self->p_testeditor, 0 ],
+        # [ 'Word'                 => $self->p_addword,      0 ],
+        # [ 'Words'                => $self->p_gridwords,    0 ],
+        # [ 'Irregular Verbs Test' => $self->pt_irrverbs,    0 ],
+        # [ 'TestSummary'          => $self->pts_irrverbs,   0 ],
+        # [ 'Translation Test'     => $self->pt_translation, 0 ],
+        # [ 'Test Editor'          => $self->p_testeditor,   0 ],
     );
 
     for my $page_item (@pages) {
@@ -312,11 +312,11 @@ sub make_pages {
     }
 }
 
-=item tran
+=item translator
 
 =cut
 
-has tran => (
+has translator => (
     is      => 'ro',
     isa     => 'Dict::Learn::Translate',
     lazy    => 1,
@@ -378,11 +378,11 @@ sub pts_irrverbs {
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 }
 
-=item pt_trans
+=item pt_translation
 
 =cut
 
-sub pt_trans {
+sub pt_translation {
     my $self = shift;
 
     return Dict::Learn::Frame::TranslationTest->new($self, $self->notebook,
@@ -411,13 +411,13 @@ sub dictionary_check {
     $self->set_frame_title(_DICT_ID($event->GetId));
 }
 
-sub set_tran_backend {
+sub set_translator_backend {
     my ($self, $event) = @_;
 
-    my $menu_item = $self->menu_trans->FindItem($event->GetId);
+    my $menu_item = $self->menu_translate->FindItem($event->GetId);
     $self->status_bar->SetStatusText(
         'Use "' . $menu_item->GetLabel . '" translator');
-    $self->tran->using($menu_item->GetLabel);
+    $self->translator->using($menu_item->GetLabel);
 }
 
 sub set_frame_title {
