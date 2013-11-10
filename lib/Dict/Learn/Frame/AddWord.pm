@@ -457,6 +457,9 @@ sub make_translation_item {
         $hbox->Add($translation_item{edit}, 0, wxALL, 0);
     }
 
+    # Set focus on newly created word field
+    $translation_item{word}->GetTextCtrl->SetFocus();
+
     return \%translation_item;
 }
 
@@ -884,6 +887,10 @@ sub BUILD {
     EVT_TEXT($self, $self->word_src,         \&check_word);
 
     EVT_KEY_UP($self, sub { $self->keybind($_[1]) });
+
+    # Set focus on word field
+    $self->word_src->SetFocus();
+
     $self;
 }
 

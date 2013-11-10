@@ -792,7 +792,9 @@ sub BUILD {
     $self->hbox->Fit($self);
     $self->Layout();
 
-    
+    # Set focus on search field
+    $self->combobox->SetFocus();
+
     Dict::Learn::Dictionary->cb(sub { $self->lookup() });
 }
 
