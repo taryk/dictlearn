@@ -361,10 +361,16 @@ sub _build_vbox {
 sub keybind {
     my ($self, $event) = @_;
 
+    # It should respond to Ctrl+"+" and Ctrl+"-"
+    # so if Ctrl key isn't pressed, go away
+    return if $event->GetModifiers() != wxMOD_CONTROL;
+
     given ($event->GetKeyCode()) {
+        # Ctrl+"+" or Ctrl+"+" on NumPad
         when ([WXK_ADD, WXK_NUMPAD_ADD]) {
             $self->add_translation_item();
         }
+        # Ctrl+"-" or Ctrl+"-" on NumPad
         when ([WXK_SUBTRACT, WXK_NUMPAD_SUBTRACT]) {
             if (my $last_word_obj
                 = first { defined $_->{cbox} }
