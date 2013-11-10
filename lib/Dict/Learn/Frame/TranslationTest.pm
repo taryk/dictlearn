@@ -264,6 +264,7 @@ has result => (
     is      => 'ro',
     isa     => 'Dict::Learn::Frame::TranslationTest::Result',
     lazy    => 1,
+    clearer => 'clear_result',
     default => sub {
         Dict::Learn::Frame::TranslationTest::Result->new(
             shift, wxID_ANY, 'Result', wxDefaultPosition,
@@ -643,7 +644,7 @@ sub next_step {
                 ->add(TEST_ID, sum(map { $_->{score} } @res), \@res);
         }
         $self->result->Destroy();
-        # $self->clear_result();
+        $self->clear_result();
         $self->reset_session();
         return;
     }
