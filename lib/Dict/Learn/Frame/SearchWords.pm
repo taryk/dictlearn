@@ -561,7 +561,7 @@ sub _get_word_forms {
 
     my @word_forms = ($word);
     
-    return @word_forms if $word =~ m{\s};
+    return \@word_forms if $word =~ m{\s};
     
     my @suffixes = qw(ed ing ly ness less able es s);
 
