@@ -179,9 +179,11 @@ sub find_ones {
             }
         }
     } else {
-        my $word_pattern = '%' . $params{word} . '%';
-        for my $column ('me.word', 'me.word2', 'me.word3', 'word2_id.word') {
-            push @{ $where{-or} }, ($column => { like => $word_pattern });
+        for my $word (@{$params{word}}) {
+            my $word_pattern = "%${word}%";
+            for my $column (qw(me.word me.word2 me.word3 word2_id.word)) {
+                push @{ $where{-or} }, ($column => { like => $word_pattern });
+            }
         }
     }
     my $rs = $self->search(

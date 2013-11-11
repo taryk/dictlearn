@@ -556,6 +556,24 @@ sub _build_hbox {
     return $hbox;
 }
 
+sub _get_word_forms {
+    my ($self, $word) = @_;
+
+    my @word_forms = ($word);
+    
+    return @word_forms if $word =~ m{\s};
+    
+    my @suffixes = qw(ed ing ly ness less able es s);
+
+    for my $suffix (@suffixes) {
+        next if $word !~ m{ ^ (?<word>\w+) $suffix $ }x;
+        push @word_forms, $+{word};
+        last;
+    }
+
+    return \@word_forms;
+}
+
 sub lookup {
     my ($self, $event) = @_;
 
@@ -600,7 +618,7 @@ sub lookup {
         @result
             = Database->schema->resultset('Word')
             ->find_ones_cached(
-                word    => $value,
+                word    => $self->_get_word_forms($value),
                 lang_id => $lang_id,
             );
     }
