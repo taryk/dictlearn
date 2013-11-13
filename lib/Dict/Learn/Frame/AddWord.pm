@@ -361,7 +361,7 @@ sub _build_vbox {
 sub keybind {
     my ($self, $event) = @_;
 
-    # It should respond to Ctrl+"+" and Ctrl+"-"
+    # It should respond to Ctrl+"+", Ctrl+"-", and Ctrl+Enter
     # so if Ctrl key isn't pressed, go away
     return if $event->GetModifiers() != wxMOD_CONTROL;
 
@@ -378,6 +378,10 @@ sub keybind {
             {
                 $self->del_translation_item($last_word_obj->{id});
             }
+        }
+        # Ctrl+Enter + Ctrl+Enter on NumPad
+        when([WXK_RETURN, WXK_NUMPAD_ENTER]) {
+            $self->add();
         }
     }
 }
