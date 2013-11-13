@@ -609,8 +609,14 @@ sub for_each_translation_item($$) {
 sub add {
     my $self = shift;
 
+    my $value = $self->word_src->GetValue();
+
+    # remove leading and trailing spaces
+    $value =~ s{ ^ \s+ }{}x;
+    $value =~ s{ \s+ $ }{}x;
+
     my %params = (
-        word => $self->word_src->GetValue(),
+        word => $value,
         note => $self->word_note->GetValue(),
         lang_id =>
             Dict::Learn::Dictionary->curr->{language_orig_id}{language_id},
