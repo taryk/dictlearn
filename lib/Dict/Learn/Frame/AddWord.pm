@@ -383,6 +383,10 @@ sub keybind {
         when([WXK_RETURN, WXK_NUMPAD_ENTER]) {
             $self->add();
         }
+        # Ctrl+"W" and Ctrl+"w"
+        when([ord('W'), ord('w')]) {
+            $self->close_page();
+        }
     }
 }
 
