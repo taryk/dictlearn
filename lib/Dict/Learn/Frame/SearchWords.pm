@@ -560,9 +560,22 @@ sub _get_word_forms {
     my ($self, $word) = @_;
 
     my @word_forms = ($word);
-    
+
+    # try other 'be' form
+    # TODO also wasn't | was not | weren't | were not | is not | isn't
+    my @be = qw(be was were is);
+    for my $be_form (@be) {
+        next if $word !~ m{ \b $be_form \b }xi;
+        push @word_forms, map {
+            $word =~ s{\b$be_form\b}{$_}gir
+        } grep { $_ ne $be_form } @be;
+        last;
+    }
+
+    # TODO dashes
+
     return \@word_forms if $word =~ m{\s};
-    
+
     my @suffixes = qw(ed ing ly ness less able es s);
 
     for my $suffix (@suffixes) {
