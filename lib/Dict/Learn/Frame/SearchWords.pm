@@ -563,7 +563,7 @@ sub _get_word_forms {
 
     # try other 'be' form
     # TODO also wasn't | was not | weren't | were not | is not | isn't
-    my @be = qw(be was were is);
+    my @be = qw(be was were is are);
     for my $be_form (@be) {
         next if $word !~ m{ \b $be_form \b }xi;
         push @word_forms, map {
