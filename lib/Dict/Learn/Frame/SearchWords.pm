@@ -803,6 +803,21 @@ sub add_to_test {
     );
 }
 
+sub keybind {
+    my ($self, $event) = @_;
+
+    # It should respond to Ctrl+"R"
+    # so if Ctrl key isn't pressed, go away
+    return if $event->GetModifiers() != wxMOD_CONTROL;
+
+    given ($event->GetKeyCode()) {
+        # Ctrl+"R" and Ctrl+"r"
+        when([ord('R'), ord('r')]) {
+            $self->lookup();
+        }
+    }
+}
+
 sub FOREIGNBUILDARGS {
     my ($class, $parent, @args) = @_;
 
@@ -827,6 +842,8 @@ sub BUILD {
     $self->combobox->SetFocus();
 
     Dict::Learn::Dictionary->cb(sub { $self->lookup() });
+
+    EVT_KEY_UP($self, \&keybind);
 }
 
 no Moose;
