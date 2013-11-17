@@ -28,8 +28,8 @@ sub clear_data {
 }
 
 sub add_one {
-    my $self     = shift;
-    my %params   = @_;
+    my ($self, %params) = @_;
+
     my %new_word = (
         word    => $params{word},
         note    => $params{note},
@@ -58,11 +58,11 @@ sub add_one {
             $fields => {
                 dictionary_id   => $params{dictionary_id},
                 partofspeech_id => $word->{partofspeech},
+                note            => $word->{note},
             }
         );
     }
     $self->get_all_flushcashe;
-    $self;
 }
 
 sub update_one {
