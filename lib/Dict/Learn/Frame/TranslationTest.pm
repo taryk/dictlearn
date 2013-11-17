@@ -256,6 +256,33 @@ has btn_reset => (
     },
 );
 
+=item btn_show_translation
+
+=cut
+
+has btn_show_translation => (
+    is      => 'ro',
+    isa     => 'Wx::Button',
+    default => sub {
+        Wx::Button->new(shift, wxID_ANY, 'Show translation', wxDefaultPosition,
+            wxDefaultSize);
+    },
+);
+
+=item translation
+
+=cut
+
+has translation => (
+    is      => 'ro',
+    isa     => 'Wx::StaticText',
+    default => sub {
+        Wx::StaticText->new(shift, wxID_ANY, '', wxDefaultPosition,
+            wxDefaultSize, wxALIGN_LEFT);
+    },
+);
+
+
 =item result
 
 =cut
@@ -289,9 +316,10 @@ sub BUILDARGS {
 sub BUILD {
     my ($self, @args) = @_;
 
-    $self->hbox->Add($self->btn_prev,  0, wxALL | wxGROW,  0);
-    $self->hbox->Add($self->btn_next,  0, wxALL | wxGROW,  0);
-    $self->hbox->Add($self->btn_reset, 0, wxLEFT | wxGROW, 40);
+    $self->hbox->Add($self->btn_prev,             0, wxALL | wxGROW,  0);
+    $self->hbox->Add($self->btn_next,             0, wxALL | wxGROW,  0);
+    $self->hbox->Add($self->btn_reset,            0, wxLEFT | wxGROW, 40);
+    $self->hbox->Add($self->btn_show_translation, 0, wxLEFT | wxGROW, 40);
 
     $self->hbox_position->Add($self->position, 0, wxGROW, 0);
     $self->hbox_position->Add($self->spin,     0, wxGROW, 0);
@@ -300,10 +328,12 @@ sub BUILD {
     $self->spin->SetRange(2, 100);
     $self->spin->SetValue(3);
 
-    $self->vbox->Add($self->hbox_position, 0, wxTOP | wxGROW, 5);
-    $self->vbox->Add($self->text,          0, wxTOP | wxGROW, 20);
-    $self->vbox->Add($self->input,         0, wxTOP | wxGROW, 5);
-    $self->vbox->Add($self->hbox,          0, wxTOP | wxGROW, 20);
+    $self->vbox->Add($self->hbox_position, 0, wxTOP | wxGROW,          5);
+    $self->vbox->Add($self->text,          0, wxTOP | wxGROW,          20);
+    $self->vbox->Add($self->input,         0, wxTOP | wxGROW,          5);
+    $self->vbox->Add($self->hbox,          0, wxTOP | wxGROW,          20);
+    $self->vbox->Add($self->translation,   0, wxTOP | wxLEFT | wxGROW, 20);
+
     $self->SetSizer($self->vbox);
     $self->Layout();
     $self->vbox->Fit($self);
@@ -311,9 +341,10 @@ sub BUILD {
     # events
     EVT_COMBOBOX($self, $self->test_category, \&reset_session);
     
-    EVT_BUTTON($self, $self->btn_prev,  \&prev_step);
-    EVT_BUTTON($self, $self->btn_next,  \&next_step);
-    EVT_BUTTON($self, $self->btn_reset, \&reset_session);
+    EVT_BUTTON($self, $self->btn_prev,             \&prev_step);
+    EVT_BUTTON($self, $self->btn_next,             \&next_step);
+    EVT_BUTTON($self, $self->btn_reset,            \&reset_session);
+    EVT_BUTTON($self, $self->btn_show_translation, \&show_translation);
 
     EVT_SPINCTRL($self, $self->spin, \&spin_max_step);
 
@@ -579,6 +610,7 @@ sub clear_fields {
 
     $self->input->Clear();
     $self->text->SetLabel('');
+    $self->translation->SetLabel('');
     $self->Layout();
 }
 
@@ -733,6 +765,14 @@ sub compare_strings {
         grep { $matched_most->[2] ne $_->[1] } @{$expected};
 
     $matched_most;
+}
+
+sub show_translation {
+    my ($self) = @_;
+
+    $self->translation->SetLabel(
+        join "\n", map { "* $_->[1]" } @{ $self->exercise->[$self->pos - 1][3] }
+    );
 }
 
 no Moose;
