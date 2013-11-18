@@ -403,7 +403,7 @@ sub add {
         $params{word2} = $self->word2_src->GetValue();
         $params{word3} = $self->word3_src->GetValue();
     }
-    $self->translations->for_each_translation_item(
+    $self->translations->for_each(
         sub {
             my $translation_panel = pop;
             my %push_item = ( word_id => $translation_panel->{word_id} );
@@ -466,7 +466,7 @@ sub clear_fields {
     $self->word3_src->Clear;
     $self->enable_irregular(0);
 
-    $self->translations->for_each_translation_item(
+    $self->translations->for_each(
         sub {
             my $translation_item = pop;
             return unless defined $translation_item->{word};
@@ -512,7 +512,7 @@ sub fill_fields {
     $self->clear_fields;
     $self->edit_origin(\%params);
     $self->item_id($params{word_id});
-    $self->translations->remove_all_transations;
+    $self->translations->remove_all;
     $self->word_src->SetValue($params{word});
     $self->enable_irregular($params{irregular});
 
@@ -521,7 +521,7 @@ sub fill_fields {
         $self->word3_src->SetValue($params{word3}) if $params{word3};
     }
     for my $word_tr (@{$params{translate}}) {
-        $self->translations->add_translation_item(
+        $self->translations->add_item(
             word_id         => $word_tr->{word_id},
             read_only       => 1,
             word            => $word_tr->{word},
@@ -551,11 +551,11 @@ sub translate_word {
                     given (ref $words) {
                         when ('ARRAY') {
                             for my $word (@$words) {
-                                $self->translations->_add_translation($word, $partofspeech);
+                                $self->translations->add($word, $partofspeech);
                             }
                         }
                         when ('HASH') {
-                            $self->translations->_add_translation($words, $partofspeech);
+                            $self->translations->add($words, $partofspeech);
                         }
                     }
                 }
@@ -585,7 +585,7 @@ sub enable_controls($$) {
     $self->btn_clear->Enable($is_enabled);
     $self->word_note->Enable($is_enabled);
     $self->btn_translate->Enable($is_enabled);
-    $self->translations->for_each_translation_item(
+    $self->translations->for_each(
         sub {
             my $translation_item = pop;
             return unless defined $translation_item->{word};
@@ -601,7 +601,7 @@ sub close_page {
     my $self = shift;
 
     $self->clear_fields();
-    $self->translations->remove_all_transations();
+    $self->translations->remove_all();
 
     $self->parent->notebook->DeletePage(
         $self->parent->notebook->GetSelection()

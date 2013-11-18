@@ -30,11 +30,11 @@ has btn_additem => (
     },
 );
 
-=item vbox_translation_item
+=item vbox_item
 
 =cut
 
-has vbox_translation_item => (
+has vbox_item => (
     is      => 'ro',
     isa     => 'ArrayRef',
     lazy    => 1,
@@ -60,23 +60,23 @@ sub _build_hbox_add {
     return $hbox_add;
 }
 
-=item vbox_translations
+=item vbox
 
 =cut
 
-has vbox_translations => (
+has vbox => (
     is         => 'ro',
     isa        => 'Wx::BoxSizer',
     lazy_build => 1,
 );
 
-sub _build_vbox_translations {
+sub _build_vbox {
     my $self = shift;
 
-    my $vbox_translations = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox_translations->Add($self->hbox_add, 0, wxALIGN_LEFT | wxRIGHT, 5);
+    my $vbox = Wx::BoxSizer->new(wxVERTICAL);
+    $vbox->Add($self->hbox_add, 0, wxALIGN_LEFT | wxRIGHT, 5);
 
-    return $vbox_translations;
+    return $vbox;
 }
 
 =item word_translations
@@ -100,7 +100,7 @@ sub keybind {
     given ($event->GetKeyCode()) {
         # Ctrl+"+" or Ctrl+"+" on NumPad
         when ([WXK_ADD, WXK_NUMPAD_ADD]) {
-            $self->add_translation_item();
+            $self->add_item();
         }
         # Ctrl+"-" or Ctrl+"-" on NumPad
         when ([WXK_SUBTRACT, WXK_NUMPAD_SUBTRACT]) {
@@ -108,20 +108,20 @@ sub keybind {
                 = first { defined $_->{cbox} }
                 reverse @{ $self->word_translations })
             {
-                $self->del_translation_item($last_word_obj->{id});
+                $self->del_item($last_word_obj->{id});
             }
         }
     }
 }
 
-sub make_translation_item {
+sub make_item {
     my ($self, $word_id, $ro) = @_;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    push @{ $self->vbox_translation_item } => $vbox;
+    push @{ $self->vbox_item } => $vbox;
 
-    my $id = $#{ $self->vbox_translation_item };
+    my $id = $#{ $self->vbox_item };
 
     my %translation_item = (
         word_id => $word_id,
@@ -155,7 +155,7 @@ sub make_translation_item {
 
     EVT_BUTTON(
         $self, $translation_item{btnm},
-        sub { $self->del_translation_item($id) }
+        sub { $self->del_item($id) }
     );
 
     my $part_of_speach_selection = 0;
@@ -195,14 +195,14 @@ sub make_translation_item {
     return \%translation_item;
 }
 
-sub add_translation_item {
+sub add_item {
     my ($self, %params) = @_;
 
     my $translation_item
-        = $self->make_translation_item($params{word_id}, $params{read_only});
+        = $self->make_item($params{word_id}, $params{read_only});
 
-    my @children = $self->vbox_translations->GetChildren;
-    $self->vbox_translations->Insert($#children || 0,
+    my @children = $self->vbox->GetChildren;
+    $self->vbox->Insert($#children || 0,
         $translation_item->{parent_vbox}, 1, wxALL | wxGROW, 0);
     $self->Layout();
 
@@ -228,7 +228,7 @@ sub add_translation_item {
     return $translation_item;
 }
 
-sub del_translation_item {
+sub del_item {
     my ($self, $id) = @_;
 
     for (qw[ cbox word btnm btnp edit note ]) {
@@ -236,10 +236,10 @@ sub del_translation_item {
         $self->word_translations->[$id]{$_}->Destroy();
         delete $self->word_translations->[$id]{$_};
     }
-    $self->vbox_translations->Detach($self->vbox_translation_item->[$id])
-        if defined $self->vbox_translation_item->[$id];
+    $self->vbox->Detach($self->vbox_item->[$id])
+        if defined $self->vbox_item->[$id];
     $self->Layout();
-    delete $self->vbox_translation_item->[$id];
+    delete $self->vbox_item->[$id];
     delete $self->word_translations->[$id]{parent_vbox};
     delete $self->word_translations->[$id]{parent_hbox};
 
@@ -264,7 +264,7 @@ sub edit_word_as_new {
     return $self;
 }
 
-sub for_each_translation_item($$) {
+sub for_each($$) {
     my ($self, $cb) = @_;
 
     for my $translation_item (grep { defined } @{ $self->word_translations }) {
@@ -272,21 +272,21 @@ sub for_each_translation_item($$) {
     }
 }
 
-sub remove_all_transations {
+sub remove_all {
     my $self = shift;
 
     for (@{$self->word_translations}) {
-        $self->del_translation_item($_->{id});
+        $self->del_item($_->{id});
         delete $self->word_translations->[$_->{id}];
     }
 }
 
 sub translation_count { scalar @{$_[0]->word_translations} }
 
-sub _add_translation {
+sub add {
     my ($self, $word, $partofspeech) = @_;
 
-    $self->add_translation_item(
+    $self->add_item(
         word         => $word->{word},
         partofspeech => $partofspeech,
         map { $word->{$_} ? ($_ => $word->{$_}) : () } (qw(category note)),
@@ -324,12 +324,12 @@ sub BUILD {
     my ($self, @args) = @_;
 
     ### main layout  
-    $self->SetSizer($self->vbox_translations);
+    $self->SetSizer($self->vbox);
     $self->Layout();
-    $self->vbox_translations->Fit($self);
+    $self->vbox->Fit($self);
 
     # events
-    EVT_BUTTON($self, $self->btn_additem, sub { $self->add_translation_item });
+    EVT_BUTTON($self, $self->btn_additem, sub { $self->add_item });
 
     EVT_KEY_UP($self, \&keybind);
 }
