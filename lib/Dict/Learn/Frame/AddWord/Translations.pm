@@ -311,15 +311,15 @@ sub get_partofspeech_id {
     }
 }
 
-# sub FOREIGNBUILDARGS {
-#     my ($class, $parent, @args) = @_;
-#     return @args;
-# }
+sub FOREIGNBUILDARGS {
+    my ($class, @args) = @_;
+    return @args;
+}
 
-# sub BUILDARGS {
-#     my ($class, $parent) = @_;
-#     return { parent => $parent };
-# }
+sub BUILDARGS {
+    my ($class, @args) = @_;
+    return { };
+}
 
 sub BUILD {
     my ($self, @args) = @_;
