@@ -87,6 +87,25 @@ sub _build_btn_reset {
     return $btn_reset;
 }
 
+=item btn_addword
+
+=cut
+
+has btn_addword => (
+    is         => 'ro',
+    isa        => 'Wx::Button',
+    lazy_build => 1,
+);
+
+sub _build_btn_addword {
+    my $self = shift;
+
+    my $btn_addword = Wx::Button->new($self, wxID_ANY, 'Add', [20, 20]);
+    EVT_BUTTON($self, $btn_addword, \&add_word);
+
+    return $btn_addword;
+}
+
 =item lookup_hbox
 
 =cut
@@ -101,9 +120,10 @@ sub _build_lookup_hbox {
     my $self = shift;
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->combobox, 1, wxGROW, 0);
-    $hbox->Add($self->btn_lookup, 0);
-    $hbox->Add($self->btn_reset,  0);
+    $hbox->Add($self->combobox,    1, wxGROW);
+    $hbox->Add($self->btn_lookup,  0, wxALIGN_RIGHT);
+    $hbox->Add($self->btn_reset,   0, wxALIGN_RIGHT);
+    $hbox->Add($self->btn_addword, 0, wxALIGN_RIGHT);
 
     return $hbox;
 }
@@ -801,6 +821,14 @@ sub add_to_test {
         sprintf 'Word "%s" has been added to "%s" test',
         $word, $self->cb_add_to_test->GetValue()
     );
+}
+
+sub add_word {
+    my ($self) = @_;
+
+    my $add_word_page = $self->parent->p_addword;
+    $add_word_page->word_src->SetValue($self->combobox->GetValue);
+    $self->parent->new_page($add_word_page, 'Add');
 }
 
 sub keybind {
