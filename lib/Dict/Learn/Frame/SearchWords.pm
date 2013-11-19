@@ -676,7 +676,7 @@ sub edit_word {
     my $add_word_page = $self->parent->p_addword;
     my $word_id = $self->get_word_id($curr_id);
     $add_word_page->load_word(word_id => $word_id);
-    $self->parent->notebook->AddPage($add_word_page, "Edit Word #$word_id", 1);
+    $self->parent->new_page($add_word_page, "Edit Word #$word_id");
 }
 
 sub edit_example {

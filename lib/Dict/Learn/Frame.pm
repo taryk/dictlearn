@@ -170,7 +170,7 @@ sub _build_menu_word {
             $caption . ($keybind ? "\t" . $keybind : ''));
 
         EVT_MENU($self, $menu_id,
-            sub { $self->notebook->AddPage($self->$coderef(), $caption, 1) });
+            sub { $self->new_page($self->$coderef(), $caption) });
     }
 
     return $menu_word;
@@ -204,7 +204,7 @@ sub _build_menu_test {
             $caption . ($keybind ? "\t" . $keybind : ''));
 
         EVT_MENU($self, $menu_id,
-            sub { $self->notebook->AddPage($self->$coderef(), $caption, 1) });
+            sub { $self->new_page($self->$coderef(), $caption) });
     }
 
     return $menu_test;
@@ -308,7 +308,7 @@ sub make_pages {
 
     for my $page_item (@pages) {
         my ($caption, $page, $default) = @$page_item;
-        $self->notebook->AddPage($page, $caption, $default);
+        $self->new_page($page, $caption, $default);
     }
 }
 
@@ -398,6 +398,12 @@ sub p_testeditor {
 
     return Dict::Learn::Frame::TestEditor->new($self, $self->notebook,
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+}
+
+sub new_page {
+    my ($self, $panel_ref, $caption, $default) = @_;
+
+    $self->notebook->AddPage($panel_ref, $caption, $default // 1);
 }
 
 sub dictionary_check {
