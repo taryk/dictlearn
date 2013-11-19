@@ -5,7 +5,7 @@ use Wx::Event qw[:everything];
 
 use Moose;
 use MooseX::NonMoose;
-extends 'Wx::Panel';
+extends 'Wx::ScrolledWindow';
 
 use Carp qw[croak confess];
 use Data::Printer;
@@ -204,7 +204,8 @@ sub add_item {
     my @children = $self->vbox->GetChildren;
     $self->vbox->Insert($#children || 0,
         $translation_item->{parent_vbox}, 1, wxALL | wxGROW, 0);
-    $self->Layout();
+    $self->vbox->FitInside($self);
+    $self->vbox->Layout();
 
     # fill out the fields
 

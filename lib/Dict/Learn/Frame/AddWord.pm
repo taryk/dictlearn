@@ -255,9 +255,10 @@ sub _build_translations {
     my $self = shift;
 
     my $translations = Dict::Learn::Frame::AddWord::Translations->new(
-        $self, wxID_ANY, wxDefaultPosition, wxDefaultSize
+        $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL
     );
-    
+    $translations->SetScrollbars(20, 20, 0, 0);
+
     return $translations;
 }
 
