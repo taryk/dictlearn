@@ -114,6 +114,15 @@ sub keybind {
     }
 }
 
+sub _scroll_to_bottom {
+    my ($self) = @_;
+
+    my $y_unit = ($self->GetScrollPixelsPerUnit())[1];
+    my $height = ($self->GetVirtualSize())[1];
+
+    $self->Scroll(0, int($height / $y_unit));
+}
+
 sub make_item {
     my ($self, $word_id, $ro) = @_;
 
@@ -206,6 +215,8 @@ sub add_item {
         $translation_item->{parent_vbox}, 1, wxALL | wxGROW, 0);
     $self->vbox->FitInside($self);
     $self->vbox->Layout();
+
+    $self->_scroll_to_bottom();
 
     # fill out the fields
 
