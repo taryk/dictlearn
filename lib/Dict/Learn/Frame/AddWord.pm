@@ -384,6 +384,26 @@ sub check_word {
     $self->enable_controls($self->enable);
 }
 
+
+sub check_for_duplicates {
+    my ($self, $translations) = @_;
+
+    for my $item_idx (0 .. $#{$translations}) {
+        my $item = $translations->[$item_idx];
+        my $key = $item->{word_id} ? 'word_id' : 'word';
+        nested_item:
+        for my $nested_item_idx (0 .. $#{$translations}) {
+            next nested_item if $item_idx == $nested_item_idx;
+            my $nested_item = $translations->[$nested_item_idx];
+            return $item
+                if ($item->{$key} && $nested_item->{$key})
+                && ($item->{$key} eq $nested_item->{$key});
+        }
+    }
+
+    return undef;
+}
+
 sub add {
     my $self = shift;
 
@@ -432,6 +452,22 @@ sub add {
             push @{$params{translate}} => \%push_item;
         }
     );
+
+    if (my $item = $self->check_for_duplicates($params{translate})) {
+        my $word
+            = $item->{word_id}
+            ? 'id: ' . $item->{word_id}
+            : $item->{word};
+        say "Duplicate translation: $word";
+        return
+            if wxYES != Wx::MessageBox(
+                qq{Found one duplicate translation: "$word"},
+                'Want to continue?',
+                wxICON_QUESTION | wxYES_NO | wxNO_DEFAULT | wxCENTRE,
+                $self,
+            );
+    }
+
     if (defined $self->item_id
         and $self->item_id >= 0)
     {
