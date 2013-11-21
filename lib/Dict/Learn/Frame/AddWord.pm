@@ -489,7 +489,7 @@ sub add {
 }
 
 sub clear_fields {
-    my $self = shift;
+    my ($self) = @_;
 
     $self->clear_item_id;
     $self->clear_edit_origin;
@@ -503,15 +503,7 @@ sub clear_fields {
     $self->word3_src->Clear;
     $self->enable_irregular(0);
 
-    $self->translations->for_each(
-        sub {
-            my $translation_item = pop;
-            return unless defined $translation_item->{word};
-            $translation_item->{cbox}->SetSelection(0);
-            $translation_item->{word}->SetText('');
-            $translation_item->{note}->Clear;
-        }
-    );
+    $self->remove_translations();
     $self->word_note->Clear;
 }
 
