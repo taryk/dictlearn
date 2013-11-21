@@ -515,6 +515,12 @@ sub clear_fields {
     $self->word_note->Clear;
 }
 
+sub remove_translations {
+    my ($self) = @_;
+
+    $self->translations->remove_all();
+}
+
 sub load_word {
     my ($self, %params) = @_;
 
@@ -665,7 +671,7 @@ sub BUILD {
 
     # events
     EVT_BUTTON($self, $self->btn_add_word,   \&add);
-    EVT_BUTTON($self, $self->btn_clear,      \&clear_fields);
+    EVT_BUTTON($self, $self->btn_clear,      \&remove_translations);
     EVT_BUTTON($self, $self->btn_translate,  \&translate_word);
     EVT_BUTTON($self, $self->btn_cancel,     \&close_page);
     EVT_CHECKBOX($self, $self->cb_irregular, \&toggle_irregular);
