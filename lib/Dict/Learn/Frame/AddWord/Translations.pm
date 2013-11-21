@@ -16,6 +16,16 @@ use Dict::Learn::Combo::WordList;
 
 use common::sense;
 
+=item parent
+
+=cut
+
+has parent => (
+    is  => 'ro',
+    isa => 'Dict::Learn::Frame::AddWord',
+);
+
+
 =item btn_additem
 
 =cut
@@ -328,8 +338,8 @@ sub FOREIGNBUILDARGS {
 }
 
 sub BUILDARGS {
-    my ($class, @args) = @_;
-    return { };
+    my ($class, $parent) = @_;
+    return { parent => $parent };
 }
 
 sub BUILD {
