@@ -133,6 +133,41 @@ sub _scroll_to_bottom {
     $self->Scroll(0, int($height / $y_unit));
 }
 
+sub _guess_part_of_speech {
+    my ($self) = @_;
+
+    my $part_of_speech_name;
+
+    given ($self->parent->word_src->GetValue()) {
+        when (/ ( ?: ing|ness ) $/x) {
+            $part_of_speech_name = 'noun';
+        }
+        when (/ ( ?: ful|able|ed|ious ) $/x) {
+            $part_of_speech_name = 'adjective';
+        }
+        when (/ ( ?: ly|less ) $/x) {
+            $part_of_speech_name = 'adverb';
+        }
+    }
+
+    return $self->get_partofspeech_id($part_of_speech_name);
+}
+
+sub _get_previous_part_of_speech {
+    my ($self) = @_;
+
+    my $id = $#{ $self->vbox_item };
+
+    if ($id > 0 and my $prev_item = $self->word_translations->[$id - 1]) {
+        return
+            unless defined $prev_item->{cbox}
+            and ref $prev_item->{cbox} eq 'Wx::ComboBox'
+            and $prev_item->{cbox}->GetSelection >= 0;
+
+        return $prev_item->{cbox}->GetSelection;
+    }
+}
+
 sub make_item {
     my ($self, $word_id, $ro) = @_;
 
@@ -177,14 +212,13 @@ sub make_item {
         sub { $self->del_item($id) }
     );
 
-    my $part_of_speach_selection = 0;
-    if ($id > 0 and my $prev_item = $self->word_translations->[$id - 1]) {
-        return unless defined $prev_item->{cbox}
-            and ref $prev_item->{cbox} eq 'Wx::ComboBox'
-            and $prev_item->{cbox}->GetSelection >= 0;
+    my $part_of_speach_selection
+        = $id == 0
+        # Try to guess the part-of-speech based on word's suffix
+        ? $self->_guess_part_of_speech()
+        # Duplicate a previous part-of-speech in a next item
+        : $self->_get_previous_part_of_speech() // 0;
 
-        $part_of_speach_selection = $prev_item->{cbox}->GetSelection;
-    }
     $translation_item{cbox}->SetSelection($part_of_speach_selection);
 
     $hbox->Add($translation_item{cbox}, 0, wxALL, 0);
