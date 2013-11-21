@@ -547,7 +547,6 @@ sub fill_fields {
     $self->clear_fields;
     $self->edit_origin(\%params);
     $self->item_id($params{word_id});
-    $self->translations->remove_all;
     $self->word_src->SetValue($params{word});
     $self->enable_irregular($params{irregular});
 
