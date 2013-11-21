@@ -634,9 +634,6 @@ sub enable_controls($$) {
 sub close_page {
     my $self = shift;
 
-    $self->clear_fields();
-    $self->translations->remove_all();
-
     $self->parent->notebook->DeletePage(
         $self->parent->notebook->GetSelection()
     );
