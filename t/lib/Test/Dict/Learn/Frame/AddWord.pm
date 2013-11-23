@@ -33,41 +33,45 @@ sub check_for_duplicates : Tests {
         word_id      => undef,
     );
 
-    my @different_words = (
-        { %item, word => 'test1' },
-        { %item, word => 'test2' },
-    );
-    ok(
-        !$self->{frame}->check_for_duplicates(\@different_words),
-        q{There are no duplicates in @different_words}
-    );
+    subtest 'Check for duplicates of the words' => sub {
+        my @different_words = (
+            { %item, word => 'test1' },
+            { %item, word => 'test2' },
+        );
+        ok(
+            !$self->{frame}->check_for_duplicates(\@different_words),
+            q{There are no duplicates in @different_words}
+        );
 
-    my @duplicate_words = (\%item, \%item);
-    is_deeply(
-        $self->{frame}->check_for_duplicates(\@duplicate_words), \%item,
-        q{It's a duplication if two identical items passed}
-    );
+        my @duplicate_words = (\%item, \%item);
+        is_deeply(
+            $self->{frame}->check_for_duplicates(\@duplicate_words), \%item,
+            q{It's a duplication if two identical items passed}
+        );
+    };
 
     my %item_with_word_id = (
         %item,
         word    => undef,
         word_id => 1
     );
-    
-    my @different_word_id = (
-        { %item_with_word_id, word_id => 2 },
-        { %item_with_word_id, word_id => 3 },
-    );
-    ok(
-        !$self->{frame}->check_for_duplicates(\@different_word_id),
-        q{There are no duplicates in @different_word_id}
-    );
 
-    my @duplicate_word_id = (\%item_with_word_id, \%item_with_word_id);
-    is_deeply(
-        $self->{frame}->check_for_duplicates(\@duplicate_word_id), \%item_with_word_id,
-        q{It's a duplication if two identical word_id passed}
-    );
+    subtest 'Check for duplicates of the word_id' => sub {
+        my @different_word_id = (
+            { %item_with_word_id, word_id => 2 },
+            { %item_with_word_id, word_id => 3 },
+        );
+        ok(
+            !$self->{frame}->check_for_duplicates(\@different_word_id),
+            q{There are no duplicates in @different_word_id}
+        );
+
+        my @duplicate_word_id = (\%item_with_word_id, \%item_with_word_id);
+        is_deeply(
+            $self->{frame}->check_for_duplicates(\@duplicate_word_id), \%item_with_word_id,
+            q{It's a duplication if two identical word_id passed}
+        );
+    };
 }
 
 1;
