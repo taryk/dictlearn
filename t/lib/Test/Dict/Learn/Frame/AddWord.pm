@@ -25,30 +25,27 @@ sub startup : Test(startup => no_plan) {
 sub check_for_duplicates : Tests {
     my ($self) = @_;
 
-    my @items = (
-        {
-            lang_id      => 1,
-            note         => '',
-            partofspeech => 0,
-            word         => 'test1',
-            word_id      => undef,
-        },
-        {
-            lang_id      => 1,
-            note         => '',
-            partofspeech => 0,
-            word         => 'test2',
-            word_id      => undef,
-        }
+    my %item = (
+        lang_id      => 1,
+        note         => '',
+        partofspeech => 0,
+        word         => 'test',
+        word_id      => undef,
     );
 
-    ok(
-        !$self->{frame}->check_for_duplicates(\@items),
-        q{There's no duplicates in a single item}
+    my @different_words = (
+        { %item, word => 'test1' },
+        { %item, word => 'test2' },
     );
+    ok(
+        !$self->{frame}->check_for_duplicates(\@different_words),
+        q{There are no duplicates in @different_words}
+    );
+
+    my @duplicate_words = (\%item, \%item);
     is_deeply(
-        $self->{frame}->check_for_duplicates([$items[0], $items[0]]), $items[0],
-        q{Duplication was found}
+        $self->{frame}->check_for_duplicates(\@duplicate_words), \%item,
+        q{It's a duplication if two identical items passed}
     );
 
 }
