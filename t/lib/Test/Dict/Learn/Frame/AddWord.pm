@@ -168,6 +168,33 @@ sub add_record : Tests {
             q{lang_id was set correctly}
         );
     }
+
+    # At first, frame is enabled
+    is($self->{frame}->enable => 1, q{Frame is enabled});
+
+    # Try to put the word which already exists in the database to 'word_src'
+    # field.
+    $self->{frame}->word_src->SetValue($record{word});
+
+    # After that, frame should become disabled
+    is($self->{frame}->enable => 0,
+        q{Frame is disabled as long as such word already exists in the database}
+    );
+
+    # 'add' method shouldn't neither add the record to the database,
+    # nor return true
+    ok(!$self->{frame}->add(),
+        q{'add' fails to add a word which already is in the database});
+
+    # There's only one record with such a word, which was added by the first
+    # 'add' method call
+    is(
+        Database->schema->resultset('Word')
+            ->search({ word => $record{word}, lang_id => $from_lang_id })
+            ->count() => 1,
+        q{The second 'add' call haven't added a record to the database}
+    );
+
 }
 
 sub add_word_with_translations {
