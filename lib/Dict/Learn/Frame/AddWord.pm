@@ -489,7 +489,7 @@ sub add {
     # TODO trigger an event informing that word list should be reloaded
     # $self->parent->p_search->lookup;
 
-    return $self;
+    return 1;
 }
 
 sub clear_fields {
