@@ -408,6 +408,9 @@ sub check_for_duplicates {
 sub add {
     my $self = shift;
 
+    # Go away if this panel isn't enabled
+    return unless $self->enable;
+
     my $value = $self->word_src->GetValue();
 
     # remove leading and trailing spaces
