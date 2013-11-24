@@ -185,7 +185,9 @@ sub add_word_with_translations {
     }
 
     # Perform adding
-    $self->{frame}->add();
+    ok($self->{frame}->add(),
+        q{'add' method returns true if a word has been added successfully});
+    $self->{frame}->clear_fields();
 }
 
 sub test_field {
