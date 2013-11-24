@@ -26,54 +26,27 @@ sub fields : Tests {
     my ($self) = @_;
 
     my $item_id = 1;
-    
-    $self->test_field(
-        name => 'item_id',
-        type => 'Int',
-    );
-    $self->test_field(
-        name => 'enable',
-        type => 'Bool',
-    );
-    $self->test_field(
-        name => 'edit_origin',
-        type => 'HashRef',
-    );
-    $self->test_field(
-        name => 'parent',
-        is   => 'ro',
-        type => 'Dict::Learn::Frame',
-    );
-    $self->test_field(
-        name => 'cb_irregular',
-        is   => 'ro',
-        type => 'Wx::CheckBox',
-    );
-    $self->test_field(
-        name => 'translations',
-        is   => 'ro',
-        type => 'Dict::Learn::Frame::AddWord::Translations',
-    );
-    for my $field (qw(word_note word_src word2_src word3_src)) {
-        $self->test_field(
-            name => $field,
-            is   => 'ro',
-            type => 'Wx::TextCtrl',
-        );
+    for (
+        [item_id => 'Int'],
+        [enable  => 'Bool'],
+        [edit_origin => 'HashRef']
+        )
+    {
+        my ($field, $type) = @$_;
+        $self->test_field( name => $field, type => $type );
     }
-    for my $field (qw(vbox_src hbox_btn hbox_words vbox)) {
-        $self->test_field(
-            name => $field,
-            is   => 'ro',
-            type => 'Wx::BoxSizer',
-        );
-    }
-    for my $field (qw(btn_add_word btn_translate btn_clear btn_cancel)) {
-        $self->test_field(
-            name => $field,
-            is   => 'ro',
-            type => 'Wx::Button',
-        );
+
+    for (
+        [parent       => 'Dict::Learn::Frame'],
+        [cb_irregular => 'Wx::CheckBox'],
+        [translations => 'Dict::Learn::Frame::AddWord::Translations'],
+        [qw(word_note word_src word2_src word3_src) => 'Wx::TextCtrl'],
+        [qw(vbox_src hbox_btn hbox_words vbox)      => 'Wx::BoxSizer'],
+        [qw(btn_add_word btn_translate btn_clear btn_cancel) => 'Wx::Button'],
+        )
+    {
+        my $type = pop @$_;
+        $self->test_field( name => $_, type => $type, is => 'ro') for @$_;
     }
 }
 
