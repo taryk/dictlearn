@@ -64,6 +64,7 @@ has parent => (
 has word_note => (
     is      => 'ro',
     isa     => 'Wx::TextCtrl',
+    lazy    => 1,
     default => sub {
         Wx::TextCtrl->new(shift, wxID_ANY, '', wxDefaultPosition,
             wxDefaultSize, wxTE_MULTILINE)
