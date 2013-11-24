@@ -142,19 +142,7 @@ sub add_record : Tests {
         ]
     );
 
-    # Set a source word
-    $self->{frame}->word_src->SetValue($record{word});
-
-    # Set a note for source word
-    $self->{frame}->word_note->SetValue($record{note});
-
-    # Add all translations
-    for (@{ $record{translations} }) {
-        $self->{frame}->translations->add_item(%$_);
-    }
-
-    # Perform adding
-    $self->{frame}->add();
+    $self->add_word_with_translations(%record);
 
     # Check if source word has been added to the database
     my $word_record = Database->schema->resultset('Word')->match(
@@ -180,6 +168,24 @@ sub add_record : Tests {
             q{lang_id was set correctly}
         );
     }
+}
+
+sub add_word_with_translations {
+    my ($self, %record) = @_;
+
+    # Set a source word
+    $self->{frame}->word_src->SetValue($record{word});
+
+    # Set a note for source word
+    $self->{frame}->word_note->SetValue($record{note});
+
+    # Add all translations
+    for (@{ $record{translations} }) {
+        $self->{frame}->translations->add_item(%$_);
+    }
+
+    # Perform adding
+    $self->{frame}->add();
 }
 
 sub test_field {
