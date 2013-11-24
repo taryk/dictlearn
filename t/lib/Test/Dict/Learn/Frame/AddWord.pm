@@ -9,17 +9,34 @@ use Wx qw[:everything];
 
 use lib::abs qw( ../../../../../../lib );
 
+use Container;
+use Database;
+use Dict::Learn::Dictionary;
 use Dict::Learn::Frame::AddWord;
 
 sub startup : Test(startup => no_plan) {
     my ($self) = @_;
 
+    # Use in-memory DB for this test
+    Container->params( dbfile => ':memory:', debug  => 1 );
+    Container->lookup('db')->install_schema();
+
+    # Set default dictionary
+    Dict::Learn::Dictionary->all();
+    Dict::Learn::Dictionary->set(0);
+
+    # Dummy parent object
     my $parent = bless {} => 'Dict::Learn::Frame';
+
+    # `Wx::Panel` wants parent frame to be real
     my $frame  = Wx::Frame->new(undef, wxID_ANY, 'Test');
     $self->{frame}
         = Dict::Learn::Frame::AddWord->new($parent, $frame, wxID_ANY,
         wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
+    # Monkey-patch the `close_page` method as it uses parent object,
+    # which isn't a real Dict::Learn::Frame instance in this test
+    *Dict::Learn::Frame::AddWord::close_page = sub {};
 }
 
 sub fields : Tests {
@@ -100,6 +117,69 @@ sub check_for_duplicates : Tests {
             q{It's a duplication if two identical word_id passed}
         );
     };
+}
+
+sub add_record : Tests {
+    my ($self) = @_;
+
+    my $from_lang_id
+        = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
+    my $to_lang_id
+        = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
+
+    my %record = (
+        word => 'Test Word',
+        note => 'Test Note',
+        translations => [
+            {
+                word  => 'Test Translation 1',
+                partofspeech_id => 1,
+            },
+            {
+                word  => 'Test Translation 2',
+                partofspeech_id => 2,
+            }
+        ]
+    );
+
+    # Set a source word
+    $self->{frame}->word_src->SetValue($record{word});
+
+    # Set a note for source word
+    $self->{frame}->word_note->SetValue($record{note});
+
+    # Add all translations
+    for (@{ $record{translations} }) {
+        $self->{frame}->translations->add_item(%$_);
+    }
+
+    # Perform adding
+    $self->{frame}->add();
+
+    # Check if source word has been added to the database
+    my $word_record = Database->schema->resultset('Word')->match(
+        $from_lang_id,
+        $record{word}
+    )->first;
+
+    ok(defined $word_record, 'DB row was added');
+
+    # Go through the translations
+    my @translations = $word_record->words;
+    for my $tr_record (@{ $record{translations} }) {
+        my ($found_record)
+            = grep { $_->word eq $tr_record->{word} } @translations;
+        ok($found_record,
+            'Translation "' . $found_record->word . '" was added');
+        is(
+            $found_record->partofspeech_id => $tr_record->{partofspeech_id},
+            q{Part-of-speech was set correctly}
+        );
+        is(
+            $found_record->lang_id => $to_lang_id,
+            q{lang_id was set correctly}
+        );
+    }
 }
 
 sub test_field {
