@@ -350,6 +350,7 @@ sub strip_spaces {
 sub check_word {
     my ($self, $event) = @_;
 
+    my $value = $self->strip_spaces($event->GetString);
     my $word;
     unless (
         defined(
@@ -357,7 +358,7 @@ sub check_word {
                 = Database->schema->resultset('Word')->match(
                 Dict::Learn::Dictionary->curr->{language_orig_id}
                     {language_id},
-                $event->GetString
+                $value
                 )->first
         )
         )
@@ -370,12 +371,11 @@ sub check_word {
         if ($self->item_id >= 0) {
             return
                 if $self->has_edit_origin
-                and $self->edit_origin->{word} eq $event->GetString;
+                and $self->edit_origin->{word} eq $value;
         }
         if ((my $word_id = $word->word_id) >= 0) {
             $self->enable(0);
-            $self->btn_add_word->SetLabel(
-                'Edit word "' . $self->word_src->GetValue . '"');
+            $self->btn_add_word->SetLabel(qq{Edit word "$value"});
             EVT_BUTTON(
                 $self,
                 $self->btn_add_word,
