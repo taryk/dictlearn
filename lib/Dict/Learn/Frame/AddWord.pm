@@ -337,6 +337,16 @@ sub keybind {
 #     }
 # }
 
+sub strip_spaces {
+    my ($self, $phrase) = @_;
+
+    # remove leading and trailing spaces
+    $phrase =~ s{ ^ \s+ }{}x;
+    $phrase =~ s{ \s+ $ }{}x;
+
+    return $phrase;
+}
+
 sub check_word {
     my ($self, $event) = @_;
 
@@ -411,11 +421,7 @@ sub add {
     # Go away if this panel isn't enabled
     return unless $self->enable;
 
-    my $value = $self->word_src->GetValue();
-
-    # remove leading and trailing spaces
-    $value =~ s{ ^ \s+ }{}x;
-    $value =~ s{ \s+ $ }{}x;
+    my $value = $self->strip_spaces($self->word_src->GetValue());
 
     my %params = (
         word => $value,
