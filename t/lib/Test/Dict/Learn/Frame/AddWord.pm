@@ -200,12 +200,15 @@ sub add_record : Tests {
 sub strip_spaces : Tests {
     my ($self) = @_;
 
-    for ($self->strip_spaces_data()) {
-        my ($input_value, $output_value) = @$_;
-        is($self->{frame}->strip_spaces($input_value) => $output_value,
-                  q{Remove leading and trailing spaces: }
-                . qq{input: "$input_value", output: "$output_value"});
-    }
+    subtest '`strip_spaces` removes leading and trailing spaces' => sub {
+        for ($self->strip_spaces_data()) {
+            my ($input_value, $output_value) = @$_;
+            is(
+                $self->{frame}->strip_spaces($input_value) => $output_value,
+                qq{input: "$input_value", output: "$output_value"}
+            );
+        }
+    };
 }
 
 sub set_word : Tests {
