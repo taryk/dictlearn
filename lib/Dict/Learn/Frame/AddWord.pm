@@ -649,6 +649,12 @@ sub close_page {
     );
 }
 
+sub set_word {
+    my ($self, $word) = @_;
+
+    $self->word_src->SetValue($self->strip_spaces($word));
+}
+
 sub FOREIGNBUILDARGS {
     my ($class, $parent, @args) = @_;
     return @args;

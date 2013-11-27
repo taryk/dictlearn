@@ -827,7 +827,7 @@ sub add_word {
     my ($self) = @_;
 
     my $add_word_page = $self->parent->p_addword;
-    $add_word_page->word_src->SetValue($self->combobox->GetValue);
+    $add_word_page->set_word($self->combobox->GetValue);
     $self->parent->new_page($add_word_page, 'Add');
 }
 
