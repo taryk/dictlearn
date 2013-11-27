@@ -232,12 +232,14 @@ sub find_ones_flushcashe {
 sub match {
     my ($self, $lang_id, $word) = @_;
     my $rs = $self->search(
-        {   lang_id => $lang_id,
-            word    => $word,
+        {
+            lang_id => $lang_id,
+            # FIXME is there a better way to search with 'COLLATE NOCASE'?
+            word    => \" = '$word' COLLATE NOCASE",
         }
     );
     say "match uncached";
-    $rs;
+    return $rs;
 }
 
 sub select {
