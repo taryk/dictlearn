@@ -200,17 +200,21 @@ sub add_record : Tests {
 sub strip_spaces : Tests {
     my ($self) = @_;
 
-    for (
-        ['phrase  '   => 'phrase'],
-        ['  phrase'   => 'phrase'],
-        ['  phrase  ' => 'phrase'],
-        )
-    {
+    for ($self->strip_spaces_data()) {
         my ($input_value, $output_value) = @$_;
         is($self->{frame}->strip_spaces($input_value) => $output_value,
                   q{Remove leading and trailing spaces: }
                 . qq{input: "$input_value", output: "$output_value"});
     }
+}
+
+# input/output values for strip_spaces testing
+sub strip_spaces_data {
+    return (
+        ['phrase  '   => 'phrase'],
+        ['  phrase'   => 'phrase'],
+        ['  phrase  ' => 'phrase'],
+    );
 }
 
 sub add_word_with_translations {
