@@ -208,6 +208,24 @@ sub strip_spaces : Tests {
     }
 }
 
+sub set_word : Tests {
+    my ($self) = @_;
+
+    my $word = 'test';
+    $self->{frame}->set_word($word);
+    is($self->{frame}->word_src->GetValue, $word,
+      q{`set_word` sets the value to `word_src` field});
+
+    for ($self->strip_spaces_data()) {
+        my ($input_value, $output_value) = @$_;
+
+        $self->{frame}->set_word($input_value);
+        is($self->{frame}->word_src->GetValue, $output_value,
+                  q{`set_word` removes leading and trailing spaces: }
+                . qq{input: "$input_value", output: "$output_value"})
+    }
+}
+
 # input/output values for strip_spaces testing
 sub strip_spaces_data {
     return (
