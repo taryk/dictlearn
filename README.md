@@ -15,6 +15,7 @@ The tool for improving and expanding your vocabulary
 * [JSON](https://metacpan.org/module/JSON)
 * [Data::Printer](https://metacpan.org/module/Data::Printer)
 * [Class::XSAccessor](https://metacpan.org/module/Class::XSAccessor)
+* [lib::abs](https://metacpan.org/module/lib::abs)
 * [common::sense](https://metacpan.org/module/common::sense)
 * [namespace::autoclean](https://metacpan.org/module/namespace::autoclean)
 * [IOC::Slinky::Container](https://metacpan.org/module/IOC::Slinky::Container)
