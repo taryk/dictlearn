@@ -501,6 +501,16 @@ sub reset_analyzer {
     Container->lookup('db')->reset_analyzer();
 }
 
+sub for_each_page {
+    my ($self, $cb) = @_;
+
+    die q{$cb isn't a coderef} unless ref $cb eq 'CODE';
+
+    for my $i (0 .. $self->notebook->GetPageCount()) {
+        $cb->($i => $self->notebook->GetPage($i));
+    }
+}
+
 sub FOREIGNBUILDARGS {
     my ($class, @args) = @_;
 
