@@ -553,6 +553,7 @@ sub predefined_categories {
                     select   => ['me.word_id'],
                     join     => ['rel_words'],
                     order_by => { -desc => 'me.word_id' },
+                    distinct => 1,
                     %{ $category_settings->[1][2] || {} },
                 }
                 );
