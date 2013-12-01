@@ -231,13 +231,17 @@ sub find_ones_flushcashe {
 
 sub match {
     my ($self, $lang_id, $word) = @_;
+
     my $rs = $self->search(
         {
             lang_id => $lang_id,
+
             # FIXME is there a better way to search with 'COLLATE NOCASE'?
-            word    => \" = '$word' COLLATE NOCASE",
+            word => \sprintf(' = %s COLLATE NOCASE',
+                $self->result_source->schema->storage->dbh->quote($word)),
         }
     );
+
     say "match uncached";
     return $rs;
 }
