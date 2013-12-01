@@ -546,10 +546,12 @@ sub predefined_categories {
                     'me.lang_id' =>
                         Dict::Learn::Dictionary->curr->{language_orig_id}
                         {language_id},
+                    'rel_words.word2_id' => {'!=' => undef},
                     %{ $category_settings->[1][1] || {} },
                 },
                 {
                     select   => ['me.word_id'],
+                    join     => ['rel_words'],
                     order_by => { -desc => 'me.word_id' },
                     %{ $category_settings->[1][2] || {} },
                 }
