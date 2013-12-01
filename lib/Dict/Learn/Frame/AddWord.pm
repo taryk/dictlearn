@@ -489,8 +489,19 @@ sub add {
     # Close the page after adding/editing the word
     $self->close_page();
 
-    # TODO trigger an event informing that word list should be reloaded
-    # $self->parent->p_search->lookup;
+    # TODO probably triggering an event informing that word list should be
+    # reloaded is a better idea
+
+    # Check if there's a Search page. If so, reload the data
+    $self->parent->for_each_page(
+        sub {
+            my ($i, $page) = @_;
+
+            return unless ref $page eq 'Dict::Learn::Frame::SearchWords';
+
+            $page->lookup();
+        }
+    );
 
     return 1;
 }
