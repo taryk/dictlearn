@@ -27,7 +27,7 @@ sub TEST_ID { 1 }
 
 =cut
 
-has min   => (is => 'ro', default => sub {1});
+has min   => (is => 'ro', default => 1);
 
 =item max
 
@@ -35,7 +35,7 @@ has min   => (is => 'ro', default => sub {1});
 
 has max => (
     is      => 'rw',
-    default => sub { 3 },
+    default => 3,
     trigger => sub {
         my ($self, $new_index, $prev_index) = @_;
 
@@ -57,7 +57,7 @@ has max => (
 
 has total_score => (
     is      => 'rw',
-    default => sub { 0 },
+    default => 0,
     clearer => 'clear_score',
 );
 

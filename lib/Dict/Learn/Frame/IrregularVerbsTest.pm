@@ -48,7 +48,7 @@ has p_min => (
     is      => 'rw',
     isa     => 'Int',
     lazy    => 1,
-    default => sub { 1 },
+    default => 1,
 );
 
 =item p_max
@@ -59,7 +59,7 @@ has p_max => (
     is      => 'rw',
     isa     => 'Int',
     lazy    => 1,
-    default => sub { STEPS },
+    default => STEPS,
 );
 
 =item p_current
@@ -78,7 +78,7 @@ has p_current => (
 has total_score => (
     is      => 'rw',
     lazy    => 1,
-    default => sub { 0 },
+    default => 0,
 );
 
 =item parent

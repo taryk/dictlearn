@@ -34,7 +34,7 @@ has item_id => (
 has enable => (
     is      => 'rw',
     isa     => 'Bool',
-    default => sub { 1 },
+    default => 1,
 );
 
 =item edit_origin
