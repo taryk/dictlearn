@@ -4,6 +4,7 @@ use parent 'Test::Class';
 use common::sense;
 
 use Data::Printer;
+use Test::MockObject;
 use Test::More;
 use Wx qw[:everything];
 
@@ -228,6 +229,59 @@ sub set_word : Tests {
                 qq{input: "$input_value", output: "$output_value"});
         }
     };
+}
+
+sub check_word : Tests {
+    my ($self) = @_;
+
+    my $word = 'first-of-its-kind';
+
+    my $from_lang_id
+        = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
+
+    # insert a new word
+    $self->_new_word_in_db(
+        {
+            word            => $word,
+            lang_id         => $from_lang_id,
+            partofspeech_id => 0,
+        }
+    );
+
+    is($self->{frame}->enable, 1, q{At the beginning, form is enabled});
+
+    # if the word already exists in the database, the form controls have to be
+    # disabled
+    $self->{frame}->check_word(
+        $self->_create_event_object($word));
+
+    is($self->{frame}->enable, 0, q{Form has been disabled});
+    like($self->{frame}->btn_add_word->GetLabel => qr{^Edit word},
+         q{The button label has been changed to 'Edit word...'});
+
+    # Try to pass a word that doesn't exist in the database.
+    # The form controls have to be enabled again in the end.
+    $self->{frame}->check_word(
+        $self->_create_event_object($word.'0'));
+
+    is($self->{frame}->enable, 1, q{Form has been enabled});
+    is($self->{frame}->btn_add_word->GetLabel => 'Add',
+       q{The button label has been changed to 'Add'});
+}
+
+sub _create_event_object {
+    my ($self, $word) = @_;
+
+    my $event = Test::MockObject->new();
+    $event->mock( GetString => sub { $word } );
+
+    return $event;
+}
+
+sub _new_word_in_db {
+    my ($self, $word) = @_;
+
+    Database->schema->resultset('Word')->create($word);
 }
 
 # input/output values for strip_spaces testing
