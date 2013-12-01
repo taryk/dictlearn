@@ -554,6 +554,15 @@ sub result {
     $self->reset_test();
 
     # if TestSummary is displayed, reload its data
+    $self->parent->for_each_page(
+        sub {
+            my ($i, $page) = @_;
+
+            return unless ref $page eq 'Dict::Learn::Frame::TestSummary';
+
+            $page->refresh_data();
+        }
+    );
 }
 
 no Moose;
