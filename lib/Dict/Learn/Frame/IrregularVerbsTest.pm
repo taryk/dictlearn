@@ -426,8 +426,11 @@ sub init_test {
     $self->clear_fields();
     $self->set_position($self->p_min);
     $self->words(
-        [   shuffle Database->schema->resultset('Word')
-                ->get_irregular_verbs(STEPS)
+        [
+            shuffle(
+                Database->schema->resultset('Word')
+                    ->get_irregular_verbs(STEPS)
+            )
         ]
     );
 
