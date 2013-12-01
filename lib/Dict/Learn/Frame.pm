@@ -506,7 +506,7 @@ sub for_each_page {
 
     die q{$cb isn't a coderef} unless ref $cb eq 'CODE';
 
-    for my $i (0 .. $self->notebook->GetPageCount()) {
+    for my $i (0 .. $self->notebook->GetPageCount() - 1) {
         $cb->($i => $self->notebook->GetPage($i));
     }
 }
