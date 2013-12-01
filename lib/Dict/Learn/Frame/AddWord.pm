@@ -25,6 +25,7 @@ has item_id => (
     is      => 'rw',
     isa     => 'Int',
     clearer => 'clear_item_id',
+    predicate => 'has_item_id',
 );
 
 =item enable
@@ -362,7 +363,7 @@ sub check_word {
         ))
     {
         $self->enable(1);
-        $self->btn_add_word->SetLabel($self->item_id >= 0 ? 'Save' : 'Add');
+        $self->btn_add_word->SetLabel($self->has_item_id ? 'Save' : 'Add');
         EVT_BUTTON($self, $self->btn_add_word, \&add);
     } else {
         if ($self->item_id >= 0) {
