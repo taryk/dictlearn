@@ -537,16 +537,30 @@ sub move_left {
     my $category_id
         = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
 
-    Database->schema->resultset('TestCategoryWords')->create(
+    my $word = $self->word_list->GetItem($word_list_row_id, 1)->GetText;
+
+    my $category_name
+        = $self->test_groups->GetItem($test_groups_row_id, 1)->GetText;
+
+    my $record = Database->schema->resultset('TestCategoryWords')->find_or_new(
         {
             test_category_id => $category_id,
             word_id          => $self->get_word_id($word_list_row_id),
             partofspeech_id  => $self->get_partofspeech_id($word_list_row_id),
         },
     );
+    if ($record->in_storage) {
+        Wx::MessageBox(
+            qq{The word "$word" is already in the test "$category_name"},
+            q{Can't add},
+            wxICON_EXCLAMATION | wxOK | wxCENTRE, $self,
+        );
+    } else {
+        $record->insert;
 
-    # check current test group
-    $self->load_words(category_id => $category_id);
+        # check current test group
+        $self->load_words(category_id => $category_id);
+    }
 }
 
 sub move_right {
