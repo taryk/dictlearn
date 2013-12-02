@@ -28,6 +28,7 @@ sub startup : Test(startup => no_plan) {
 
     # Dummy parent object
     my $parent = bless {} => 'Dict::Learn::Frame';
+    *Dict::Learn::Frame::for_each_page = sub { };
 
     # `Wx::Panel` wants parent frame to be real
     my $frame  = Wx::Frame->new(undef, wxID_ANY, 'Test');
