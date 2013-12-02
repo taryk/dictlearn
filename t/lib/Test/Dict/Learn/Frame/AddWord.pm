@@ -41,6 +41,12 @@ sub startup : Test(startup => no_plan) {
     *Dict::Learn::Frame::AddWord::close_page = sub {};
 }
 
+sub after  : Test(teardown) {
+    my ($self) = @_;
+
+    $self->{frame}->word_src->Clear;
+}
+
 sub fields : Tests {
     my ($self) = @_;
 
