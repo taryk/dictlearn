@@ -342,7 +342,7 @@ sub BUILD {
     $self->hbox_position->Add($self->spin,     0, wxGROW, 0);
     $self->hbox_position->Add($self->test_category, 0, wxGROW, 0);
     
-    $self->spin->SetRange(2, 100);
+    $self->spin->SetRange($self->min, 100);
     $self->spin->SetValue(3);
 
     $self->vbox->Add($self->hbox_position, 0, wxTOP | wxGROW,          5);
