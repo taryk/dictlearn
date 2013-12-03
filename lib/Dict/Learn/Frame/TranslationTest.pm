@@ -51,6 +51,23 @@ has max => (
     },
 );
 
+=item count
+
+Number of the words in the test
+
+=cut
+
+has count => (
+    is      => 'rw',
+    isa     => 'Int',
+    default => 0,
+    trigger => sub {
+        my ($self, $new_value) = @_;
+
+        $self->spin->SetRange($self->min, $new_value);
+    }
+);
+
 =item total_score
 
 =cut
@@ -563,6 +580,7 @@ sub predefined_categories {
         my $count = scalar(@ids);
         say "Fetched $count words. [".join(' ', @ids)."]";
         $self->max($count) if $count < $self->max;
+        $self->count($count);
     }
 
     sub fetch_exercises {
