@@ -246,7 +246,7 @@ sub _build_lb_words {
             $self->lb_words->SetColumn(COL_LANG2, $li[1]);
         }
     );
-    
+
     return $lb_words;
 }
 
@@ -407,7 +407,7 @@ sub _build_lb_examples {
             $self->lb_examples->SetColumn(COL_E_LANG2, $li[1]);
         }
     );
-    
+
     return $lb_examples;
 }
 
@@ -455,8 +455,8 @@ has cb_add_to_test => (
 );
 
 sub _build_cb_add_to_test {
-    my $self = shift;  
-    
+    my $self = shift;
+
     my $cb
         = Wx::ComboBox->new($self, wxID_ANY, '', wxDefaultPosition,
         wxDefaultSize, [],
@@ -475,7 +475,7 @@ sub _build_cb_add_to_test {
             $cb->SetSelection(0);
         }
     );
-    
+
     return $cb;
 }
 
@@ -804,7 +804,7 @@ sub add_to_test {
 
     my $row_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
-    
+
     my $word_id = $self->get_word_id($row_id);
 
     Database->schema->resultset('TestCategoryWords')->create(

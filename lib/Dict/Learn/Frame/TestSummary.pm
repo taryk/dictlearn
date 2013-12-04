@@ -107,7 +107,7 @@ sub _build_vbox {
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
     $vbox->Add($self->hbox, 1, wxALL | wxGROW, 0);
-    
+
     return $vbox;
 }
 

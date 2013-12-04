@@ -106,7 +106,7 @@ sub check_for_duplicates : Tests {
     my %item_with_word_id = (
         %item,
         word    => undef,
-        word_id => 1
+        word_id => 1,
     );
 
     subtest 'Check for duplicates of the word_id' => sub {
@@ -147,7 +147,7 @@ sub add_record : Tests {
                 word  => 'Test Translation 2',
                 partofspeech_id => 2,
             }
-        ]
+        ],
     );
 
     $self->add_word_with_translations(%record);

@@ -65,7 +65,7 @@ has count => (
         my ($self, $new_value) = @_;
 
         $self->spin->SetRange($self->min, $new_value);
-    }
+    },
 );
 
 =item total_score
@@ -192,7 +192,7 @@ sub _build_test_category {
         $combobox->Append($category->[0], $id);
     }
     $combobox->SetSelection(0);
-    
+
     Dict::Learn::Dictionary->cb(
         sub {
             my $dict = shift;
@@ -204,7 +204,7 @@ sub _build_test_category {
             }
         }
     );
-    
+
     return $combobox;
 }
 
@@ -299,7 +299,6 @@ has translation => (
     },
 );
 
-
 =item result
 
 =cut
@@ -315,7 +314,7 @@ has result => (
             [800, 600],
             wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxSTAY_ON_TOP
         )
-    }
+    },
 );
 
 sub FOREIGNBUILDARGS {
@@ -341,7 +340,7 @@ sub BUILD {
     $self->hbox_position->Add($self->position, 0, wxGROW, 0);
     $self->hbox_position->Add($self->spin,     0, wxGROW, 0);
     $self->hbox_position->Add($self->test_category, 0, wxGROW, 0);
-    
+
     $self->spin->SetRange($self->min, 100);
     $self->spin->SetValue(3);
 
@@ -357,7 +356,7 @@ sub BUILD {
 
     # events
     EVT_COMBOBOX($self, $self->test_category, \&reset_session);
-    
+
     EVT_BUTTON($self, $self->btn_prev,             \&prev_step);
     EVT_BUTTON($self, $self->btn_next,             \&next_step);
     EVT_BUTTON($self, $self->btn_reset,            \&reset_session);
@@ -407,7 +406,7 @@ sub predefined_categories {
         ['Recent 50'  => [-2, {}, { rows => 50,  page => 1 }]],
         ['Recent 100' => [-3, {}, { rows => 100, page => 1 }]],
         [
-            "Today's" => [
+            q{Today's} => [
                 -4,
                 {
                     'me.cdate' => {
@@ -420,7 +419,7 @@ sub predefined_categories {
             ]
         ],
         [
-            "Yesterday's" => [
+            q{Yesterday's} => [
                 -5,
                 {
                     'me.cdate' => {
@@ -437,7 +436,7 @@ sub predefined_categories {
             ],
         ],
         [
-            "This week" => [
+            q{This week} => [
                 -6,
                 {
                     'me.cdate' => {
@@ -454,7 +453,7 @@ sub predefined_categories {
             ]
         ],
         [
-            "Tested within last 12 hours" => [
+            q{Tested within last 12 hours} => [
                 -7,
                 {
                     'last_test.cdate' => {
@@ -473,7 +472,7 @@ sub predefined_categories {
             ],
         ],
         [
-            "Tested within last 24 hours" => [
+            q{Tested within last 24 hours} => [
                 -8,
                 {
                     'last_test.cdate' => {
@@ -492,11 +491,11 @@ sub predefined_categories {
             ],
         ],
         [
-            "Tested more than 12 hours ago" => [
+            q{Tested more than 12 hours ago} => [
                 -9,
                 {
                     'last_test.cdate' => {
-                        ">" => $dtf->format_datetime(
+                        '>' => $dtf->format_datetime(
                             DateTime->now->subtract(hours => 24)
                         ),
                     }
@@ -508,11 +507,11 @@ sub predefined_categories {
             ]
         ],
         [
-            "Tested more than 24 hours ago" => [
+            q{Tested more than 24 hours ago} => [
                 -10,
                 {
                     'last_test.cdate' => {
-                        ">" => $dtf->format_datetime(
+                        '>' => $dtf->format_datetime(
                             DateTime->now->subtract(hours => 24)
                         ),
                     }
@@ -523,7 +522,7 @@ sub predefined_categories {
                 },
             ],
         ],
-        ['All' => [-11, {}, {}]],
+        [q{All} => [-11, {}, {}]],
     ];
 }
 
@@ -531,7 +530,7 @@ sub predefined_categories {
     my @ids;
 
     sub set_ids { @ids = @_ }
-    
+
     sub load_exercise_ids {
         my ($self) = @_;
 
@@ -578,7 +577,7 @@ sub predefined_categories {
             @ids = shuffle map { $_->word_id } ($id_rs->all());
         }
         my $count = scalar(@ids);
-        say "Fetched $count words. [".join(' ', @ids)."]";
+        say "Fetched $count words. [".join(' ', @ids).']';
         $self->max($count) if $count < $self->max;
         $self->count($count);
     }
@@ -607,7 +606,7 @@ sub predefined_categories {
             my $item = $self->exercise->[$_];
             next if defined $item && ref $item eq 'ARRAY';
             p($self->exercise);
-            confess "${_}th of ".($self->max-1)." element is wrong";
+            confess "${_}th of ".($self->max-1).' element is wrong';
         }
     }
 }
