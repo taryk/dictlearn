@@ -22,9 +22,9 @@ use common::sense;
 =cut
 
 has item_id => (
-    is      => 'rw',
-    isa     => 'Int',
-    clearer => 'clear_item_id',
+    is        => 'rw',
+    isa       => 'Int',
+    clearer   => 'clear_item_id',
     predicate => 'has_item_id',
 );
 
