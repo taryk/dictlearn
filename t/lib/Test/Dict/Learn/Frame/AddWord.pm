@@ -135,7 +135,7 @@ sub add_record : Tests {
     my $to_lang_id
         = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
 
-    my %record = (
+    my %phrase = (
         word => 'Test Word',
         note => 'Test Note',
         translations => [
@@ -150,19 +150,19 @@ sub add_record : Tests {
         ],
     );
 
-    $self->add_word_with_translations(%record);
+    $self->add_word_with_translations(%phrase);
 
     # Check if source word has been added to the database
-    my $word_record = Database->schema->resultset('Word')->match(
+    my $phrase_dbix = Database->schema->resultset('Word')->match(
         $from_lang_id,
-        $record{word}
+        $phrase{word}
     )->first;
 
-    ok(defined $word_record, 'DB row was added');
+    ok(defined $phrase_dbix, 'DB row was added');
 
     # Go through the translations
-    my @translations = $word_record->words;
-    for my $tr_record (@{ $record{translations} }) {
+    my @translations = $phrase_dbix->words;
+    for my $tr_record (@{ $phrase{translations} }) {
         my ($found_record)
             = grep { $_->word eq $tr_record->{word} } @translations;
         ok($found_record,
@@ -182,7 +182,7 @@ sub add_record : Tests {
 
     # Try to put the word which already exists in the database to 'word_src'
     # field.
-    $self->{frame}->word_src->SetValue($record{word});
+    $self->{frame}->word_src->SetValue($phrase{word});
 
     # After that, frame should become disabled
     is($self->{frame}->enable => 0,
@@ -198,7 +198,7 @@ sub add_record : Tests {
     # 'add' method call
     is(
         Database->schema->resultset('Word')
-            ->search({ word => $record{word}, lang_id => $from_lang_id })
+            ->search({ word => $phrase{word}, lang_id => $from_lang_id })
             ->count() => 1,
         q{The second 'add' call haven't added a record to the database}
     );
@@ -301,16 +301,16 @@ sub strip_spaces_data {
 }
 
 sub add_word_with_translations {
-    my ($self, %record) = @_;
+    my ($self, %phrase) = @_;
 
     # Set a source word
-    $self->{frame}->word_src->SetValue($record{word});
+    $self->{frame}->word_src->SetValue($phrase{word});
 
     # Set a note for source word
-    $self->{frame}->word_note->SetValue($record{note});
+    $self->{frame}->word_note->SetValue($phrase{note});
 
     # Add all translations
-    for (@{ $record{translations} }) {
+    for (@{ $phrase{translations} }) {
         $self->{frame}->translations->add_item(%$_);
     }
 
