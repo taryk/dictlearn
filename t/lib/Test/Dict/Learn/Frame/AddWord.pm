@@ -122,7 +122,8 @@ sub check_for_duplicates : Tests {
 
         my @duplicate_word_id = (\%item_with_word_id, \%item_with_word_id);
         is_deeply(
-            $self->{frame}->check_for_duplicates(\@duplicate_word_id), \%item_with_word_id,
+            $self->{frame}->check_for_duplicates(\@duplicate_word_id),
+            \%item_with_word_id,
             q{It's a duplication if two identical word_id passed}
         );
     };

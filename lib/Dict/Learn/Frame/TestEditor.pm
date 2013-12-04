@@ -542,13 +542,15 @@ sub move_left {
     my $category_name
         = $self->test_groups->GetItem($test_groups_row_id, 1)->GetText;
 
-    my $record_dbix = Database->schema->resultset('TestCategoryWords')->find_or_new(
+    my $record_dbix
+        = Database->schema->resultset('TestCategoryWords')->find_or_new(
         {
             test_category_id => $category_id,
             word_id          => $self->get_word_id($word_list_row_id),
             partofspeech_id  => $self->get_partofspeech_id($word_list_row_id),
         },
-    );
+        );
+
     if ($record_dbix->in_storage) {
         Wx::MessageBox(
             qq{The word "$word" is already in the test "$category_name"},
