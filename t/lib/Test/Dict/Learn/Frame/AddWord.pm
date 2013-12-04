@@ -27,6 +27,7 @@ sub startup : Test(startup => no_plan) {
     Dict::Learn::Dictionary->set(0);
 
     # Dummy parent object
+    # TODO find a module for creating fake object that can return desired ref
     my $parent = bless {} => 'Dict::Learn::Frame';
     *Dict::Learn::Frame::for_each_page = sub { };
 
