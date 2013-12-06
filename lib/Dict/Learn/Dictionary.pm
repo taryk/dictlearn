@@ -22,6 +22,8 @@ sub new {
 
 sub singleton { $singleton ||= __PACKAGE__->new }
 
+sub clear { undef $singleton }
+
 sub all {
     my $self = shift;
 
