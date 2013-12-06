@@ -41,6 +41,12 @@ sub startup : Test(startup => no_plan) {
     ok($self->{frame}, qw{SearchWords page created});
 }
 
+sub shutdown : Test(shutdown) {
+    my ($self) = @_;
+
+    Dict::Learn::Dictionary->clear();
+}
+
 sub fields : Tests {
     my ($self) = @_;
 

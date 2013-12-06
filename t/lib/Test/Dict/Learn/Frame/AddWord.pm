@@ -48,6 +48,12 @@ sub after  : Test(teardown) {
     $self->{frame}->word_src->Clear;
 }
 
+sub shutdown : Test(shutdown) {
+    my ($self) = @_;
+
+    Dict::Learn::Dictionary->clear();
+}
+
 sub fields : Tests {
     my ($self) = @_;
 
