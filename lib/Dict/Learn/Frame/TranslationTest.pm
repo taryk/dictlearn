@@ -27,7 +27,7 @@ sub TEST_ID { 1 }
 
 =cut
 
-has min   => (is => 'ro', default => 1);
+has min => (is => 'ro', default => 1);
 
 =item max
 
@@ -175,8 +175,8 @@ has spin => (
 =cut
 
 has test_category => (
-    is => 'ro',
-    isa => 'Wx::ComboBox',
+    is         => 'ro',
+    isa        => 'Wx::ComboBox',
     lazy_build => 1,
 );
 
