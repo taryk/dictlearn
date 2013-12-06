@@ -50,7 +50,66 @@ sub shutdown : Test(shutdown) {
 sub fields : Tests {
     my ($self) = @_;
 
-    pass;
+    for (
+        [qw(parent)                  => 'Dict::Learn::Frame'],
+        [qw(combobox cb_add_to_test) => 'Wx::ComboBox'],
+        [qw(sidebar)                 => 'Dict::Learn::Frame::Sidebar'],
+        [qw(st_add_to_test)          => 'Wx::StaticText'],
+        [qw(lb_words lb_examples)    => 'Wx::ListCtrl'],
+        [
+            qw(
+                  lookup_hbox vbox_btn_words hbox_words
+                  vbox_btn_examples hbox_examples
+                  hbox_add_to_test
+                  vbox hbox
+             ) => 'Wx::BoxSizer'
+        ],
+        [
+            qw(
+                  btn_lookup btn_reset btn_addword
+                  btn_edit_word btn_unlink_word btn_delete_word
+                  btn_add_example btn_edit_example btn_unlink_example
+                  btn_delete_example btn_add_to_test
+             ) => 'Wx::Button'
+        ],
+        )
+    {
+        my $type = pop @$_;
+        $self->test_field(name => $_, type => $type, is => 'ro') for @$_;
+    }
+
+}
+
+sub test_field {
+    my ($self, %params) = @_;
+
+    my $field = delete $params{name};
+    $params{is} //= 'rw';
+
+    my $value;
+    if ($params{is} eq 'rw') {
+        given ($params{type}) {
+            when ('Bool')     { $value = 1 }
+            when ('Int')      { $value = 3 }
+            when ('ArrayRef') { $value = [1 .. 9] }
+            when ('HashRef')  { $value = { key => 'value' } }
+            when (['Str', undef]) { $value = 'test' }
+            default { $value = bless {} => $params{type} }
+        }
+    }
+    subtest $field => sub {
+        ok($self->{frame}->$field($value), qq{We can set '$field'})
+            if $params{is} eq 'rw';
+        my $attr = $self->{frame}->meta->get_attribute($field);
+        if ($params{type}) {
+            ok($attr->has_type_constraint, qq{$field has a type constraint});
+            is($attr->type_constraint, $params{type}, qq{It's $params{type}});
+        }
+        ok(defined $self->{frame}->$field, q{We can get a value})
+            if $params{is} eq 'rw'
+            || $attr->has_default
+            || $attr->has_builder;
+    };
 }
 
 1;
