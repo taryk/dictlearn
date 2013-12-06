@@ -23,10 +23,6 @@ sub startup : Test(startup => no_plan) {
     Container->params( dbfile => ':memory:', debug  => 1 );
     Container->lookup('db')->install_schema();
 
-    # Set default dictionary
-    Dict::Learn::Dictionary->all();
-    Dict::Learn::Dictionary->set(0);
-
     my $parent = bless {} => 'Dict::Learn::Frame';
 
     # `Wx::Panel` wants parent frame to be real
@@ -36,6 +32,10 @@ sub startup : Test(startup => no_plan) {
         wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
     *Dict::Learn::Frame::SearchWords::set_status_text = sub { };
+
+    # Set a default dictionary
+    Dict::Learn::Dictionary->all();
+    Dict::Learn::Dictionary->set(0);
 
     ok($self->{frame}, qw{SearchWords page created});
 }
