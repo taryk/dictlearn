@@ -34,6 +34,9 @@ sub startup : Test(startup => no_plan) {
     $self->{frame}
         = Dict::Learn::Frame::SearchWords->new($parent, $frame, wxID_ANY,
         wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+
+    *Dict::Learn::Frame::SearchWords::set_status_text = sub { };
+
     ok($self->{frame}, qw{SearchWords page created});
 }
 
