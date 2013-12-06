@@ -51,7 +51,6 @@ sub after  : Test(teardown) {
 sub fields : Tests {
     my ($self) = @_;
 
-    my $item_id = 1;
     for (
         [item_id => 'Int'],
         [enable  => 'Bool'],
