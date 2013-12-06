@@ -27,9 +27,7 @@ sub startup : Test(startup => no_plan) {
     Dict::Learn::Dictionary->all();
     Dict::Learn::Dictionary->set(0);
 
-    my $parent = Dict::Learn::Frame->new(undef, wxID_ANY, 'DictLearn Test',
-        wxDefaultPosition, wxDefaultSize,
-        wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    my $parent = bless {} => 'Dict::Learn::Frame';
 
     # `Wx::Panel` wants parent frame to be real
     my $frame  = Wx::Frame->new(undef, wxID_ANY, 'Test');
