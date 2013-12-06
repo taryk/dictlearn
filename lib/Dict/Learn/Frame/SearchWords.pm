@@ -607,6 +607,12 @@ sub _get_word_forms {
     return \@word_forms;
 }
 
+sub set_status_text {
+    my ($self, $status_text) = @_;
+
+    $self->parent->status_bar->SetStatusText($status_text);
+}
+
 sub lookup {
     my ($self, $event) = @_;
 
@@ -627,7 +633,7 @@ sub lookup {
             when([qw(words phrases phrasal_verbs idioms)]) {
                 # TODO return only words
                 # it requires to have some kind of tags, which can be filtered by
-                $self->parent->status_bar->SetStatusText(
+                $self->set_status_text(
                     sprintf 'Filter "/%s" is not implemented at the moment ',
                     $+{filter}
                 );
@@ -642,7 +648,7 @@ sub lookup {
                     );
             }
             default {
-                $self->parent->status_bar->SetStatusText(
+                $self->set_status_text(
                     sprintf 'Unknown filter: "/%s"', $+{filter});
                 return;
             }
@@ -675,7 +681,7 @@ sub lookup {
     my $records_count = scalar @result;
 
     # Show how many records have been selected
-    $self->parent->status_bar->SetStatusText($records_count > 0
+    $self->set_status_text($records_count > 0
         ? "$records_count records selected"
         : 'No records selected');
 }
@@ -817,7 +823,7 @@ sub add_to_test {
 
     my $word = $self->lb_words->GetItem($row_id, 1)->GetText;
 
-    $self->parent->status_bar->SetStatusText(
+    $self->set_status_text(
         sprintf 'Word "%s" has been added to "%s" test',
         $word, $self->cb_add_to_test->GetValue()
     );
