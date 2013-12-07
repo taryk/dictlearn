@@ -383,6 +383,12 @@ sub init {
     $self->lookup();
 }
 
+sub set_status_text {
+    my ($self, $status_text) = @_;
+
+    $self->parent->status_bar->SetStatusText($status_text);
+}
+
 sub load_categories {
     my ($self) = @_;
 
@@ -429,7 +435,7 @@ sub lookup {
                     # TODO return only words
                     # it requires to have some kind of tags, which can be
                     # filtered by
-                    $self->parent->status_bar->SetStatusText(
+                    $self->set_status_text(
                         sprintf
                             'Filter "/%s" is not implemented at the moment ',
                         $+{filter}
@@ -443,7 +449,7 @@ sub lookup {
                     };
                 }
                 default {
-                    $self->parent->status_bar->SetStatusText(
+                    $self->set_status_text(
                         sprintf 'Unknown filter: "/%s"', $+{filter});
                     return;
                 }
@@ -490,7 +496,7 @@ sub lookup {
     }
 
     # Show how many records have been selected
-    $self->parent->status_bar->SetStatusText($records_count > 0
+    $self->set_status_text($records_count > 0
         ? "$records_count records selected"
         : 'No records selected');
 }
