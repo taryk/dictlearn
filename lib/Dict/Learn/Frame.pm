@@ -161,6 +161,7 @@ sub _build_menu_word {
     my @menu = (
         [ 'Add'  => \&p_addword   => 'Ctrl+N' ],
         [ "Grid" => \&p_gridwords => 'Ctrl+G' ],
+        [ "Search" => \&p_search  => 'Ctrl+F' ],
     );
 
     for my $menu_item (@menu) {
@@ -297,7 +298,7 @@ sub make_pages {
     my ($self) = @_;
 
     my @pages = (
-        [ 'Search'               => $self->p_search,     1 ],
+        # [ 'Search'               => $self->p_search,       1 ],
         # [ 'Word'                 => $self->p_addword,      0 ],
         # [ 'Words'                => $self->p_gridwords,    0 ],
         # [ 'Irregular Verbs Test' => $self->pt_irrverbs,    0 ],
