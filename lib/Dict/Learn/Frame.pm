@@ -159,9 +159,9 @@ sub _build_menu_word {
     my $menu_word = Wx::Menu->new;
 
     my @menu = (
-        [ 'Add'  => \&p_addword   => 'Ctrl+N' ],
-        [ "Grid" => \&p_gridwords => 'Ctrl+G' ],
-        [ "Search" => \&p_search  => 'Ctrl+F' ],
+        ['Add'    => \&p_addword   => 'Ctrl+N'],
+        ["Grid"   => \&p_gridwords => 'Ctrl+G'],
+        ["Search" => \&p_search    => 'Ctrl+F'],
     );
 
     for my $menu_item (@menu) {
