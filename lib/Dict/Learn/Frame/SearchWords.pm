@@ -236,17 +236,6 @@ sub _build_lb_words {
     $lb_words->InsertColumn(5,         'created', wxLIST_FORMAT_LEFT, 150);
     EVT_LIST_ITEM_SELECTED($self, $lb_words, \&load_examples);
 
-    Dict::Learn::Dictionary->cb(
-        sub {
-            my $dict = shift;
-            my @li = (Wx::ListItem->new, Wx::ListItem->new);
-            $li[0]->SetText($dict->curr->{language_orig_id}{language_name});
-            $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
-            $self->lb_words->SetColumn(COL_LANG1, $li[0]);
-            $self->lb_words->SetColumn(COL_LANG2, $li[1]);
-        }
-    );
-
     return $lb_words;
 }
 
@@ -396,17 +385,6 @@ sub _build_lb_examples {
     $lb_examples->InsertColumn(COL_E_LANG1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
     $lb_examples->InsertColumn(COL_E_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
     $lb_examples->InsertColumn(3,           'Note', wxLIST_FORMAT_LEFT, 150);
-
-    Dict::Learn::Dictionary->cb(
-        sub {
-            my $dict = shift;
-            my @li = (Wx::ListItem->new, Wx::ListItem->new);
-            $li[0]->SetText($dict->curr->{language_orig_id}{language_name});
-            $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
-            $self->lb_examples->SetColumn(COL_E_LANG1, $li[0]);
-            $self->lb_examples->SetColumn(COL_E_LANG2, $li[1]);
-        }
-    );
 
     return $lb_examples;
 }
@@ -874,6 +852,28 @@ sub BUILD {
 
     # Set focus on search field
     $self->combobox->SetFocus();
+
+    Dict::Learn::Dictionary->cb(
+        sub {
+            my $dict = shift;
+            my @li = (Wx::ListItem->new, Wx::ListItem->new);
+            $li[0]->SetText($dict->curr->{language_orig_id}{language_name});
+            $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
+            $self->lb_words->SetColumn(COL_LANG1, $li[0]);
+            $self->lb_words->SetColumn(COL_LANG2, $li[1]);
+        }
+    );
+
+    Dict::Learn::Dictionary->cb(
+        sub {
+            my $dict = shift;
+            my @li = (Wx::ListItem->new, Wx::ListItem->new);
+            $li[0]->SetText($dict->curr->{language_orig_id}{language_name});
+            $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
+            $self->lb_examples->SetColumn(COL_E_LANG1, $li[0]);
+            $self->lb_examples->SetColumn(COL_E_LANG2, $li[1]);
+        }
+    );
 
     Dict::Learn::Dictionary->cb(sub { $self->lookup() });
 
