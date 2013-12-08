@@ -27,7 +27,7 @@ sub TEST_ID { 1 }
 
 =cut
 
-has min => (is => 'ro', default => 1);
+has min => (is => 'ro', isa => 'Int', default => 1);
 
 =item max
 
@@ -35,6 +35,7 @@ has min => (is => 'ro', default => 1);
 
 has max => (
     is      => 'rw',
+    isa     => 'Int',
     default => 3,
     trigger => sub {
         my ($self, $new_index, $prev_index) = @_;
@@ -74,6 +75,7 @@ has count => (
 
 has total_score => (
     is      => 'rw',
+    isa     => 'Int',
     default => 0,
     clearer => 'clear_score',
 );
@@ -84,6 +86,7 @@ has total_score => (
 
 has exercise => (
     is      => 'rw',
+    isa     => 'ArrayRef',
     default => sub { [] },
     clearer => 'clear_exercise',
 );
