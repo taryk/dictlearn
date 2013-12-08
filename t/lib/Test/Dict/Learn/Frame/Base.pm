@@ -26,8 +26,20 @@ sub startup : Test(startup => no_plan) {
     Dict::Learn::Dictionary->set(0);
 }
 
-sub shutdown : Test(shutdown) {
+# this method should run after frame is created
+sub z_after_all_startups : Test(startup) {
     my ($self) = @_;
+
+    $self->{attributes} = {
+        map { ($_->name => $_) } $self->{frame}->meta->get_all_attributes
+    };
+}
+
+sub shutdown : Test(shutdown => no_plan) {
+    my ($self) = @_;
+
+    # if there's any untested attribute, fail a test
+    fail("Attribute '$_' isn't tested") for keys %{ $self->{attributes} };
 
     Dict::Learn::Dictionary->clear();
 }
@@ -50,9 +62,11 @@ sub test_field {
         }
     }
     subtest $field => sub {
+        my $attr = delete $self->{attributes}{$field};
+        ok($attr, qq{Attribute '$field' exists});
+
         ok($self->{frame}->$field($value), qq{We can set '$field'})
             if $params{is} eq 'rw';
-        my $attr = $self->{frame}->meta->get_attribute($field);
         if ($params{type}) {
             ok($attr->has_type_constraint, qq{$field has a type constraint});
             is($attr->type_constraint, $params{type}, qq{It's $params{type}});
