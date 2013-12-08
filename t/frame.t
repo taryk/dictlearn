@@ -3,5 +3,6 @@ use lib::abs 'lib';
 use Test::Dict::Learn::Frame::AddWord;
 use Test::Dict::Learn::Frame::SearchWords;
 use Test::Dict::Learn::Frame::TestEditor;
+use Test::Dict::Learn::Frame::TranslationTest;
 
 Test::Class->runtests;
