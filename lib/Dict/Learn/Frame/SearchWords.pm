@@ -853,7 +853,7 @@ sub BUILD {
     # Set focus on search field
     $self->combobox->SetFocus();
 
-    Dict::Learn::Dictionary->cb(
+    for (
         sub {
             my $dict = shift;
             my @li = (Wx::ListItem->new, Wx::ListItem->new);
@@ -861,10 +861,7 @@ sub BUILD {
             $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
             $self->lb_words->SetColumn(COL_LANG1, $li[0]);
             $self->lb_words->SetColumn(COL_LANG2, $li[1]);
-        }
-    );
-
-    Dict::Learn::Dictionary->cb(
+        },
         sub {
             my $dict = shift;
             my @li = (Wx::ListItem->new, Wx::ListItem->new);
@@ -872,10 +869,12 @@ sub BUILD {
             $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
             $self->lb_examples->SetColumn(COL_E_LANG1, $li[0]);
             $self->lb_examples->SetColumn(COL_E_LANG2, $li[1]);
-        }
-    );
-
-    Dict::Learn::Dictionary->cb(sub { $self->lookup() });
+        },
+        sub { $self->lookup() }
+        )
+    {
+        Dict::Learn::Dictionary->cb($_);
+    }
 
     EVT_KEY_UP($self, \&keybind);
 }
