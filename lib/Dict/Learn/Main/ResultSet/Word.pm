@@ -220,7 +220,17 @@ sub find_ones {
 
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
     say "find_ones uncached";
-    $rs->all();
+    my @result = $rs->all();
+    if ($params{word} && scalar @{$params{word}} > 0) {
+        # Word with a relevance of 100% should go first
+        for (@result) {
+            next if $_->{word_orig} ne $params{word}[0];
+            unshift @result, $_;
+            undef $_;
+            last;
+        }
+    }
+    return @result;
 }
 
 sub find_ones_flushcashe {
