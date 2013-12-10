@@ -557,6 +557,9 @@ sub _build_hbox {
 sub _get_word_forms {
     my ($self, $word) = @_;
 
+    # return an empty arrayref if a word is empty
+    return [] unless $word;
+
     my @word_forms = ($word);
 
     # try other 'be' form
