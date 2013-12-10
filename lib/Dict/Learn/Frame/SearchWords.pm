@@ -641,8 +641,20 @@ sub lookup {
     }
 
     $self->lb_words->DeleteAllItems();
+    my $item_id;
     for my $item (@result) {
-        my $id = $self->lb_words->InsertItem(Wx::ListItem->new);
+        # there can be undefined items we should ignore
+        next unless defined $item;
+        my $id = $self->lb_words->InsertItem(
+            # InsertItem method always inserts an item at the first position
+            # so set the position explicitly
+            do {
+                my $list_item = Wx::ListItem->new;
+                $list_item->SetId($item_id++);
+                $list_item
+            }
+        );
+
         my $word
             = $item->{is_irregular}
             ? join(' / ' => $item->{word_orig}, $item->{word2}, $item->{word3})

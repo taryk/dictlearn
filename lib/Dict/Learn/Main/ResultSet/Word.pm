@@ -214,7 +214,7 @@ sub find_ones {
                   ]
             ],
             group_by => ['me.word_id', 'rel_words.partofspeech_id'],
-            order_by => { -asc => 'me.cdate' },
+            order_by => { -desc => 'me.cdate' },
         }
     );
 
