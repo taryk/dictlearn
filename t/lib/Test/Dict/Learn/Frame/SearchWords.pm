@@ -62,4 +62,15 @@ sub fields : Tests {
 
 }
 
+sub get_word_forms : Tests {
+    my ($self) = @_;
+
+    is_deeply($self->{frame}->_get_word_forms() => [],
+        qq{_get_word_forms returns empty arrayref if no parameters passed});
+
+    # TODO test `be` substitutions
+
+    # TODO test suffixes
+}
+
 1;
