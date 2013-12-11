@@ -635,12 +635,13 @@ sub lookup {
             }
         }
     } else {
-        @result
-            = Database->schema->resultset('Word')
-            ->find_ones_cached(
-                word    => $self->_get_word_forms($value),
-                lang_id => $lang_id,
-            );
+        @result = Database->schema->resultset('Word')->find_ones_cached(
+            lang_id => $lang_id,
+            $value
+                ? (word => $self->_get_word_forms($value))
+                : (rows => 1_000)
+        );
+
     }
 
     $self->lb_words->DeleteAllItems();
