@@ -73,4 +73,24 @@ sub get_word_forms : Tests {
     # TODO test suffixes
 }
 
+sub lookup : Tests {
+    my ($self) = @_;
+
+    my $default_limit    = 1_000;
+    my $inserted_records = 1_500;
+    for (1 .. $inserted_records) {
+        $self->_new_word_in_db({ word => "test-$_" });
+    }
+    $self->{frame}->combobox->SetValue('');
+    $self->{frame}->lookup();
+    is($self->{frame}->lb_words->GetItemCount() => $default_limit,
+       qq{Empty lookup returns $default_limit records});
+    $self->{frame}->combobox->SetValue('/all');
+    $self->{frame}->lookup();
+    is($self->{frame}->lb_words->GetItemCount() => $inserted_records,
+       qq{'/all' command returns all $inserted_records records for given language});
+
+    # TODO test other filters/commands
+}
+
 1;
