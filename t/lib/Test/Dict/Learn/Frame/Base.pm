@@ -78,4 +78,14 @@ sub test_field {
     };
 }
 
+sub _new_word_in_db {
+    my ($self, $word) = @_;
+
+    $word->{lang_id} //=
+        Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
+    $word->{partofspeech_id} //= 0;
+
+    Database->schema->resultset('Word')->create($word);
+}
+
 1;

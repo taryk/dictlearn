@@ -233,17 +233,8 @@ sub check_word : Tests {
 
     my $word = 'first-of-its-kind';
 
-    my $from_lang_id
-        = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
-
     # insert a new word
-    $self->_new_word_in_db(
-        {
-            word            => $word,
-            lang_id         => $from_lang_id,
-            partofspeech_id => 0,
-        }
-    );
+    $self->_new_word_in_db({ word => $word });
 
     is($self->{frame}->enable, 1, q{At the beginning, form is enabled});
 
@@ -273,12 +264,6 @@ sub _create_event_object {
     $event->mock( GetString => sub { $word } );
 
     return $event;
-}
-
-sub _new_word_in_db {
-    my ($self, $word) = @_;
-
-    Database->schema->resultset('Word')->create($word);
 }
 
 # input/output values for strip_spaces testing
