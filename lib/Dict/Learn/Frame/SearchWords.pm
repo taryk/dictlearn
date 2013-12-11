@@ -604,6 +604,7 @@ sub lookup {
     my (%args, @result);
     if ($value =~ m{^ / (?<filter> \!? [\w=]+ ) $}x) {
         given ($+{filter}) {
+            when([qw(all)]) { %args = () }
             when([qw(untranslated !untranslated translated irregular)]) {
                 my $filter = $+{filter};
                 $filter = 'translated' if $filter eq '!untranslated';
