@@ -601,15 +601,13 @@ sub lookup {
     my $lang_id
         = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
 
-    my @result;
+    my (%args, @result);
     if ($value =~ m{^ / (?<filter> \!? [\w=]+ ) $}x) {
         given ($+{filter}) {
             when([qw(untranslated !untranslated translated irregular)]) {
                 my $filter = $+{filter};
                 $filter = 'translated' if $filter eq '!untranslated';
-                @result
-                    = Database->schema->resultset('Word')
-                    ->find_ones(filter => $filter, lang_id => $lang_id);
+                %args = (filter => $filter);
             }
             when([qw(words phrases phrasal_verbs idioms)]) {
                 # TODO return only words
@@ -621,12 +619,7 @@ sub lookup {
                 return;
             }
             when(m{^ partofspeech = (?<partofspeech> \w+ ) $}x) {
-                @result
-                    = Database->schema->resultset('Word')
-                    ->find_ones(
-                        partofspeech => $+{partofspeech},
-                        lang_id      => $lang_id
-                    );
+                %args = (partofspeech => $+{partofspeech});
             }
             default {
                 $self->set_status_text(
@@ -635,14 +628,15 @@ sub lookup {
             }
         }
     } else {
-        @result = Database->schema->resultset('Word')->find_ones_cached(
-            lang_id => $lang_id,
+        %args = (
             $value
                 ? (word => $self->_get_word_forms($value))
                 : (rows => 1_000)
         );
-
     }
+
+    @result = Database->schema->resultset('Word')
+        ->find_ones_cached(%args, lang_id => $lang_id);
 
     $self->lb_words->DeleteAllItems();
     my $item_id;
