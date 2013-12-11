@@ -29,6 +29,17 @@ sub startup : Test(startup => no_plan) {
     ok($self->{frame}, qw{SearchWords page created});
 }
 
+# clear `word` table before each test
+sub clear_db : Test(setup => no_plan) {
+    my ($self) = @_;
+
+    Database->schema->resultset('Word')->delete_all();
+    is(
+        Database->schema->resultset('Word')->count() => 0,
+        qq{'word' table has been cleared up}
+    );
+}
+
 sub fields : Tests {
     my ($self) = @_;
 
