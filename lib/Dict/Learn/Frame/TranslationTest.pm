@@ -663,6 +663,10 @@ sub load_step {
     my ($self, $id) = @_;
 
     my $step = $self->get_step($id);
+
+    # TODO probably, show some warning here
+    return if !$step;
+
     $self->load_fields(
         text  => $step->[1],
         input => $step->[2],
