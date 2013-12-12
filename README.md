@@ -1,4 +1,4 @@
-# Dictlearn
+# Dictlearn [![Build Status](https://travis-ci.org/taryk/dictlearn.png?branch=development)](https://travis-ci.org/taryk/dictlearn)
 
 The tool for improving and expanding your vocabulary
 
