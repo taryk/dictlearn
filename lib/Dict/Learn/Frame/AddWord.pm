@@ -596,7 +596,7 @@ sub translate_word {
     my $limit = $self->translations->translation_count;
     if (keys %$res >= 1) {
         for my $meaning_group (keys %$res) {
-            for my $partofspeech (keys %$res->{$meaning_group}) {
+            for my $partofspeech (keys %{$res->{$meaning_group}}) {
                 next
                     if $partofspeech eq '_'
                     and ref $res->{$meaning_group}{$partofspeech} eq '';
