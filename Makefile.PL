@@ -8,21 +8,35 @@ license  'perl';
 perl_version '5.014';
 
 requires 'Wx'                     => '0.9914';
+requires 'Moose'                  => 0;
+requires 'MooseX::NonMoose'       => 0;
+requires 'DBD::SQLite'            => '1.37';
 requires 'DBIx::Class'            => '0.08204';
+requires 'DBIx::Class::QueryLog'           => 0;
+requires 'DBIx::Class::QueryLog::Analyzer' => 0;
+requires 'DateTime::Format::SQLite'        => 0;
 requires 'LWP::UserAgent'         => '6.04';
 requires 'JSON'                   => '2.53';
 requires 'Data::Printer'          => '0.33';
 requires 'Class::XSAccessor'      => '1.16';
+requires 'lib::abs'               => 0;
 requires 'common::sense'          => '3.6';
 requires 'namespace::autoclean'   => '0.13';
 requires 'IOC::Slinky::Container' => '0.1001';
 requires 'Class::XSAccessor'      => '1.16';
-requires 'DBD::SQLite'            => '1.37';
-requires 'IO::File'               => '1.16';
+requires 'IO::File'               => '1.14';
 requires 'URI::Escape'            => '3.31';
 requires 'List::Util'             => '1.25';
+requires 'List::MoreUtils' => 0;
+requires 'String::Diff'    => 0;
+requires 'DateTime'        => 0;
+requires 'Mojolicious'     => 0;
+requires 'Term::ANSIColor' => 0;
+requires 'Memoize'         => 0;
 
 test_requires 'Test::Class'       => '0.37';
+test_requires 'Test::More'        => 0;
+test_requires 'Test::MockObject'  => 0;
 
 no_index directory => qw| db inc t |;
 
@@ -33,5 +47,5 @@ install_script 'scripts/dictlearn';
 # install_as_cpan;
 auto_install;
 
-WriteAll;
+WriteAll();
 
