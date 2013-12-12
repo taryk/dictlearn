@@ -6,6 +6,8 @@ perl:
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq wx-common libwxbase2.8-0 libwxgtk2.8-0 libwxbase2.8-dev libwxgtk2.8-dev libgtk2.0-dev libwx-perl
+ - "export DISPLAY=:99.0"
+ - "sh -e /etc/init.d/xvfb start"
 install:
   - "cpanm -n --installdeps ."
 branches:
