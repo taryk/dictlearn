@@ -139,13 +139,13 @@ sub _guess_part_of_speech {
     my $part_of_speech_name;
 
     given ($self->parent->word_src->GetValue()) {
-        when (/ ( ?: ing|ness ) $/x) {
+        when (/ (?:ing|ness) $/x) {
             $part_of_speech_name = 'noun';
         }
-        when (/ ( ?: ful|able|ed|ious ) $/x) {
+        when (/ (?:ful|able|ed|ious) $/x) {
             $part_of_speech_name = 'adjective';
         }
-        when (/ ( ?: ly|less ) $/x) {
+        when (/ (?:ly|less) $/x) {
             $part_of_speech_name = 'adverb';
         }
     }
