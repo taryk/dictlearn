@@ -9,7 +9,7 @@ before_install:
  - "export DISPLAY=:99.0"
  - "sh -e /etc/init.d/xvfb start"
 install:
-  - "cpanm -n --installdeps ."
+  - "cpanm -n -v --installdeps ."
 branches:
   only:
     - development
