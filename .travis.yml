@@ -5,7 +5,7 @@ perl:
   - "5.14"
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq libwx-perl
+ - sudo apt-get install -qq wx-common libwx-perl
 install:
   - "cpanm -n --installdeps ."
 branches:
