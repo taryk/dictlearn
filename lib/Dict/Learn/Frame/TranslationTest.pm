@@ -24,13 +24,27 @@ use Dict::Learn::Frame::TranslationTest::Result;
 
 const my $TEST_ID => 1;
 
-=item min
+=head1 NAME
+
+Dict::Learn::Frame::TranslationTest
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 min
+
+TODO add description
 
 =cut
 
 has min => (is => 'ro', isa => 'Int', default => 1);
 
-=item max
+=head2 max
+
+TODO add description
 
 =cut
 
@@ -53,7 +67,7 @@ has max => (
     },
 );
 
-=item count
+=head2 count
 
 Number of the words in the test
 
@@ -70,7 +84,9 @@ has count => (
     },
 );
 
-=item total_score
+=head2 total_score
+
+TODO add description
 
 =cut
 
@@ -81,7 +97,9 @@ has total_score => (
     clearer => 'clear_score',
 );
 
-=item exercise
+=head2 exercise
+
+TODO add description
 
 =cut
 
@@ -92,7 +110,9 @@ has exercise => (
     clearer => 'clear_exercise',
 );
 
-=item parent
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -101,7 +121,9 @@ has parent => (
     isa => 'Dict::Learn::Frame',
 );
 
-=item hbox
+=head2 hbox
+
+TODO add description
 
 =cut
 
@@ -111,7 +133,9 @@ has hbox => (
     default => sub { Wx::BoxSizer->new(wxHORIZONTAL) },
 );
 
-=item hbox_position
+=head2 hbox_position
+
+TODO add description
 
 =cut
 
@@ -121,7 +145,9 @@ has hbox_position => (
     default => sub { Wx::BoxSizer->new(wxHORIZONTAL) },
 );
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -131,7 +157,9 @@ has vbox => (
     default => sub { Wx::BoxSizer->new(wxVERTICAL) },
 );
 
-=item pos
+=head2 pos
+
+TODO add description
 
 =cut
 
@@ -146,7 +174,9 @@ has pos => (
     },
 );
 
-=item position
+=head2 position
+
+TODO add description
 
 =cut
 
@@ -161,7 +191,9 @@ has position => (
     },
 );
 
-=item spin
+=head2 spin
+
+TODO add description
 
 =cut
 
@@ -174,7 +206,9 @@ has spin => (
     },
 );
 
-=item
+=head2 test_category
+
+TODO add description
 
 =cut
 
@@ -212,7 +246,9 @@ sub _build_test_category {
     return $combobox;
 }
 
-=item text
+=head2 text
+
+TODO add description
 
 =cut
 
@@ -225,7 +261,9 @@ has text => (
     },
 );
 
-=item input
+=head2 input
+
+TODO add description
 
 =cut
 
@@ -238,7 +276,9 @@ has input => (
     },
 );
 
-=item btn_prev
+=head2 btn_prev
+
+TODO add description
 
 =cut
 
@@ -251,7 +291,9 @@ has btn_prev => (
     },
 );
 
-=item btn_next
+=head2 btn_next
+
+TODO add description
 
 =cut
 
@@ -264,7 +306,9 @@ has btn_next => (
     },
 );
 
-=item btn_reset
+=head2 btn_reset
+
+TODO add description
 
 =cut
 
@@ -277,7 +321,9 @@ has btn_reset => (
     },
 );
 
-=item btn_show_translation
+=head2 btn_show_translation
+
+TODO add description
 
 =cut
 
@@ -290,7 +336,9 @@ has btn_show_translation => (
     },
 );
 
-=item translation
+=head2 translation
+
+TODO add description
 
 =cut
 
@@ -303,7 +351,9 @@ has translation => (
     },
 );
 
-=item result
+=head2 result
+
+TODO add description
 
 =cut
 
@@ -320,6 +370,10 @@ has result => (
         )
     },
 );
+
+=head1 FUNCTIONS
+
+=cut
 
 sub FOREIGNBUILDARGS {
     my ($class, $parent, @args) = @_;
@@ -378,12 +432,24 @@ sub BUILD {
     );
 }
 
+=head2 keybind
+
+TODO add description
+
+=cut
+
 sub keybind {
     my ($self, $event) = @_;
 
     $self->next_step()
         if $event->GetKeyCode() == WXK_RETURN;
 }
+
+=head2 keybind2
+
+TODO add description
+
+=cut
 
 sub keybind2 {
     my ($self, $event) = @_;
@@ -397,11 +463,23 @@ sub keybind2 {
     }
 }
 
+=head2 spin_max_step
+
+TODO add description
+
+=cut
+
 sub spin_max_step {
     my ($self, $event) = @_;
 
     $self->max($event->GetInt);
 }
+
+=head2 predefined_categories
+
+TODO add description
+
+=cut
 
 sub predefined_categories {
     my $dtf = Database->schema->storage->datetime_parser;
@@ -615,6 +693,12 @@ sub predefined_categories {
     }
 }
 
+=head2 init
+
+TODO add description
+
+=cut
+
 sub init {
     my ($self) = @_;
 
@@ -629,6 +713,12 @@ sub init {
     $self->load_step($self->pos);
 }
 
+=head2 clear_fields
+
+TODO add description
+
+=cut
+
 sub clear_fields {
     my ($self) = @_;
 
@@ -637,6 +727,12 @@ sub clear_fields {
     $self->translation->SetLabel('');
     $self->Layout();
 }
+
+=head2 load_fields
+
+TODO add description
+
+=cut
 
 sub load_fields {
     my ($self, %args) = @_;
@@ -647,11 +743,23 @@ sub load_fields {
     $self->Layout();
 }
 
+=head2 set_position
+
+TODO add description
+
+=cut
+
 sub set_position {
     my ($self, $pos) = @_;
 
     $self->position->SetLabel($pos . '/');
 }
+
+=head2 get_step
+
+TODO add description
+
+=cut
 
 sub get_step {
     my ($self, $id) = @_;
@@ -659,6 +767,12 @@ sub get_step {
     return $self->exercise->[$id - 1]
         if defined $self->exercise->[$id - 1];
 }
+
+=head2 load_step
+
+TODO add description
+
+=cut
 
 sub load_step {
     my ($self, $id) = @_;
@@ -674,7 +788,12 @@ sub load_step {
     );
 }
 
-# next step
+=head2 next_step
+
+TODO add description
+
+=cut
+
 sub next_step {
     my ($self) = @_;
 
@@ -713,7 +832,12 @@ sub next_step {
     $self->load_step($self->pos);
 }
 
-# one step back
+=head2 prev_step
+
+TODO add description
+
+=cut
+
 sub prev_step {
     my ($self) = @_;
 
@@ -724,11 +848,23 @@ sub prev_step {
     $self->SetFocus();
 }
 
+=head2 reset_session
+
+TODO add description
+
+=cut
+
 sub reset_session {
     my ($self) = @_;
 
     $self->init();
 }
+
+=head2 strip_string
+
+TODO add description
+
+=cut
 
 sub strip_string {
     my ($string) = @_;
@@ -742,6 +878,12 @@ sub strip_string {
 
     lc $string;
 }
+
+=head2 compare_strings
+
+TODO add description
+
+=cut
 
 sub compare_strings {
     my ($self, $got, $expected) = @_;
@@ -794,6 +936,12 @@ sub compare_strings {
 
     $matched_most;
 }
+
+=head2 show_translation
+
+TODO add description
+
+=cut
 
 sub show_translation {
     my ($self) = @_;
