@@ -11,7 +11,19 @@ use Data::Printer;
 
 use common::sense;
 
-=item parent
+=head1 NAME
+
+Dict::Learn::Frame::IrregularVerbsTest::Result
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -21,7 +33,9 @@ has parent => (
     required => 1,
 );
 
-=item lb_result
+=head2 lb_result
+
+TODO add description
 
 =cut
 
@@ -48,7 +62,9 @@ sub _build_lb_result {
     return $lb_result;
 }
 
-=item l_top
+=head2 l_top
+
+TODO add description
 
 =cut
 
@@ -65,7 +81,9 @@ has l_top => (
     },
 );
 
-=item l_question
+=head2 l_question
+
+TODO add description
 
 =cut
 
@@ -82,7 +100,9 @@ has l_question => (
     },
 );
 
-=item l_correct
+=head2 l_correct
+
+TODO add description
 
 =cut
 
@@ -99,7 +119,9 @@ has l_correct => (
     },
 );
 
-=item l_wrong
+=head2 l_wrong
+
+TODO add description
 
 =cut
 
@@ -116,7 +138,9 @@ has l_wrong => (
     },
 );
 
-=item l_total
+=head2 l_total
+
+TODO add description
 
 =cut
 
@@ -133,7 +157,9 @@ has l_total => (
     },
 );
 
-=item vbox_result
+=head2 vbox_result
+
+TODO add description
 
 =cut
 
@@ -154,7 +180,9 @@ sub _build_vbox_result {
     return $vbox_result;
 }
 
-=item btn_ok
+=head2 btn_ok
+
+TODO add description
 
 =cut
 
@@ -169,7 +197,9 @@ has btn_ok => (
     },
 );
 
-=item btn_cancel
+=head2 btn_cancel
+
+TODO add description
 
 =cut
 
@@ -184,7 +214,9 @@ has btn_cancel => (
     },
 );
 
-=item hbox_btn
+=head2 hbox_btn
+
+TODO add description
 
 =cut
 
@@ -204,7 +236,9 @@ sub _build_hbox_btn {
     return $hbox_btn;
 }
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -227,6 +261,10 @@ sub _build_vbox {
     return $vbox;
 }
 
+=head1 FUNCTIONS
+
+=cut
+
 sub FOREIGNBUILDARGS {
     my ($class, @args) = @_;
 
@@ -246,6 +284,12 @@ sub BUILD {
     $self->Layout();
     $self->vbox->Fit($self);
 }
+
+=head2 fill_result
+
+TODO add description
+
+=cut
 
 sub fill_result {
     my ($self, $result) = @_;
