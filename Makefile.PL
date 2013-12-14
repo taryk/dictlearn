@@ -37,6 +37,9 @@ requires 'Memoize'         => 0;
 test_requires 'Test::Class'       => '0.37';
 test_requires 'Test::More'        => 0;
 test_requires 'Test::MockObject'  => 0;
+test_requires 'Test::POD'           => '1.22';
+test_requires 'POD::Coverage'       => '0.18';
+test_requires 'Test::POD::Coverage' => '1.08';
 
 no_index directory => qw| db inc t |;
 

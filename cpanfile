@@ -26,7 +26,10 @@ requires 'Term::ANSIColor'                 => '0';
 requires 'Memoize'                         => '0';
 
 on 'test' => sub {
-    requires 'Test::More'       => '0';
-    requires 'Test::Class'      => '0';
-    requires 'Test::MockObject' => '0';
+    requires 'Test::More'          => '0';
+    requires 'Test::Class'         => '0';
+    requires 'Test::MockObject'    => '0';
+    requires 'Test::Pod'           => '>= 1.22';
+    requires 'Pod::Coverage'       => '>= 0.18';
+    requires 'Test::Pod::Coverage' => '>= 1.08';
 };
