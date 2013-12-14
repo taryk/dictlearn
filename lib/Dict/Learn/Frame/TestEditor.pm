@@ -19,7 +19,19 @@ use Dict::Learn::Dictionary;
 
 const my $TEST_ID => 1;
 
-=item parent
+=head1 NAME
+
+Dict::Learn::Frame::TestEditor
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -28,7 +40,9 @@ has parent => (
     isa => 'Dict::Learn::Frame',
 );
 
-=item test_groups
+=head2 test_groups
+
+TODO add description
 
 =cut
 
@@ -55,7 +69,9 @@ sub _build_test_groups {
 }
 
 
-=item btn_add_group
+=head2 btn_add_group
+
+TODO add description
 
 =cut
 
@@ -74,7 +90,9 @@ sub _build_btn_add_group {
     return $btn_add_group;
 }
 
-=item btn_del_group
+=head2 btn_del_group
+
+TODO add description
 
 =cut
 
@@ -93,7 +111,9 @@ sub _build_btn_del_group {
     return $btn_del_group;
 }
 
-=item btn_update_group
+=head2 btn_update_group
+
+TODO add description
 
 =cut
 
@@ -112,7 +132,9 @@ sub _build_btn_update_group {
     return $btn_update_group;
 }
 
-=item hbox_test_groups
+=head2 hbox_test_groups
+
+TODO add description
 
 =cut
 
@@ -133,7 +155,9 @@ sub _build_hbox_test_groups {
     return $hbox_test_groups;
 }
 
-=item vbox_test_groups
+=head2 vbox_test_groups
+
+TODO add description
 
 =cut
 
@@ -153,7 +177,9 @@ sub _build_vbox_test_groups {
     return $vbox_test_groups;
 }
 
-=item test_words
+=head2 test_words
+
+TODO add description
 
 =cut
 
@@ -176,7 +202,9 @@ sub _build_test_words {
     return $test_words;
 }
 
-=item btn_move_left
+=head2 btn_move_left
+
+TODO add description
 
 =cut
 
@@ -190,7 +218,9 @@ has btn_move_left => (
     },
 );
 
-=item btn_move_right
+=head2 btn_move_right
+
+TODO add description
 
 =cut
 
@@ -204,7 +234,9 @@ has btn_move_right => (
     },
 );
 
-=item btn_reload
+=head2 btn_reload
+
+TODO add description
 
 =cut
 
@@ -218,7 +250,9 @@ has btn_reload => (
     },
 );
 
-=item vbox_btn
+=head2 vbox_btn
+
+TODO add description
 
 =cut
 
@@ -239,7 +273,9 @@ sub _build_vbox_btn {
     return $vbox_btn;
 }
 
-=item word_list
+=head2 word_list
+
+TODO add description
 
 =cut
 
@@ -262,7 +298,9 @@ sub _build_word_list {
     return $word_list;
 }
 
-=item btn_move_right
+=head2 btn_move_right
+
+TODO add description
 
 =cut
 
@@ -282,7 +320,9 @@ sub _build_cb_lookup {
     return $cb_lookup;
 }
 
-=item vbox_word_list
+=head2 vbox_word_list
+
+TODO add description
 
 =cut
 
@@ -302,7 +342,9 @@ sub _build_vbox_word_list {
     return $vbox_word_list;
 }
 
-=item hbox
+=head2 hbox
+
+TODO add description
 
 =cut
 
@@ -324,6 +366,12 @@ sub _build_hbox {
     return $hbox;
 }
 
+=head2 partofspeech
+
+TODO add description
+
+=cut
+
 has partofspeech => (
     is         => 'ro',
     isa        => 'HashRef',
@@ -344,6 +392,10 @@ sub _build_partofspeech {
     return $partofspeech_hashref;
 
 }
+
+=head1 FUNCTIONS
+
+=cut
 
 sub FOREIGNBUILDARGS {
     my ($class, $parent, @args) = @_;
@@ -377,6 +429,12 @@ sub BUILD {
     );
 }
 
+=head2 init
+
+TODO add description
+
+=cut
+
 sub init {
     my ($self) = @_;
 
@@ -384,11 +442,23 @@ sub init {
     $self->lookup();
 }
 
+=head2 set_status_text
+
+TODO add description
+
+=cut
+
 sub set_status_text {
     my ($self, $status_text) = @_;
 
     $self->parent->status_bar->SetStatusText($status_text);
 }
+
+=head2 load_categories
+
+TODO add description
+
+=cut
 
 sub load_categories {
     my ($self) = @_;
@@ -413,6 +483,12 @@ sub load_categories {
         # $self->test_groups->SetItem($id, 3, $category->name);           # scrore
     }
 }
+
+=head2 lookup
+
+TODO add description
+
+=cut
 
 sub lookup {
     my ($self, $event) = @_;
@@ -502,11 +578,23 @@ sub lookup {
         : 'No records selected');
 }
 
+=head2 on_category_select
+
+TODO add description
+
+=cut
+
 sub on_category_select {
     my ($self, $obj) = @_;
 
     $self->load_words(category_id => $obj->GetLabel());
 }
+
+=head2 load_words
+
+TODO add description
+
+=cut
 
 sub load_words {
     my ($self, %params) = @_;
@@ -530,6 +618,12 @@ sub load_words {
         # $self->test_words->SetItem($id, 2, $word->word_id->word);  # score
     }
 }
+
+=head2 move_left
+
+TODO add description
+
+=cut
 
 sub move_left {
     my ($self) = @_;
@@ -572,6 +666,12 @@ sub move_left {
     }
 }
 
+=head2 move_right
+
+TODO add description
+
+=cut
+
 sub move_right {
     my ($self) = @_;
 
@@ -599,11 +699,23 @@ sub move_right {
     $self->load_words(category_id => $category_id);
 }
 
+=head2 reload
+
+TODO add description
+
+=cut
+
 sub reload {
     my ($self) = @_;
 
     $self->init();
 }
+
+=head2 select_first_item
+
+TODO add description
+
+=cut
 
 sub select_first_item {
     my ($self) = @_;
@@ -617,11 +729,23 @@ sub select_first_item {
     );
 }
 
+=head2 get_word_id
+
+TODO add description
+
+=cut
+
 sub get_word_id {
     my ($self, $rowid) = @_;
 
     return $self->word_list->GetItem($rowid, 0)->GetText;
 }
+
+=head2 get_partofspeech_id
+
+TODO add description
+
+=cut
 
 sub get_partofspeech_id {
     my ($self, $rowid) = @_;
@@ -630,11 +754,23 @@ sub get_partofspeech_id {
         $self->partofspeech->{$self->word_list->GetItem($rowid, 2)->GetText};
 }
 
+=head2 get_test_group_id
+
+TODO add description
+
+=cut
+
 sub get_test_group_id {
     my ($self, $rowid) = @_;
 
     return $self->test_groups->GetItem($rowid, 0)->GetText;
 }
+
+=head2 get_test_group_name
+
+TODO add description
+
+=cut
 
 sub get_test_group_name {
     my ($self, $rowid) = @_;
@@ -642,6 +778,11 @@ sub get_test_group_name {
     return $self->test_groups->GetItem($rowid, 1)->GetText;
 }
 
+=head2 add_group
+
+TODO add description
+
+=cut
 
 sub add_group {
     my ($self) = @_;
@@ -666,6 +807,12 @@ sub add_group {
     $self->load_categories();
 }
 
+=head2 del_group
+
+TODO add description
+
+=cut
+
 sub del_group {
     my ($self) = @_;
 
@@ -685,6 +832,12 @@ sub del_group {
 
     $self->load_categories();
 }
+
+=head2 update_group
+
+TODO add description
+
+=cut
 
 sub update_group {
     my ($self) = @_;
@@ -719,52 +872,3 @@ sub update_group {
 no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
-__END__
-
-=head1 NAME
-
-Dict::Learn::Frame::TestEditor - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Dict::Learn::Frame::TestEditor;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Dict::Learn::Frame::TestEditor, 
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
-=head1 AUTHOR
-
-taryk, E<lt>mrtaryk@gmail.comE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2013 by taryk
-
-This program is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.8.2 or,
-at your option, any later version of Perl 5 you may have available.
-
-=head1 BUGS
-
-None reported... yet.
-
-=cut
