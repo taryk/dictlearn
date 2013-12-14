@@ -47,12 +47,8 @@ sub _MENU_ID { int(shift) + $DICT_OFFSET }
 # Returns DICT_ID including offset
 sub _DICT_ID { int(shift) - $DICT_OFFSET }
 
-{
-    my $menu_id = 0;
-
-    sub _next_menu_id {
-        $menu_id++
-    }
+sub _next_menu_id {
+    state $menu_id = 0; $menu_id++
 }
 
 =head1 ATTRIBUTES

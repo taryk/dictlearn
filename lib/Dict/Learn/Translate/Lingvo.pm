@@ -41,75 +41,72 @@ const my $PARTSOFSPEACH => {
 
 =cut
 
-{
-    my $curr = {
+sub _parse_item {
+    state $curr = {
         partofspeech => '_',
         variant      => 'I'
     };
 
-    sub _parse_item {
-        my $res = {
-            variant      => undef,
-            partofspeech => undef,
-            words        => []
-        };
+    my $res = {
+        variant      => undef,
+        partofspeech => undef,
+        words        => []
+    };
 
-        given ($_[0]->attr->{class}) {
-            when ('P') {
-                my $span = $_[0]->find('span')->first;
-                return unless $span;
-                my $text = $span->all_text;
+    given ($_[0]->attr->{class}) {
+        when ('P') {
+            my $span = $_[0]->find('span')->first;
+            return unless $span;
+            my $text = $span->all_text;
 
-                given ($span->attr->{class}) {
-                    when ('Bold') {
-                        if ($text =~ /^(?<variant>[IVXLMC]+)\s*$/x) {
-                            $curr->{variant} = $+{variant};
-                        }
-                    }
-                    when ('l-article__abbrev') {
-                        # if ($text =~ /^(n|v|)$/)
-                        say "unknown: '$text'" unless $PARTSOFSPEACH->{$text};
-                        $curr->{partofspeech} = $PARTSOFSPEACH->{$text}
-                            // 'noun';
+            given ($span->attr->{class}) {
+                when ('Bold') {
+                    if ($text =~ /^(?<variant>[IVXLMC]+)\s*$/x) {
+                        $curr->{variant} = $+{variant};
                     }
                 }
+                when ('l-article__abbrev') {
+
+                    # if ($text =~ /^(n|v|)$/)
+                    say "unknown: '$text'" unless $PARTSOFSPEACH->{$text};
+                    $curr->{partofspeech} = $PARTSOFSPEACH->{$text} // 'noun';
+                }
             }
-            when ('P1') {
-                if (    $_[0]->find('span.translation')->size == 0
-                    and $_[0]->find('span.l-article__abbrev')->size >= 1)
+        }
+        when ('P1') {
+            if (    $_[0]->find('span.translation')->size == 0
+                and $_[0]->find('span.l-article__abbrev')->size >= 1)
+            {
+                my $text = $_[0]->span->all_text;
+                if (any { $text eq $_ } keys %$PARTSOFSPEACH) {
+                    $curr->{partofspeech} = $PARTSOFSPEACH->{$text};
+                    return;
+                }
+            }
+            my $words_line = $_[0]->all_text =~ s/^\d+[)]\s+//r;
+            my $words;
+            for my $word (split /\s*;\s*/ => $words_line) {
+                my $word_entry;
+                if ($word =~ s/^\s*[(]\s*(?<preposition>[^)]+)\s*[)]\s*//iusx)
                 {
-                    my $text = $_[0]->span->all_text;
-                    if (any { $text eq $_ } keys %$PARTSOFSPEACH) {
-                        $curr->{partofspeech} = $PARTSOFSPEACH->{$text};
-                        return;
-                    }
+                    $word_entry->{prep}
+                        = [split /\s*,\s*/ => $+{preposition}];
                 }
-                my $words_line = $_[0]->all_text =~ s/^\d+[)]\s+//r;
-                my $words;
-                for my $word (split /\s*;\s*/ => $words_line) {
-                    my $word_entry;
-                    if ($word
-                        =~ s/^\s*[(]\s*(?<preposition>[^)]+)\s*[)]\s*//iusx)
-                    {
-                        $word_entry->{prep}
-                            = [split /\s*,\s*/ => $+{preposition}];
-                    }
-                    if ($word =~ s/^\s*(?<category>[^. ]+)[.]\s*//iusx) {
-                        $word_entry->{category} = $+{category};
-                    }
-                    if ($word =~ s/\s*[(]\s*(?<note>[^)]+)\s*[)]\s*$//iusx) {
-                        $word_entry->{note} = $+{note};
-                        chomp($word_entry->{note});
-                    }
-                    $word_entry->{word} = $word;
-                    push @$words => $word_entry;
+                if ($word =~ s/^\s*(?<category>[^. ]+)[.]\s*//iusx) {
+                    $word_entry->{category} = $+{category};
                 }
-                $res = {
-                    variant      => $curr->{variant},
-                    partofspeech => $curr->{partofspeech},
-                    words        => $words,
-                };
+                if ($word =~ s/\s*[(]\s*(?<note>[^)]+)\s*[)]\s*$//iusx) {
+                    $word_entry->{note} = $+{note};
+                    chomp($word_entry->{note});
+                }
+                $word_entry->{word} = $word;
+                push @$words => $word_entry;
             }
+            $res = {
+                variant      => $curr->{variant},
+                partofspeech => $curr->{partofspeech},
+                words        => $words,
+            };
         }
     }
 }
