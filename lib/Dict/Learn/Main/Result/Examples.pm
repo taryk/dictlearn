@@ -1,6 +1,16 @@
 package Dict::Learn::Main::Result::Examples 0.2;
 use base qw[ DBIx::Class::Core ];
 
+=head1 NAME
+
+Dict::Learn::Main::ResultSet::Examples
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=cut
+
 __PACKAGE__->table('example_xref');
 __PACKAGE__->add_columns(
     qw[ example1_id example2_id dictionary_id

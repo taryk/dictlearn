@@ -1,6 +1,16 @@
 package Dict::Learn::Main::Result::PartOfSpeech 0.1;
 use base qw[ DBIx::Class::Core ];
 
+=head1 NAME
+
+Dict::Learn::Main::Result::PartOfSpeech
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=cut
+
 __PACKAGE__->table('partofspeech');
 __PACKAGE__->add_columns(
     qw[ partofspeech_id name_orig name_tr abbr

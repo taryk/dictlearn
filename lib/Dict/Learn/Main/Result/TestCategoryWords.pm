@@ -1,6 +1,16 @@
 package Dict::Learn::Main::Result::TestCategoryWords 0.1;
 use base qw[ DBIx::Class::Core ];
 
+=head1 NAME
+
+Dict::Learn::Main::ResultSet::TestCategoryWords
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=cut
+
 __PACKAGE__->table('test_category_word_xref');
 __PACKAGE__->add_columns(
     qw[ test_category_id word_id partofspeech_id cdate mdate ]

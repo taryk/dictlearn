@@ -2,6 +2,16 @@ package Dict::Learn::Main::Result::TestCategory;
 use base qw[ DBIx::Class::Core ];
 # __PACKAGE__->load_components(qw/InflateColumn::DateTime/);
 
+=head1 NAME
+
+Dict::Learn::Main::Result::TestCategory
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=cut
+
 __PACKAGE__->table('test_category');
 __PACKAGE__->add_columns(qw[ test_category_id test_id dictionary_id name cdate mdate ]);
 __PACKAGE__->set_primary_key('test_category_id');

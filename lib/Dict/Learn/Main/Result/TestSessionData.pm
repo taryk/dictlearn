@@ -1,6 +1,16 @@
 package Dict::Learn::Main::Result::TestSessionData 0.1;
 use base qw[ DBIx::Class::Core ];
 
+=head1 NAME
+
+Dict::Learn::Main::Result::TestSessionData
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=cut
+
 __PACKAGE__->table('test_session_data');
 __PACKAGE__->add_columns(
     qw[ test_session_data_id test_session_id word_id data score note

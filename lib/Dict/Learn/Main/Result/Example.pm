@@ -1,6 +1,16 @@
 package Dict::Learn::Main::Result::Example 0.2;
 use base qw[ DBIx::Class::Core ];
 
+=head1 NAME
+
+Dict::Learn::Main::Result::Example
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=cut
+
 __PACKAGE__->table('example');
 __PACKAGE__->add_columns(
     qw[ example_id example lang_id idioma in_test

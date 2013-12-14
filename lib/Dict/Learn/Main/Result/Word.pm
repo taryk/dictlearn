@@ -1,6 +1,16 @@
 package Dict::Learn::Main::Result::Word 0.2;
 use base qw[ DBIx::Class::Core ];
 
+=head1 NAME
+
+Dict::Learn::Main::Result::Word
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=cut
+
 __PACKAGE__->table('word');
 __PACKAGE__->add_columns(
     qw[ word_id word word2 word3 irregular lang_id partofspeech_id in_test
