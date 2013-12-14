@@ -1,13 +1,15 @@
 package Dict::Learn::Main::ResultSet::Word 0.1;
 use base 'DBIx::Class::ResultSet';
 
+use Const::Fast;
 use Memoize qw[memoize flush_cache];
 use Data::Printer;
 
 use namespace::autoclean;
 use common::sense;
 
-sub MIN_SCORE { 0.43 }
+const my $MIN_SCORE => 0.43;
+
 =head1 NAME
 
 Dict::Learn::Main::ResultSet::Word
@@ -471,7 +473,7 @@ sub get_irregular_verbs {
             {   word_id => {
                     -in => [
                         map  { $_->{word_id} }
-                        grep { $_->{avg_score} < MIN_SCORE } @words
+                        grep { $_->{avg_score} < $MIN_SCORE } @words
                     ]
                 }
             }
