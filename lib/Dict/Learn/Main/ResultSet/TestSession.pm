@@ -7,6 +7,22 @@ use common::sense;
 
 use Data::Printer;
 
+=head1 NAME
+
+Dict::Learn::Main::ResultSet::TestSession
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 export_data
+
+TODO add description
+
+=cut
+
 sub export_data {
     my ($self) = @_;
     my $rs = $self->search({}, {});
@@ -14,16 +30,34 @@ sub export_data {
     $rs->all();
 }
 
+=head2 import_data
+
+TODO add description
+
+=cut
+
 sub import_data {
     my ($self, $data) = @_;
     $self->populate($data);
     return 1;
 }
 
+=head2 clear_data
+
+TODO add description
+
+=cut
+
 sub clear_data {
     my ($self) = @_;
     $self->delete_all();
 }
+
+=head2 add
+
+TODO add description
+
+=cut
 
 sub add {
     my ($self, $test_id, $total_score, $result) = @_;
@@ -49,6 +83,12 @@ sub add {
         ->populate(\@data);
 }
 
+=head2 get_all
+
+TODO add description
+
+=cut
+
 sub get_all {
     my ($self, $test_id) = @_;
     my $rs = $self->search(
@@ -64,6 +104,12 @@ sub get_all {
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
     $rs->all();
 }
+
+=head2 get_words_stats
+
+TODO add description
+
+=cut
 
 sub get_words_stats {
     my ($self, $test_id) = @_;

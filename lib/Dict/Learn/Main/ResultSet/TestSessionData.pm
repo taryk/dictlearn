@@ -6,6 +6,22 @@ use common::sense;
 
 use Data::Printer;
 
+=head1 NAME
+
+Dict::Learn::Main::ResultSet::TestSessionData
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 export_data
+
+TODO add description
+
+=cut
+
 sub export_data {
     my ($self) = @_;
     my $rs = $self->search({}, {});
@@ -13,16 +29,34 @@ sub export_data {
     $rs->all();
 }
 
+=head2 import_data
+
+TODO add description
+
+=cut
+
 sub import_data {
     my ($self, $data) = @_;
     $self->populate($data);
     return 1;
 }
 
+=head2 clear_data
+
+TODO add description
+
+=cut
+
 sub clear_data {
     my ($self) = @_;
     $self->delete_all();
 }
+
+=head2 get_words
+
+TODO add description
+
+=cut
 
 sub get_words {
     my ($self) = @_;

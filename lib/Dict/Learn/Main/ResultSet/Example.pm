@@ -6,6 +6,22 @@ use common::sense;
 
 use Data::Printer;
 
+=head1 NAME
+
+Dict::Learn::Main::ResultSet::Example
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 export_data
+
+TODO add description
+
+=cut
+
 sub export_data {
     my ($self) = @_;
     my $rs = $self->search({}, {});
@@ -13,16 +29,34 @@ sub export_data {
     $rs->all();
 }
 
+=head2 import_data
+
+TODO add description
+
+=cut
+
 sub import_data {
     my ($self, $data) = @_;
     $self->populate($data);
     return 1;
 }
 
+=head2 clear_data
+
+TODO add description
+
+=cut
+
 sub clear_data {
     my ($self) = @_;
     $self->delete_all();
 }
+
+=head2 add_one
+
+TODO add description
+
+=cut
 
 sub add_one {
     my $self        = shift;
@@ -59,6 +93,12 @@ sub add_one {
     }
     $self;
 }
+
+=head2 update_one
+
+TODO add description
+
+=cut
 
 sub update_one {
     my $self   = shift;
@@ -111,15 +151,33 @@ sub update_one {
     $self;
 }
 
+=head2 delete_one
+
+TODO add description
+
+=cut
+
 sub delete_one {
     my $self = shift;
     $self->search({example_id => [@_]})->delete;
 }
 
+=head2 unlink_one
+
+TODO add description
+
+=cut
+
 sub unlink_one {
     my $self = shift;
     $self->search({example1_id => [@_]})->delete;
 }
+
+=head2 select_one
+
+TODO add description
+
+=cut
 
 sub select_one {
     my $self       = shift;
@@ -130,6 +188,12 @@ sub select_one {
     $rs->first();
 }
 
+
+=head2 select
+
+TODO add description
+
+=cut
 
 sub select {
     my $self   = shift;
@@ -171,6 +235,12 @@ sub select {
     $rs->all();
 }
 
+=head2 get_all
+
+TODO add description
+
+=cut
+
 sub get_all {
     my $self    = shift;
     my $lang_id = shift;
@@ -178,6 +248,12 @@ sub get_all {
     $rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
     $rs->all();
 }
+
+=head2 select_examples_grid
+
+TODO add description
+
+=cut
 
 sub select_examples_grid {
     my $self   = shift;

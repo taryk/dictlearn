@@ -8,6 +8,21 @@ use namespace::autoclean;
 use common::sense;
 
 sub MIN_SCORE { 0.43 }
+=head1 NAME
+
+Dict::Learn::Main::ResultSet::Word
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 export_data
+
+TODO add description
+
+=cut
 
 sub export_data {
     my ($self) = @_;
@@ -16,16 +31,34 @@ sub export_data {
     $rs->all();
 }
 
+=head2 import_data
+
+TODO add description
+
+=cut
+
 sub import_data {
     my ($self, $data) = @_;
     $self->populate($data);
     return 1;
 }
 
+=head2 clear_data
+
+TODO add description
+
+=cut
+
 sub clear_data {
     my ($self) = @_;
     $self->delete_all();
 }
+
+=head2 add_one
+
+TODO add description
+
+=cut
 
 sub add_one {
     my ($self, %params) = @_;
@@ -64,6 +97,12 @@ sub add_one {
     }
     $self->get_all_flushcashe;
 }
+
+=head2 update_one
+
+TODO add description
+
+=cut
 
 sub update_one {
     my $self     = shift;
@@ -143,11 +182,23 @@ sub update_one {
     return $self;
 }
 
+=head2 delete_one
+
+TODO add description
+
+=cut
+
 sub delete_one {
     my $self = shift;
     $self->search({word_id => [@_]})->delete;
     $self->get_all_flushcashe;
 }
+
+=head2 unlink_one
+
+TODO add description
+
+=cut
 
 sub unlink_one {
     my $self = shift;
@@ -156,6 +207,12 @@ sub unlink_one {
 }
 
 memoize('find_ones', INSTALL => 'find_ones_cached');
+
+=head2 find_ones
+
+TODO add description
+
+=cut
 
 sub find_ones {
     my ($self, %params) = @_;
@@ -234,11 +291,23 @@ sub find_ones {
     return @result;
 }
 
+=head2 find_ones_flushcashe
+
+TODO add description
+
+=cut
+
 sub find_ones_flushcashe {
     my $self = shift;
     flush_cache('find_ones_cached');
     $self;
 }
+
+=head2 match
+
+TODO add description
+
+=cut
 
 sub match {
     my ($self, $lang_id, $word) = @_;
@@ -257,6 +326,12 @@ sub match {
     return $rs;
 }
 
+=head2 select
+
+TODO add description
+
+=cut
+
 sub select {
     my ($self, $lang_id, $word) = @_;
     my $params = {'lang_id' => $lang_id};
@@ -274,6 +349,12 @@ sub select {
     $rs->all();
 }
 
+=head2 select_one
+
+TODO add description
+
+=cut
+
 sub select_one {
     my ($self, $word_id) = @_;
     my $rs = $self->search({'me.word_id' => $word_id,},
@@ -282,6 +363,12 @@ sub select_one {
     say "select_one uncached";
     $rs->first();
 }
+
+=head2 select_words_grid
+
+TODO add description
+
+=cut
 
 sub select_words_grid {
     my $self   = shift;
@@ -317,6 +404,12 @@ sub select_words_grid {
 
 memoize('get_all', INSTALL => 'get_all_cached');
 
+=head2 get_all
+
+TODO add description
+
+=cut
+
 sub get_all {
     my $self    = shift;
     my $lang_id = shift;
@@ -325,11 +418,23 @@ sub get_all {
     $rs->all();
 }
 
+=head2 get_all_flushcashe
+
+TODO add description
+
+=cut
+
 sub get_all_flushcashe {
     my $self = shift;
     flush_cache('get_all_cached');
     $self;
 }
+
+=head2 get_irregular_verbs
+
+TODO add description
+
+=cut
 
 sub get_irregular_verbs {
     my ($self, $min_count) = @_;
