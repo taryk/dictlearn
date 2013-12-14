@@ -447,7 +447,7 @@ sub get_irregular_verbs {
         ->get_words();
 
     ## no critic (Subroutines::ProhibitNestedSubs)
-    sub search_irregular_verbs {
+    sub _search_irregular_verbs {
         my $self = shift;
         $self->search(
             {   irregular => 1,
@@ -462,14 +462,14 @@ sub get_irregular_verbs {
     ## use critic
 
     # select untested words
-    my $rs_untested = $self->search_irregular_verbs(
+    my $rs_untested = $self->_search_irregular_verbs(
         {word_id => {-not_in => [map { $_->{word_id} } @words]}});
     $rs_untested->result_class('DBIx::Class::ResultClass::HashRefInflator');
     push @res => $rs_untested->all();
 
     # select failed words ( scrore <= 0.5 )
     unless (@res >= $min_count) {
-        my $rs_failed = $self->search_irregular_verbs(
+        my $rs_failed = $self->_search_irregular_verbs(
             {   word_id => {
                     -in => [
                         map  { $_->{word_id} }
@@ -487,7 +487,7 @@ sub get_irregular_verbs {
     unless (@res >= $min_count) {
         my $limit = $min_count - scalar @res;
         my $rs_other
-            = $self->search_irregular_verbs(
+            = $self->_search_irregular_verbs(
             {word_id => {-not_in => [map { $_->{word_id} } @res]}},
             {limit   => $limit});
         $rs_other->result_class('DBIx::Class::ResultClass::HashRefInflator');
