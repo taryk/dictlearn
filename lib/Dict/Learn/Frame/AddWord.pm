@@ -17,7 +17,19 @@ use Dict::Learn::Frame::AddWord::Translations;
 
 use common::sense;
 
-=item item_id
+=head1 NAME
+
+Dict::Learn::Frame::AddWord
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 item_id
+
+TODO add description
 
 =cut
 
@@ -28,7 +40,9 @@ has item_id => (
     predicate => 'has_item_id',
 );
 
-=item enable
+=head2 enable
+
+TODO add description
 
 =cut
 
@@ -38,7 +52,9 @@ has enable => (
     default => 1,
 );
 
-=item edit_origin
+=head2 edit_origin
+
+TODO add description
 
 =cut
 
@@ -49,7 +65,9 @@ has edit_origin => (
     clearer   => 'clear_edit_origin',
 );
 
-=item parent
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -58,7 +76,9 @@ has parent => (
     isa => 'Dict::Learn::Frame',
 );
 
-=item word_note
+=head2 word_note
+
+TODO add description
 
 =cut
 
@@ -72,7 +92,9 @@ has word_note => (
     },
 );
 
-=item word_src
+=head2 word_src
+
+TODO add description
 
 =cut
 
@@ -86,7 +108,9 @@ has word_src => (
     },
 );
 
-=item word2_src
+=head2 word2_src
+
+TODO add description
 
 =cut
 
@@ -106,7 +130,9 @@ sub _build_word2_src {
     return $word2;
 }
 
-=item word3_src
+=head2 word3_src
+
+TODO add description
 
 =cut
 
@@ -126,7 +152,9 @@ sub _build_word3_src {
     return $word3;
 }
 
-=item cb_irregular
+=head2 cb_irregular
+
+TODO add description
 
 =cut
 
@@ -141,7 +169,9 @@ has cb_irregular => (
     },
 );
 
-=item vbox_src
+=head2 vbox_src
+
+TODO add description
 
 =cut
 
@@ -163,7 +193,9 @@ sub _build_vbox_src {
     return $vbox_src;
 }
 
-=item btn_add_word
+=head2 btn_add_word
+
+TODO add description
 
 =cut
 
@@ -177,7 +209,9 @@ has btn_add_word => (
     },
 );
 
-=item btn_translate
+=head2 btn_translate
+
+TODO add description
 
 =cut
 
@@ -191,7 +225,9 @@ has btn_translate => (
     },
 );
 
-=item btn_clear
+=head2 btn_clear
+
+TODO add description
 
 =cut
 
@@ -205,7 +241,9 @@ has btn_clear => (
     },
 );
 
-=item btn_cancel
+=head2 btn_cancel
+
+TODO add description
 
 =cut
 
@@ -219,7 +257,9 @@ has btn_cancel => (
     },
 );
 
-=item hbox_btn
+=head2 hbox_btn
+
+TODO add description
 
 =cut
 
@@ -243,7 +283,9 @@ sub _build_hbox_btn {
     return $hbox_btn;
 }
 
-=item translations
+=head2 translations
+
+TODO add description
 
 =cut
 
@@ -264,7 +306,9 @@ sub _build_translations {
     return $translations;
 }
 
-=item hbox_words
+=head2 hbox_words
+
+TODO add description
 
 =cut
 
@@ -284,7 +328,9 @@ sub _build_hbox_words {
     return $hbox_words;
 }
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -304,6 +350,14 @@ sub _build_vbox {
 
     return $vbox;
 }
+
+=head1 FUNCTIONS
+
+=head2 keybind
+
+TODO add description
+
+=cut
 
 sub keybind {
     my ($self, $event) = @_;
@@ -338,6 +392,12 @@ sub keybind {
 #     }
 # }
 
+=head2 strip_spaces
+
+TODO add description
+
+=cut
+
 sub strip_spaces {
     my ($self, $phrase) = @_;
 
@@ -347,6 +407,12 @@ sub strip_spaces {
 
     return $phrase;
 }
+
+=head2 check_word
+
+TODO add description
+
+=cut
 
 sub check_word {
     my ($self, $event) = @_;
@@ -393,6 +459,11 @@ sub check_word {
     $self->enable_controls($self->enable);
 }
 
+=head2 check_for_duplicates
+
+TODO add description
+
+=cut
 
 sub check_for_duplicates {
     my ($self, $translations) = @_;
@@ -412,6 +483,12 @@ sub check_for_duplicates {
 
     return undef;
 }
+
+=head2 add
+
+TODO add description
+
+=cut
 
 sub add {
     my $self = shift;
@@ -507,6 +584,12 @@ sub add {
     return 1;
 }
 
+=head2 clear_fields
+
+TODO add description
+
+=cut
+
 sub clear_fields {
     my ($self) = @_;
 
@@ -526,11 +609,23 @@ sub clear_fields {
     $self->word_note->Clear;
 }
 
+=head2 remove_translations
+
+TODO add description
+
+=cut
+
 sub remove_translations {
     my ($self) = @_;
 
     $self->translations->remove_all();
 }
+
+=head2 load_word
+
+TODO add description
+
+=cut
 
 sub load_word {
     my ($self, %params) = @_;
@@ -560,6 +655,12 @@ sub load_word {
     $self->btn_add_word->SetLabel('Save');
 }
 
+=head2 fill_fields
+
+TODO add description
+
+=cut
+
 sub fill_fields {
     my ($self, %params) = @_;
 
@@ -584,6 +685,12 @@ sub fill_fields {
     }
     $self->word_note->SetValue($params{note});
 }
+
+=head2 translate_word
+
+TODO add description
+
+=cut
 
 sub translate_word {
     my $self = shift;
@@ -617,6 +724,12 @@ sub translate_word {
     }
 }
 
+=head2 enable_irregular
+
+TODO add description
+
+=cut
+
 sub enable_irregular {
     my ($self, $is_checked) = @_;
 
@@ -625,11 +738,23 @@ sub enable_irregular {
     $self->word3_src->Enable($is_checked);
 }
 
+=head2 toggle_irregular
+
+TODO add description
+
+=cut
+
 sub toggle_irregular {
     my ($self, $event) = @_;
 
     $self->enable_irregular($event->IsChecked);
 }
+
+=head2 enable_controls
+
+TODO add description
+
+=cut
 
 sub enable_controls($$) {
     my ($self, $is_enabled) = @_;
@@ -650,6 +775,12 @@ sub enable_controls($$) {
     );
 }
 
+=head2 close_page
+
+TODO add description
+
+=cut
+
 sub close_page {
     my $self = shift;
 
@@ -657,6 +788,12 @@ sub close_page {
         $self->parent->notebook->GetSelection()
     );
 }
+
+=head2 set_word
+
+TODO add description
+
+=cut
 
 sub set_word {
     my ($self, $word) = @_;
