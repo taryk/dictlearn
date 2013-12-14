@@ -62,7 +62,7 @@ has max => (
             my $last_index = $#{ $self->exercise } + 1;
             say "last index - $last_index";
             return unless $new_index >= $last_index;
-            $self->fetch_exercises($last_index, $new_index);
+            $self->_fetch_exercises($last_index, $new_index);
         }
     },
 );
@@ -611,9 +611,9 @@ sub predefined_categories {
 {
     my @ids;
 
-    sub set_ids { @ids = @_ }
+    sub _set_ids { @ids = @_ }
 
-    sub load_exercise_ids {
+    sub _load_exercise_ids {
         my ($self) = @_;
 
         my $curr_category = $self->test_category->GetClientData(
@@ -664,7 +664,7 @@ sub predefined_categories {
         $self->count($count);
     }
 
-    sub fetch_exercises {
+    sub _fetch_exercises {
         my ($self, $from, $to) = @_;
 
         say "fetching exercises from $from to $to";
@@ -679,10 +679,10 @@ sub predefined_categories {
                     [map { [$_->word_id, $_->word] } $word->words]
                 ];
         }
-        $self->check_exercise_consistency();
+        $self->_check_exercise_consistency();
     }
 
-    sub check_exercise_consistency {
+    sub _check_exercise_consistency {
         my ($self) = @_;
         for ( 0 .. $self->max-1 ) {
             my $item = $self->exercise->[$_];
@@ -707,8 +707,8 @@ sub init {
     $self->exercise([]);
     $self->pos($self->min);
 
-    $self->load_exercise_ids();
-    $self->fetch_exercises(0, $self->max - 1);
+    $self->_load_exercise_ids();
+    $self->_fetch_exercises(0, $self->max - 1);
 
     $self->load_step($self->pos);
 }
