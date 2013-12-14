@@ -23,7 +23,19 @@ const my $COL_INTEST       => [4, 'in_test'];
 const my $COL_CDATE        => [5, 'cdate'];
 const my $COL_MDATE        => [6, 'mdate'];
 
-=item parent
+=head1 NAME
+
+Dict::Learn::Frame::GridWords
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -32,7 +44,9 @@ has parent => (
     isa => 'Dict::Learn::Frame',
 );
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -52,7 +66,9 @@ sub _build_vbox {
     return $vbox;
 }
 
-=item grid
+=head2 grid
+
+TODO add description
 
 =cut
 
@@ -99,7 +115,9 @@ sub _build_grid {
     return $grid;
 }
 
-=item panel2_hbox_btn
+=head2 panel2_hbox_btn
+
+TODO add description
 
 =cut
 
@@ -124,7 +142,9 @@ sub _build_panel2_hbox_btn {
 }
 
 
-=item btn_delete_item
+=head2 btn_delete_item
+
+TODO add description
 
 =cut
 
@@ -140,7 +160,9 @@ has btn_delete_item => (
 );
 
 
-=item btn_clear_all
+=head2 btn_clear_all
+
+TODO add description
 
 =cut
 
@@ -155,7 +177,9 @@ has btn_clear_all => (
     },
 );
 
-=item btn_refresh
+=head2 btn_refresh
+
+TODO add description
 
 =cut
 
@@ -169,6 +193,14 @@ has btn_refresh => (
         )
     },
 );
+
+=head1 FUNCTIONS
+
+=head2 update_word
+
+TODO add description
+
+=cut
 
 sub update_word {
     my ($self, $obj) = @_;
@@ -201,6 +233,12 @@ sub update_word {
         ->update_one(%upd_word);
 }
 
+=head2 delete_word
+
+TODO add description
+
+=cut
+
 sub delete_word {
     my $self = shift;
 
@@ -217,11 +255,23 @@ sub delete_word {
     $self->refresh_words();
 }
 
+=head2 clear_db
+
+TODO add description
+
+=cut
+
 sub clear_db {
     my $self = shift;
 
     # @TODO: implement
 }
+
+=head2 select_words
+
+TODO add description
+
+=cut
 
 sub select_words {
     my $self = shift;
@@ -264,6 +314,12 @@ sub select_words {
         $self->grid->SetReadOnly($i++, $COL_MDATE->[0], 1);
     }
 }
+
+=head2 refresh_words
+
+TODO add description
+
+=cut
 
 sub refresh_words {
     my $self = shift;
