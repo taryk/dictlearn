@@ -20,7 +20,19 @@ sub COL_LANG2   {3}
 sub COL_E_LANG1 {1}
 sub COL_E_LANG2 {2}
 
-=item parent
+=head1 NAME
+
+Dict::Learn::Frame::SearchWords
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -29,7 +41,9 @@ has parent => (
     isa => 'Dict::Learn::Frame',
 );
 
-=item combobox
+=head2 combobox
+
+TODO add description
 
 =cut
 
@@ -49,7 +63,9 @@ sub _build_combobox {
     return $combobox;
 }
 
-=item btn_lookup
+=head2 btn_lookup
+
+TODO add description
 
 =cut
 
@@ -68,7 +84,9 @@ sub _build_btn_lookup {
     return $btn_lookup;
 }
 
-=item btn_reset
+=head2 btn_reset
+
+TODO add description
 
 =cut
 
@@ -87,7 +105,9 @@ sub _build_btn_reset {
     return $btn_reset;
 }
 
-=item btn_addword
+=head2 btn_addword
+
+TODO add description
 
 =cut
 
@@ -106,7 +126,9 @@ sub _build_btn_addword {
     return $btn_addword;
 }
 
-=item lookup_hbox
+=head2 lookup_hbox
+
+TODO add description
 
 =cut
 
@@ -128,7 +150,9 @@ sub _build_lookup_hbox {
     return $hbox;
 }
 
-=item btn_edit_word
+=head2 btn_edit_word
+
+TODO add description
 
 =cut
 
@@ -149,7 +173,9 @@ sub _build_btn_edit_word {
     return $btn_edit_word;
 }
 
-=item btn_unlink_word
+=head2 btn_unlink_word
+
+TODO add description
 
 =cut
 
@@ -170,7 +196,9 @@ sub _build_btn_unlink_word {
     return $btn_unlink_word;
 }
 
-=item btn_delete_word
+=head2 btn_delete_word
+
+TODO add description
 
 =cut
 
@@ -191,7 +219,9 @@ sub _build_btn_delete_word {
     return $btn_delete_word;
 }
 
-=item vbox_btn_words
+=head2 vbox_btn_words
+
+TODO add description
 
 =cut
 
@@ -212,7 +242,9 @@ sub _build_vbox_btn_words {
     return $vbox;
 }
 
-=item lb_words
+=head2 lb_words
+
+TODO add description
 
 =cut
 
@@ -239,7 +271,9 @@ sub _build_lb_words {
     return $lb_words;
 }
 
-=item hbox_words
+=head2 hbox_words
+
+TODO add description
 
 =cut
 
@@ -259,7 +293,9 @@ sub _build_hbox_words {
     return $hbox;
 }
 
-=item btn_add_example
+=head2 btn_add_example
+
+TODO add description
 
 =cut
 
@@ -280,7 +316,9 @@ sub _build_btn_add_example {
     return $btn_add_example;
 }
 
-=item btn_edit_example
+=head2 btn_edit_example
+
+TODO add description
 
 =cut
 
@@ -301,7 +339,9 @@ sub _build_btn_edit_example {
     return $btn_edit_example;
 }
 
-=item btn_unlink_example
+=head2 btn_unlink_example
+
+TODO add description
 
 =cut
 
@@ -322,7 +362,9 @@ sub _build_btn_unlink_example {
     return $btn_unlink_example;
 }
 
-=item btn_delete_example
+=head2 btn_delete_example
+
+TODO add description
 
 =cut
 
@@ -343,7 +385,9 @@ sub _build_btn_delete_example {
     return $btn_delete_example;
 }
 
-=item vbox_btn_examples
+=head2 vbox_btn_examples
+
+TODO add description
 
 =cut
 
@@ -365,7 +409,9 @@ sub _build_vbox_btn_examples {
     return $vbox;
 }
 
-=item lb_examples
+=head2 lb_examples
+
+TODO add description
 
 =cut
 
@@ -389,7 +435,9 @@ sub _build_lb_examples {
     return $lb_examples;
 }
 
-=item hbox_examples
+=head2 hbox_examples
+
+TODO add description
 
 =cut
 
@@ -409,7 +457,9 @@ sub _build_hbox_examples {
     return $hbox;
 }
 
-=item st_add_to_test
+=head2 st_add_to_test
+
+TODO add description
 
 =cut
 
@@ -422,7 +472,9 @@ has st_add_to_test => (
     },
 );
 
-=item cb_add_to_test
+=head2 cb_add_to_test
+
+TODO add description
 
 =cut
 
@@ -457,7 +509,9 @@ sub _build_cb_add_to_test {
     return $cb;
 }
 
-=item btn_add_to_test
+=head2 btn_add_to_test
+
+TODO add description
 
 =cut
 
@@ -476,7 +530,9 @@ sub _build_btn_add_to_test {
     return $btn_add_to_test;
 }
 
-=item hbox_add_to_test
+=head2 hbox_add_to_test
+
+TODO add description
 
 =cut
 
@@ -498,7 +554,9 @@ sub _build_hbox_add_to_test {
 }
 
 
-=item sidebar
+=head2 sidebar
+
+TODO add description
 
 =cut
 
@@ -512,7 +570,9 @@ has sidebar => (
     },
 );
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -534,7 +594,9 @@ sub _build_vbox {
     return $vbox;
 }
 
-=item hbox
+=head2 hbox
+
+TODO add description
 
 =cut
 
@@ -553,6 +615,14 @@ sub _build_hbox {
 
     return $hbox;
 }
+
+=head1 FUNCTIONS
+
+=head2 _get_word_forms
+
+TODO add description
+
+=cut
 
 sub _get_word_forms {
     my ($self, $word) = @_;
@@ -588,11 +658,23 @@ sub _get_word_forms {
     return \@word_forms;
 }
 
+=head2 set_status_text
+
+TODO add description
+
+=cut
+
 sub set_status_text {
     my ($self, $status_text) = @_;
 
     $self->parent->status_bar->SetStatusText($status_text);
 }
+
+=head2 lookup
+
+TODO add description
+
+=cut
 
 sub lookup {
     my ($self, $event) = @_;
@@ -675,12 +757,24 @@ sub lookup {
         : 'No records selected');
 }
 
+=head2 reset
+
+TODO add description
+
+=cut
+
 sub reset {
     my ($self) = @_;
 
     $self->combobox->SetValue('');
     $self->lookup();
 }
+
+=head2 edit_word
+
+TODO add description
+
+=cut
 
 sub edit_word {
     my $self    = shift;
@@ -694,6 +788,12 @@ sub edit_word {
     $self->parent->new_page($add_word_page, "Edit Word #$word_id");
 }
 
+=head2 edit_example
+
+TODO add description
+
+=cut
+
 sub edit_example {
     my $self    = shift;
 
@@ -705,6 +805,12 @@ sub edit_example {
 
     $self->parent->notebook->ChangeSelection(2);
 }
+
+=head2 load_examples
+
+TODO add description
+
+=cut
 
 sub load_examples {
     my ($self, $obj) = @_;
@@ -727,17 +833,35 @@ sub load_examples {
     $self->sidebar->load_word(word_id => $word_id);
 }
 
+=head2 get_word_id
+
+TODO add description
+
+=cut
+
 sub get_word_id {
     my ($self, $rowid) = @_;
 
     $self->lb_words->GetItem($rowid, 0)->GetText;
 }
 
+=head2 get_example_id
+
+TODO add description
+
+=cut
+
 sub get_example_id {
     my ($self, $rowid) = @_;
 
     $self->lb_examples->GetItem($rowid, 0)->GetText;
 }
+
+=head2 delete_word
+
+TODO add description
+
+=cut
 
 sub delete_word {
     my $self    = shift;
@@ -749,6 +873,12 @@ sub delete_word {
     $self->lookup;
 }
 
+=head2 unlink_word
+
+TODO add description
+
+=cut
+
 sub unlink_word {
     my $self    = shift;
 
@@ -758,6 +888,12 @@ sub unlink_word {
         ->unlink_one($self->get_word_id($curr_id));
     $self->lookup;
 }
+
+=head2 delete_example
+
+TODO add description
+
+=cut
 
 sub delete_example {
     my $self    = shift;
@@ -769,6 +905,12 @@ sub delete_example {
     $self->lookup;
 }
 
+=head2 unlink_example
+
+TODO add description
+
+=cut
+
 sub unlink_example {
     my $self    = shift;
 
@@ -778,6 +920,12 @@ sub unlink_example {
         ->unlink_one($self->get_example_id($curr_id));
     $self->lookup;
 }
+
+=head2 select_first_item
+
+TODO add description
+
+=cut
 
 sub select_first_item {
     my $self = shift;
@@ -790,6 +938,12 @@ sub select_first_item {
         wxLIST_STATE_SELECTED
     );
 }
+
+=head2 add_to_test
+
+TODO add description
+
+=cut
 
 sub add_to_test {
     my ($self) = @_;
@@ -818,6 +972,12 @@ sub add_to_test {
     );
 }
 
+=head2 add_word
+
+TODO add description
+
+=cut
+
 sub add_word {
     my ($self) = @_;
 
@@ -825,6 +985,12 @@ sub add_word {
     $add_word_page->set_word($self->combobox->GetValue);
     $self->parent->new_page($add_word_page, 'Add');
 }
+
+=head2 keybind
+
+TODO add description
+
+=cut
 
 sub keybind {
     my ($self, $event) = @_;
