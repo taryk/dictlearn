@@ -19,7 +19,19 @@ use common::sense;
 const my $TEST_ID => 0;
 const my $STEPS   => 10;
 
-=item words
+=head1 NAME
+
+Dict::Learn::Frame::IrregularVerbsTest
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 words
+
+TODO add description
 
 =cut
 
@@ -30,7 +42,9 @@ has words => (
     default => sub { [] },
 );
 
-=item exercise
+=head2 exercise
+
+TODO add description
 
 =cut
 
@@ -41,7 +55,9 @@ has exercise => (
     default => sub { [] },
 );
 
-=item p_min
+=head2 p_min
+
+TODO add description
 
 =cut
 
@@ -52,7 +68,9 @@ has p_min => (
     default => 1,
 );
 
-=item p_max
+=head2 p_max
+
+TODO add description
 
 =cut
 
@@ -63,7 +81,9 @@ has p_max => (
     default => $STEPS,
 );
 
-=item p_current
+=head2 p_current
+
+TODO add description
 
 =cut
 
@@ -72,7 +92,9 @@ has p_current => (
     isa => 'Int',
 );
 
-=item total_score
+=head2 total_score
+
+TODO add description
 
 =cut
 
@@ -82,7 +104,9 @@ has total_score => (
     default => 0,
 );
 
-=item parent
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -91,7 +115,9 @@ has parent => (
     isa => 'Dict::Learn::Frame',
 );
 
-=item l_position
+=head2 l_position
+
+TODO add description
 
 =cut
 
@@ -108,7 +134,9 @@ has l_position => (
     },
 );
 
-=item l_word
+=head2 l_word
+
+TODO add description
 
 =cut
 
@@ -125,7 +153,9 @@ has l_word => (
     },
 );
 
-=item e_word2
+=head2 e_word2
+
+TODO add description
 
 =cut
 
@@ -142,7 +172,9 @@ has e_word2 => (
     },
 );
 
-=item e_word3
+=head2 e_word3
+
+TODO add description
 
 =cut
 
@@ -159,7 +191,9 @@ has e_word3 => (
     },
 );
 
-=item hbox_words
+=head2 hbox_words
+
+TODO add description
 
 =cut
 
@@ -181,7 +215,9 @@ sub _build_hbox_words {
     return $hbox_words;
 }
 
-=item res
+=head2 res
+
+TODO add description
 
 =cut
 
@@ -198,7 +234,9 @@ has res => (
     },
 );
 
-=item res_word2
+=head2 res_word2
+
+TODO add description
 
 =cut
 
@@ -215,7 +253,9 @@ has res_word2 => (
     },
 );
 
-=item res_word3
+=head2 res_word3
+
+TODO add description
 
 =cut
 
@@ -232,7 +272,9 @@ has res_word3 => (
     },
 );
 
-=item hbox_res
+=head2 hbox_res
+
+TODO add description
 
 =cut
 
@@ -253,7 +295,9 @@ sub _build_hbox_res {
     return $hbox_res;
 }
 
-=item btn_prev
+=head2 btn_prev
+
+TODO add description
 
 =cut
 
@@ -267,7 +311,9 @@ has btn_prev => (
     },
 );
 
-=item btn_next
+=head2 btn_next
+
+TODO add description
 
 =cut
 
@@ -281,7 +327,9 @@ has btn_next => (
     },
 );
 
-=item btn_reset
+=head2 btn_reset
+
+TODO add description
 
 =cut
 
@@ -295,7 +343,9 @@ has btn_reset => (
     },
 );
 
-=item hbox_buttons
+=head2 hbox_buttons
+
+TODO add description
 
 =cut
 
@@ -316,7 +366,9 @@ sub _build_hbox_buttons {
     return $hbox_buttons;
 }
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -337,6 +389,10 @@ sub _build_vbox {
 
     return $vbox;
 }
+
+=head1 FUNCTIONS
+
+=cut
 
 sub FOREIGNBUILDARGS {
     my ($class, $parent, @args) = @_;
@@ -368,6 +424,12 @@ sub BUILD {
     EVT_KEY_UP($self->e_word3, sub { $self->keybind3($_[1]) });
 }
 
+=head2 keybind
+
+TODO add description
+
+=cut
+
 sub keybind {
     my ($self, $event) = @_;
 
@@ -377,6 +439,12 @@ sub keybind {
         $self->next_word();
     }
 }
+
+=head2 keybind2
+
+TODO add description
+
+=cut
 
 sub keybind2 {
     my ($self, $event) = @_;
@@ -390,6 +458,12 @@ sub keybind2 {
     }
 }
 
+=head2 keybind3
+
+TODO add description
+
+=cut
+
 sub keybind3 {
     my ($self, $event) = @_;
 
@@ -402,6 +476,12 @@ sub keybind3 {
     }
 }
 
+=head2 get_word
+
+TODO add description
+
+=cut
+
 sub get_word {
     my ($self, $id, $n) = @_;
 
@@ -413,12 +493,24 @@ sub get_word {
     return $self->words->[$id];
 }
 
+=head2 get_step
+
+TODO add description
+
+=cut
+
 sub get_step {
     my ($self, $id) = @_;
 
     return $self->exercise->[$id]
         if defined $self->exercise->[$id];
 }
+
+=head2 init_test
+
+TODO add description
+
+=cut
 
 sub init_test {
     my ($self) = @_;
@@ -451,6 +543,12 @@ sub init_test {
     $self->load_step($self->p_current);
 }
 
+=head2 write_step_res
+
+TODO add description
+
+=cut
+
 sub write_step_res {
     my ($self, $id, $end) = @_;
 
@@ -471,6 +569,12 @@ sub write_step_res {
     $self->total_score($self->total_score + $ex->{score});
 }
 
+=head2 next_word
+
+TODO add description
+
+=cut
+
 sub next_word {
     my ($self) = @_;
 
@@ -484,6 +588,12 @@ sub next_word {
     $self->load_step($self->p_current);
 }
 
+=head2 prev_word
+
+TODO add description
+
+=cut
+
 sub prev_word {
     my ($self) = @_;
 
@@ -495,12 +605,24 @@ sub prev_word {
     $self->SetFocus();
 }
 
+=head2 set_position
+
+TODO add description
+
+=cut
+
 sub set_position {
     my ($self, $position) = @_;
 
     $self->p_current($position);
     $self->l_position->SetLabel($self->p_current . '/' . $STEPS);
 }
+
+=head2 load_fields
+
+TODO add description
+
+=cut
 
 sub load_fields {
     my ($self, $en, @words) = @_;
@@ -514,6 +636,12 @@ sub load_fields {
     $self->Layout();
 }
 
+=head2 load_step
+
+TODO add description
+
+=cut
+
 sub load_step {
     my ($self, $id) = @_;
 
@@ -524,6 +652,12 @@ sub load_step {
     );
 }
 
+=head2 clear_fields
+
+TODO add description
+
+=cut
+
 sub clear_fields {
     my ($self) = @_;
 
@@ -533,11 +667,23 @@ sub clear_fields {
     $self->Layout();
 }
 
+=head2 reset_test
+
+TODO add description
+
+=cut
+
 sub reset_test {
     my ($self) = @_;
 
     $self->init_test();
 }
+
+=head2 result
+
+TODO add description
+
+=cut
 
 sub result {
     my ($self) = @_;
