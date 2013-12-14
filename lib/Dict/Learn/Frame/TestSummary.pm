@@ -9,6 +9,7 @@ use MooseX::NonMoose;
 extends 'Wx::Panel';
 
 use Carp qw[croak confess];
+use Const::Fast;
 use Data::Printer;
 
 use Database;
@@ -16,12 +17,12 @@ use Dict::Learn::Dictionary;
 
 use common::sense;
 
-sub RES_COUNT    { 10 }
-sub TEST_ID      { 0 }
-sub COL_DATE     { 0 }
-sub COL_SCORE    { 1 }
-sub COL_LB_WORD  { 0 }
-sub COL_LB_SCORE { 1 }
+const my $RES_COUNT    => 10;
+const my $TEST_ID      => 0;
+const my $COL_DATE     => 0;
+const my $COL_SCORE    => 1;
+const my $COL_LB_WORD  => 0;
+const my $COL_LB_SCORE => 1;
 
 =item parent
 
@@ -49,9 +50,9 @@ sub _build_lb_word_score {
     my $lb_word_score
         = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
-    $lb_word_score->InsertColumn(COL_LB_WORD, 'Word',
+    $lb_word_score->InsertColumn($COL_LB_WORD, 'Word',
         wxLIST_FORMAT_LEFT, 120);
-    $lb_word_score->InsertColumn(COL_LB_SCORE, 'Score',
+    $lb_word_score->InsertColumn($COL_LB_SCORE, 'Score',
         wxLIST_FORMAT_LEFT, 90);
 
     return $lb_word_score;
@@ -72,9 +73,9 @@ sub _build_grid {
     my $self = shift;
 
     my $grid = Wx::Grid->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
-    $grid->CreateGrid(0, RES_COUNT * 3 + 2);
-    $grid->SetColSize(COL_DATE,  140);
-    $grid->SetColSize(COL_SCORE, 100);
+    $grid->CreateGrid(0, $RES_COUNT * 3 + 2);
+    $grid->SetColSize($COL_DATE,  140);
+    $grid->SetColSize($COL_SCORE, 100);
     $grid->EnableGridLines(1);
     $grid->EnableDragGridSize(0);
     $grid->SetMargins(0, 0);
@@ -136,12 +137,12 @@ sub select_data {
 
     my $i        = 0;
     my @sessions = Database->schema->resultset('TestSession')
-        ->get_all(TEST_ID);
+        ->get_all($TEST_ID);
     $self->grid->InsertRows(0, scalar @sessions);
     for my $session (@sessions) {
         $self->grid->SetRowLabelValue($i => $session->{test_session_id});
-        $self->grid->SetCellValue($i, COL_DATE, $session->{cdate});
-        my $j = COL_SCORE + 1;
+        $self->grid->SetCellValue($i, $COL_DATE, $session->{cdate});
+        my $j = $COL_SCORE + 1;
         my $r = {correct => 0, wrong => 0};
         my $k = 0;
         for my $data (@{$session->{data}}) {
@@ -174,15 +175,15 @@ sub select_data {
                 Wx::Colour->new(@color));
         }
         $self->grid->SetCellValue(
-            $i, COL_SCORE,
+            $i, $COL_SCORE,
             sprintf '%d%% (%d/%d)',
-            $r->{correct} * 100 / RES_COUNT,
-            $r->{correct}, RES_COUNT
+            $r->{correct} * 100 / $RES_COUNT,
+            $r->{correct}, $RES_COUNT
         );
-        if ($r->{correct} == RES_COUNT) {
-            $self->grid->SetCellBackgroundColour($i, COL_DATE,
+        if ($r->{correct} == $RES_COUNT) {
+            $self->grid->SetCellBackgroundColour($i, $COL_DATE,
                 Wx::Colour->new(182, 247, 176));
-            $self->grid->SetCellBackgroundColour($i, COL_SCORE,
+            $self->grid->SetCellBackgroundColour($i, $COL_SCORE,
                 Wx::Colour->new(182, 247, 176));
         }
         $i++;
@@ -193,11 +194,11 @@ sub select_words_stats {
     my $self = shift;
 
     my @stats = Database->schema->resultset('TestSession')
-        ->get_words_stats(TEST_ID);
+        ->get_words_stats($TEST_ID);
     for my $stat (@stats) {
         my $id = $self->lb_word_score->InsertItem(Wx::ListItem->new);
-        $self->lb_word_score->SetItem($id, COL_LB_WORD, $stat->{word});
-        $self->lb_word_score->SetItem($id, COL_LB_SCORE,
+        $self->lb_word_score->SetItem($id, $COL_LB_WORD, $stat->{word});
+        $self->lb_word_score->SetItem($id, $COL_LB_SCORE,
             sprintf '%d%% (%d/%d)',
             $stat->{perc}, $stat->{sumscore}, $stat->{wcount});
     }

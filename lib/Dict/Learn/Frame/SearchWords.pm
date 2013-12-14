@@ -7,6 +7,8 @@ use Moose;
 use MooseX::NonMoose;
 extends 'Wx::Panel';
 
+use Const::Fast;
+
 use Database;
 use Dict::Learn::Dictionary;
 use Dict::Learn::Frame::Sidebar;
@@ -15,10 +17,10 @@ use common::sense;
 
 use Data::Printer;
 
-sub COL_LANG1   {1}
-sub COL_LANG2   {3}
-sub COL_E_LANG1 {1}
-sub COL_E_LANG2 {2}
+const my $COL_LANG1   => 1;
+const my $COL_LANG2   => 3;
+const my $COL_E_LANG1 => 1;
+const my $COL_E_LANG2 => 2;
 
 =head1 NAME
 
@@ -261,9 +263,9 @@ sub _build_lb_words {
         = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
     $lb_words->InsertColumn(0,         'id',      wxLIST_FORMAT_LEFT, 50);
-    $lb_words->InsertColumn(COL_LANG1, 'Eng',     wxLIST_FORMAT_LEFT, 200);
+    $lb_words->InsertColumn($COL_LANG1, 'Eng',     wxLIST_FORMAT_LEFT, 200);
     $lb_words->InsertColumn(2,         'pos',     wxLIST_FORMAT_LEFT, 35);
-    $lb_words->InsertColumn(COL_LANG2, 'Ukr',     wxLIST_FORMAT_LEFT, 200);
+    $lb_words->InsertColumn($COL_LANG2, 'Ukr',     wxLIST_FORMAT_LEFT, 200);
     $lb_words->InsertColumn(4,         'note',    wxLIST_FORMAT_LEFT, 200);
     $lb_words->InsertColumn(5,         'created', wxLIST_FORMAT_LEFT, 150);
     EVT_LIST_ITEM_SELECTED($self, $lb_words, \&load_examples);
@@ -428,8 +430,8 @@ sub _build_lb_examples {
         = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
     $lb_examples->InsertColumn(0,           'id',   wxLIST_FORMAT_LEFT, 50);
-    $lb_examples->InsertColumn(COL_E_LANG1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
-    $lb_examples->InsertColumn(COL_E_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
+    $lb_examples->InsertColumn($COL_E_LANG1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
+    $lb_examples->InsertColumn($COL_E_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
     $lb_examples->InsertColumn(3,           'Note', wxLIST_FORMAT_LEFT, 150);
 
     return $lb_examples;
@@ -741,9 +743,9 @@ sub lookup {
             ? join(' / ' => $item->{word_orig}, $item->{word2}, $item->{word3})
             : $item->{word_orig};
         $self->lb_words->SetItem($id, 0,         $item->{word_id});
-        $self->lb_words->SetItem($id, COL_LANG1, $word);
+        $self->lb_words->SetItem($id, $COL_LANG1, $word);
         $self->lb_words->SetItem($id, 2,         $item->{partofspeech} // '');
-        $self->lb_words->SetItem($id, COL_LANG2, $item->{word_tr} // '');
+        $self->lb_words->SetItem($id, $COL_LANG2, $item->{word_tr} // '');
         $self->lb_words->SetItem($id, 4,         $item->{note});
         $self->lb_words->SetItem($id, 5,         $item->{cdate});
     }
@@ -825,8 +827,8 @@ sub load_examples {
     for my $item (@items) {
         my $id = $self->lb_examples->InsertItem(Wx::ListItem->new);
         $self->lb_examples->SetItem($id, 0,           $item->{example_id});
-        $self->lb_examples->SetItem($id, COL_E_LANG1, $item->{example_orig});
-        $self->lb_examples->SetItem($id, COL_E_LANG2, $item->{example_tr});
+        $self->lb_examples->SetItem($id, $COL_E_LANG1, $item->{example_orig});
+        $self->lb_examples->SetItem($id, $COL_E_LANG2, $item->{example_tr});
         $self->lb_examples->SetItem($id, 3,           $item->{note});
     }
 
@@ -1036,16 +1038,16 @@ sub BUILD {
             my @li = (Wx::ListItem->new, Wx::ListItem->new);
             $li[0]->SetText($dict->curr->{language_orig_id}{language_name});
             $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
-            $self->lb_words->SetColumn(COL_LANG1, $li[0]);
-            $self->lb_words->SetColumn(COL_LANG2, $li[1]);
+            $self->lb_words->SetColumn($COL_LANG1, $li[0]);
+            $self->lb_words->SetColumn($COL_LANG2, $li[1]);
         },
         sub {
             my $dict = shift;
             my @li = (Wx::ListItem->new, Wx::ListItem->new);
             $li[0]->SetText($dict->curr->{language_orig_id}{language_name});
             $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
-            $self->lb_examples->SetColumn(COL_E_LANG1, $li[0]);
-            $self->lb_examples->SetColumn(COL_E_LANG2, $li[1]);
+            $self->lb_examples->SetColumn($COL_E_LANG1, $li[0]);
+            $self->lb_examples->SetColumn($COL_E_LANG2, $li[1]);
         },
         sub { $self->lookup() }
         )

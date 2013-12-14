@@ -10,13 +10,14 @@ use MooseX::NonMoose;
 extends 'Wx::Panel';
 
 use Carp qw[ croak confess ];
+use Const::Fast;
 
 use common::sense;
 
 use Database;
 use Dict::Learn::Dictionary;
 
-sub TEST_ID { 1 }
+const my $TEST_ID => 1;
 
 =item parent
 
@@ -657,7 +658,7 @@ sub add_group {
 
     Database->schema->resultset('TestCategory')->create(
         {
-            test_id          => TEST_ID,
+            test_id          => $TEST_ID,
             dictionary_id    => Dict::Learn::Dictionary->curr_id,
             name             => $group_name,
         },
@@ -677,7 +678,7 @@ sub del_group {
     Database->schema->resultset('TestCategory')->search(
         {
             test_category_id => $selected_test_group_id,
-            test_id          => TEST_ID,
+            test_id          => $TEST_ID,
             dictionary_id    => Dict::Learn::Dictionary->curr_id,
         }
     )->delete_all;
@@ -707,7 +708,7 @@ sub update_group {
     Database->schema->resultset('TestCategory')->search(
         {
             test_category_id => $selected_test_group_id,
-            test_id          => TEST_ID,
+            test_id          => $TEST_ID,
             dictionary_id    => Dict::Learn::Dictionary->curr_id,
         },
     )->update({ name => $group_name });

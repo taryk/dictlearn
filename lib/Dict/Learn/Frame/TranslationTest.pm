@@ -10,6 +10,7 @@ use MooseX::NonMoose;
 extends 'Wx::Panel';
 
 use Carp qw[ croak confess ];
+use Const::Fast;
 use DateTime;
 use List::Util qw[ shuffle reduce sum ];
 use String::Diff qw[ diff_fully diff diff_merge ];
@@ -21,7 +22,7 @@ use Database;
 use Dict::Learn::Dictionary;
 use Dict::Learn::Frame::TranslationTest::Result;
 
-sub TEST_ID { 1 }
+const my $TEST_ID => 1;
 
 =item min
 
@@ -700,7 +701,7 @@ sub next_step {
 
             # store results in a DB tables
             Database->schema->resultset('TestSession')
-                ->add(TEST_ID, sum(map { $_->{score} } @res), \@res);
+                ->add($TEST_ID, sum(map { $_->{score} } @res), \@res);
         }
         $self->result->Destroy();
         $self->clear_result();

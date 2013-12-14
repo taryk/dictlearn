@@ -7,6 +7,7 @@ use Moose;
 use MooseX::NonMoose;
 extends 'Wx::Panel';
 
+use Const::Fast;
 use Data::Printer;
 use List::Util qw[shuffle];
 
@@ -15,8 +16,8 @@ use Dict::Learn::Frame::IrregularVerbsTest::Result;
 
 use common::sense;
 
-sub TEST_ID { 0  }
-sub STEPS   { 10 }
+const my $TEST_ID => 0;
+const my $STEPS   => 10;
 
 =item words
 
@@ -59,7 +60,7 @@ has p_max => (
     is      => 'rw',
     isa     => 'Int',
     lazy    => 1,
-    default => STEPS,
+    default => $STEPS,
 );
 
 =item p_current
@@ -101,7 +102,7 @@ has l_position => (
     default => sub {
         Wx::StaticText->new(
             shift,         wxID_ANY,
-            '1/' . STEPS,  wxDefaultPosition,
+            '1/' . $STEPS,  wxDefaultPosition,
             wxDefaultSize, wxALIGN_CENTRE
         )
     },
@@ -429,7 +430,7 @@ sub init_test {
         [
             shuffle(
                 Database->schema->resultset('Word')
-                    ->get_irregular_verbs(STEPS)
+                    ->get_irregular_verbs($STEPS)
             )
         ]
     );
@@ -498,7 +499,7 @@ sub set_position {
     my ($self, $position) = @_;
 
     $self->p_current($position);
-    $self->l_position->SetLabel($self->p_current . '/' . STEPS);
+    $self->l_position->SetLabel($self->p_current . '/' . $STEPS);
 }
 
 sub load_fields {
@@ -548,7 +549,7 @@ sub result {
     if ($result_dialog->fill_result($self->exercise)->ShowModal() == wxID_OK)
     {
         Database->schema->resultset('TestSession')
-            ->add(TEST_ID, $self->total_score, $self->exercise);
+            ->add($TEST_ID, $self->total_score, $self->exercise);
     }
     $result_dialog->Destroy();
     $self->reset_test();
