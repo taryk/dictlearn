@@ -24,7 +24,19 @@ const my $COL_SCORE    => 1;
 const my $COL_LB_WORD  => 0;
 const my $COL_LB_SCORE => 1;
 
-=item parent
+=head1 NAME
+
+Dict::Learn::Frame::TestSummary
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -34,7 +46,9 @@ has parent => (
 );
 
 
-=item lb_word_score
+=head2 lb_word_score
+
+TODO add description
 
 =cut
 
@@ -59,7 +73,9 @@ sub _build_lb_word_score {
 }
 
 
-=item grid
+=head2 grid
+
+TODO add description
 
 =cut
 
@@ -93,7 +109,9 @@ sub _build_grid {
     return $grid;
 }
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -112,7 +130,9 @@ sub _build_vbox {
     return $vbox;
 }
 
-=item hbox
+=head2 hbox
+
+TODO add description
 
 =cut
 
@@ -131,6 +151,14 @@ sub _build_hbox {
 
     return $hbox;
 }
+
+=head1 FUNCTIONS
+
+=head2 select_data
+
+TODO add description
+
+=cut
 
 sub select_data {
     my $self     = shift;
@@ -190,6 +218,12 @@ sub select_data {
     }
 }
 
+=head2 select_words_stats
+
+TODO add description
+
+=cut
+
 sub select_words_stats {
     my $self = shift;
 
@@ -203,6 +237,12 @@ sub select_words_stats {
             $stat->{perc}, $stat->{sumscore}, $stat->{wcount});
     }
 }
+
+=head2 refresh_data
+
+TODO add description
+
+=cut
 
 sub refresh_data {
     my $self = shift;
