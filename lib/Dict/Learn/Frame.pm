@@ -10,6 +10,7 @@ use MooseX::NonMoose;
 extends 'Wx::Frame';
 
 use Carp qw[ croak confess ];
+use Const::Fast;
 use Data::Printer;
 use File::Basename 'dirname';
 
@@ -27,53 +28,46 @@ use Dict::Learn::Frame::TestSummary;
 use Dict::Learn::Frame::TranslationTest;
 use Dict::Learn::Import;
 
-=item DICT_OFFSET
+# A hardcoded offset to distinguish dictionaries IDs from other IDs
+const my $DICT_OFFSET => 100;
 
-A hardcoded offset to distinguish dictionaries IDs from other IDs
+=head1 NAME
 
-=cut
+Dict::Learn::Frame
 
-sub DICT_OFFSET { 100 }
+=head1 DESCRIPTION
 
-=item _MENU_ID
-
- In: $menu_id
- Out: $menu_id_including_offset
+TODO add description
 
 =cut
 
-sub _MENU_ID { int(shift) + DICT_OFFSET }
+# Returns MENU_ID including offset
+sub _MENU_ID { int(shift) + $DICT_OFFSET }
 
-=item _DICT_ID
-
- In: $dict_id
- Out: $dict_id_including_offset
-
-=cut
-
-sub _DICT_ID { int(shift) - DICT_OFFSET }
-
-=item next_menu_id
-
-Get id for next menu element
-
-=cut
+# Returns DICT_ID including offset
+sub _DICT_ID { int(shift) - $DICT_OFFSET }
 
 {
     my $menu_id = 0;
 
-    sub next_menu_id {
+    sub _next_menu_id {
         $menu_id++
     }
 }
 
-=item parent
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
 has parent => ( is => 'ro' );
 
-=item manager
+=head2 manager
+
+TODO add description
 
 =cut
 
@@ -84,7 +78,9 @@ has manager => (
     default => sub { Wx::AuiManager->new },
 );
 
-=item menu_bar
+=head2 menu_bar
+
+TODO add description
 
 =cut
 
@@ -115,7 +111,9 @@ sub _build_menu_bar {
     $menubar
 }
 
-=item menu_dicts
+=head2 menu_dicts
+
+TODO add description
 
 =cut
 
@@ -144,7 +142,9 @@ sub _build_menu_dicts {
     $menu_dicts
 }
 
-=item menu_word
+=head2 menu_word
+
+TODO add description
 
 =cut
 
@@ -166,7 +166,7 @@ sub _build_menu_word {
 
     for my $menu_item (@menu) {
         my ($caption, $coderef, $keybind) = @$menu_item;
-        my $menu_id = $self->next_menu_id;
+        my $menu_id = $self->_next_menu_id;
         $menu_word->Append($menu_id,
             $caption . ($keybind ? "\t" . $keybind : ''));
 
@@ -177,7 +177,9 @@ sub _build_menu_word {
     return $menu_word;
 }
 
-=item menu_test
+=head2 menu_test
+
+TODO add description
 
 =cut
 
@@ -200,7 +202,7 @@ sub _build_menu_test {
 
     for my $menu_item (@menu) {
         my ($caption, $coderef, $keybind) = @$menu_item;
-        my $menu_id = $self->next_menu_id;
+        my $menu_id = $self->_next_menu_id;
         $menu_test->Append($menu_id,
             $caption . ($keybind ? "\t" . $keybind : ''));
 
@@ -211,7 +213,9 @@ sub _build_menu_test {
     return $menu_test;
 }
 
-=item menu_db
+=head2 menu_db
+
+TODO add description
 
 =cut
 
@@ -236,7 +240,7 @@ sub _build_menu_db {
 
     for my $menu_item (@menu) {
         my ($caption, $coderef) = @$menu_item;
-        my $menu_id = $self->next_menu_id;
+        my $menu_id = $self->_next_menu_id;
         $menu_db->Append($menu_id, $caption);
         EVT_MENU($self, $menu_id, $coderef);
     }
@@ -244,7 +248,9 @@ sub _build_menu_db {
     $menu_db
 }
 
-=item menu_translate
+=head2 menu_translate
+
+TODO add description
 
 =cut
 
@@ -259,7 +265,7 @@ sub _build_menu_translate {
     my $menu_translate = Wx::Menu->new;
 
     for my $translator_backend (@{ $self->translator->get_backends_list }) {
-        my $menu_id = $self->next_menu_id;
+        my $menu_id = $self->_next_menu_id;
         $menu_translate->AppendRadioItem($menu_id, $translator_backend);
         EVT_MENU($self, $menu_id, \&set_translator_backend);
     }
@@ -267,7 +273,9 @@ sub _build_menu_translate {
     return $menu_translate
 }
 
-=item status_bar
+=head2 status_bar
+
+TODO add description
 
 =cut
 
@@ -277,7 +285,7 @@ has status_bar => (
     default => sub { shift->CreateStatusBar(1, wxST_SIZEGRIP, wxID_ANY) },
 );
 
-=item notebook
+=head2 notebook
 
 =cut
 
@@ -293,6 +301,27 @@ has notebook => (
         ),
     },
 );
+
+=head2 translator
+
+TODO add description
+
+=cut
+
+has translator => (
+    is      => 'ro',
+    isa     => 'Dict::Learn::Translate',
+    lazy    => 1,
+    default => sub { Dict::Learn::Translate->new() },
+);
+
+=head1 FUNCTIONS
+
+=head2 make_pages
+
+TODO add description
+
+=cut
 
 sub make_pages {
     my ($self) = @_;
@@ -313,18 +342,9 @@ sub make_pages {
     }
 }
 
-=item translator
+=head2 p_search
 
-=cut
-
-has translator => (
-    is      => 'ro',
-    isa     => 'Dict::Learn::Translate',
-    lazy    => 1,
-    default => sub { Dict::Learn::Translate->new() },
-);
-
-=item p_search
+TODO add description
 
 =cut
 
@@ -335,7 +355,9 @@ sub p_search {
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 }
 
-=item p_addword
+=head2 p_addword
+
+TODO add description
 
 =cut
 
@@ -346,7 +368,9 @@ sub p_addword {
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 }
 
-=item p_gridwords
+=head2 p_gridwords
+
+TODO add description
 
 =cut
 
@@ -357,7 +381,9 @@ sub p_gridwords {
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 }
 
-=item pt_irrverbs
+=head2 pt_irrverbs
+
+TODO add description
 
 =cut
 
@@ -368,7 +394,9 @@ sub pt_irrverbs {
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 }
 
-=item pts_irrverbs
+=head2 pts_irrverbs
+
+TODO add description
 
 =cut
 
@@ -379,7 +407,9 @@ sub pts_irrverbs {
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 }
 
-=item pt_translation
+=head2 pt_translation
+
+TODO add description
 
 =cut
 
@@ -390,7 +420,9 @@ sub pt_translation {
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 }
 
-=item p_testeditor
+=head2 p_testeditor
+
+TODO add description
 
 =cut
 
@@ -401,11 +433,23 @@ sub p_testeditor {
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 }
 
+=head2 new_page
+
+TODO add description
+
+=cut
+
 sub new_page {
     my ($self, $panel_ref, $caption, $default) = @_;
 
     $self->notebook->AddPage($panel_ref, $caption, $default // 1);
 }
+
+=head2 dictionary_check
+
+TODO add description
+
+=cut
 
 sub dictionary_check {
     my ($self, $event) = @_;
@@ -418,6 +462,12 @@ sub dictionary_check {
     $self->set_frame_title(_DICT_ID($event->GetId));
 }
 
+=head2 set_translator_backend
+
+TODO add description
+
+=cut
+
 sub set_translator_backend {
     my ($self, $event) = @_;
 
@@ -427,6 +477,12 @@ sub set_translator_backend {
     $self->translator->using($menu_item->GetLabel);
 }
 
+=head2 set_frame_title
+
+TODO add description
+
+=cut
+
 sub set_frame_title {
     my ($self, $id) = @_;
 
@@ -435,12 +491,24 @@ sub set_frame_title {
         Dict::Learn::Dictionary->get($id)->{dictionary_name});
 }
 
+=head2 on_close
+
+TODO add description
+
+=cut
+
 sub on_close {
     my ($self, $event) = @_;
 
     print "exit\n";
     $self->Destroy;
 }
+
+=head2 db_export
+
+TODO add description
+
+=cut
 
 sub db_export {
     my ($self) = @_;
@@ -452,6 +520,12 @@ sub db_export {
         say 'export failed';
     }
 }
+
+=head2 db_import
+
+TODO add description
+
+=cut
 
 sub db_import {
     my ($self) = @_;
@@ -478,11 +552,23 @@ sub db_import {
     }
 }
 
+=head2 db_clear
+
+TODO add description
+
+=cut
+
 sub db_clear {
     my ($self) = @_;
 
     Container->lookup('db')->clear_data();
 }
+
+=head2 db_clear_test_results
+
+TODO add description
+
+=cut
 
 sub db_clear_test_results {
     my ($self) = @_;
@@ -490,17 +576,35 @@ sub db_clear_test_results {
     Container->lookup('db')->clear_test_results();
 }
 
+=head2 analyze
+
+TODO add description
+
+=cut
+
 sub analyze {
     my ($self) = @_;
 
     Container->lookup('db')->analyze();
 }
 
+=head2 reset_analyzer
+
+TODO add description
+
+=cut
+
 sub reset_analyzer {
     my ($self) = @_;
 
     Container->lookup('db')->reset_analyzer();
 }
+
+=head2 for_each_page
+
+TODO add description
+
+=cut
 
 sub for_each_page {
     my ($self, $cb) = @_;
