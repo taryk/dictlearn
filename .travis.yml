@@ -13,6 +13,6 @@ install:
 branches:
   only:
     - development
-script: "prove t/frame.t"
+script: "prove -lr t"
 notifications:
   email: false
