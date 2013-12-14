@@ -11,7 +11,19 @@ use Data::Printer;
 
 use common::sense;
 
-=item parent
+=head1 NAME
+
+Dict::Learn::Frame::Log
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -20,7 +32,9 @@ has parent => (
     isa => 'Dict::Learn::Frame',
 );
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
