@@ -21,7 +21,7 @@ Version 0.01
 
 TODO add description
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 OnInit
 

@@ -15,7 +15,7 @@ Dict::Learn::Main::ResultSet::Test
 
 TODO add description
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 export_data
 

@@ -16,7 +16,7 @@ TODO add description
 
 my %params;
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 params
 

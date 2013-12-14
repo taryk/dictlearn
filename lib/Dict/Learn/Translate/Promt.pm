@@ -41,7 +41,7 @@ const my $CATEGORIES => {
     cable => 'Кабельная промышленность',
 };
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 parse_result
 

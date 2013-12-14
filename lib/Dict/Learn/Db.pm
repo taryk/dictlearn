@@ -57,7 +57,7 @@ has querylog => (
     default => sub { DBIx::Class::QueryLog->new },
 );
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =cut
 

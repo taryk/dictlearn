@@ -311,7 +311,7 @@ has translator => (
     default => sub { Dict::Learn::Translate->new() },
 );
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 make_pages
 

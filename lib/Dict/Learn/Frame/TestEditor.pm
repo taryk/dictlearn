@@ -393,7 +393,7 @@ sub _build_partofspeech {
 
 }
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =cut
 

@@ -18,7 +18,7 @@ Dict::Learn::Main::ResultSet::Word
 
 TODO add description
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 export_data
 

@@ -37,7 +37,7 @@ const my $PARTSOFSPEACH => {
     'p. p.' => 'participle',    # дієприкметник (past participle)
 };
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =cut
 

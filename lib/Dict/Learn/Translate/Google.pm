@@ -21,7 +21,7 @@ TODO add description
 const my $URL =>
     'http://translate.google.com/translate_a/t?client=t&sl=%s&tl=%s&text=%s';
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 parse_result
 

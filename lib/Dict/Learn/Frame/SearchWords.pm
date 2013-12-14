@@ -618,7 +618,7 @@ sub _build_hbox {
     return $hbox;
 }
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 _get_word_forms
 

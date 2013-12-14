@@ -10,7 +10,7 @@ Database
 
 TODO add description
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 schema
 

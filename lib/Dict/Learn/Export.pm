@@ -32,7 +32,7 @@ const my $TABLE_MAP => {
     test_session_data   => 'TestSessionData'
 };
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 new
 

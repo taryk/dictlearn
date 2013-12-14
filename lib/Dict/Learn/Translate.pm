@@ -21,7 +21,7 @@ TODO add description
 
 const my $USERAGENT => 'Mozilla/5.0';
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 new
 

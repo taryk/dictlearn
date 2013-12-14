@@ -103,7 +103,7 @@ has listbox => (
     },
 );
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =cut
 

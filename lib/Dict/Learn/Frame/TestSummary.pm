@@ -152,7 +152,7 @@ sub _build_hbox {
     return $hbox;
 }
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 select_data
 

@@ -122,7 +122,7 @@ has word_translations => (
     default => sub { [] },
 );
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 keybind
 

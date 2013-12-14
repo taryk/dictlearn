@@ -261,7 +261,7 @@ sub _build_vbox {
     return $vbox;
 }
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =cut
 
