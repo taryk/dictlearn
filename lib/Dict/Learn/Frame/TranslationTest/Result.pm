@@ -11,7 +11,19 @@ use Data::Printer;
 
 use common::sense;
 
-=item parent
+=head1 NAME
+
+Dict::Learn::Frame::TranslationTest::Result
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -21,7 +33,9 @@ has parent => (
     required => 1,
 );
 
-=item hbox
+=head2 hbox
+
+TODO add description
 
 =cut
 
@@ -31,7 +45,9 @@ has hbox => (
     default => sub { Wx::BoxSizer->new(wxHORIZONTAL) },
 );
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -41,7 +57,9 @@ has vbox => (
     default => sub { Wx::BoxSizer->new(wxVERTICAL) },
 );
 
-=item btn_ok
+=head2 btn_ok
+
+TODO add description
 
 =cut
 
@@ -54,7 +72,9 @@ has btn_ok => (
     },
 );
 
-=item btn_cancel
+=head2 btn_cancel
+
+TODO add description
 
 =cut
 
@@ -67,7 +87,9 @@ has btn_cancel => (
     },
 );
 
-=item listbox
+=head2 listbox
+
+TODO add description
 
 =cut
 
@@ -80,6 +102,10 @@ has listbox => (
             [], wxLB_MULTIPLE);
     },
 );
+
+=head1 FUNCTIONS
+
+=cut
 
 sub FOREIGNBUILDARGS {
     my ($class, @args) = @_;
@@ -106,6 +132,12 @@ sub BUILD {
     $self->Layout();
     $self->vbox->Fit($self);
 }
+
+=head2 fill_result
+
+TODO add description
+
+=cut
 
 sub fill_result {
     my ($self, @res) = @_;
