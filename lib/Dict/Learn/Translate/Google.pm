@@ -7,9 +7,31 @@ use URI::Escape qw[ uri_escape_utf8 ];
 
 use common::sense;
 
+=head1 NAME
+
+Dict::Learn::Translate::Google
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 URL
+
+TODO add description
+
+=cut
+
 sub URL {
     'http://translate.google.com/translate_a/t?client=t&sl=%s&tl=%s&text=%s'
 }
+
+=head2 parse_result
+
+TODO add description
+
+=cut
 
 sub parse_result {
     my $json = shift;
@@ -26,6 +48,12 @@ sub parse_result {
 
     return $res;
 }
+
+=head2 translate
+
+TODO add description
+
+=cut
 
 sub translate {
     my $class = shift;

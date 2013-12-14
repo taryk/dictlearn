@@ -8,9 +8,31 @@ use common::sense;
 
 use Data::Printer;
 
+=head1 NAME
+
+Dict::Learn::Translate::Promt
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 URL
+
+TODO add description
+
+=cut
+
 sub URL {
     'http://www.translate.ru/services/TranslationService.asmx/GetTranslation'
 }
+
+=head2 PARTSOFSPEACH
+
+TODO add description
+
+=cut
 
 sub PARTSOFSPEACH {
     {
@@ -27,13 +49,25 @@ sub PARTSOFSPEACH {
     };
 }
 
-# @TODO: implement categories support
+=head2 CATEGORIES
+
+TODO add description
+TODO implement categories support
+
+=cut
+
 sub CATEGORIES {
     {
         auto  => 'Автомобильный',
         cable => 'Кабельная промышленность',
     }
 }
+
+=head2 parse_result
+
+TODO add description
+
+=cut
 
 sub parse_result {
     my $json = shift;
@@ -79,6 +113,12 @@ sub parse_result {
     return $res;
 }
 
+=head2 partofspeech_tr
+
+TODO add description
+
+=cut
+
 sub partofspeech_tr($) {
     my $original = shift;
 
@@ -87,6 +127,12 @@ sub partofspeech_tr($) {
             if lc $original eq lc +PARTSOFSPEACH->{$item};
     }
 }
+
+=head2 translate
+
+TODO add description
+
+=cut
 
 sub translate {
     my ($class, $from, $to, $text) = @_;

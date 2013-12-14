@@ -11,7 +11,29 @@ use List::MoreUtils 'any';
 
 use common::sense;
 
+=head1 NAME
+
+Dict::Learn::Translate::Lingvo
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 URL
+
+TODO add description
+
+=cut
+
 sub URL { 'http://www.lingvo.ua/ru/Translate/%s-%s/%s' }
+
+=head2 PARTSOFSPEACH
+
+TODO add description
+
+=cut
 
 sub PARTSOFSPEACH {
     {
@@ -35,7 +57,7 @@ sub PARTSOFSPEACH {
         variant      => 'I'
     };
 
-    sub parse_item {
+    sub _parse_item {
         my $res = {
             variant      => undef,
             partofspeech => undef,
@@ -102,6 +124,12 @@ sub PARTSOFSPEACH {
     }
 }
 
+=head2 translate
+
+TODO add description
+
+=cut
+
 sub translate {
     my $class = shift;
 
@@ -129,7 +157,7 @@ sub translate {
         # $res->all_text(0);
         given ($res->find('p')->size) {
             when (1) {
-                if (my $parsed_item = parse_item $res->p) {
+                if (my $parsed_item = _parse_item $res->p) {
                     push @{$tr_res->{$parsed_item->{variant}}
                             {$parsed_item->{partofspeech}}},
                         $parsed_item->{words};
@@ -137,7 +165,7 @@ sub translate {
             }
             when ($_ > 1) {
                 for my $item ($res->p->each) {
-                    if (my $parsed_item = parse_item $item) {
+                    if (my $parsed_item = _parse_item $item) {
                         push @{$tr_res->{$parsed_item->{variant}}
                                 {$parsed_item->{partofspeech}}},
                             $parsed_item->{words};

@@ -8,7 +8,29 @@ use List::MoreUtils 'any';
 
 use common::sense;
 
+=head1 NAME
+
+Dict::Learn::Translate
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 USERAGENT
+
+TODO add description
+
+=cut
+
 sub USERAGENT { 'Mozilla/5.0' }
+
+=head2 new
+
+TODO add description
+
+=cut
 
 sub new {
     my $class = shift;
@@ -24,6 +46,12 @@ sub new {
 
     $self;
 }
+
+=head2 preload_tplugins
+
+TODO add description
+
+=cut
 
 sub preload_tplugins {
     my $self = shift;
@@ -43,11 +71,23 @@ sub preload_tplugins {
     }
 }
 
+=head2 get_backends_list
+
+TODO add description
+
+=cut
+
 sub get_backends_list {
     my $self = shift;
 
     $self->{tplugins};
 }
+
+=head2 do
+
+TODO add description
+
+=cut
 
 sub do {
     my $self = shift;
@@ -62,6 +102,12 @@ sub do {
     $tr_class->translate($self->{from}, $self->{to}, $text);
 }
 
+=head2 from
+
+TODO add description
+
+=cut
+
 sub from {
     my $self = shift;
 
@@ -69,6 +115,12 @@ sub from {
 
     $self;
 }
+
+=head2 to
+
+TODO add description
+
+=cut
 
 sub to {
     my $self = shift;
@@ -78,6 +130,12 @@ sub to {
     $self;
 }
 
+=head2 using
+
+TODO add description
+
+=cut
+
 sub using {
     my $self = shift;
 
@@ -85,6 +143,12 @@ sub using {
 
     $self;
 }
+
+=head2 http_request
+
+TODO add description
+
+=cut
 
 sub http_request {
     my ($self, $method, $url, $headers, $content) = @_;
