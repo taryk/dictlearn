@@ -12,7 +12,19 @@ use Database;
 
 use Data::Printer;
 
-=item parent
+=head1 NAME
+
+Dict::Learn::Combo::WordList
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -21,7 +33,9 @@ has parent => (
     isa => 'Wx::PopupTransientWindow',
 );
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -40,7 +54,9 @@ sub _build_vbox {
     return $vbox;
 }
 
-=item panel
+=head2 panel
+
+TODO add description
 
 =cut
 
@@ -59,7 +75,9 @@ sub _build_panel {
     return $panel;
 }
 
-=item lb_words
+=head2 lb_words
+
+TODO add description
 
 =cut
 
@@ -86,7 +104,9 @@ sub _build_lb_words {
     return $lb_words;
 }
 
-=item initialized
+=head2 initialized
+
+TODO add description
 
 =cut
 
@@ -94,6 +114,14 @@ has initialized => (
     is  => 'rw',
     isa => 'Bool',
 );
+
+=head1 FUNCTIONS
+
+=head2 Create
+
+TODO add description
+
+=cut
 
 sub Create {
     my ($self, $parent) = @_;
@@ -106,11 +134,23 @@ sub Create {
     return 1;
 }
 
+=head2 GetControl
+
+TODO add description
+
+=cut
+
 sub GetControl {
     my $self = shift;
 
     $self->panel;
 }
+
+=head2 OnPopup
+
+TODO add description
+
+=cut
 
 sub OnPopup {
     my $self = shift;
@@ -124,12 +164,24 @@ sub OnPopup {
     # Wx::LogMessage( "Popping up" );
 }
 
+=head2 OnDismiss
+
+TODO add description
+
+=cut
+
 sub OnDismiss {
     my $self = shift;
 
     $self->SUPER::OnDismiss();
     # Wx::LogMessage( "Being dismissed" );
 }
+
+=head2 GetStringValue
+
+TODO add description
+
+=cut
 
 sub GetStringValue {
     my ($self) = @_;
@@ -141,6 +193,12 @@ sub GetStringValue {
     $self->lb_words->GetItem($item_id, 1)->GetText;
 }
 
+=head2 on_select
+
+TODO add description
+
+=cut
+
 sub on_select {
     my ($self, $parent, $event) = @_;
 
@@ -149,6 +207,12 @@ sub on_select {
 
     $self->Dismiss();
 }
+
+=head2 initialize_words
+
+TODO add description
+
+=cut
 
 sub initialize_words {
     my $self = shift;

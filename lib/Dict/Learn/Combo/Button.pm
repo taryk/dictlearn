@@ -15,6 +15,22 @@ use Class::XSAccessor accessors => [qw| parent popup_window button vbox |];
 
 our @EXPORT = qw[ EVT_SELECTED ];
 
+=head1 NAME
+
+Dict::Learn::Combo::Button
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 new
+
+TODO add description
+
+=cut
+
 sub new {
     my $class = shift;
     my $self  = $class->SUPER::new(@_);
@@ -24,6 +40,12 @@ sub new {
     EVT_BUTTON($self, $self, \&OnClick);
     $self;
 }
+
+=head2 OnClick
+
+TODO add description
+
+=cut
 
 sub OnClick {
     my ($self, $event) = @_;
@@ -36,11 +58,23 @@ sub OnClick {
     $self->popup_window->Layout();
 }
 
+=head2 init
+
+TODO add description
+
+=cut
+
 sub init {
     my $self = shift;
     $self->popup_window->initialize_examples;
     $self;
 }
+
+=head2 EVT_SELECTED
+
+TODO add description
+
+=cut
 
 sub EVT_SELECTED {
     my ($parent, $obj, $sub) = @_;

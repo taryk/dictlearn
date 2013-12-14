@@ -12,6 +12,22 @@ use Class::XSAccessor accessors => [qw| parent vbox search lb_examples cb |];
 
 use Database;
 
+=head1 NAME
+
+Dict::Learn::Combo::ExamplesList
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 new
+
+TODO add description
+
+=cut
+
 sub new {
     my $class = shift;
     my $self  = $class->SUPER::new(@_);
@@ -47,6 +63,12 @@ sub new {
     $self;
 }
 
+=head2 OnSelect
+
+TODO add description
+
+=cut
+
 sub OnSelect {
     my ($self, $event) = @_;
     my $text = $self->lb_examples->GetItem($event->GetIndex, 1)->GetText;
@@ -56,6 +78,12 @@ sub OnSelect {
     ) if $self->cb;
     $self->Dismiss();
 }
+
+=head2 initialize_examples
+
+TODO add description
+
+=cut
 
 sub initialize_examples {
     my $self = shift;
