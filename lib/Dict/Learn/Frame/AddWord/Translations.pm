@@ -16,7 +16,19 @@ use Dict::Learn::Combo::WordList;
 
 use common::sense;
 
-=item parent
+=head1 NAME
+
+Dict::Learn::Frame::AddWord::Translations
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -26,7 +38,9 @@ has parent => (
 );
 
 
-=item btn_additem
+=head2 btn_additem
+
+TODO add description
 
 =cut
 
@@ -40,7 +54,9 @@ has btn_additem => (
     },
 );
 
-=item vbox_item
+=head2 vbox_item
+
+TODO add description
 
 =cut
 
@@ -51,7 +67,9 @@ has vbox_item => (
     default => sub { [] },
 );
 
-=item hbox_add
+=head2 hbox_add
+
+TODO add description
 
 =cut
 
@@ -70,7 +88,9 @@ sub _build_hbox_add {
     return $hbox_add;
 }
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -89,7 +109,9 @@ sub _build_vbox {
     return $vbox;
 }
 
-=item word_translations
+=head2 word_translations
+
+TODO add description
 
 =cut
 
@@ -99,6 +121,14 @@ has word_translations => (
     lazy    => 1,
     default => sub { [] },
 );
+
+=head1 FUNCTIONS
+
+=head2 keybind
+
+TODO add description
+
+=cut
 
 sub keybind {
     my ($self, $event) = @_;
@@ -167,6 +197,12 @@ sub _get_previous_part_of_speech {
         return $prev_item->{cbox}->GetSelection;
     }
 }
+
+=head2 make_item
+
+TODO add description
+
+=cut
 
 sub make_item {
     my ($self, $word_id, $ro) = @_;
@@ -248,6 +284,12 @@ sub make_item {
     return \%translation_item;
 }
 
+=head2 add_item
+
+TODO add description
+
+=cut
+
 sub add_item {
     my ($self, %params) = @_;
 
@@ -284,6 +326,12 @@ sub add_item {
     return $translation_item;
 }
 
+=head2 del_item
+
+TODO add description
+
+=cut
+
 sub del_item {
     my ($self, $id) = @_;
 
@@ -301,6 +349,12 @@ sub del_item {
 
     return $self;
 }
+
+=head2 edit_word_as_new
+
+TODO add description
+
+=cut
 
 sub edit_word_as_new {
     my ($self, $word_id) = @_;
@@ -320,6 +374,12 @@ sub edit_word_as_new {
     return $self;
 }
 
+=head2 for_each
+
+TODO add description
+
+=cut
+
 sub for_each($$) {
     my ($self, $cb) = @_;
 
@@ -327,6 +387,12 @@ sub for_each($$) {
         $cb->($self, $translation_item);
     }
 }
+
+=head2 remove_all
+
+TODO add description
+
+=cut
 
 sub remove_all {
     my $self = shift;
@@ -337,7 +403,19 @@ sub remove_all {
     }
 }
 
+=head2 translation_count
+
+TODO add description
+
+=cut
+
 sub translation_count { scalar @{$_[0]->word_translations} }
+
+=head2 add
+
+TODO add description
+
+=cut
 
 sub add {
     my ($self, $word, $partofspeech) = @_;
@@ -349,12 +427,24 @@ sub add {
     );
 }
 
+=head2 import_partofspeech
+
+TODO add description
+
+=cut
+
 sub import_partofspeech {
     my $self = shift;
 
     map { $_->{name_orig} }
         Database->schema->resultset('PartOfSpeech')->select();
 }
+
+=head2 get_partofspeech_id
+
+TODO add description
+
+=cut
 
 sub get_partofspeech_id {
     my ($self, $name) = @_;
