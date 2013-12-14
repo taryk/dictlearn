@@ -1,6 +1,7 @@
 package Dict::Learn::Translate::Google 0.01;
 use base qw[ Dict::Learn::Translate ];
 
+use Const::Fast;
 use Data::Printer;
 use JSON qw[ decode_json from_json ];
 use URI::Escape qw[ uri_escape_utf8 ];
@@ -15,17 +16,12 @@ Dict::Learn::Translate::Google
 
 TODO add description
 
-=head1 FUNCTIONS
-
-=head2 URL
-
-TODO add description
-
 =cut
 
-sub URL {
-    'http://translate.google.com/translate_a/t?client=t&sl=%s&tl=%s&text=%s'
-}
+const my $URL =>
+    'http://translate.google.com/translate_a/t?client=t&sl=%s&tl=%s&text=%s';
+
+=head1 FUNCTIONS
 
 =head2 parse_result
 
@@ -60,7 +56,7 @@ sub translate {
 
     my ($from, $to, $text) = @_;
     my $res = $class->SUPER::http_request(
-        GET => sprintf URL,
+        GET => sprintf $URL,
         $from, $to, uri_escape_utf8($text)
     );
     return if $res->{code} < 0;

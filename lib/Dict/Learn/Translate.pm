@@ -1,5 +1,6 @@
 package Dict::Learn::Translate;
 
+use Const::Fast;
 use Data::Printer;
 use HTTP::Request;
 use JSON qw[ encode_json to_json decode_json from_json ];
@@ -16,15 +17,11 @@ Dict::Learn::Translate
 
 TODO add description
 
-=head1 FUNCTIONS
-
-=head2 USERAGENT
-
-TODO add description
-
 =cut
 
-sub USERAGENT { 'Mozilla/5.0' }
+const my $USERAGENT => 'Mozilla/5.0';
+
+=head1 FUNCTIONS
 
 =head2 new
 
@@ -161,7 +158,7 @@ sub http_request {
         $json = encode_json($content);
     }
     my $req = HTTP::Request->new($method => $url, $h, $json || $content);
-    my $res = LWP::UserAgent->new(agent => USERAGENT)->request($req);
+    my $res = LWP::UserAgent->new(agent => $USERAGENT)->request($req);
     if ($res->is_success) {
         {
             code    => $res->code,

@@ -2,6 +2,7 @@ package Dict::Learn::Translate::Lingvo 0.1;
 
 use base qw[ Dict::Learn::Translate ];
 
+use Const::Fast;
 use Data::Printer;
 use Encode qw(encode decode);
 use JSON qw[ decode_json from_json ];
@@ -19,37 +20,26 @@ Dict::Learn::Translate::Lingvo
 
 TODO add description
 
+=cut
+
+const my $URL => 'http://www.lingvo.ua/ru/Translate/%s-%s/%s';
+
+const my $PARTSOFSPEACH => {
+    n       => 'noun',          # іменник
+    a       => 'adjective',     # прикметник
+    num     => 'numeral',       # числівник
+    pron    => 'pronoun',       # займенник
+    v       => 'verb',          # дієслово
+    adv     => 'adverb',        # прислівник
+    prep    => 'preposition',   # прийменник
+    cj      => 'conjunction',   # сполучник
+    int     => 'interjection',  # вигук
+    'p. p.' => 'participle',    # дієприкметник (past participle)
+};
+
 =head1 FUNCTIONS
 
-=head2 URL
-
-TODO add description
-
 =cut
-
-sub URL { 'http://www.lingvo.ua/ru/Translate/%s-%s/%s' }
-
-=head2 PARTSOFSPEACH
-
-TODO add description
-
-=cut
-
-sub PARTSOFSPEACH {
-    {
-        n    => 'noun',            # іменник
-        a    => 'adjective',       # прикметник
-        num  => 'numeral',         # числівник
-        pron => 'pronoun',         # займенник
-        v    => 'verb',            # дієслово
-        adv  => 'adverb',          # прислівник
-        prep => 'preposition',     # прийменник
-        cj   => 'conjunction',     # сполучник
-        int  => 'interjection',    # вигук
-        'p. p.' =>
-            'participle',    # дієприкметник (past participle)
-    }
-}
 
 {
     my $curr = {
@@ -78,8 +68,8 @@ sub PARTSOFSPEACH {
                     }
                     when ('l-article__abbrev') {
                         # if ($text =~ /^(n|v|)$/)
-                        say "unknown: '$text'" unless PARTSOFSPEACH->{$text};
-                        $curr->{partofspeech} = PARTSOFSPEACH->{$text}
+                        say "unknown: '$text'" unless $PARTSOFSPEACH->{$text};
+                        $curr->{partofspeech} = $PARTSOFSPEACH->{$text}
                             // 'noun';
                     }
                 }
@@ -89,8 +79,8 @@ sub PARTSOFSPEACH {
                     and $_[0]->find('span.l-article__abbrev')->size >= 1)
                 {
                     my $text = $_[0]->span->all_text;
-                    if (any { $text eq $_ } keys %{+PARTSOFSPEACH}) {
-                        $curr->{partofspeech} = PARTSOFSPEACH->{$text};
+                    if (any { $text eq $_ } keys %$PARTSOFSPEACH) {
+                        $curr->{partofspeech} = $PARTSOFSPEACH->{$text};
                         return;
                     }
                 }
@@ -135,7 +125,7 @@ sub translate {
 
     my ($from, $to, $text) = @_;
     my $res = $class->SUPER::http_request(
-        GET => sprintf(URL, $from, $to, uri_escape_utf8($text)),
+        GET => sprintf($URL, $from, $to, uri_escape_utf8($text)),
         {   'Cookie' =>
                 'ClickedOnTranslationsCount=2; '
                 . 'xst=E33FE85E8DE54DC5B7CC20A2F0EEDD33; '

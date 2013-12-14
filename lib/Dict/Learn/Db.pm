@@ -1,5 +1,6 @@
 package Dict::Learn::Db 0.1;
 
+use Const::Fast;
 use DBIx::Class::QueryLog::Analyzer;
 use DBIx::Class::QueryLog;
 use Data::Printer;
@@ -19,27 +20,17 @@ Dict::Learn::Db
 
 TODO add description
 
-=head1 ATTRIBUTES
-
-=head2 REQ_TABLES
-
-TODO add description
-
 =cut
 
-has REQ_TABLES => (
-    is      => 'ro',
-    isa     => 'ArrayRef',
-    default => sub {
-        [
-            qw(
-                  word word_xref example example_xref word_example_xref
-                  dictionary partofspeech language test test_session
-                  test_session_data
-             )
-        ]
-    },
-);
+const my $REQ_TABLES => [
+    qw(
+        word word_xref example example_xref word_example_xref
+        dictionary partofspeech language test test_session
+        test_session_data
+    )
+];
+
+=head1 ATTRIBUTES
 
 =head2 schema
 
@@ -124,7 +115,7 @@ sub check_tables {
     my @tables = grep { $_->[0] eq 'main' }
         map { [(/^["](\w+)["][.]["](\w+)["]$/x)] }
         $self->schema->storage->dbh->tables();
-    for my $req_table (@{ $self->REQ_TABLES }) {
+    for my $req_table (@$REQ_TABLES) {
         return unless any { $req_table eq $_->[1] } @tables;
     }
 

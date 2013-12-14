@@ -2,8 +2,9 @@ package Dict::Learn::Translate::Promt 0.1;
 
 use base qw[ Dict::Learn::Translate ];
 
-use URI::Escape qw[ uri_escape_utf8 ];
+use Const::Fast;
 use JSON qw[ decode_json from_json ];
+use URI::Escape qw[ uri_escape_utf8 ];
 use common::sense;
 
 use Data::Printer;
@@ -16,52 +17,31 @@ Dict::Learn::Translate::Promt
 
 TODO add description
 
+=cut
+
+const my $URL =>
+    'http://www.translate.ru/services/TranslationService.asmx/GetTranslation';
+
+const my $PARTSOFSPEACH => {
+    noun        => 'существительное',    # іменник
+    adjective   => 'прилагательное',      # прикметник
+    numeral     => 'числительное',          # числівник
+    pronoun     => 'местоимение',            # займенник
+    verb        => 'глагол',                      # дієслово
+    adverb      => 'наречие',                    # прислівник
+    preposition => 'предлог',                    # прийменник
+    conjunction => 'союз',                          # сполучник
+    participle   => 'причастие',      # дієприкметник
+    interjection => 'междометие',    # вигук
+};
+
+# TODO implement categories support
+const my $CATEGORIES => {
+    auto  => 'Автомобильный',
+    cable => 'Кабельная промышленность',
+};
+
 =head1 FUNCTIONS
-
-=head2 URL
-
-TODO add description
-
-=cut
-
-sub URL {
-    'http://www.translate.ru/services/TranslationService.asmx/GetTranslation'
-}
-
-=head2 PARTSOFSPEACH
-
-TODO add description
-
-=cut
-
-sub PARTSOFSPEACH {
-    {
-        noun      => 'существительное',  # іменник
-        adjective => 'прилагательное',   # прикметник
-        numeral   => 'числительное',     # числівник
-        pronoun   => 'местоимение',      # займенник
-        verb      => 'глагол',           # дієслово
-        adverb    => 'наречие',          # прислівник
-        preposition  => 'предлог',       # прийменник
-        conjunction  => 'союз',          # сполучник
-        participle   => 'причастие',     # дієприкметник
-        interjection => 'междометие',    # вигук
-    };
-}
-
-=head2 CATEGORIES
-
-TODO add description
-TODO implement categories support
-
-=cut
-
-sub CATEGORIES {
-    {
-        auto  => 'Автомобильный',
-        cable => 'Кабельная промышленность',
-    }
-}
 
 =head2 parse_result
 
@@ -122,9 +102,9 @@ TODO add description
 sub partofspeech_tr($) {
     my $original = shift;
 
-    for my $item (keys %{+PARTSOFSPEACH}) {
+    for my $item (keys %$PARTSOFSPEACH) {
         return $item
-            if lc $original eq lc +PARTSOFSPEACH->{$item};
+            if lc $original eq lc $PARTSOFSPEACH->{$item};
     }
 }
 
@@ -141,7 +121,7 @@ sub translate {
     $from = 'ru' if $from eq 'uk';
     $to   = 'ru' if $to eq 'uk';
     my $res = $class->SUPER::http_request(
-        POST => sprintf(URL, $from, $to, uri_escape_utf8($text)),
+        POST => sprintf($URL, $from, $to, uri_escape_utf8($text)),
 
         {   'Accept' =>
                 'Accept: application/json, text/javascript, */*; q=0.01',
