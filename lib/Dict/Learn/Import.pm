@@ -8,6 +8,22 @@ use common::sense;
 
 use Database;
 
+=head1 NAME
+
+Dict::Learn::Import
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 TABLE_MAP
+
+TODO add description
+
+=cut
+
 sub TABLE_MAP {
     {   words      => 'Word',
         words_xref => 'Words',
@@ -20,12 +36,24 @@ sub TABLE_MAP {
     }
 }
 
+=head2 new
+
+TODO add description
+
+=cut
+
 sub new {
     my $class = shift;
     my $self = bless {} => $class;
 
     $self;
 }
+
+=head2 do
+
+TODO add description
+
+=cut
 
 sub do {
     my ($self, $filename) = @_;

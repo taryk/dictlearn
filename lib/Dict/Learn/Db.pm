@@ -11,7 +11,19 @@ use Moose;
 use common::sense;
 use namespace::autoclean;
 
-=item REQ_TABLES
+=head1 NAME
+
+Dict::Learn::Db
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 REQ_TABLES
+
+TODO add description
 
 =cut
 
@@ -29,7 +41,9 @@ has REQ_TABLES => (
     },
 );
 
-=item schema
+=head2 schema
+
+TODO add description
 
 =cut
 
@@ -39,7 +53,9 @@ has schema => (
     required => 1,
 );
 
-=item querylog
+=head2 querylog
+
+TODO add description
 
 =cut
 
@@ -50,6 +66,10 @@ has querylog => (
     default => sub { DBIx::Class::QueryLog->new },
 );
 
+=head1 FUNCTIONS
+
+=cut
+
 sub BUILD {
     my ($self, @args) = @_;
 
@@ -57,6 +77,12 @@ sub BUILD {
     $self->schema->storage->debugobj($self->querylog);
     $self->schema->storage->debug(1);
 }
+
+=head2 analyze
+
+TODO add description
+
+=cut
 
 sub analyze {
     my ($self) = @_;
@@ -73,11 +99,23 @@ sub analyze {
     $self->querylog->reset;
 }
 
+=head2 reset_analyzer
+
+TODO add description
+
+=cut
+
 sub reset_analyzer {
     my ($self) = @_;
 
     $self->querylog->reset;
 }
+
+=head2 check_tables
+
+TODO add description
+
+=cut
 
 sub check_tables {
     my $self = shift;
@@ -93,6 +131,12 @@ sub check_tables {
     1;
 }
 
+=head2 install_schema
+
+TODO add description
+
+=cut
+
 sub install_schema {
     my $self = shift;
 
@@ -104,6 +148,12 @@ sub install_schema {
 
     1;
 }
+
+=head2 clear_data
+
+TODO add description
+
+=cut
 
 sub clear_data {
     my $self = shift;
@@ -117,6 +167,12 @@ sub clear_data {
     1;
 }
 
+=head2 clear_test_results
+
+TODO add description
+
+=cut
+
 sub clear_test_results {
     my $self = shift;
 
@@ -126,6 +182,12 @@ sub clear_test_results {
 
     1;
 }
+
+=head2 clear_all
+
+TODO add description
+
+=cut
 
 sub clear_all {
     my $self = shift;

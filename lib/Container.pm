@@ -4,9 +4,33 @@ use IOC::Slinky::Container;
 
 use common::sense;
 
+=head1 NAME
+
+Container
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=cut
+
 my %params;
 
+=head1 FUNCTIONS
+
+=head2 params
+
+TODO add description
+
+=cut
+
 sub params { shift; %params = @_ }
+
+=head2 ioc
+
+TODO add description
+
+=cut
 
 sub ioc {
     return state $ioc //= IOC::Slinky::Container->new(
@@ -43,6 +67,12 @@ sub ioc {
         }
     );
 }
+
+=head2 lookup
+
+TODO add description
+
+=cut
 
 sub lookup { shift; ioc->lookup(@_) }
 

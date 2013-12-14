@@ -9,6 +9,22 @@ use Database;
 
 my $singleton;
 
+=head1 NAME
+
+Dict::Learn::Dictionary
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 new
+
+TODO add description
+
+=cut
+
 sub new {
     my $class = shift;
 
@@ -20,9 +36,27 @@ sub new {
     $self;
 }
 
+=head2 singleton
+
+TODO add description
+
+=cut
+
 sub singleton { $singleton ||= __PACKAGE__->new }
 
+=head2 clear
+
+TODO add description
+
+=cut
+
 sub clear { undef $singleton }
+
+=head2 all
+
+TODO add description
+
+=cut
 
 sub all {
     my $self = shift;
@@ -36,6 +70,12 @@ sub all {
     return $self->{dicts};
 }
 
+=head2 set
+
+TODO add description
+
+=cut
+
 sub set {
     my ($self, $id) = @_;
 
@@ -43,6 +83,12 @@ sub set {
     $self->{dict_id} = $id;
     for (@{ $self->{cb} }) { $_->($self) }
 }
+
+=head2 cb
+
+TODO add description
+
+=cut
 
 sub cb {
     my ($self, $cb) = @_;
@@ -59,12 +105,24 @@ sub cb {
     $cb->($self) if defined $self->{dict_id};
 }
 
+=head2 get
+
+TODO add description
+
+=cut
+
 sub get {
     my ($self, $id) = @_;
 
     $self = $self->singleton unless ref $self;
     defined $self->{dicts}{$id} ? $self->{dicts}{$id} : undef;
 }
+
+=head2 curr
+
+TODO add description
+
+=cut
 
 sub curr {
     my $self = shift;
@@ -73,9 +131,21 @@ sub curr {
     $self->{dicts}{ $self->{dict_id} };
 }
 
+=head2 curr_id
+
+TODO add description
+
+=cut
+
 sub curr_id {
     shift->singleton->{dict_id}
 }
+
+=head2 add
+
+TODO add description
+
+=cut
 
 sub add {
     my ($self, %params) = @_;
@@ -84,6 +154,12 @@ sub add {
 
     # @TODO implement
 }
+
+=head2 delete
+
+TODO add description
+
+=cut
 
 sub delete {
     my ($self, $id) = @_;

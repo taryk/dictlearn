@@ -6,6 +6,22 @@ use common::sense;
 
 use Database;
 
+=head1 NAME
+
+Dict::Learn::Main::Migration::JoinWordsExamples
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 FUNCTIONS
+
+=head2 down
+
+TODO add description
+
+=cut
+
 sub down {
     my $data_up;
 
@@ -58,6 +74,12 @@ sub down {
     }
     $data_up;
 }
+
+=head2 up
+
+TODO add description
+
+=cut
 
 sub up {
     my $data_up = shift;
