@@ -15,7 +15,19 @@ use common::sense;
 
 use Database;
 
-=item parent
+=head1 NAME
+
+Dict::Learn::Frame::Sidebar
+
+=head1 DESCRIPTION
+
+TODO add description
+
+=head1 ATTRIBUTES
+
+=head2 parent
+
+TODO add description
 
 =cut
 
@@ -24,7 +36,9 @@ has parent => (
     isa => 'Dict::Learn::Frame::SearchWords',
 );
 
-=item html
+=head2 html
+
+TODO add description
 
 =cut
 
@@ -41,7 +55,9 @@ has html => (
     }
 );
 
-=item btn_refresh
+=head2 btn_refresh
+
+TODO add description
 
 =cut
 
@@ -55,7 +71,9 @@ has btn_refresh => (
     },
 );
 
-=item vbox
+=head2 vbox
+
+TODO add description
 
 =cut
 
@@ -73,6 +91,14 @@ has vbox => (
         $vbox
     }
 );
+
+=head1 FUNCTIONS
+
+=head2 load_word
+
+TODO add description
+
+=cut
 
 sub load_word {
     my ($self, %params) = @_;
@@ -104,6 +130,12 @@ sub load_word {
         )
     );
 }
+
+=head2 gen_html
+
+TODO add description
+
+=cut
 
 sub gen_html {
     my ($self, %params) = @_;
