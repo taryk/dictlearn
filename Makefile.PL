@@ -33,6 +33,7 @@ requires 'DateTime'        => 0;
 requires 'Mojolicious'     => 0;
 requires 'Term::ANSIColor' => 0;
 requires 'Memoize'         => 0;
+requires 'Const::Fast'     => '0.014';
 
 test_requires 'Test::Class'       => '0.37';
 test_requires 'Test::More'        => 0;

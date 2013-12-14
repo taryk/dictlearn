@@ -32,6 +32,7 @@ The tool for improving and expanding your vocabulary
 * [Mojolicious](https://metacpan.org/module/Mojolicious)
 * [Term::ANSIColor](https://metacpan.org/module/Term::ANSIColor)
 * [Memoize](https://metacpan.org/module/Memoize)
+* [Const::Fast](https://metacpan.org/module/Const::Fast)
 * [Test::Pod](https://metacpan.org/module/Test::Pod)
 * [Test::Pod::Coverage](https://metacpan.org/module/Test::Pod::Coverage)
 
