@@ -21,6 +21,7 @@ const my $COL_LANG1   => 1;
 const my $COL_LANG2   => 3;
 const my $COL_E_LANG1 => 1;
 const my $COL_E_LANG2 => 2;
+const my $LAST_SEARCH_HISTORY_SIZE => 20;
 
 =head1 NAME
 
@@ -753,6 +754,20 @@ sub lookup {
 
     my $records_count = scalar @result;
 
+    # Populate SearchHistory only if value isn't emtpy
+    if ($value) {
+        Database->schema->resultset('SearchHistory')->create(
+            {
+                text          => $value,
+                dictionary_id => Dict::Learn::Dictionary->curr_id,
+                results_count => $records_count,
+            }
+        );
+
+        # TODO just add element to the lookup combobox w/o full reloading
+        $self->load_search_history(Dict::Learn::Dictionary->curr_id);
+    }
+
     # Show how many records have been selected
     $self->set_status_text($records_count > 0
         ? "$records_count records selected"
@@ -988,6 +1003,30 @@ sub add_word {
     $self->parent->new_page($add_word_page, 'Add');
 }
 
+=head2 load_search_history
+
+(Re)load the latest n unique words/phrases which were looked for
+into the lookup combobox
+
+=cut
+
+sub load_search_history {
+    my ($self, $dictionary_id) = @_;
+
+    $self->combobox->Clear;
+    my $rs = Database->schema->resultset('SearchHistory')->search(
+        { 'dictionary_id' => $dictionary_id },
+        {
+            rows     => $LAST_SEARCH_HISTORY_SIZE,
+            group_by => 'text',
+            order_by => { -desc => 'search_history_id' },
+        }
+    );
+    while (my $search_history_record = $rs->next) {
+        $self->combobox->Append($search_history_record->text);
+    }
+}
+
 =head2 keybind
 
 TODO add description
@@ -1048,6 +1087,11 @@ sub BUILD {
             $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
             $self->lb_examples->SetColumn($COL_E_LANG1, $li[0]);
             $self->lb_examples->SetColumn($COL_E_LANG2, $li[1]);
+        },
+        # Load Search History into a lookup combobox
+        sub {
+            my $dict = shift;
+            $self->load_search_history($dict->curr_id);
         },
         sub { $self->lookup() }
         )
