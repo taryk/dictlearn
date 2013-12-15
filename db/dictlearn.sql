@@ -123,7 +123,16 @@ CREATE TABLE IF NOT EXISTS test_category (
 CREATE TABLE IF NOT EXISTS test_category_word_xref (
   `test_category_id`     INTEGER  NOT NULL DEFAULT 0,
   `word_id`              INTEGER  NOT NULL DEFAULT 0,
-  `partofspeech_id`         INTEGER  NOT NULL DEFAULT 0,
+  `partofspeech_id`      INTEGER  NOT NULL DEFAULT 0,
+  `cdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP  
+);
+
+CREATE TABLE IF NOT EXISTS search_history (
+  `search_history_id`    INTEGER  PRIMARY KEY ASC AUTOINCREMENT,
+  `text`                 VARCHAR,
+  `results_count`        INTEGER  NOT NULL DEFAULT 0,
+  `dictionary_id`        INTEGER  NOT NULL DEFAULT 0,
   `cdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mdate`                DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP  
 );
