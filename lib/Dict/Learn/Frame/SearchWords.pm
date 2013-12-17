@@ -661,6 +661,22 @@ sub _get_word_forms {
     return \@word_forms;
 }
 
+=head2 _strip_spaces
+
+Removes the whitespaces at the beginning and at the end of a string
+
+=cut
+
+sub _strip_spaces {
+    my ($self, $phrase) = @_;
+
+    # remove leading and trailing spaces
+    $phrase =~ s{ ^ \s+ }{}x;
+    $phrase =~ s{ \s+ $ }{}x;
+
+    return $phrase;
+}
+
 =head2 set_status_text
 
 TODO add description
@@ -758,7 +774,7 @@ sub lookup {
     if ($value =~ m{ [a-z] }ix) {
         Database->schema->resultset('SearchHistory')->create(
             {
-                text          => $value,
+                text          => $self->_strip_spaces($value),
                 dictionary_id => Dict::Learn::Dictionary->curr_id,
                 results_count => $records_count,
             }
