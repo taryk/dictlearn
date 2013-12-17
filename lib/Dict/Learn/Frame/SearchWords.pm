@@ -755,7 +755,7 @@ sub lookup {
     my $records_count = scalar @result;
 
     # Populate SearchHistory only if value isn't emtpy
-    if ($value) {
+    if ($value =~ m{ [a-z] }ix) {
         Database->schema->resultset('SearchHistory')->create(
             {
                 text          => $value,
