@@ -698,6 +698,8 @@ TODO add description
 sub lookup {
     my ($self, $event) = @_;
 
+    state $previous_value;
+
     my $value = $self->combobox->GetValue;
     my $lang_id
         = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
@@ -770,8 +772,12 @@ sub lookup {
 
     my $records_count = scalar @result;
 
-    # Populate SearchHistory only if value isn't emtpy
-    if ($value =~ m{ [a-z] }ix) {
+
+    # go on only if previous and current value aren't the same
+    if (   $previous_value ne $value
+           # $value should contain at least one letter
+        && $value =~ m{ [a-z] }ix)
+    {
         Database->schema->resultset('SearchHistory')->create(
             {
                 text          => $self->_strip_spaces($value),
@@ -783,6 +789,7 @@ sub lookup {
         # TODO just add element to the lookup combobox w/o full reloading
         $self->load_search_history(Dict::Learn::Dictionary->curr_id);
     }
+    $previous_value = $value;
 
     # Show how many records have been selected
     $self->set_status_text($records_count > 0
