@@ -1,0 +1,60 @@
+---
+abstract: 'The great new Dict::Learn!'
+author:
+  - 'Taras Iagniuk, C<< <mrtaryk at gmail.com> >>'
+  - 'Taras Iagniuk <mrtaryk@gmail.net>'
+build_requires:
+  ExtUtils::MakeMaker: 6.59
+  POD::Coverage: 0.18
+  Test::Class: 0.37
+  Test::MockObject: 0
+  Test::More: 0
+  Test::POD: 1.22
+  Test::POD::Coverage: 1.08
+configure_requires:
+  ExtUtils::MakeMaker: 6.59
+distribution_type: module
+dynamic_config: 1
+generated_by: 'Module::Install version 1.06'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Dict-Learn
+no_index:
+  directory:
+    - db
+    - inc
+    - t
+requires:
+  Class::XSAccessor: 1.16
+  Const::Fast: 0.014
+  DBD::SQLite: 1.37
+  DBIx::Class: 0.08204
+  DBIx::Class::QueryLog: 0
+  DBIx::Class::QueryLog::Analyzer: 0
+  Data::Printer: 0.33
+  DateTime: 0
+  DateTime::Format::SQLite: 0
+  IO::File: 1.14
+  IOC::Slinky::Container: 0.1001
+  JSON: 2.53
+  LWP::UserAgent: 6.04
+  List::MoreUtils: 0
+  List::Util: 1.25
+  Memoize: 0
+  Mojolicious: 0
+  Moose: 0
+  MooseX::NonMoose: 0
+  String::Diff: 0
+  Term::ANSIColor: 0
+  URI::Escape: 3.31
+  Wx: 0.9914
+  common::sense: 3.6
+  lib::abs: 0
+  namespace::autoclean: 0.13
+  perl: 5.14.0
+resources:
+  license: http://dev.perl.org/licenses/
+  repository: http://github.com/taryk/dictlearn
+version: 0.1
