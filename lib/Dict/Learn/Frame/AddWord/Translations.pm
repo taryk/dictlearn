@@ -476,8 +476,6 @@ sub BUILD {
 
     # events
     EVT_BUTTON($self, $self->btn_additem, sub { $self->add_item });
-
-    EVT_KEY_UP($self, \&keybind);
 }
 
 no Moose;

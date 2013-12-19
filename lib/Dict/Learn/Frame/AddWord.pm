@@ -362,6 +362,9 @@ TODO add description
 sub keybind {
     my ($self, $event) = @_;
 
+    # Handle keybindings from translations panel as well
+    $self->translations->keybind($event);
+
     # It should respond to Ctrl+"W", Ctrl+"w", and Ctrl+Enter
     # so if Ctrl key isn't pressed, go away
     return if $event->GetModifiers() != wxMOD_CONTROL;
