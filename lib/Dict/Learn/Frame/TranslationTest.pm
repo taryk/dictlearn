@@ -236,9 +236,11 @@ sub _build_test_category {
             my $dict = shift;
             my $test_categories_rs
                 = Database->schema->resultset('TestCategory')
-                ->search({dictionary_id => $dict->curr_id});
+                ->search({ 'me.dictionary_id' => $dict->curr_id },
+                { join => 'words', group_by => 'me.test_category_id' });
             for ($test_categories_rs->all()) {
-                $combobox->Append($_->name, $_->test_category_id);
+                $combobox->Append($_->name . ' (' . $_->words->count . ')',
+                    $_->test_category_id);
             }
         }
     );
