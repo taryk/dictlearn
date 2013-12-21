@@ -392,9 +392,9 @@ sub BUILDARGS {
 sub BUILD {
     my ($self, @args) = @_;
 
-    $self->hbox->Add($self->btn_prev,             0, wxALL | wxGROW,  0);
-    $self->hbox->Add($self->btn_next,             0, wxALL | wxGROW,  0);
-    $self->hbox->Add($self->btn_reset,            0, wxLEFT | wxGROW, 40);
+    $self->hbox->Add($self->btn_prev,               0, wxALL | wxGROW,  0);
+    $self->hbox->Add($self->btn_next,               0, wxALL | wxGROW,  0);
+    $self->hbox->Add($self->btn_reset,              0, wxLEFT | wxGROW, 40);
     $self->hbox->Add($self->btn_toggle_translation, 0, wxLEFT | wxGROW, 40);
 
     $self->hbox_position->Add($self->position, 0, wxGROW, 0);
@@ -417,9 +417,9 @@ sub BUILD {
     # events
     EVT_COMBOBOX($self, $self->test_category, \&reset_session);
 
-    EVT_BUTTON($self, $self->btn_prev,             \&prev_step);
-    EVT_BUTTON($self, $self->btn_next,             \&next_step);
-    EVT_BUTTON($self, $self->btn_reset,            \&reset_session);
+    EVT_BUTTON($self, $self->btn_prev,               \&prev_step);
+    EVT_BUTTON($self, $self->btn_next,               \&next_step);
+    EVT_BUTTON($self, $self->btn_reset,              \&reset_session);
     EVT_BUTTON($self, $self->btn_toggle_translation, \&toggle_translation);
 
     EVT_SPINCTRL($self, $self->spin, \&spin_max_step);
