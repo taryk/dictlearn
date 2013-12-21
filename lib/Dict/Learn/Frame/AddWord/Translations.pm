@@ -198,6 +198,18 @@ sub _get_previous_part_of_speech {
     }
 }
 
+=head2 set_status_text
+
+Set the status in the bottom's statusbar
+
+=cut
+
+sub set_status_text {
+    my ($self, $status_text) = @_;
+
+    $self->parent->parent->status_bar->SetStatusText($status_text);
+}
+
 =head2 make_item
 
 TODO add description
@@ -335,6 +347,11 @@ TODO add description
 sub del_item {
     my ($self, $id) = @_;
 
+    die "There's no translation with such index"
+        unless exists $self->word_translations->[$id];
+
+    my $phrase = $self->word_translations->[$id]{word}->GetValue();
+
     for (qw[ cbox word btnm btnp edit note ]) {
         next unless defined $self->word_translations->[$id]{$_};
         $self->word_translations->[$id]{$_}->Destroy();
@@ -346,6 +363,9 @@ sub del_item {
     delete $self->vbox_item->[$id];
     delete $self->word_translations->[$id]{parent_vbox};
     delete $self->word_translations->[$id]{parent_hbox};
+
+    $self->set_status_text(
+        qq{Translation phrase "$phrase" has just been deleted});
 
     return $self;
 }
