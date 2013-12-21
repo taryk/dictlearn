@@ -478,7 +478,7 @@ sub check_for_duplicates {
         for my $nested_item_idx (0 .. $#{$translations}) {
             next nested_item if $item_idx == $nested_item_idx;
             my $nested_item = $translations->[$nested_item_idx];
-            return $item
+            return $nested_item
                 if ($item->{$key} && $nested_item->{$key})
                 && ($item->{$key} eq $nested_item->{$key});
         }
