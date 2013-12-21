@@ -515,7 +515,10 @@ sub add {
     $self->translations->for_each(
         sub {
             my $translation_panel = pop;
-            my %push_item = ( word_id => $translation_panel->{word_id} );
+            my %push_item = (
+                id      => $translation_panel->{id},
+                word_id => $translation_panel->{word_id}
+            );
             if ($translation_panel->{word}) {
                 $push_item{partofspeech}
                     = int($translation_panel->{cbox}->GetSelection());
@@ -547,13 +550,14 @@ sub add {
             ? 'id: ' . $item->{word_id}
             : $item->{word};
         say "Duplicate translation: $word";
-        return
-            if wxYES != Wx::MessageBox(
+        $self->translations->del_item($item->{id})
+            if wxYES == Wx::MessageBox(
                 qq{Found one duplicate translation: "$word"},
-                'Want to continue?',
+                'Do you want to get rid of this duplication?',
                 wxICON_QUESTION | wxYES_NO | wxNO_DEFAULT | wxCENTRE,
                 $self,
             );
+        return
     }
 
     if (defined $self->item_id
