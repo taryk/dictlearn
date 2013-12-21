@@ -420,7 +420,7 @@ sub BUILD {
     EVT_BUTTON($self, $self->btn_prev,             \&prev_step);
     EVT_BUTTON($self, $self->btn_next,             \&next_step);
     EVT_BUTTON($self, $self->btn_reset,            \&reset_session);
-    EVT_BUTTON($self, $self->btn_toggle_translation, \&show_translation);
+    EVT_BUTTON($self, $self->btn_toggle_translation, \&toggle_translation);
 
     EVT_SPINCTRL($self, $self->spin, \&spin_max_step);
 
@@ -939,13 +939,13 @@ sub compare_strings {
     $matched_most;
 }
 
-=head2 show_translation
+=head2 toggle_translation
 
 TODO add description
 
 =cut
 
-sub show_translation {
+sub toggle_translation {
     my ($self) = @_;
 
     state $show = 1;
