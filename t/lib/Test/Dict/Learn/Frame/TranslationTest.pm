@@ -38,7 +38,7 @@ sub fields : Tests {
         [qw(position text translation) => 'Wx::StaticText'],
         [qw(input)                     => 'Wx::TextCtrl'],
         [qw(hbox hbox_position vbox)   => 'Wx::BoxSizer'],
-        [qw(btn_prev btn_next btn_reset btn_show_translation) =>'Wx::Button'],
+        [qw(btn_prev btn_next btn_reset btn_toggle_translation) =>'Wx::Button'],
         # [qw(result) => 'Dict::Learn::Frame::TranslationTest::Result'],
         )
     {

@@ -323,13 +323,13 @@ has btn_reset => (
     },
 );
 
-=head2 btn_show_translation
+=head2 btn_toggle_translation
 
 TODO add description
 
 =cut
 
-has btn_show_translation => (
+has btn_toggle_translation => (
     is      => 'ro',
     isa     => 'Wx::Button',
     default => sub {
@@ -395,7 +395,7 @@ sub BUILD {
     $self->hbox->Add($self->btn_prev,             0, wxALL | wxGROW,  0);
     $self->hbox->Add($self->btn_next,             0, wxALL | wxGROW,  0);
     $self->hbox->Add($self->btn_reset,            0, wxLEFT | wxGROW, 40);
-    $self->hbox->Add($self->btn_show_translation, 0, wxLEFT | wxGROW, 40);
+    $self->hbox->Add($self->btn_toggle_translation, 0, wxLEFT | wxGROW, 40);
 
     $self->hbox_position->Add($self->position, 0, wxGROW, 0);
     $self->hbox_position->Add($self->spin,     0, wxGROW, 0);
@@ -420,7 +420,7 @@ sub BUILD {
     EVT_BUTTON($self, $self->btn_prev,             \&prev_step);
     EVT_BUTTON($self, $self->btn_next,             \&next_step);
     EVT_BUTTON($self, $self->btn_reset,            \&reset_session);
-    EVT_BUTTON($self, $self->btn_show_translation, \&show_translation);
+    EVT_BUTTON($self, $self->btn_toggle_translation, \&show_translation);
 
     EVT_SPINCTRL($self, $self->spin, \&spin_max_step);
 
@@ -950,7 +950,7 @@ sub show_translation {
 
     state $show = 1;
 
-    $self->btn_show_translation->SetLabel(
+    $self->btn_toggle_translation->SetLabel(
         $show ? 'Hide translation' : 'Show translation');
 
     $self->translation->SetLabel(
