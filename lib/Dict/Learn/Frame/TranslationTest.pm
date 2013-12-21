@@ -948,9 +948,18 @@ TODO add description
 sub show_translation {
     my ($self) = @_;
 
+    state $show = 1;
+
+    $self->btn_show_translation->SetLabel(
+        $show ? 'Hide translation' : 'Show translation');
+
     $self->translation->SetLabel(
-        join "\n", map { "* $_->[1]" } @{ $self->exercise->[$self->pos - 1][3] }
+        $show
+        ? join("\n",
+            map { "* $_->[1]" } @{ $self->exercise->[$self->pos - 1][3] })
+        : ''
     );
+    $show = !$show;
 }
 
 no Moose;
