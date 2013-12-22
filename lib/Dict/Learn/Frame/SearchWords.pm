@@ -61,120 +61,6 @@ sub _build_lookup_phrases {
     return $lookup_phrases;
 }
 
-=head2 btn_edit_word
-
-TODO add description
-
-=cut
-
-has btn_edit_word => (
-    is         => 'ro',
-    isa        => 'Wx::Button',
-    lazy_build => 1,
-);
-
-sub _build_btn_edit_word {
-    my $self = shift;
-
-    my $btn_edit_word
-        = Wx::Button->new($self, wxID_ANY, 'Edit', wxDefaultPosition,
-        wxDefaultSize);
-    EVT_BUTTON($self, $btn_edit_word, \&edit_word);
-
-    return $btn_edit_word;
-}
-
-=head2 btn_unlink_word
-
-TODO add description
-
-=cut
-
-has btn_unlink_word => (
-    is         => 'ro',
-    isa        => 'Wx::Button',
-    lazy_build => 1,
-);
-
-sub _build_btn_unlink_word {
-    my $self = shift;
-
-    my $btn_unlink_word
-        = Wx::Button->new($self, wxID_ANY, 'Unlink', wxDefaultPosition,
-        wxDefaultSize);
-    EVT_BUTTON($self, $btn_unlink_word, \&unlink_word);
-
-    return $btn_unlink_word;
-}
-
-=head2 btn_delete_word
-
-TODO add description
-
-=cut
-
-has btn_delete_word => (
-    is         => 'ro',
-    isa        => 'Wx::Button',
-    lazy_build => 1,
-);
-
-sub _build_btn_delete_word {
-    my $self = shift;
-
-    my $btn_delete_word
-        = Wx::Button->new($self, wxID_ANY, 'Del', wxDefaultPosition,
-        wxDefaultSize);
-    EVT_BUTTON($self, $btn_delete_word, \&delete_word);
-
-    return $btn_delete_word;
-}
-
-=head2 vbox_btn_words
-
-TODO add description
-
-=cut
-
-has vbox_btn_words => (
-    is         => 'ro',
-    isa        => 'Wx::BoxSizer',
-    lazy_build => 1,
-);
-
-sub _build_vbox_btn_words {
-    my $self = shift;
-
-    my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->btn_edit_word);
-    $vbox->Add($self->btn_unlink_word);
-    $vbox->Add($self->btn_delete_word);
-
-    return $vbox;
-}
-
-=head2 hbox_words
-
-TODO add description
-
-=cut
-
-has hbox_words => (
-    is         => 'ro',
-    isa        => 'Wx::BoxSizer',
-    lazy_build => 1,
-);
-
-sub _build_hbox_words {
-    my $self = shift;
-
-    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->vbox_btn_words, 0, wxRIGHT | wxEXPAND, 5);
-    $hbox->Add($self->lookup_phrases, 2, wxALL | wxEXPAND, 0);
-
-    return $hbox;
-}
-
 =head2 st_add_to_test
 
 TODO add description
@@ -304,7 +190,7 @@ sub _build_vbox {
     my $self = shift;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->hbox_words,       2, wxALL | wxGROW | wxEXPAND, 0);
+    $vbox->Add($self->lookup_phrases,   2, wxALL | wxGROW | wxEXPAND, 0);
     $vbox->Add($self->hbox_add_to_test, 0, wxALL | wxGROW | wxEXPAND, 0);
 
     return $vbox;
@@ -334,24 +220,6 @@ sub _build_hbox {
 
 =head1 METHODS
 
-=head2 edit_word
-
-TODO add description
-
-=cut
-
-sub edit_word {
-    my $self    = shift;
-
-    my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-
-    my $add_word_page = $self->parent->p_addword;
-    my $word_id = $self->get_word_id($curr_id);
-    $add_word_page->load_word(word_id => $word_id);
-    $self->parent->new_page($add_word_page, "Edit Word #$word_id");
-}
-
 =head2 load_phrase
 
 Load a selected phrase into sidebar
@@ -374,39 +242,7 @@ TODO add description
 sub get_word_id {
     my ($self, $rowid) = @_;
 
-    $self->lb_words->GetItem($rowid, 0)->GetText;
-}
-
-=head2 delete_word
-
-TODO add description
-
-=cut
-
-sub delete_word {
-    my $self    = shift;
-
-    my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-    Database->schema->resultset('Word')
-        ->delete_one($self->get_word_id($curr_id));
-    $self->lookup;
-}
-
-=head2 unlink_word
-
-TODO add description
-
-=cut
-
-sub unlink_word {
-    my $self    = shift;
-
-    my $curr_id = $self->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-    Database->schema->resultset('Word')
-        ->unlink_one($self->get_word_id($curr_id));
-    $self->lookup;
+    $self->lookup_phrases->lb_words->GetItem($rowid, 0)->GetText;
 }
 
 =head2 add_to_test

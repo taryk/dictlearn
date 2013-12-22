@@ -55,6 +55,75 @@ has html => (
     }
 );
 
+=head2 btn_edit_word
+
+TODO add description
+
+=cut
+
+has btn_edit_word => (
+    is         => 'ro',
+    isa        => 'Wx::Button',
+    lazy_build => 1,
+);
+
+sub _build_btn_edit_word {
+    my $self = shift;
+
+    my $btn_edit_word
+        = Wx::Button->new($self, wxID_ANY, 'Edit', wxDefaultPosition,
+        wxDefaultSize);
+    EVT_BUTTON($self, $btn_edit_word, \&edit_word);
+
+    return $btn_edit_word;
+}
+
+=head2 btn_unlink_word
+
+TODO add description
+
+=cut
+
+has btn_unlink_word => (
+    is         => 'ro',
+    isa        => 'Wx::Button',
+    lazy_build => 1,
+);
+
+sub _build_btn_unlink_word {
+    my $self = shift;
+
+    my $btn_unlink_word
+        = Wx::Button->new($self, wxID_ANY, 'Unlink', wxDefaultPosition,
+        wxDefaultSize);
+    EVT_BUTTON($self, $btn_unlink_word, \&unlink_word);
+
+    return $btn_unlink_word;
+}
+
+=head2 btn_delete_word
+
+TODO add description
+
+=cut
+
+has btn_delete_word => (
+    is         => 'ro',
+    isa        => 'Wx::Button',
+    lazy_build => 1,
+);
+
+sub _build_btn_delete_word {
+    my $self = shift;
+
+    my $btn_delete_word
+        = Wx::Button->new($self, wxID_ANY, 'Del', wxDefaultPosition,
+        wxDefaultSize);
+    EVT_BUTTON($self, $btn_delete_word, \&delete_word);
+
+    return $btn_delete_word;
+}
+
 =head2 btn_refresh
 
 TODO add description
@@ -71,6 +140,31 @@ has btn_refresh => (
     },
 );
 
+=head2 hbox_buttons
+
+TODO add description
+
+=cut
+
+has hbox_buttons => (
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
+);
+
+sub _build_hbox_buttons {
+    my $self = shift;
+
+    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox->Add($self->btn_edit_word);
+    $hbox->Add($self->btn_unlink_word);
+    $hbox->Add($self->btn_delete_word);
+    $hbox->Add($self->btn_refresh);
+
+    return $hbox;
+}
+
+
 =head2 vbox
 
 TODO add description
@@ -86,7 +180,7 @@ has vbox => (
 
         my $vbox = Wx::BoxSizer->new(wxVERTICAL);
         $vbox->Add($self->html,        1, wxEXPAND | wxALL, 0);
-        $vbox->Add($self->btn_refresh, 0, wxTOP,            5);
+        $vbox->Add($self->hbox_buttons, 0, wxTOP,            5);
 
         $vbox
     }
@@ -129,6 +223,56 @@ sub load_word {
             translate    => $translate,
         )
     );
+}
+
+=head2 edit_word
+
+TODO add description
+
+=cut
+
+sub edit_word {
+    my $self    = shift;
+
+    my $curr_id = $self->parent->lookup_phrases->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+   
+    my $add_word_page = $self->parent->parent->p_addword;
+    my $word_id = $self->parent->get_word_id($curr_id);
+    $add_word_page->load_word(word_id => $word_id);
+    $self->parent->parent->new_page($add_word_page, "Edit Word #$word_id");
+}
+
+=head2 delete_word
+
+TODO add description
+
+=cut
+
+sub delete_word {
+    my $self    = shift;
+
+    my $curr_id = $self->parent->lookup_phrases->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+    Database->schema->resultset('Word')
+        ->delete_one($self->parent->get_word_id($curr_id));
+    $self->parent->lookup;
+}
+
+=head2 unlink_word
+
+TODO add description
+
+=cut
+
+sub unlink_word {
+    my $self    = shift;
+
+    my $curr_id = $self->parent->lookup_phrases->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+    Database->schema->resultset('Word')
+        ->unlink_one($self->parent->get_word_id($curr_id));
+    $self->parent->lookup;
 }
 
 =head2 gen_html
