@@ -242,7 +242,7 @@ TODO add description
 sub get_word_id {
     my ($self, $rowid) = @_;
 
-    $self->lookup_phrases->lb_words->GetItem($rowid, 0)->GetText;
+    $self->lookup_phrases->phrase_table->GetItem($rowid, 0)->GetText;
 }
 
 =head2 add_to_test
@@ -257,7 +257,7 @@ sub add_to_test {
     my $test_category_id = $self->cb_add_to_test->GetClientData(
         $self->cb_add_to_test->GetSelection());
 
-    my $row_id = $self->lookup_phrases->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
+    my $row_id = $self->lookup_phrases->phrase_table->GetNextItem(-1, wxLIST_NEXT_ALL,
         wxLIST_STATE_SELECTED);
 
     my $word_id = $self->get_word_id($row_id);
@@ -270,7 +270,7 @@ sub add_to_test {
         }
     );
 
-    my $word = $self->lookup_phrases->lb_words->GetItem($row_id, 1)->GetText;
+    my $word = $self->lookup_phrases->phrase_table->GetItem($row_id, 1)->GetText;
 
     $self->set_status_text(
         sprintf 'Word "%s" has been added to "%s" test',
@@ -299,7 +299,7 @@ sub BUILD {
     $self->Layout();
 
     EVT_KEY_UP($self, \&keybind);
-    EVT_LIST_ITEM_SELECTED($self, $self->lookup_phrases->lb_words,
+    EVT_LIST_ITEM_SELECTED($self, $self->lookup_phrases->phrase_table,
         \&load_phrase);
 }
 

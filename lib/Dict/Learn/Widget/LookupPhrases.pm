@@ -150,32 +150,32 @@ sub _build_lookup_hbox {
     return $hbox;
 }
 
-=head2 lb_words
+=head2 phrase_table
 
 TODO add description
 
 =cut
 
-has lb_words => (
+has phrase_table => (
     is         => 'ro',
     isa        => 'Wx::ListCtrl',
     lazy_build => 1,
 );
 
-sub _build_lb_words {
+sub _build_phrase_table {
     my $self = shift;
 
-    my $lb_words
+    my $phrase_table
         = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
-    $lb_words->InsertColumn(0,         'id',      wxLIST_FORMAT_LEFT, 50);
-    $lb_words->InsertColumn($COL_LANG1, 'Eng',     wxLIST_FORMAT_LEFT, 200);
-    $lb_words->InsertColumn(2,         'pos',     wxLIST_FORMAT_LEFT, 35);
-    $lb_words->InsertColumn($COL_LANG2, 'Ukr',     wxLIST_FORMAT_LEFT, 200);
-    $lb_words->InsertColumn(4,         'note',    wxLIST_FORMAT_LEFT, 200);
-    $lb_words->InsertColumn(5,         'created', wxLIST_FORMAT_LEFT, 150);
+    $phrase_table->InsertColumn(0,         'id',      wxLIST_FORMAT_LEFT, 50);
+    $phrase_table->InsertColumn($COL_LANG1, 'Eng',     wxLIST_FORMAT_LEFT, 200);
+    $phrase_table->InsertColumn(2,         'pos',     wxLIST_FORMAT_LEFT, 35);
+    $phrase_table->InsertColumn($COL_LANG2, 'Ukr',     wxLIST_FORMAT_LEFT, 200);
+    $phrase_table->InsertColumn(4,         'note',    wxLIST_FORMAT_LEFT, 200);
+    $phrase_table->InsertColumn(5,         'created', wxLIST_FORMAT_LEFT, 150);
 
-    return $lb_words;
+    return $phrase_table;
 }
 
 =head2 lookup_hbox
@@ -195,7 +195,7 @@ sub _build_vbox {
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
     $vbox->Add($self->lookup_hbox, 0, wxEXPAND);
-    $vbox->Add($self->lb_words,    1, wxEXPAND);
+    $vbox->Add($self->phrase_table,    1, wxEXPAND);
 
     return $vbox;
 }
@@ -323,12 +323,12 @@ sub lookup {
     @result = Database->schema->resultset('Word')
         ->find_ones_cached(%args, lang_id => $lang_id);
 
-    $self->lb_words->DeleteAllItems();
+    $self->phrase_table->DeleteAllItems();
     my $item_id;
     for my $item (@result) {
         # there can be undefined items we should ignore
         next unless defined $item;
-        my $id = $self->lb_words->InsertItem(
+        my $id = $self->phrase_table->InsertItem(
             # InsertItem method always inserts an item at the first position
             # so set the position explicitly
             do {
@@ -342,12 +342,12 @@ sub lookup {
             = $item->{is_irregular}
             ? join(' / ' => $item->{word_orig}, $item->{word2}, $item->{word3})
             : $item->{word_orig};
-        $self->lb_words->SetItem($id, 0,         $item->{word_id});
-        $self->lb_words->SetItem($id, $COL_LANG1, $word);
-        $self->lb_words->SetItem($id, 2,         $item->{partofspeech} // '');
-        $self->lb_words->SetItem($id, $COL_LANG2, $item->{word_tr} // '');
-        $self->lb_words->SetItem($id, 4,         $item->{note});
-        $self->lb_words->SetItem($id, 5,         $item->{cdate});
+        $self->phrase_table->SetItem($id, 0,         $item->{word_id});
+        $self->phrase_table->SetItem($id, $COL_LANG1, $word);
+        $self->phrase_table->SetItem($id, 2,         $item->{partofspeech} // '');
+        $self->phrase_table->SetItem($id, $COL_LANG2, $item->{word_tr} // '');
+        $self->phrase_table->SetItem($id, 4,         $item->{note});
+        $self->phrase_table->SetItem($id, 5,         $item->{cdate});
     }
     $self->select_first_item;
 
@@ -386,8 +386,8 @@ TODO add description
 sub select_first_item {
     my $self = shift;
 
-    $self->lb_words->SetItemState(
-        $self->lb_words->GetNextItem(
+    $self->phrase_table->SetItemState(
+        $self->phrase_table->GetNextItem(
             -1, wxLIST_NEXT_ALL, wxLIST_STATE_DONTCARE
         ),
         wxLIST_STATE_SELECTED,
@@ -496,8 +496,8 @@ sub BUILD {
             my @li = (Wx::ListItem->new, Wx::ListItem->new);
             $li[0]->SetText($dict->curr->{language_orig_id}{language_name});
             $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
-            $self->lb_words->SetColumn($COL_LANG1, $li[0]);
-            $self->lb_words->SetColumn($COL_LANG2, $li[1]);
+            $self->phrase_table->SetColumn($COL_LANG1, $li[0]);
+            $self->phrase_table->SetColumn($COL_LANG2, $li[1]);
         },
         # Load Search History into a lookup combobox
         sub {
