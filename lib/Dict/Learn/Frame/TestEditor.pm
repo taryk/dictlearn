@@ -478,6 +478,26 @@ sub load_words {
     }
 }
 
+=head2 get_selected_category
+
+Returns id and category name of a selected item
+
+=cut
+
+sub get_selected_category {
+    my ($self) = @_;
+
+    # selected row id
+    my $test_groups_row_id = $self->test_groups->GetNextItem(
+        -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
+    # 0 - ID, 1 - Category Name
+    return
+        map {
+            $self->test_groups->GetItem($test_groups_row_id, $_)->GetText
+        } 0 .. 1;
+}
+
 =head2 move_left
 
 TODO add description
@@ -487,15 +507,7 @@ TODO add description
 sub move_left {
     my ($self) = @_;
 
-    # selected row id
-    my $test_groups_row_id = $self->test_groups->GetNextItem(
-        -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-
-    my $category_id
-        = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
-
-    my $category_name
-        = $self->test_groups->GetItem($test_groups_row_id, 1)->GetText;
+    my ($category_id, $category_name) = $self->get_selected_category();
 
     my ($phrase_id, $phrase, $part_of_speech)
         = $self->lookup_phrases->get_selected_phrase();
@@ -537,12 +549,7 @@ sub move_right {
         = $self->test_words->GetNextItem(
             -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
-    my $test_groups_row_id
-        = $self->test_groups->GetNextItem(
-            -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-
-    my $category_id
-        = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
+    my ($category_id) = $self->get_selected_category();
 
     Database->schema->resultset('TestCategoryWords')->search(
         {
@@ -598,30 +605,6 @@ sub get_partofspeech_id {
     return $self->partofspeech->{$part_of_speech};
 }
 
-=head2 get_test_group_id
-
-TODO add description
-
-=cut
-
-sub get_test_group_id {
-    my ($self, $rowid) = @_;
-
-    return $self->test_groups->GetItem($rowid, 0)->GetText;
-}
-
-=head2 get_test_group_name
-
-TODO add description
-
-=cut
-
-sub get_test_group_name {
-    my ($self, $rowid) = @_;
-
-    return $self->test_groups->GetItem($rowid, 1)->GetText;
-}
-
 =head2 add_group
 
 TODO add description
@@ -660,15 +643,13 @@ TODO add description
 sub del_group {
     my ($self) = @_;
 
-    my $selected_rowid = $self->test_groups->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-    my $selected_test_group_id = $self->get_test_group_id($selected_rowid);
+    my ($category_id) = $self->get_selected_category();
 
     # `delete_all` method deletes all records from `TestCategoryWords` table
     # related to this category as well
     Database->schema->resultset('TestCategory')->search(
         {
-            test_category_id => $selected_test_group_id,
+            test_category_id => $category_id,
             test_id          => $TEST_ID,
             dictionary_id    => Dict::Learn::Dictionary->curr_id,
         }
@@ -686,29 +667,25 @@ TODO add description
 sub update_group {
     my ($self) = @_;
 
-    my $selected_rowid = $self->test_groups->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-    my $selected_test_group_id = $self->get_test_group_id($selected_rowid);
-    my $selected_test_group_name
-        = $self->get_test_group_name($selected_rowid);
+    my ($category_id, $category_name) = $self->get_selected_category();
 
     my $dialog = Wx::TextEntryDialog->new(
         $self, 'Group name', 'Please enter group name',
-        $selected_test_group_name, wxOK | wxCANCEL | wxCENTRE,
+        $category_name, wxOK | wxCANCEL | wxCENTRE,
         wxDefaultPosition
     );
 
     return if $dialog->ShowModal != wxID_OK;
 
-    my $group_name = $dialog->GetValue;
+    my $new_category_name = $dialog->GetValue;
 
     Database->schema->resultset('TestCategory')->search(
         {
-            test_category_id => $selected_test_group_id,
+            test_category_id => $category_id,
             test_id          => $TEST_ID,
             dictionary_id    => Dict::Learn::Dictionary->curr_id,
         },
-    )->update({ name => $group_name });
+    )->update({ name => $new_category_name });
 
     $self->load_categories();
 }
