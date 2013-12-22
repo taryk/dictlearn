@@ -33,15 +33,14 @@ sub fields : Tests {
     my ($self) = @_;
 
     for (
-        [qw(parent)                           => 'Dict::Learn::Frame'],
-        [qw(cb_lookup)                        => 'Wx::ComboBox'],
-        [qw(partofspeech)                     => 'HashRef'],
-        [qw(test_groups test_words word_list) => 'Wx::ListCtrl'],
+        [qw(parent)                 => 'Dict::Learn::Frame'],
+        [qw(lookup_phrases)         => 'Dict::Learn::Widget::LookupPhrases'],
+        [qw(partofspeech)           => 'HashRef'],
+        [qw(test_groups test_words) => 'Wx::ListCtrl'],
         [
             qw(
                 hbox_test_groups vbox_test_groups
-                vbox_btn vbox_word_list
-                hbox
+                vbox_btn hbox
               ) => 'Wx::BoxSizer'
         ],
         [
@@ -55,7 +54,6 @@ sub fields : Tests {
         my $type = pop @$_;
         $self->test_field(name => $_, type => $type, is => 'ro') for @$_;
     }
-
 }
 
 1;
