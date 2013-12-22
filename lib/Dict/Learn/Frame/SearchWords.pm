@@ -18,9 +18,6 @@ use common::sense;
 
 use Data::Printer;
 
-const my $COL_E_LANG1 => 1;
-const my $COL_E_LANG2 => 2;
-
 =head1 NAME
 
 Dict::Learn::Frame::SearchWords
@@ -178,170 +175,6 @@ sub _build_hbox_words {
     return $hbox;
 }
 
-=head2 btn_add_example
-
-TODO add description
-
-=cut
-
-has btn_add_example => (
-    is         => 'ro',
-    isa        => 'Wx::Button',
-    lazy_build => 1,
-);
-
-sub _build_btn_add_example {
-    my $self = shift;
-
-    my $btn_add_example
-        = Wx::Button->new($self, wxID_ANY, 'Add', wxDefaultPosition,
-        wxDefaultSize);
-    EVT_BUTTON($self, $btn_add_example, \&add_example);
-
-    return $btn_add_example;
-}
-
-=head2 btn_edit_example
-
-TODO add description
-
-=cut
-
-has btn_edit_example => (
-    is         => 'ro',
-    isa        => 'Wx::Button',
-    lazy_build => 1,
-);
-
-sub _build_btn_edit_example {
-    my $self = shift;
-
-    my $btn_edit_example
-        = Wx::Button->new($self, wxID_ANY, 'Edit', wxDefaultPosition,
-        wxDefaultSize);
-    EVT_BUTTON($self, $btn_edit_example, \&edit_example);
-
-    return $btn_edit_example;
-}
-
-=head2 btn_unlink_example
-
-TODO add description
-
-=cut
-
-has btn_unlink_example => (
-    is         => 'ro',
-    isa        => 'Wx::Button',
-    lazy_build => 1,
-);
-
-sub _build_btn_unlink_example {
-    my $self = shift;
-
-    my $btn_unlink_example
-        = Wx::Button->new($self, wxID_ANY, 'Unlink', wxDefaultPosition,
-        wxDefaultSize);
-    EVT_BUTTON($self, $btn_unlink_example, \&unlink_example);
-
-    return $btn_unlink_example;
-}
-
-=head2 btn_delete_example
-
-TODO add description
-
-=cut
-
-has btn_delete_example => (
-    is         => 'ro',
-    isa        => 'Wx::Button',
-    lazy_build => 1,
-);
-
-sub _build_btn_delete_example {
-    my $self = shift;
-
-    my $btn_delete_example
-        = Wx::Button->new($self, wxID_ANY, 'Del', wxDefaultPosition,
-        wxDefaultSize);
-    EVT_BUTTON($self, $btn_delete_example, \&delete_example);
-
-    return $btn_delete_example;
-}
-
-=head2 vbox_btn_examples
-
-TODO add description
-
-=cut
-
-has vbox_btn_examples => (
-    is         => 'ro',
-    isa        => 'Wx::BoxSizer',
-    lazy_build => 1,
-);
-
-sub _build_vbox_btn_examples {
-    my $self = shift;
-
-    my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->btn_add_example);
-    $vbox->Add($self->btn_edit_example);
-    $vbox->Add($self->btn_unlink_example);
-    $vbox->Add($self->btn_delete_example);
-
-    return $vbox;
-}
-
-=head2 lb_examples
-
-TODO add description
-
-=cut
-
-has lb_examples => (
-    is         => 'ro',
-    isa        => 'Wx::ListCtrl',
-    lazy_build => 1,
-);
-
-sub _build_lb_examples {
-    my $self = shift;
-
-    my $lb_examples
-        = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-        wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
-    $lb_examples->InsertColumn(0,           'id',   wxLIST_FORMAT_LEFT, 50);
-    $lb_examples->InsertColumn($COL_E_LANG1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
-    $lb_examples->InsertColumn($COL_E_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
-    $lb_examples->InsertColumn(3,           'Note', wxLIST_FORMAT_LEFT, 150);
-
-    return $lb_examples;
-}
-
-=head2 hbox_examples
-
-TODO add description
-
-=cut
-
-has hbox_examples => (
-    is         => 'ro',
-    isa        => 'Wx::BoxSizer',
-    lazy_build => 1,
-);
-
-sub _build_hbox_examples {
-    my $self = shift;
-
-    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->vbox_btn_examples, 0, wxRIGHT, 5);
-    $hbox->Add($self->lb_examples, 2, wxALL | wxGROW | wxEXPAND, 0);
-
-    return $hbox;
-}
-
 =head2 st_add_to_test
 
 TODO add description
@@ -473,7 +306,6 @@ sub _build_vbox {
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
     $vbox->Add($self->hbox_words,       2, wxALL | wxGROW | wxEXPAND, 0);
     $vbox->Add($self->hbox_add_to_test, 0, wxALL | wxGROW | wxEXPAND, 0);
-    $vbox->Add($self->hbox_examples,    1, wxALL | wxGROW | wxEXPAND, 0);
 
     return $vbox;
 }
@@ -520,51 +352,6 @@ sub edit_word {
     $self->parent->new_page($add_word_page, "Edit Word #$word_id");
 }
 
-=head2 edit_example
-
-TODO add description
-
-=cut
-
-sub edit_example {
-    my $self    = shift;
-
-    my $curr_id = $self->lb_examples->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-
-    $self->parent->p_addexample->load_example(
-        example_id => $self->get_example_id($curr_id),);
-
-    $self->parent->notebook->ChangeSelection(2);
-}
-
-=head2 load_examples
-
-TODO add description
-
-=cut
-
-sub load_examples {
-    my ($self, $obj) = @_;
-
-    my $word_id = $obj->GetLabel();
-    $self->lb_examples->DeleteAllItems();
-    my @items
-        = Database->schema->resultset('Example')->select(
-            word_id       => $word_id,
-            dictionary_id => Dict::Learn::Dictionary->curr_id,
-        );
-    for my $item (@items) {
-        my $id = $self->lb_examples->InsertItem(Wx::ListItem->new);
-        $self->lb_examples->SetItem($id, 0,           $item->{example_id});
-        $self->lb_examples->SetItem($id, $COL_E_LANG1, $item->{example_orig});
-        $self->lb_examples->SetItem($id, $COL_E_LANG2, $item->{example_tr});
-        $self->lb_examples->SetItem($id, 3,           $item->{note});
-    }
-
-    $self->sidebar->load_word(word_id => $word_id);
-}
-
 =head2 load_phrase
 
 Load a selected phrase into sidebar
@@ -588,18 +375,6 @@ sub get_word_id {
     my ($self, $rowid) = @_;
 
     $self->lb_words->GetItem($rowid, 0)->GetText;
-}
-
-=head2 get_example_id
-
-TODO add description
-
-=cut
-
-sub get_example_id {
-    my ($self, $rowid) = @_;
-
-    $self->lb_examples->GetItem($rowid, 0)->GetText;
 }
 
 =head2 delete_word
@@ -631,38 +406,6 @@ sub unlink_word {
         wxLIST_STATE_SELECTED);
     Database->schema->resultset('Word')
         ->unlink_one($self->get_word_id($curr_id));
-    $self->lookup;
-}
-
-=head2 delete_example
-
-TODO add description
-
-=cut
-
-sub delete_example {
-    my $self    = shift;
-
-    my $curr_id = $self->lb_examples->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-    Database->schema->resultset('Example')
-        ->delete_one($self->get_example_id($curr_id));
-    $self->lookup;
-}
-
-=head2 unlink_example
-
-TODO add description
-
-=cut
-
-sub unlink_example {
-    my $self    = shift;
-
-    my $curr_id = $self->lb_examples->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-    Database->schema->resultset('Example')
-        ->unlink_one($self->get_example_id($curr_id));
     $self->lookup;
 }
 
@@ -718,20 +461,6 @@ sub BUILD {
     $self->SetSizer($self->hbox);
     $self->hbox->Fit($self);
     $self->Layout();
-
-    for (
-        sub {
-            my $dict = shift;
-            my @li = (Wx::ListItem->new, Wx::ListItem->new);
-            $li[0]->SetText($dict->curr->{language_orig_id}{language_name});
-            $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
-            $self->lb_examples->SetColumn($COL_E_LANG1, $li[0]);
-            $self->lb_examples->SetColumn($COL_E_LANG2, $li[1]);
-        },
-        )
-    {
-        Dict::Learn::Dictionary->cb($_);
-    }
 
     EVT_KEY_UP($self, \&keybind);
     EVT_LIST_ITEM_SELECTED($self, $self->lookup_phrases->lb_words,
