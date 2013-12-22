@@ -38,7 +38,7 @@ Link to the parent object
 
 has parent => (
     is  => 'ro',
-    isa => 'Dict::Learn::Frame::SearchWords',
+    isa => 'Wx::Panel',
 );
 
 =head2 lookup_field

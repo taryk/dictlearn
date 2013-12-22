@@ -273,73 +273,26 @@ sub _build_vbox_btn {
     return $vbox_btn;
 }
 
-=head2 word_list
+=head2 lookup_phrases
 
-TODO add description
+A form for looking up the phrases
 
 =cut
 
-has word_list => (
+has lookup_phrases => (
     is         => 'ro',
-    isa        => 'Wx::ListCtrl',
+    isa        => 'Dict::Learn::Widget::LookupPhrases',
     lazy_build => 1,
 );
 
-sub _build_word_list {
+sub _build_lookup_phrases {
     my $self = shift;
 
-    my $word_list = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition,
-        wxDefaultSize, wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
-    $word_list->InsertColumn(0, '#',    wxLIST_FORMAT_LEFT, 50  );
-    $word_list->InsertColumn(1, 'word', wxLIST_FORMAT_LEFT, 200 );
-    $word_list->InsertColumn(2, 'pos',  wxLIST_FORMAT_LEFT, 30  );
-    $word_list->InsertColumn(3, 'tr',   wxLIST_FORMAT_LEFT, 200 );
+    my $lookup_phrases
+        = Dict::Learn::Widget::LookupPhrases->new($self, wxID_ANY,
+        wxDefaultPosition, wxDefaultSize);
 
-    return $word_list;
-}
-
-=head2 btn_move_right
-
-TODO add description
-
-=cut
-
-has cb_lookup => (
-    is         => 'ro',
-    isa        => 'Wx::ComboBox',
-    lazy_build => 1,
-);
-
-sub _build_cb_lookup {
-    my ($self) = @_;
-
-    my $cb_lookup = Wx::ComboBox->new($self, wxID_ANY, '', wxDefaultPosition,
-        wxDefaultSize, [], 0, wxDefaultValidator);
-    EVT_TEXT_ENTER($self, $cb_lookup, \&lookup);
-
-    return $cb_lookup;
-}
-
-=head2 vbox_word_list
-
-TODO add description
-
-=cut
-
-has vbox_word_list => (
-    is         => 'ro',
-    isa        => 'Wx::BoxSizer',
-    lazy_build => 1,
-);
-
-sub _build_vbox_word_list {
-    my $self = shift;
-
-    my $vbox_word_list = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox_word_list->Add($self->cb_lookup, 0, wxEXPAND, 0 );
-    $vbox_word_list->Add($self->word_list, 1, wxEXPAND, 0 );
-
-    return $vbox_word_list;
+    return $lookup_phrases;
 }
 
 =head2 hbox
@@ -361,7 +314,7 @@ sub _build_hbox {
     $hbox->Add($self->vbox_test_groups, 1,          wxEXPAND, 0  );
     $hbox->Add($self->test_words,       1, wxLEFT | wxEXPAND, 5  );
     $hbox->Add($self->vbox_btn,         0, wxTOP,             25 );
-    $hbox->Add($self->vbox_word_list,   1, wxLEFT | wxEXPAND, 5  );
+    $hbox->Add($self->lookup_phrases,   1, wxLEFT | wxEXPAND, 5  );
 
     return $hbox;
 }
@@ -439,7 +392,7 @@ sub init {
     my ($self) = @_;
 
     $self->load_categories();
-    $self->lookup();
+    $self->lookup_phrases->lookup();
 }
 
 =head2 set_status_text
@@ -482,100 +435,6 @@ sub load_categories {
         # $self->test_groups->SetItem($id, 2, $category->name);           # number of words
         # $self->test_groups->SetItem($id, 3, $category->name);           # scrore
     }
-}
-
-=head2 lookup
-
-TODO add description
-
-=cut
-
-sub lookup {
-    my ($self, $event) = @_;
-
-    my %options;
-
-    if (my $value = $self->cb_lookup->GetValue) {
-        my $word_pattern = "%$value%";
-
-        # TODO Basically, lookup tables in Dict::Learn::Frame::SearchWords and
-        # Dict::Learn::Frame::TestEditor are almost the same (except that the
-        # later don't have translated words column).
-        # Thus, in order to not duplicate code, they can be easily merged into
-        # one class.
-        if ($value =~ m{^ / (?<filter> \!? [\w=]+ ) $}x) {
-            given ($+{filter}) {
-                when('irregular') {
-                    %options = ( 'word1_id.irregular' => 1 );
-                }
-                when([qw(words phrases phrasal_verbs idioms)]) {
-                    # TODO return only words
-                    # it requires to have some kind of tags, which can be
-                    # filtered by
-                    $self->set_status_text(
-                        sprintf
-                            'Filter "/%s" is not implemented at the moment ',
-                        $+{filter}
-                    );
-                    return;
-                }
-                when(m{^ partofspeech = (?<partofspeech> \w+ ) $}x) {
-                    $options{'-or'} = {
-                        'partofspeech.abbr'      => $+{partofspeech},
-                        'partofspeech.name_orig' => ucfirst($+{partofspeech}),
-                    };
-                }
-                default {
-                    $self->set_status_text(
-                        sprintf 'Unknown filter: "/%s"', $+{filter});
-                    return;
-                }
-            }
-        } else {
-            for my $column (
-                'word1_id.word',  'word1_id.word2',
-                'word1_id.word3', 'word2_id.word'
-                )
-            {
-                push @{ $options{-or} },
-                    ($column => { like => $word_pattern });
-            }
-        }
-    }
-
-    my $all_words
-        = Database->schema->resultset('Words')->search(
-        {
-            'me.dictionary_id' => Dict::Learn::Dictionary->curr_id,
-            %options
-        },
-        {
-            select => [
-                'word1_id.word_id', 'word1_id.word', 'partofspeech.abbr',
-                { group_concat => 'word2_id.word' },
-            ],
-            as       => [qw(word_id word partofspeech translations)],
-            join     => [qw(word1_id word2_id partofspeech)],
-            group_by => [qw(me.word1_id me.partofspeech_id)],
-            order_by => { -asc => 'me.word1_id' }
-        }
-        );
-
-    $self->word_list->DeleteAllItems();
-    my $records_count = 0;
-    while (my $word = $all_words->next) {
-        my $id = $self->word_list->InsertItem(Wx::ListItem->new);
-        $self->word_list->SetItem($id, 0, $word->get_column('word_id'));      # id
-        $self->word_list->SetItem($id, 1, $word->get_column('word'));         # word original
-        $self->word_list->SetItem($id, 2, $word->get_column('partofspeech')); # word original
-        $self->word_list->SetItem($id, 3, $word->get_column('translations')); # word tr
-        $records_count++;
-    }
-
-    # Show how many records have been selected
-    $self->set_status_text($records_count > 0
-        ? "$records_count records selected"
-        : 'No records selected');
 }
 
 =head2 on_category_select
@@ -629,7 +488,7 @@ sub move_left {
     my ($self) = @_;
 
     # selected row id
-    my $word_list_row_id = $self->word_list->GetNextItem(
+    my $word_list_row_id = $self->lookup_phrases->phrase_table->GetNextItem(
         -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
     my $test_groups_row_id = $self->test_groups->GetNextItem(
@@ -638,7 +497,7 @@ sub move_left {
     my $category_id
         = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
 
-    my $word = $self->word_list->GetItem($word_list_row_id, 1)->GetText;
+    my $word = $self->lookup_phrases->phrase_table->GetItem($word_list_row_id, 1)->GetText;
 
     my $category_name
         = $self->test_groups->GetItem($test_groups_row_id, 1)->GetText;
@@ -738,7 +597,7 @@ TODO add description
 sub get_word_id {
     my ($self, $rowid) = @_;
 
-    return $self->word_list->GetItem($rowid, 0)->GetText;
+    return $self->lookup_phrases->phrase_table->GetItem($rowid, 0)->GetText;
 }
 
 =head2 get_partofspeech_id
@@ -751,7 +610,7 @@ sub get_partofspeech_id {
     my ($self, $rowid) = @_;
 
     return
-        $self->partofspeech->{$self->word_list->GetItem($rowid, 2)->GetText};
+        $self->partofspeech->{$self->lookup_phrases->phrase_table->GetItem($rowid, 2)->GetText};
 }
 
 =head2 get_test_group_id
