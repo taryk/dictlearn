@@ -36,6 +36,19 @@ has parent => (
     isa => 'Dict::Learn::Frame::SearchWords',
 );
 
+=head2 word_id
+
+ID of a word loaded here
+
+=cut
+
+has word_id => (
+    is        => 'rw',
+    isa       => 'Int',
+    clearer   => 'clear_word_id',
+    predicate => 'has_word_id',
+);
+
 =head2 html
 
 TODO add description
@@ -197,8 +210,10 @@ TODO add description
 sub load_word {
     my ($self, %params) = @_;
 
+    $self->word_id($params{word_id});
+    
     my $word = Database->schema->resultset('Word')->search(
-        {'me.word_id' => $params{word_id}},
+        {'me.word_id' => $self->word_id},
         {prefetch     => {rel_words => ['word2_id']}}
     )->first;
     my $translate;
@@ -232,15 +247,12 @@ TODO add description
 =cut
 
 sub edit_word {
-    my $self    = shift;
+    my ($self) = @_;
 
-    my $curr_id = $self->parent->lookup_phrases->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-   
     my $add_word_page = $self->parent->parent->p_addword;
-    my $word_id = $self->parent->get_word_id($curr_id);
-    $add_word_page->load_word(word_id => $word_id);
-    $self->parent->parent->new_page($add_word_page, "Edit Word #$word_id");
+    $add_word_page->load_word(word_id => $self->word_id);
+    $self->parent->parent->new_page($add_word_page,
+        'Edit Word #' . $self->word_id);
 }
 
 =head2 delete_word
@@ -250,12 +262,9 @@ TODO add description
 =cut
 
 sub delete_word {
-    my $self    = shift;
+    my ($self) = @_;
 
-    my $curr_id = $self->parent->lookup_phrases->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-    Database->schema->resultset('Word')
-        ->delete_one($self->parent->get_word_id($curr_id));
+    Database->schema->resultset('Word')->delete_one($self->word_id);
     $self->parent->lookup;
 }
 
@@ -266,12 +275,9 @@ TODO add description
 =cut
 
 sub unlink_word {
-    my $self    = shift;
+    my ($self) = @_;
 
-    my $curr_id = $self->parent->lookup_phrases->lb_words->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
-    Database->schema->resultset('Word')
-        ->unlink_one($self->parent->get_word_id($curr_id));
+    Database->schema->resultset('Word')->unlink_one($self->word_id);
     $self->parent->lookup;
 }
 
