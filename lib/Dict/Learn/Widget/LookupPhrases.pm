@@ -446,6 +446,26 @@ sub load_search_history {
     }
 }
 
+=head2 get_selected_phrase
+
+Returns id, phrase and part-of-speech of a selected item
+
+=cut
+
+sub get_selected_phrase {
+    my ($self) = @_;
+
+    my $phrase_table_row_id
+        = $self->phrase_table->GetNextItem(-1,
+        wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
+    # 0 - ID, 1 - Phrase, 2 - part-of-speech
+    return
+        map {
+            $self->phrase_table->GetItem($phrase_table_row_id, $_)->GetText
+        } 0 .. 2;
+}
+
 =head2 keybind
 
 TODO add description

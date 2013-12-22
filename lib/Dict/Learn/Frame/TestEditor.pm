@@ -488,32 +488,30 @@ sub move_left {
     my ($self) = @_;
 
     # selected row id
-    my $word_list_row_id = $self->lookup_phrases->phrase_table->GetNextItem(
-        -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-
     my $test_groups_row_id = $self->test_groups->GetNextItem(
         -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
     my $category_id
         = $self->test_groups->GetItem($test_groups_row_id, 0)->GetText;
 
-    my $word = $self->lookup_phrases->phrase_table->GetItem($word_list_row_id, 1)->GetText;
-
     my $category_name
         = $self->test_groups->GetItem($test_groups_row_id, 1)->GetText;
+
+    my ($phrase_id, $phrase, $part_of_speech)
+        = $self->lookup_phrases->get_selected_phrase();
 
     my $record_dbix
         = Database->schema->resultset('TestCategoryWords')->find_or_new(
         {
             test_category_id => $category_id,
-            word_id          => $self->get_word_id($word_list_row_id),
-            partofspeech_id  => $self->get_partofspeech_id($word_list_row_id),
+            word_id          => $phrase_id,
+            partofspeech_id  => $self->get_partofspeech_id($part_of_speech),
         },
         );
 
     if ($record_dbix->in_storage) {
         Wx::MessageBox(
-            qq{The word "$word" is already in the test "$category_name"},
+            qq{The word "$phrase" is already in the test "$category_name"},
             q{Can't add},
             wxICON_EXCLAMATION | wxOK | wxCENTRE, $self,
         );
@@ -588,18 +586,6 @@ sub select_first_item {
     );
 }
 
-=head2 get_word_id
-
-TODO add description
-
-=cut
-
-sub get_word_id {
-    my ($self, $rowid) = @_;
-
-    return $self->lookup_phrases->phrase_table->GetItem($rowid, 0)->GetText;
-}
-
 =head2 get_partofspeech_id
 
 TODO add description
@@ -607,10 +593,9 @@ TODO add description
 =cut
 
 sub get_partofspeech_id {
-    my ($self, $rowid) = @_;
+    my ($self, $part_of_speech) = @_;
 
-    return
-        $self->partofspeech->{$self->lookup_phrases->phrase_table->GetItem($rowid, 2)->GetText};
+    return $self->partofspeech->{$part_of_speech};
 }
 
 =head2 get_test_group_id
