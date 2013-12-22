@@ -61,7 +61,7 @@ sub fields : Tests {
 sub get_word_forms : Tests {
     my ($self) = @_;
 
-    is_deeply($self->{frame}->_get_word_forms() => [],
+    is_deeply($self->{frame}->lookup_phrases->_get_word_forms() => [],
         qq{_get_word_forms returns empty arrayref if no parameters passed});
 
     # TODO test `be` substitutions
@@ -77,13 +77,14 @@ sub lookup : Tests {
     for (1 .. $inserted_records) {
         $self->_new_word_in_db({ word => "test-$_" });
     }
-    $self->{frame}->combobox->SetValue('');
-    $self->{frame}->lookup();
-    is($self->{frame}->lb_words->GetItemCount() => $default_limit,
+    my $lookup_phrases = $self->{frame}->lookup_phrases;
+    $lookup_phrases->lookup_field->SetValue('');
+    $lookup_phrases->lookup();
+    is($lookup_phrases->phrase_table->GetItemCount() => $default_limit,
        qq{Empty lookup returns $default_limit records});
-    $self->{frame}->combobox->SetValue('/all');
-    $self->{frame}->lookup();
-    is($self->{frame}->lb_words->GetItemCount() => $inserted_records,
+    $lookup_phrases->lookup_field->SetValue('/all');
+    $lookup_phrases->lookup();
+    is($lookup_phrases->phrase_table->GetItemCount() => $inserted_records,
        qq{'/all' command returns all $inserted_records records for given language});
 
     # TODO test other filters/commands
