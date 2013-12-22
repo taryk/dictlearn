@@ -44,33 +44,18 @@ sub fields : Tests {
     my ($self) = @_;
 
     for (
-        [qw(parent)                  => 'Dict::Learn::Frame'],
-        [qw(combobox cb_add_to_test) => 'Wx::ComboBox'],
-        [qw(sidebar)                 => 'Dict::Learn::Frame::Sidebar'],
-        [qw(st_add_to_test)          => 'Wx::StaticText'],
-        [qw(lb_words lb_examples)    => 'Wx::ListCtrl'],
-        [
-            qw(
-                  lookup_hbox vbox_btn_words hbox_words
-                  vbox_btn_examples hbox_examples
-                  hbox_add_to_test
-                  vbox hbox
-             ) => 'Wx::BoxSizer'
-        ],
-        [
-            qw(
-                  btn_lookup btn_reset btn_addword
-                  btn_edit_word btn_unlink_word btn_delete_word
-                  btn_add_example btn_edit_example btn_unlink_example
-                  btn_delete_example btn_add_to_test
-             ) => 'Wx::Button'
-        ],
+        [qw(parent)               => 'Dict::Learn::Frame'],
+        [qw(lookup_phrases)       => 'Dict::Learn::Widget::LookupPhrases'],
+        [qw(sidebar)              => 'Dict::Learn::Widget::Sidebar'],
+        [qw(cb_add_to_test)       => 'Wx::ComboBox'],
+        [qw(st_add_to_test)       => 'Wx::StaticText'],
+        [qw(btn_add_to_test)      => 'Wx::Button'],
+        [qw(hbox_add_to_test vbox hbox) => 'Wx::BoxSizer'],
         )
     {
         my $type = pop @$_;
         $self->test_field(name => $_, type => $type, is => 'ro') for @$_;
     }
-
 }
 
 sub get_word_forms : Tests {
