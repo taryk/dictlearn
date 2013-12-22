@@ -23,6 +23,7 @@ sub startup : Test(startup => no_plan) {
         wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
     *Dict::Learn::Frame::TestEditor::set_status_text = sub { };
+    *Dict::Learn::Widget::LookupPhrases::set_status_text = sub { };
 
     $self->SUPER::startup();
 
