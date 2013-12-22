@@ -498,6 +498,27 @@ sub get_selected_category {
         } 0 .. 1;
 }
 
+=head2 get_selected_test_phrase
+
+Returns id and phrase of a selected item in a test phrases table
+
+=cut
+
+sub get_selected_test_phrase {
+    my ($self) = @_;
+
+    # selected row id
+    my $test_words_row_id
+        = $self->test_words->GetNextItem(-1, wxLIST_NEXT_ALL,
+        wxLIST_STATE_SELECTED);
+
+    # 0 - ID, 1 - Phrase
+    return
+        map {
+            $self->test_words->GetItem($test_words_row_id, $_)->GetText
+        } 0 .. 1;
+}
+
 =head2 move_left
 
 TODO add description
@@ -544,18 +565,14 @@ TODO add description
 sub move_right {
     my ($self) = @_;
 
-    # selected row id
-    my $test_words_row_id
-        = $self->test_words->GetNextItem(
-            -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+    my ($test_phrase_id) = $self->get_selected_test_phrase();
 
     my ($category_id) = $self->get_selected_category();
 
     Database->schema->resultset('TestCategoryWords')->search(
         {
             test_category_id => $category_id,
-            word_id =>
-                $self->test_words->GetItem($test_words_row_id, 0)->GetText,
+            word_id          => $test_phrase_id,
         },
     )->delete;
 
