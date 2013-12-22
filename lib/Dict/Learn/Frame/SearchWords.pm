@@ -11,7 +11,7 @@ use Const::Fast;
 
 use Database;
 use Dict::Learn::Dictionary;
-use Dict::Learn::Frame::Sidebar;
+use Dict::Learn::Widget::Sidebar;
 use Dict::Learn::Widget::LookupPhrases;
 
 use common::sense;
@@ -280,10 +280,10 @@ TODO add description
 
 has sidebar => (
     is      => 'ro',
-    isa     => 'Dict::Learn::Frame::Sidebar',
+    isa     => 'Dict::Learn::Widget::Sidebar',
     lazy    => 1,
     default => sub {
-        Dict::Learn::Frame::Sidebar->new($_[0], wxID_ANY, wxDefaultPosition,
+        Dict::Learn::Widget::Sidebar->new($_[0], wxID_ANY, wxDefaultPosition,
             wxDefaultSize);
     },
 );
