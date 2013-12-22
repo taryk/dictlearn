@@ -584,7 +584,7 @@ sub add {
 
             return unless ref $page eq 'Dict::Learn::Frame::SearchWords';
 
-            $page->lookup();
+            $page->lookup_phrases->lookup();
         }
     );
 
