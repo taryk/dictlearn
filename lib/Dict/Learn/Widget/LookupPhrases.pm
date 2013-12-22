@@ -41,26 +41,26 @@ has parent => (
     isa => 'Dict::Learn::Frame::SearchWords',
 );
 
-=head2 combobox
+=head2 lookup_field
 
 TODO add description
 
 =cut
 
-has combobox => (
+has lookup_field => (
     is         => 'ro',
     isa        => 'Wx::ComboBox',
     lazy_build => 1,
 );
 
-sub _build_combobox {
+sub _build_lookup_field {
     my $self     = shift;
 
-    my $combobox = Wx::ComboBox->new($self, wxID_ANY, '', wxDefaultPosition,
+    my $lookup_field = Wx::ComboBox->new($self, wxID_ANY, '', wxDefaultPosition,
         wxDefaultSize, [], 0, wxDefaultValidator);
-    EVT_TEXT_ENTER($self, $combobox, \&lookup);
+    EVT_TEXT_ENTER($self, $lookup_field, \&lookup);
 
-    return $combobox;
+    return $lookup_field;
 }
 
 =head2 btn_lookup
@@ -142,7 +142,7 @@ sub _build_lookup_hbox {
     my $self = shift;
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->combobox,    1, wxEXPAND);
+    $hbox->Add($self->lookup_field,    1, wxEXPAND);
     $hbox->Add($self->btn_lookup,  0, wxALIGN_RIGHT);
     $hbox->Add($self->btn_reset,   0, wxALIGN_RIGHT);
     $hbox->Add($self->btn_addword, 0, wxALIGN_RIGHT);
@@ -281,7 +281,7 @@ sub lookup {
 
     state $previous_value;
 
-    my $value = $self->combobox->GetValue;
+    my $value = $self->lookup_field->GetValue;
     my $lang_id
         = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
 
@@ -404,7 +404,7 @@ TODO add description
 sub reset {
     my ($self) = @_;
 
-    $self->combobox->SetValue('');
+    $self->lookup_field->SetValue('');
     $self->lookup();
 }
 
@@ -418,7 +418,7 @@ sub add_word {
     my ($self) = @_;
 
     my $add_word_page = $self->parent->p_addword;
-    $add_word_page->set_word($self->combobox->GetValue);
+    $add_word_page->set_word($self->lookup_field->GetValue);
     $self->parent->new_page($add_word_page, 'Add');
 }
 
@@ -432,7 +432,7 @@ into the lookup combobox
 sub load_search_history {
     my ($self, $dictionary_id) = @_;
 
-    $self->combobox->Clear;
+    $self->lookup_field->Clear;
     my $rs = Database->schema->resultset('SearchHistory')->search(
         { 'dictionary_id' => $dictionary_id },
         {
@@ -442,7 +442,7 @@ sub load_search_history {
         }
     );
     while (my $search_history_record = $rs->next) {
-        $self->combobox->Append($search_history_record->text);
+        $self->lookup_field->Append($search_history_record->text);
     }
 }
 
@@ -488,7 +488,7 @@ sub BUILD {
     $self->Layout();
 
     # Set focus on search field
-    $self->combobox->SetFocus();
+    $self->lookup_field->SetFocus();
 
     for (
         sub {
