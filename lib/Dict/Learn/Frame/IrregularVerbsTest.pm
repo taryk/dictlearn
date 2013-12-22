@@ -359,9 +359,9 @@ sub _build_hbox_buttons {
     my $self = shift;
 
     my $hbox_buttons = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox_buttons->Add($self->btn_prev,  0, wxALL | wxGROW,  0);
-    $hbox_buttons->Add($self->btn_next,  0, wxALL | wxGROW,  0);
-    $hbox_buttons->Add($self->btn_reset, 0, wxLEFT | wxGROW, 40);
+    $hbox_buttons->Add($self->btn_prev,  0, wxALL  | wxEXPAND,  0);
+    $hbox_buttons->Add($self->btn_next,  0, wxALL  | wxEXPAND,  0);
+    $hbox_buttons->Add($self->btn_reset, 0, wxLEFT | wxEXPAND, 40);
 
     return $hbox_buttons;
 }
@@ -382,10 +382,10 @@ sub _build_vbox {
     my $self = shift;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->l_position,   0, wxTOP | wxGROW, 5);
-    $vbox->Add($self->hbox_words,   0, wxTOP | wxGROW, 20);
-    $vbox->Add($self->hbox_res,     0, wxTOP | wxGROW, 5);
-    $vbox->Add($self->hbox_buttons, 0, wxTOP | wxGROW, 20);
+    $vbox->Add($self->l_position,   0, wxTOP | wxEXPAND, 5);
+    $vbox->Add($self->hbox_words,   0, wxTOP | wxEXPAND, 20);
+    $vbox->Add($self->hbox_res,     0, wxTOP | wxEXPAND, 5);
+    $vbox->Add($self->hbox_buttons, 0, wxTOP | wxEXPAND, 20);
 
     return $vbox;
 }

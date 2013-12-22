@@ -148,9 +148,9 @@ sub _build_hbox_test_groups {
     my $self = shift;
 
     my $hbox_test_groups = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox_test_groups->Add($self->btn_add_group,    0, wxRIGHT | wxGROW, 5);
-    $hbox_test_groups->Add($self->btn_del_group,    0, wxRIGHT | wxGROW, 5);
-    $hbox_test_groups->Add($self->btn_update_group, 0, wxRIGHT | wxGROW, 5);
+    $hbox_test_groups->Add($self->btn_add_group,    0, wxRIGHT | wxEXPAND, 5);
+    $hbox_test_groups->Add($self->btn_del_group,    0, wxRIGHT | wxEXPAND, 5);
+    $hbox_test_groups->Add($self->btn_update_group, 0, wxRIGHT | wxEXPAND, 5);
 
     return $hbox_test_groups;
 }

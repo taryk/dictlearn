@@ -60,8 +60,8 @@ sub _build_vbox {
     my $self = shift;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->grid,            1, wxALL | wxGROW,            5);
-    $vbox->Add($self->panel2_hbox_btn, 0, wxALL | wxGROW | wxEXPAND, 5);
+    $vbox->Add($self->grid,            1, wxALL | wxEXPAND, 5);
+    $vbox->Add($self->panel2_hbox_btn, 0, wxALL | wxEXPAND, 5);
 
     return $vbox;
 }

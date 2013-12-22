@@ -185,10 +185,10 @@ sub _build_vbox_src {
     my $self = shift;
 
     my $vbox_src = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox_src->Add($self->word_src,     2, wxGROW | wxEXPAND | wxBOTTOM, 5);
+    $vbox_src->Add($self->word_src,     2, wxEXPAND | wxBOTTOM, 5);
     $vbox_src->Add($self->cb_irregular, 1, wxALIGN_LEFT | wxBOTTOM,      5);
-    $vbox_src->Add($self->word2_src,    1, wxGROW | wxBOTTOM,            5);
-    $vbox_src->Add($self->word3_src,    1, wxGROW | wxBOTTOM,            5);
+    $vbox_src->Add($self->word2_src,    1, wxEXPAND | wxBOTTOM,            5);
+    $vbox_src->Add($self->word3_src,    1, wxEXPAND | wxBOTTOM,            5);
 
     return $vbox_src;
 }
@@ -344,9 +344,9 @@ sub _build_vbox {
     my $self = shift;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->hbox_words, 3, wxALL | wxEXPAND | wxGROW, 0);
-    $vbox->Add($self->word_note,  1, wxALL | wxEXPAND | wxGROW, 5);
-    $vbox->Add($self->hbox_btn,   0, wxALL | wxGROW,            5);
+    $vbox->Add($self->hbox_words, 3, wxALL | wxEXPAND, 0);
+    $vbox->Add($self->word_note,  1, wxALL | wxEXPAND, 5);
+    $vbox->Add($self->hbox_btn,   0, wxALL | wxEXPAND, 5);
 
     return $vbox;
 }

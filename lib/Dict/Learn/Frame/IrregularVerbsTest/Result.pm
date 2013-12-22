@@ -253,7 +253,7 @@ sub _build_vbox {
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
     $vbox->Add($self->l_top,       0, wxALL | wxEXPAND, 5);
-    $vbox->Add($self->lb_result,   1, wxALL | wxGROW,   5);
+    $vbox->Add($self->lb_result,   1, wxALL | wxEXPAND, 5);
     $vbox->Add($self->vbox_result, 0, wxALL | wxEXPAND, 5);
     $vbox->Add($self->l_question,  0, wxALL | wxEXPAND, 5);
     $vbox->Add($self->hbox_btn,    0, wxALL | wxEXPAND, 5);

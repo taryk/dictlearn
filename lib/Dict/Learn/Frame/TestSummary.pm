@@ -125,7 +125,7 @@ sub _build_vbox {
     my $self = shift;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->hbox, 1, wxALL | wxGROW, 0);
+    $vbox->Add($self->hbox, 1, wxALL | wxEXPAND, 0);
 
     return $vbox;
 }
@@ -147,7 +147,7 @@ sub _build_hbox {
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
     $hbox->Add($self->grid,          3, wxRIGHT | wxEXPAND, 5);
-    $hbox->Add($self->lb_word_score, 1, wxALL | wxGROW,     0);
+    $hbox->Add($self->lb_word_score, 1, wxALL | wxEXPAND,   0);
 
     return $hbox;
 }

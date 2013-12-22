@@ -392,23 +392,23 @@ sub BUILDARGS {
 sub BUILD {
     my ($self, @args) = @_;
 
-    $self->hbox->Add($self->btn_prev,               0, wxALL | wxGROW,  0);
-    $self->hbox->Add($self->btn_next,               0, wxALL | wxGROW,  0);
-    $self->hbox->Add($self->btn_reset,              0, wxLEFT | wxGROW, 40);
-    $self->hbox->Add($self->btn_toggle_translation, 0, wxLEFT | wxGROW, 40);
+    $self->hbox->Add($self->btn_prev,               0, wxALL | wxEXPAND,  0);
+    $self->hbox->Add($self->btn_next,               0, wxALL | wxEXPAND,  0);
+    $self->hbox->Add($self->btn_reset,              0, wxLEFT | wxEXPAND, 40);
+    $self->hbox->Add($self->btn_toggle_translation, 0, wxLEFT | wxEXPAND, 40);
 
-    $self->hbox_position->Add($self->position, 0, wxGROW, 0);
-    $self->hbox_position->Add($self->spin,     0, wxGROW, 0);
-    $self->hbox_position->Add($self->test_category, 0, wxGROW, 0);
+    $self->hbox_position->Add($self->position, 0, wxEXPAND, 0);
+    $self->hbox_position->Add($self->spin,     0, wxEXPAND, 0);
+    $self->hbox_position->Add($self->test_category, 0, wxEXPAND, 0);
 
     $self->spin->SetRange($self->min, 100);
     $self->spin->SetValue(3);
 
-    $self->vbox->Add($self->hbox_position, 0, wxTOP | wxGROW,          5);
-    $self->vbox->Add($self->text,          0, wxTOP | wxGROW,          20);
-    $self->vbox->Add($self->input,         0, wxTOP | wxGROW,          5);
-    $self->vbox->Add($self->hbox,          0, wxTOP | wxGROW,          20);
-    $self->vbox->Add($self->translation,   0, wxTOP | wxLEFT | wxGROW, 20);
+    $self->vbox->Add($self->hbox_position, 0, wxTOP | wxEXPAND,          5);
+    $self->vbox->Add($self->text,          0, wxTOP | wxEXPAND,          20);
+    $self->vbox->Add($self->input,         0, wxTOP | wxEXPAND,          5);
+    $self->vbox->Add($self->hbox,          0, wxTOP | wxEXPAND,          20);
+    $self->vbox->Add($self->translation,   0, wxTOP | wxLEFT | wxEXPAND, 20);
 
     $self->SetSizer($self->vbox);
     $self->Layout();

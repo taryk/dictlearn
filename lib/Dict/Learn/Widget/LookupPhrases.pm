@@ -142,7 +142,7 @@ sub _build_lookup_hbox {
     my $self = shift;
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->combobox,    1, wxGROW);
+    $hbox->Add($self->combobox,    1, wxEXPAND);
     $hbox->Add($self->btn_lookup,  0, wxALIGN_RIGHT);
     $hbox->Add($self->btn_reset,   0, wxALIGN_RIGHT);
     $hbox->Add($self->btn_addword, 0, wxALIGN_RIGHT);

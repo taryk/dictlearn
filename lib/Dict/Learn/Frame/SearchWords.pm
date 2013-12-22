@@ -190,8 +190,8 @@ sub _build_vbox {
     my $self = shift;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->lookup_phrases,   2, wxALL | wxGROW | wxEXPAND, 0);
-    $vbox->Add($self->hbox_add_to_test, 0, wxALL | wxGROW | wxEXPAND, 0);
+    $vbox->Add($self->lookup_phrases,   2, wxALL | wxEXPAND, 0);
+    $vbox->Add($self->hbox_add_to_test, 0, wxALL | wxEXPAND, 0);
 
     return $vbox;
 }
@@ -212,8 +212,8 @@ sub _build_hbox {
     my $self = shift;
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->vbox,    3, wxALL | wxGROW | wxEXPAND, 0);
-    $hbox->Add($self->sidebar, 1, wxGROW | wxEXPAND | wxALL, 0);
+    $hbox->Add($self->vbox,    3, wxALL | wxEXPAND, 0);
+    $hbox->Add($self->sidebar, 1, wxALL | wxEXPAND, 0);
 
     return $hbox;
 }
