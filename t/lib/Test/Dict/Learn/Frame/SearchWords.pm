@@ -30,17 +30,6 @@ sub startup : Test(startup => no_plan) {
     ok($self->{frame}, qw{SearchWords page created});
 }
 
-# clear `word` table before each test
-sub clear_db : Test(setup => no_plan) {
-    my ($self) = @_;
-
-    Database->schema->resultset('Word')->delete_all();
-    is(
-        Database->schema->resultset('Word')->count() => 0,
-        qq{'word' table has been cleared up}
-    );
-}
-
 sub fields : Tests {
     my ($self) = @_;
 
@@ -57,38 +46,6 @@ sub fields : Tests {
         my $type = pop @$_;
         $self->test_field(name => $_, type => $type, is => 'ro') for @$_;
     }
-}
-
-sub get_word_forms : Tests {
-    my ($self) = @_;
-
-    is_deeply($self->{frame}->lookup_phrases->_get_word_forms() => [],
-        qq{_get_word_forms returns empty arrayref if no parameters passed});
-
-    # TODO test `be` substitutions
-
-    # TODO test suffixes
-}
-
-sub lookup : Tests {
-    my ($self) = @_;
-
-    my $default_limit    = 1_000;
-    my $inserted_records = 1_500;
-    for (1 .. $inserted_records) {
-        $self->_new_word_in_db({ word => "test-$_" });
-    }
-    my $lookup_phrases = $self->{frame}->lookup_phrases;
-    $lookup_phrases->lookup_field->SetValue('');
-    $lookup_phrases->lookup();
-    is($lookup_phrases->phrase_table->GetItemCount() => $default_limit,
-       qq{Empty lookup returns $default_limit records});
-    $lookup_phrases->lookup_field->SetValue('/all');
-    $lookup_phrases->lookup();
-    is($lookup_phrases->phrase_table->GetItemCount() => $inserted_records,
-       qq{'/all' command returns all $inserted_records records for given language});
-
-    # TODO test other filters/commands
 }
 
 1;
