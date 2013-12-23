@@ -52,6 +52,10 @@ sub fields : Tests {
         my $type = pop @$_;
         $self->test_field(name => $_, type => $type, is => 'ro') for @$_;
     }
+    for ([qw(options) => 'HashRef']) {
+        my $type = pop @$_;
+        $self->test_field(name => $_, type => $type, is => 'rw') for @$_;
+    }
 }
 
 
