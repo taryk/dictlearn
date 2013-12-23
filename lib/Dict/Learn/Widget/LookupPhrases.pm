@@ -38,7 +38,7 @@ Link to the parent object
 
 has parent => (
     is  => 'ro',
-    isa => 'Wx::Panel',
+    isa => 'Wx::Window',
 );
 
 =head2 lookup_field
