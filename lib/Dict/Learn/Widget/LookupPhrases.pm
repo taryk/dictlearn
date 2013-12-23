@@ -56,7 +56,8 @@ has lookup_field => (
 sub _build_lookup_field {
     my $self     = shift;
 
-    my $lookup_field = Wx::ComboBox->new($self, wxID_ANY, '', wxDefaultPosition,
+    my $lookup_field
+        = Wx::ComboBox->new($self, wxID_ANY, '', wxDefaultPosition,
         wxDefaultSize, [], 0, wxDefaultValidator);
     EVT_TEXT_ENTER($self, $lookup_field, \&lookup);
 
@@ -142,10 +143,10 @@ sub _build_lookup_hbox {
     my $self = shift;
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->lookup_field,    1, wxEXPAND);
-    $hbox->Add($self->btn_lookup,  0, wxALIGN_RIGHT);
-    $hbox->Add($self->btn_reset,   0, wxALIGN_RIGHT);
-    $hbox->Add($self->btn_addword, 0, wxALIGN_RIGHT);
+    $hbox->Add($self->lookup_field, 1, wxEXPAND);
+    $hbox->Add($self->btn_lookup,   0, wxALIGN_RIGHT);
+    $hbox->Add($self->btn_reset,    0, wxALIGN_RIGHT);
+    $hbox->Add($self->btn_addword,  0, wxALIGN_RIGHT);
 
     return $hbox;
 }
@@ -168,12 +169,12 @@ sub _build_phrase_table {
     my $phrase_table
         = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
-    $phrase_table->InsertColumn(0,         'id',      wxLIST_FORMAT_LEFT, 50);
-    $phrase_table->InsertColumn($COL_LANG1, 'Eng',     wxLIST_FORMAT_LEFT, 200);
-    $phrase_table->InsertColumn(2,         'pos',     wxLIST_FORMAT_LEFT, 35);
-    $phrase_table->InsertColumn($COL_LANG2, 'Ukr',     wxLIST_FORMAT_LEFT, 200);
-    $phrase_table->InsertColumn(4,         'note',    wxLIST_FORMAT_LEFT, 200);
-    $phrase_table->InsertColumn(5,         'created', wxLIST_FORMAT_LEFT, 150);
+    $phrase_table->InsertColumn(0,          'id',   wxLIST_FORMAT_LEFT, 50);
+    $phrase_table->InsertColumn($COL_LANG1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
+    $phrase_table->InsertColumn(2,          'pos',  wxLIST_FORMAT_LEFT, 35);
+    $phrase_table->InsertColumn($COL_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
+    $phrase_table->InsertColumn(4,          'note', wxLIST_FORMAT_LEFT, 200);
+    $phrase_table->InsertColumn(5,       'created', wxLIST_FORMAT_LEFT, 150);
 
     return $phrase_table;
 }
@@ -194,8 +195,8 @@ sub _build_vbox {
     my $self = shift;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->lookup_hbox, 0, wxEXPAND);
-    $vbox->Add($self->phrase_table,    1, wxEXPAND);
+    $vbox->Add($self->lookup_hbox,  0, wxEXPAND);
+    $vbox->Add($self->phrase_table, 1, wxEXPAND);
 
     return $vbox;
 }
@@ -342,12 +343,13 @@ sub lookup {
             = $item->{is_irregular}
             ? join(' / ' => $item->{word_orig}, $item->{word2}, $item->{word3})
             : $item->{word_orig};
-        $self->phrase_table->SetItem($id, 0,         $item->{word_id});
+        $self->phrase_table->SetItem($id, 0,          $item->{word_id});
         $self->phrase_table->SetItem($id, $COL_LANG1, $word);
-        $self->phrase_table->SetItem($id, 2,         $item->{partofspeech} // '');
+        $self->phrase_table->SetItem($id, 2,     $item->{partofspeech} // '');
         $self->phrase_table->SetItem($id, $COL_LANG2, $item->{word_tr} // '');
-        $self->phrase_table->SetItem($id, 4,         $item->{note});
-        $self->phrase_table->SetItem($id, 5,         $item->{cdate});
+        $self->phrase_table->SetItem($id, 4,          $item->{note});
+        $self->phrase_table->SetItem($id, 5,          $item->{cdate});
+
     }
     $self->select_first_item;
 
