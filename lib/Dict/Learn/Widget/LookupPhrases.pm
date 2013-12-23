@@ -41,6 +41,37 @@ has parent => (
     isa => 'Wx::Window',
 );
 
+=head2 options
+
+Additional customization of this widget
+
+=head3 parameters
+
+=over
+
+=item translated_only
+
+Boolean. Applies "/translated" filter by default and disallows any other filters.
+
+=item buttons
+
+Boolean. Determines whether to show or hide the buttons near to lookup field.
+
+=back
+
+=cut
+
+has options => (
+    is      => 'rw',
+    isa     => 'HashRef',
+    default => sub {
+        {
+            translated_only => 0,
+            buttons         => 1,
+        }
+    }
+);
+
 =head2 lookup_field
 
 TODO add description
@@ -144,9 +175,12 @@ sub _build_lookup_hbox {
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
     $hbox->Add($self->lookup_field, 1, wxEXPAND);
-    $hbox->Add($self->btn_lookup,   0, wxALIGN_RIGHT);
-    $hbox->Add($self->btn_reset,    0, wxALIGN_RIGHT);
-    $hbox->Add($self->btn_addword,  0, wxALIGN_RIGHT);
+
+    if ($self->options->{buttons}) {
+        $hbox->Add($self->btn_lookup,   0, wxALIGN_RIGHT);
+        $hbox->Add($self->btn_reset,    0, wxALIGN_RIGHT);
+        $hbox->Add($self->btn_addword,  0, wxALIGN_RIGHT);
+    }
 
     return $hbox;
 }
@@ -321,6 +355,15 @@ sub lookup {
         );
     }
 
+    if ($self->options->{translated_only}) {
+        if ($args{filter}) {
+            $self->set_status_text(
+                sprintf q{Filter "/%s" isn't allowed here}, $args{filter});
+            return;
+        }
+        $args{filter} = 'translated';
+    }
+
     @result = Database->schema->resultset('Word')
         ->find_ones_cached(%args, lang_id => $lang_id);
 
@@ -492,13 +535,21 @@ sub keybind {
 sub FOREIGNBUILDARGS {
     my ($class, @args) = @_;
 
+    # Don't pass the last parameter to the parent object if it's a hashref
+    pop @args if ref $args[-1] eq 'HASH';
+
     return @args;
 }
 
 sub BUILDARGS {
     my ($class, $parent) = @_;
 
-    return {parent => $parent};
+    return {
+        # parent object
+        parent => $parent,
+        # if the last parameter is a hashref, consider it as 'options'
+        (ref $_[-1] eq 'HASH' ? (options => $_[-1]) : ())
+    };
 }
 
 sub BUILD {
