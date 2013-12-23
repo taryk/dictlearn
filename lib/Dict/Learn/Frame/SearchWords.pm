@@ -298,7 +298,6 @@ sub BUILD {
     $self->hbox->Fit($self);
     $self->Layout();
 
-    EVT_KEY_UP($self, \&keybind);
     EVT_LIST_ITEM_SELECTED($self, $self->lookup_phrases->phrase_table,
         \&load_phrase);
 }
