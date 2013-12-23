@@ -288,9 +288,13 @@ has lookup_phrases => (
 sub _build_lookup_phrases {
     my $self = shift;
 
-    my $lookup_phrases
-        = Dict::Learn::Widget::LookupPhrases->new($self, wxID_ANY,
-        wxDefaultPosition, wxDefaultSize);
+    my $lookup_phrases = Dict::Learn::Widget::LookupPhrases->new(
+        $self, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+        {
+            translated_only => 1,
+            buttons         => 0,
+        }
+    );
 
     return $lookup_phrases;
 }
