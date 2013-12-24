@@ -462,9 +462,9 @@ TODO add description
 sub add_word {
     my ($self) = @_;
 
-    my $add_word_page = $self->parent->p_addword;
+    my $add_word_page = $self->parent->parent->p_addword;
     $add_word_page->set_word($self->lookup_field->GetValue);
-    $self->parent->new_page($add_word_page, 'Add');
+    $self->parent->parent->new_page($add_word_page, 'Add');
 }
 
 =head2 load_search_history
