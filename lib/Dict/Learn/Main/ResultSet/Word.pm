@@ -231,18 +231,17 @@ sub find_ones {
                 $where{'rel_words.word2_id'} = { '!=' => undef };
             }
             when('untranslated') {
-                $where{'rel_words.word2_id'} =  undef;
+                $where{'rel_words.word2_id'} = undef;
             }
             when('irregular') {
                 $where{'me.irregular'} = 1;
             }
         }
-    } else {
-        for my $word (@{$params{word}}) {
-            my $word_pattern = "%${word}%";
-            for my $column (qw(me.word me.word2 me.word3 word2_id.word)) {
-                push @{ $where{-or} }, ($column => { like => $word_pattern });
-            }
+    }
+    for my $word (@{ $params{word} || [] }) {
+        my $word_pattern = "%${word}%";
+        for my $column (qw(me.word me.word2 me.word3 word2_id.word)) {
+            push @{ $where{-or} }, ($column => { like => $word_pattern });
         }
     }
     my $rs = $self->search(
