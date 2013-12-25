@@ -100,7 +100,7 @@ TODO add description
 
 has total_score => (
     is      => 'rw',
-    lazy    => 1,
+    isa     => 'Int',
     default => 0,
 );
 
@@ -376,7 +376,7 @@ has vbox => (
     is         => 'ro',
     isa        => 'Wx::BoxSizer',
     lazy_build => 1,
-   );
+);
 
 sub _build_vbox {
     my $self = shift;
