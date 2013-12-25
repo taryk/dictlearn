@@ -33,7 +33,7 @@ TODO add description
 
 has parent => (
     is  => 'ro',
-    isa => 'Dict::Learn::Frame::SearchWords',
+    isa => 'Wx::Window',
 );
 
 =head2 word_id
