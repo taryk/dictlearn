@@ -42,6 +42,7 @@ TODO add description
 has hbox => (
     is      => 'ro',
     isa     => 'Wx::BoxSizer',
+    lazy    => 1,
     default => sub { Wx::BoxSizer->new(wxHORIZONTAL) },
 );
 
@@ -54,6 +55,7 @@ TODO add description
 has vbox => (
     is      => 'ro',
     isa     => 'Wx::BoxSizer',
+    lazy    => 1,
     default => sub { Wx::BoxSizer->new(wxVERTICAL) },
 );
 
@@ -66,6 +68,7 @@ TODO add description
 has btn_ok => (
     is      => 'ro',
     isa     => 'Wx::Button',
+    lazy    => 1,
     default => sub {
         Wx::Button->new(shift, wxID_OK, 'OK', wxDefaultPosition,
             wxDefaultSize);
@@ -81,6 +84,7 @@ TODO add description
 has btn_cancel => (
     is      => 'ro',
     isa     => 'Wx::Button',
+    lazy    => 1,
     default => sub {
         Wx::Button->new(shift, wxID_CANCEL, 'Cancel', wxDefaultPosition,
             wxDefaultSize);
@@ -96,6 +100,7 @@ TODO add description
 has listbox => (
     is      => 'ro',
     isa     => 'Wx::SimpleHtmlListBox',
+    lazy    => 1,
     default => sub {
         Wx::SimpleHtmlListBox->new(shift, wxID_ANY, wxDefaultPosition,
             [350, 300],
