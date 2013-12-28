@@ -4,6 +4,7 @@ use Test::Dict::Learn::Frame::AddWord;
 use Test::Dict::Learn::Frame::SearchWords;
 use Test::Dict::Learn::Frame::TestEditor;
 use Test::Dict::Learn::Frame::TranslationTest;
+use Test::Dict::Learn::Frame::TranslationTest::Result;
 use Test::Dict::Learn::Frame::IrregularVerbsTest;
 
 Test::Class->runtests;
