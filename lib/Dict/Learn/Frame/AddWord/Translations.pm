@@ -12,7 +12,7 @@ use Data::Printer;
 use List::Util qw(first);
 
 use Database;
-use Dict::Learn::Combo::WordList;
+use Dict::Learn::Widget::WordList;
 
 use common::sense;
 
@@ -234,7 +234,7 @@ sub make_item {
             [110, -1], [$self->import_partofspeech],
             wxCB_DROPDOWN | wxCB_READONLY, wxDefaultValidator
         ),
-        popup => Dict::Learn::Combo::WordList->new(),
+        popup => Dict::Learn::Widget::WordList->new(),
         word => Wx::ComboCtrl->new(
             $self,         wxID_ANY,
             '',            wxDefaultPosition,

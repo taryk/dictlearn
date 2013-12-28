@@ -1,4 +1,4 @@
-package Dict::Learn::Combo::WordList 0.1;
+package Dict::Learn::Widget::WordList 0.1;
 
 use Wx qw[:everything];
 use Wx::Event qw[:everything];
