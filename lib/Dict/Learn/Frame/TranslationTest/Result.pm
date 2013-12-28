@@ -29,7 +29,7 @@ TODO add description
 
 has parent => (
     is       => 'ro',
-    isa      => 'Dict::Learn::Frame::TranslationTest',
+    isa      => 'Wx::Window',
     required => 1,
 );
 
