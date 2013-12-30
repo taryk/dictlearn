@@ -29,6 +29,7 @@ sub startup : Test(startup => no_plan) {
     # Monkey-patch the `close_page` method as it uses parent object,
     # which isn't a real Dict::Learn::Frame instance in this test
     *Dict::Learn::Frame::AddWord::close_page = sub {};
+    *Dict::Learn::Frame::AddWord::set_status_text = sub {};
     *Dict::Learn::Frame::AddWord::Translations::set_status_text = sub {};
 }
 

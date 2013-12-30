@@ -395,6 +395,18 @@ sub keybind {
 #     }
 # }
 
+=head2 set_status_text
+
+Set the status in the bottom's statusbar
+
+=cut
+
+sub set_status_text {
+    my ($self, $status_text) = @_;
+
+    $self->parent->status_bar->SetStatusText($status_text);
+}
+
 =head2 strip_spaces
 
 TODO add description
@@ -452,6 +464,10 @@ sub check_word {
                     EVT_BUTTON($self, $self->btn_add_word, \&add);
                 }
             );
+            my $translations_number = $word->words->count;
+            $self->set_status_text(qq{Word "$value" already exists with }
+                    . ($translations_number > 0 ? $translations_number : 'no')
+                    . ' translation(s)');
         }
         else {
             $self->enable(1);
