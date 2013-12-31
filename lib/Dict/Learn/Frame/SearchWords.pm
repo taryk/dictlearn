@@ -257,8 +257,8 @@ sub add_to_test {
     my $test_category_id = $self->cb_add_to_test->GetClientData(
         $self->cb_add_to_test->GetSelection());
 
-    my $row_id = $self->lookup_phrases->phrase_table->GetNextItem(-1, wxLIST_NEXT_ALL,
-        wxLIST_STATE_SELECTED);
+    my $row_id = $self->lookup_phrases->phrase_table->GetNextItem(-1,
+        wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
     my $word_id = $self->get_word_id($row_id);
 
@@ -270,13 +270,13 @@ sub add_to_test {
         }
     );
 
-    my $word = $self->lookup_phrases->phrase_table->GetItem($row_id, 1)->GetText;
+    my $word
+        = $self->lookup_phrases->phrase_table->GetItem($row_id, 1)->GetText;
 
-    $self->set_status_text(
-        sprintf 'Word "%s" has been added to "%s" test',
-        $word, $self->cb_add_to_test->GetValue()
-    );
+    $self->set_status_text(sprintf 'Word "%s" has been added to "%s" test',
+        $word, $self->cb_add_to_test->GetValue());
 }
+
 
 sub FOREIGNBUILDARGS {
     my ($class, $parent, @args) = @_;
@@ -287,7 +287,7 @@ sub FOREIGNBUILDARGS {
 sub BUILDARGS {
     my ($class, $parent) = @_;
 
-    return {parent => $parent};
+    return { parent => $parent };
 }
 
 sub BUILD {
