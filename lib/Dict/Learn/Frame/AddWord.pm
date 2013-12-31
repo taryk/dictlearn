@@ -381,20 +381,6 @@ sub keybind {
     }
 }
 
-# sub query_words {
-#     my ($self, $id) = @_;
-
-#     my $cb = $self->word_translations->[$id]{word};
-#     my @words
-#         = Database->schema->resultset('Word')
-#         ->select(Dict::Learn::Dictionary->curr->{language_tr_id}{language_id},
-#         $cb->GetValue());
-#     $cb->Clear;
-#     for (@words) {
-#         $cb->Append($_->{word});
-#     }
-# }
-
 =head2 set_status_text
 
 Set the status in the bottom's statusbar
