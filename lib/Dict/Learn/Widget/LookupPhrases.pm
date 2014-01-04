@@ -565,11 +565,15 @@ sub BUILD {
     for (
         sub {
             my $dict = shift;
-            my @li = (Wx::ListItem->new, Wx::ListItem->new);            
-            $li[0]->SetText($dict->curr->{language_orig_id}{language_name});
-            $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
-            $self->phrase_table->SetColumn($LANG_COL[0], $li[0]);
-            $self->phrase_table->SetColumn($LANG_COL[1], $li[1]);
+
+            my %columns;
+            @columns{@LANG_COL} = qw(language_orig_id language_tr_id);
+            while (my ($column_pos, $lang_key) = each %columns) {
+                my $column_header = Wx::ListItem->new;
+                $column_header->SetText(
+                    $dict->curr->{$lang_key}{language_name});
+                $self->phrase_table->SetColumn($column_pos, $column_header);
+            }
         },
         # Load Search History into a lookup combobox
         sub {
