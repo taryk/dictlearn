@@ -16,8 +16,7 @@ use Data::Printer;
 
 use common::sense;
 
-const my $COL_LANG1   => 1;
-const my $COL_LANG2   => 3;
+const my @LANG_COL => (1, 3);
 const my $LAST_SEARCH_HISTORY_SIZE => 20;
 
 =head1 NAME
@@ -204,9 +203,9 @@ sub _build_phrase_table {
         = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
     $phrase_table->InsertColumn(0,          'id',   wxLIST_FORMAT_LEFT, 50);
-    $phrase_table->InsertColumn($COL_LANG1, 'Eng',  wxLIST_FORMAT_LEFT, 200);
+    $phrase_table->InsertColumn($LANG_COL[0], 'Eng',  wxLIST_FORMAT_LEFT, 200);
     $phrase_table->InsertColumn(2,          'pos',  wxLIST_FORMAT_LEFT, 35);
-    $phrase_table->InsertColumn($COL_LANG2, 'Ukr',  wxLIST_FORMAT_LEFT, 200);
+    $phrase_table->InsertColumn($LANG_COL[1], 'Ukr',  wxLIST_FORMAT_LEFT, 200);
     $phrase_table->InsertColumn(4,          'note', wxLIST_FORMAT_LEFT, 200);
     $phrase_table->InsertColumn(5,       'created', wxLIST_FORMAT_LEFT, 150);
 
@@ -387,9 +386,9 @@ sub lookup {
             ? join(' / ' => $item->{word_orig}, $item->{word2}, $item->{word3})
             : $item->{word_orig};
         $self->phrase_table->SetItem($id, 0,          $item->{word_id});
-        $self->phrase_table->SetItem($id, $COL_LANG1, $word);
+        $self->phrase_table->SetItem($id, $LANG_COL[0], $word);
         $self->phrase_table->SetItem($id, 2,     $item->{partofspeech} // '');
-        $self->phrase_table->SetItem($id, $COL_LANG2, $item->{word_tr} // '');
+        $self->phrase_table->SetItem($id, $LANG_COL[1], $item->{word_tr} // '');
         $self->phrase_table->SetItem($id, 4,          $item->{note});
         $self->phrase_table->SetItem($id, 5,          $item->{cdate});
 
@@ -566,11 +565,11 @@ sub BUILD {
     for (
         sub {
             my $dict = shift;
-            my @li = (Wx::ListItem->new, Wx::ListItem->new);
+            my @li = (Wx::ListItem->new, Wx::ListItem->new);            
             $li[0]->SetText($dict->curr->{language_orig_id}{language_name});
             $li[1]->SetText($dict->curr->{language_tr_id}{language_name});
-            $self->phrase_table->SetColumn($COL_LANG1, $li[0]);
-            $self->phrase_table->SetColumn($COL_LANG2, $li[1]);
+            $self->phrase_table->SetColumn($LANG_COL[0], $li[0]);
+            $self->phrase_table->SetColumn($LANG_COL[1], $li[1]);
         },
         # Load Search History into a lookup combobox
         sub {
