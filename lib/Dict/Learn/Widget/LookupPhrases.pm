@@ -176,9 +176,11 @@ sub _build_lookup_hbox {
     $hbox->Add($self->lookup_field, 1, wxEXPAND);
 
     if ($self->options->{buttons}) {
-        $hbox->Add($self->btn_lookup,   0, wxALIGN_RIGHT);
-        $hbox->Add($self->btn_reset,    0, wxALIGN_RIGHT);
-        $hbox->Add($self->btn_addword,  0, wxALIGN_RIGHT);
+        for my $button (
+            $self->btn_lookup, $self->btn_reset, $self->btn_addword)
+        {
+            $hbox->Add($button, 0, wxALIGN_RIGHT);
+        }
     }
 
     return $hbox;
@@ -202,12 +204,20 @@ sub _build_phrase_table {
     my $phrase_table
         = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
-    $phrase_table->InsertColumn(0,            'id',  wxLIST_FORMAT_LEFT, 50);
-    $phrase_table->InsertColumn($LANG_COL[0], 'Eng', wxLIST_FORMAT_LEFT, 200);
-    $phrase_table->InsertColumn(2,            'pos', wxLIST_FORMAT_LEFT, 35);
-    $phrase_table->InsertColumn($LANG_COL[1], 'Ukr', wxLIST_FORMAT_LEFT, 200);
-    $phrase_table->InsertColumn(4, 'note',    wxLIST_FORMAT_LEFT, 200);
-    $phrase_table->InsertColumn(5, 'created', wxLIST_FORMAT_LEFT, 150);
+    my $column_pos = 0;
+    for my $column (
+        [ id      => 50  ],
+        [ Eng     => 200 ],
+        [ pos     => 35  ],
+        [ Ukr     => 200 ],
+        [ note    => 200 ],
+        [ created => 150 ],
+        )
+    {
+        my ($name, $width) = @$column;
+        $phrase_table->InsertColumn(
+            $column_pos++, $name, wxLIST_FORMAT_LEFT, $width);
+    }
 
     return $phrase_table;
 }
@@ -228,9 +238,14 @@ sub _build_vbox {
     my $self = shift;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->lookup_hbox,  0, wxEXPAND);
-    $vbox->Add($self->phrase_table, 1, wxEXPAND);
-
+    for (
+        # object               # proportion
+        [ $self->lookup_hbox  => 0 ],
+        [ $self->phrase_table => 1 ]
+       )
+    {
+        $vbox->Add(@$_, wxEXPAND);
+    }
     return $vbox;
 }
 
@@ -385,13 +400,18 @@ sub lookup {
             = $item->{is_irregular}
             ? join(' / ' => $item->{word_orig}, $item->{word2}, $item->{word3})
             : $item->{word_orig};
-        $self->phrase_table->SetItem($id, 0,            $item->{word_id});
-        $self->phrase_table->SetItem($id, $LANG_COL[0], $word);
-        $self->phrase_table->SetItem($id, 2, $item->{partofspeech} // '');
-        $self->phrase_table->SetItem($id, $LANG_COL[1],
-            $item->{word_tr} // '');
-        $self->phrase_table->SetItem($id, 4, $item->{note});
-        $self->phrase_table->SetItem($id, 5, $item->{cdate});
+        my $column_pos = 0;
+        for my $value (
+            $item->{word_id},               # 0
+            $word,                          # 1
+            $item->{partofspeech} // '',    # 2
+            $item->{word_tr}      // '',    # 3
+            $item->{note},                  # 4
+            $item->{cdate}                  # 5
+            )
+        {
+            $self->phrase_table->SetItem($id, $column_pos++, $value);
+        }
     }
     $self->select_first_item;
 
