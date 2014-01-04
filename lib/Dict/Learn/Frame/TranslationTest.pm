@@ -397,8 +397,8 @@ sub BUILD {
     $self->hbox->Add($self->btn_reset,              0, wxLEFT | wxEXPAND, 40);
     $self->hbox->Add($self->btn_toggle_translation, 0, wxLEFT | wxEXPAND, 40);
 
-    $self->hbox_position->Add($self->position, 0, wxEXPAND, 0);
-    $self->hbox_position->Add($self->spin,     0, wxEXPAND, 0);
+    $self->hbox_position->Add($self->position,      0, wxEXPAND, 0);
+    $self->hbox_position->Add($self->spin,          0, wxEXPAND, 0);
     $self->hbox_position->Add($self->test_category, 0, wxEXPAND, 0);
 
     $self->spin->SetRange($self->min, 100);
@@ -810,12 +810,12 @@ sub next_step {
                 = $self->compare_strings($e_item->[2], $e_item->[3]);
             push @res,
                 {
-                word_id => $e_item->[0],
-                word    => $e_item->[1],
-                note    => $compare_res->[2],
-                user    => [[$compare_res->[1], $compare_res->[0]]],
-                score   => $compare_res->[0],
-                other   => [map { $_->[1] } splice(@$compare_res, 3)]
+                    word_id => $e_item->[0],
+                    word    => $e_item->[1],
+                    note    => $compare_res->[2],
+                    user    => [[$compare_res->[1], $compare_res->[0]]],
+                    score   => $compare_res->[0],
+                    other   => [map { $_->[1] } splice(@$compare_res, 3)]
                 };
         }
         if ($self->result->fill_result(@res)->ShowModal() == wxID_OK) {

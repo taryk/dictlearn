@@ -185,10 +185,10 @@ sub _build_vbox_src {
     my $self = shift;
 
     my $vbox_src = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox_src->Add($self->word_src,     2, wxEXPAND | wxBOTTOM, 5);
-    $vbox_src->Add($self->cb_irregular, 1, wxALIGN_LEFT | wxBOTTOM,      5);
-    $vbox_src->Add($self->word2_src,    1, wxEXPAND | wxBOTTOM,            5);
-    $vbox_src->Add($self->word3_src,    1, wxEXPAND | wxBOTTOM,            5);
+    $vbox_src->Add($self->word_src,     2, wxEXPAND | wxBOTTOM,     5);
+    $vbox_src->Add($self->cb_irregular, 1, wxALIGN_LEFT | wxBOTTOM, 5);
+    $vbox_src->Add($self->word2_src,    1, wxEXPAND | wxBOTTOM,     5);
+    $vbox_src->Add($self->word3_src,    1, wxEXPAND | wxBOTTOM,     5);
 
     return $vbox_src;
 }
@@ -322,7 +322,7 @@ sub _build_hbox_words {
     my $self = shift;
 
     my $hbox_words = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox_words->Add($self->vbox_src, 2, wxALL | wxTOP,    5);
+    $hbox_words->Add($self->vbox_src,     2, wxALL | wxTOP,    5);
     $hbox_words->Add($self->translations, 4, wxALL | wxEXPAND, 5);
 
     return $hbox_words;

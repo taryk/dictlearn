@@ -88,7 +88,8 @@ has grid => (
 sub _build_grid {
     my $self = shift;
 
-    my $grid = Wx::Grid->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
+    my $grid
+        = Wx::Grid->new($self, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
     $grid->CreateGrid(0, $RES_COUNT * 3 + 2);
     $grid->SetColSize($COL_DATE,  140);
     $grid->SetColSize($COL_SCORE, 100);

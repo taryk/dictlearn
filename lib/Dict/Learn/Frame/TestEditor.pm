@@ -57,11 +57,12 @@ sub _build_test_groups {
 
     my $test_groups = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition,
         wxDefaultSize, wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
-    $test_groups->InsertColumn(0, '#',     wxLIST_FORMAT_LEFT, 30  );
-    $test_groups->InsertColumn(1, 'name',  wxLIST_FORMAT_LEFT, 200 );
-    $test_groups->InsertColumn(2, 'words', wxLIST_FORMAT_LEFT, 30  );
+    $test_groups->InsertColumn(0, '#',     wxLIST_FORMAT_LEFT, 30);
+    $test_groups->InsertColumn(1, 'name',  wxLIST_FORMAT_LEFT, 200);
+    $test_groups->InsertColumn(2, 'words', wxLIST_FORMAT_LEFT, 30);
+
     # score: taken (correct/wrong) percentage
-    $test_groups->InsertColumn(3, 'score', wxLIST_FORMAT_LEFT, 60  );
+    $test_groups->InsertColumn(3, 'score', wxLIST_FORMAT_LEFT, 60);
 
     EVT_LIST_ITEM_SELECTED($self, $test_groups, \&on_category_select);
 
@@ -171,8 +172,8 @@ sub _build_vbox_test_groups {
     my $self = shift;
 
     my $vbox_test_groups = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox_test_groups->Add($self->test_groups, 1, wxEXPAND, 0);
-    $vbox_test_groups->Add($self->hbox_test_groups, 0, wxTOP, 5);
+    $vbox_test_groups->Add($self->test_groups,      1, wxEXPAND, 0);
+    $vbox_test_groups->Add($self->hbox_test_groups, 0, wxTOP,    5);
 
     return $vbox_test_groups;
 }
@@ -194,10 +195,11 @@ sub _build_test_words {
 
     my $test_words = Wx::ListCtrl->new($self, wxID_ANY, wxDefaultPosition,
         wxDefaultSize, wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
-    $test_words->InsertColumn(0, '#',      wxLIST_FORMAT_LEFT, 50  );
-    $test_words->InsertColumn(1, 'word',   wxLIST_FORMAT_LEFT, 200 );
+    $test_words->InsertColumn(0, '#',    wxLIST_FORMAT_LEFT, 50);
+    $test_words->InsertColumn(1, 'word', wxLIST_FORMAT_LEFT, 200);
+
     # score: taken (correct/wrong) percentage
-    $test_words->InsertColumn(2, 'score', wxLIST_FORMAT_LEFT,  100 );
+    $test_words->InsertColumn(2, 'score', wxLIST_FORMAT_LEFT, 100);
 
     return $test_words;
 }
@@ -347,7 +349,6 @@ sub _build_partofspeech {
             = $partofspeech->partofspeech_id;
     }
     return $partofspeech_hashref;
-
 }
 
 =head1 METHODS

@@ -558,14 +558,16 @@ sub write_step_res {
     return if $ex->{score} and $ex->{score} >= 0;
     $ex->{user} = [
         undef,
-        [   $self->e_word2->GetValue => $self->e_word2->GetValue eq
+        [
+            $self->e_word2->GetValue => $self->e_word2->GetValue eq
                 $ex->{word}[1] ? 0.5 : 0
         ],
-        [   $self->e_word3->GetValue => $self->e_word3->GetValue eq
+        [
+            $self->e_word3->GetValue => $self->e_word3->GetValue eq
                 $ex->{word}[2] ? 0.5 : 0
         ]
-        ],
-        $ex->{score} = $ex->{user}[1][1] + $ex->{user}[2][1];
+    ];
+    $ex->{score} = $ex->{user}[1][1] + $ex->{user}[2][1];
     $self->total_score($self->total_score + $ex->{score});
 }
 
