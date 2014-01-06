@@ -24,15 +24,15 @@ const my $URL =>
 
 const my $PARTSOFSPEACH => {
     noun        => 'существительное',    # іменник
-    adjective   => 'прилагательное',      # прикметник
-    numeral     => 'числительное',          # числівник
-    pronoun     => 'местоимение',            # займенник
-    verb        => 'глагол',                      # дієслово
-    adverb      => 'наречие',                    # прислівник
-    preposition => 'предлог',                    # прийменник
-    conjunction => 'союз',                          # сполучник
-    participle   => 'причастие',      # дієприкметник
-    interjection => 'междометие',    # вигук
+    adjective   => 'прилагательное',     # прикметник
+    numeral     => 'числительное',       # числівник
+    pronoun     => 'местоимение',        # займенник
+    verb        => 'глагол',             # дієслово
+    adverb      => 'наречие',            # прислівник
+    preposition => 'предлог',            # прийменник
+    conjunction => 'союз',               # сполучник
+    participle   => 'причастие',         # дієприкметник
+    interjection => 'междометие',        # вигук
 };
 
 # TODO implement categories support
