@@ -1,4 +1,4 @@
-package Dict::Learn::Frame::TestSummary 0.1;
+package Dict::Learn::Frame::TestSummary;
 
 use Wx qw[:everything];
 use Wx::Grid;

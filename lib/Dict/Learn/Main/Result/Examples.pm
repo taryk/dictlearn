@@ -1,4 +1,4 @@
-package Dict::Learn::Main::Result::Examples 0.2;
+package Dict::Learn::Main::Result::Examples;
 use base qw[ DBIx::Class::Core ];
 
 =head1 NAME

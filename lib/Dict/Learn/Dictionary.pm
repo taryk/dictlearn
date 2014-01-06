@@ -1,4 +1,4 @@
-package Dict::Learn::Dictionary 0.1;
+package Dict::Learn::Dictionary;
 
 use Data::Printer;
 

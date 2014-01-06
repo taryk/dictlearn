@@ -1,4 +1,4 @@
-package Dict::Learn::Frame 0.1;
+package Dict::Learn::Frame;
 
 use Wx qw[:everything];
 use Wx::AUI;

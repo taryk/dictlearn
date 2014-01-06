@@ -1,4 +1,4 @@
-package Dict::Learn::Widget::Sidebar 0.1;
+package Dict::Learn::Widget::Sidebar;
 
 use Wx qw[:everything];
 use Wx::Event qw[:everything];

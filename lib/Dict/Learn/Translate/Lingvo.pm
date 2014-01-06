@@ -1,4 +1,4 @@
-package Dict::Learn::Translate::Lingvo 0.1;
+package Dict::Learn::Translate::Lingvo;
 
 use base qw[ Dict::Learn::Translate ];
 

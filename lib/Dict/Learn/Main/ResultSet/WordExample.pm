@@ -1,4 +1,4 @@
-package Dict::Learn::Main::ResultSet::WordExample 0.1;
+package Dict::Learn::Main::ResultSet::WordExample;
 use base 'DBIx::Class::ResultSet';
 
 use namespace::autoclean;

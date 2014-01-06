@@ -1,4 +1,4 @@
-package Dict::Learn::Main::ResultSet::Test 0.1;
+package Dict::Learn::Main::ResultSet::Test;
 use base 'DBIx::Class::ResultSet';
 
 use namespace::autoclean;

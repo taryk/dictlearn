@@ -1,4 +1,4 @@
-package Dict::Learn::Frame::TestEditor 0.1;
+package Dict::Learn::Frame::TestEditor;
 
 use Wx qw[:everything];
 use Wx::Event qw[:everything];

@@ -1,4 +1,4 @@
-package Dict::Learn::Frame::SearchWords 0.1;
+package Dict::Learn::Frame::SearchWords;
 
 use Wx qw[:everything];
 use Wx::Event qw[:everything];

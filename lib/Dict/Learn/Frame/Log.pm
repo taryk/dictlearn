@@ -1,4 +1,4 @@
-package Dict::Learn::Frame::Log 0.1;
+package Dict::Learn::Frame::Log;
 
 use Wx qw[:everything];
 use Wx::Event qw[:everything];

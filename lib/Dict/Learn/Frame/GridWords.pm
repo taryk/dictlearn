@@ -1,4 +1,4 @@
-package Dict::Learn::Frame::GridWords 0.1;
+package Dict::Learn::Frame::GridWords;
 
 use Wx qw[:everything];
 use Wx::Grid;

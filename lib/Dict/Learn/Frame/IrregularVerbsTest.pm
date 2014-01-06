@@ -1,4 +1,4 @@
-package Dict::Learn::Frame::IrregularVerbsTest 0.1;
+package Dict::Learn::Frame::IrregularVerbsTest;
 
 use Wx qw[:everything];
 use Wx::Event qw[:everything];

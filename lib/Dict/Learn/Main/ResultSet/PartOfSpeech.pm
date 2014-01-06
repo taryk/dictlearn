@@ -1,4 +1,4 @@
-package Dict::Learn::Main::ResultSet::PartOfSpeech 0.1;
+package Dict::Learn::Main::ResultSet::PartOfSpeech;
 use base 'DBIx::Class::ResultSet';
 
 use namespace::autoclean;

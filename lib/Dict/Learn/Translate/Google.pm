@@ -1,4 +1,4 @@
-package Dict::Learn::Translate::Google 0.01;
+package Dict::Learn::Translate::Google;
 use base qw[ Dict::Learn::Translate ];
 
 use Const::Fast;

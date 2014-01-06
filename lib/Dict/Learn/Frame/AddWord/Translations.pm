@@ -1,4 +1,4 @@
-package Dict::Learn::Frame::AddWord::Translations 0.1;
+package Dict::Learn::Frame::AddWord::Translations;
 
 use Wx qw[:everything];
 use Wx::Event qw[:everything];

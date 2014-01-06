@@ -1,4 +1,4 @@
-package Dict::Learn::Db 0.1;
+package Dict::Learn::Db;
 
 use Const::Fast;
 use DBIx::Class::QueryLog::Analyzer;

@@ -1,4 +1,4 @@
-package Dict::Learn::Main::ResultSet::Word 0.1;
+package Dict::Learn::Main::ResultSet::Word;
 use base 'DBIx::Class::ResultSet';
 
 use Const::Fast;

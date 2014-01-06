@@ -1,4 +1,4 @@
-package Dict::Learn::Translate::Promt 0.1;
+package Dict::Learn::Translate::Promt;
 
 use base qw[ Dict::Learn::Translate ];
 

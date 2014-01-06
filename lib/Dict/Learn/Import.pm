@@ -1,4 +1,4 @@
-package Dict::Learn::Import 0.1;
+package Dict::Learn::Import;
 
 use Const::Fast;
 use Data::Printer;
