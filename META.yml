@@ -46,6 +46,7 @@ requires:
   Mojolicious: 0
   Moose: 0
   MooseX::NonMoose: 0
+  SQL::Abstract: 1.75
   String::Diff: 0
   Term::ANSIColor: 0
   URI::Escape: 3.31

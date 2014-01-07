@@ -11,6 +11,7 @@ requires 'Wx'                              => '0.9914';
 requires 'Moose'                           => 0;
 requires 'MooseX::NonMoose'                => 0;
 requires 'DBD::SQLite'                     => '1.37';
+requires 'SQL::Abstract'                   => '1.75';
 requires 'DBIx::Class'                     => '0.08204';
 requires 'DBIx::Class::QueryLog'           => 0;
 requires 'DBIx::Class::QueryLog::Analyzer' => 0;
