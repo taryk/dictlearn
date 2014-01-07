@@ -672,7 +672,7 @@ sub predefined_categories {
         say "fetching exercises from $from to $to";
         my $words
             = Database->schema->resultset('Word')
-            ->search({'me.word_id' => {in => [@ids[$from .. $to]]}},
+            ->search({'me.word_id' => {in => [@ids[$from .. ($to > $#ids ? $#ids : $to)]]}},
             {distinct => 1});
         while (my $word = $words->next) {
             push @{$self->exercise},
