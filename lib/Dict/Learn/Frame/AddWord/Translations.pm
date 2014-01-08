@@ -365,7 +365,8 @@ sub del_item {
     delete $self->word_translations->[$id]{parent_hbox};
 
     $self->set_status_text(
-        qq{Translation phrase "$phrase" has just been deleted});
+        qq{Translation phrase "$phrase" has just been deleted})
+        if $phrase;
 
     return $self;
 }
