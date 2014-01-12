@@ -88,6 +88,41 @@ sub lookup : Tests {
     is($self->{frame}->phrase_table->GetItemCount() => $inserted_records,
        qq{'/all' command returns all $inserted_records records for given language});
 
+    subtest 'Most relevant records go first' => sub {
+        my $word = 'test-order';
+        for (
+            {
+                word         => $word,
+                translations => [
+                    { word => 'test-order-tr-1', partofspeech_id => 1 },
+                    { word => 'test-order-tr-2', partofspeech_id => 2 },
+                ]
+            },
+            { word => "$word $word" },
+            { word => "$word $word $word" }
+            )
+        {
+            $self->_new_word_in_db(%$_);
+        }
+        $self->{frame}->lookup_field->SetValue($word);
+        $self->{frame}->lookup();
+        is($self->{frame}->phrase_table->GetItemCount() => 4,
+          q{Returns all four occurences});
+        my $COL_PHRASE   = 1;
+        my $phrase_table = $self->{frame}->phrase_table;
+        for my $row_id (0 .. 1) {
+            is(
+                $phrase_table->GetItem($row_id, $COL_PHRASE)->GetText => $word,
+                qq{$row_id row is '$word'}
+            );
+        }
+        for my $row_id (2 .. 3) {
+            isnt(
+                $phrase_table->GetItem($row_id, $COL_PHRASE)->GetText => $word,
+                qq{$row_id row isn't '$word'}
+            );
+        }
+    };
     # TODO test other filters/commands
 }
 
