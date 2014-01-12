@@ -189,6 +189,7 @@ sub _build_vbox_src {
     $vbox_src->Add($self->cb_irregular, 1, wxALIGN_LEFT | wxBOTTOM, 5);
     $vbox_src->Add($self->word2_src,    1, wxEXPAND | wxBOTTOM,     5);
     $vbox_src->Add($self->word3_src,    1, wxEXPAND | wxBOTTOM,     5);
+    $vbox_src->Add($self->word_note,    4, wxEXPAND | wxBOTTOM,     5);
 
     return $vbox_src;
 }
@@ -345,7 +346,6 @@ sub _build_vbox {
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
     $vbox->Add($self->hbox_words, 3, wxALL | wxEXPAND, 0);
-    $vbox->Add($self->word_note,  1, wxALL | wxEXPAND, 5);
     $vbox->Add($self->hbox_btn,   0, wxALL | wxEXPAND, 5);
 
     return $vbox;
