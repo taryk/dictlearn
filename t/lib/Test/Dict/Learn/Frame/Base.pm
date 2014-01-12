@@ -81,13 +81,31 @@ sub test_field {
 }
 
 sub _new_word_in_db {
-    my ($self, $word) = @_;
+    my ($self, %params) = @_;
 
-    $word->{lang_id} //=
-        Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
-    $word->{partofspeech_id} //= 0;
+    my $orig_lang_id
+        = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
+    my $tr_lang_id
+        = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
+    my $new_word = Database->schema->resultset('Word')->create(
+        {
+            word    => $params{word},
+            lang_id => $orig_lang_id,
+        }
+    );
 
-    Database->schema->resultset('Word')->create($word);
+    for (@{ $params{translations} }) {
+        $new_word->add_to_words(
+            {
+                lang_id => $tr_lang_id,
+                %$_
+            },
+            {
+                dictionary_id   => Dict::Learn::Dictionary->curr_id,
+                partofspeech_id => $_->{partofspeech_id}
+            }
+        );
+    }
 }
 
 1;

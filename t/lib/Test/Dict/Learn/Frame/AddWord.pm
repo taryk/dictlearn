@@ -236,7 +236,7 @@ sub check_word : Tests {
     my $word = 'first-of-its-kind';
 
     # insert a new word
-    $self->_new_word_in_db({ word => $word });
+    $self->_new_word_in_db( word => $word );
 
     is($self->{frame}->enable, 1, q{At the beginning, form is enabled});
 

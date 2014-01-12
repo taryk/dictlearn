@@ -76,7 +76,7 @@ sub lookup : Tests {
     my $default_limit    = 1_000;
     my $inserted_records = 1_500;
     for (1 .. $inserted_records) {
-        $self->_new_word_in_db({ word => "test-$_" });
+        $self->_new_word_in_db( word => "test-$_" );
     }
     my $lookup_phrases = $self->{frame};
     $self->{frame}->lookup_field->SetValue('');
