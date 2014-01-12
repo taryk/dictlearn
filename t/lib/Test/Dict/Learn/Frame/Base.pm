@@ -38,8 +38,10 @@ sub z_after_all_startups : Test(startup) {
 sub shutdown : Test(shutdown => no_plan) {
     my ($self) = @_;
 
-    # if there's any untested attribute, fail a test
-    fail("Attribute '$_' isn't tested") for keys %{ $self->{attributes} };
+    if (!$ENV{TEST_METHOD}) {
+        # if there's any untested attribute, fail a test
+        fail("Attribute '$_' isn't tested") for keys %{ $self->{attributes} };
+    }
 
     Dict::Learn::Dictionary->clear();
 }
