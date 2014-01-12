@@ -491,9 +491,8 @@ sub BUILD {
     my ($self, @args) = @_;
 
     ### main layout  
-    $self->SetSizer($self->vbox);
+    $self->SetSizerAndFit($self->vbox);
     $self->Layout();
-    $self->vbox->Fit($self);
 
     # events
     EVT_BUTTON($self, $self->btn_additem, sub { $self->add_item });
