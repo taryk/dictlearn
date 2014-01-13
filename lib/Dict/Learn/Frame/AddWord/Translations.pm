@@ -301,6 +301,7 @@ sub make_item {
 
     # Set focus on newly created word field
     $translation_item{word}->GetTextCtrl->SetFocus();
+    $translation_item{note}->Hide();
 
     return \%translation_item;
 }
