@@ -1,8 +1,9 @@
 language: perl
 perl:
-  - "5.18.2"
-  - "5.16.3"
-#  - "5.14.4"
+  - "5.19"
+  - "5.18"
+  - "5.16"
+#  - "5.14"
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq wx-common libwxbase2.8-0 libwxgtk2.8-0 libwxbase2.8-dev libwxgtk2.8-dev libgtk2.0-dev libwx-perl
