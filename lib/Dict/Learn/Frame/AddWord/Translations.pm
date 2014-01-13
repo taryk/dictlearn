@@ -320,7 +320,7 @@ sub add_item {
 
     my @children = $self->vbox->GetChildren;
     $self->vbox->Insert($#children || 0,
-        $translation_item->{parent_vbox}, 1, wxALL | wxEXPAND, 0);
+        $translation_item->{parent_vbox}, 0, wxALL | wxEXPAND, 0);
     $self->vbox->FitInside($self);
     $self->vbox->Layout();
 
