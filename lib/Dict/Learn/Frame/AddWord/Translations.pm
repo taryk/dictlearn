@@ -246,6 +246,9 @@ sub make_item {
         btnm => Wx::Button->new(
             $self, wxID_ANY, '-', wxDefaultPosition, [40, -1]
         ),
+        btnn => Wx::Button->new(
+            $self, wxID_ANY, 'n', wxDefaultPosition, [40, -1]
+        ),
         parent_vbox => $vbox,
         parent_hbox => $hbox,
     );
@@ -260,6 +263,11 @@ sub make_item {
         sub { $self->del_item($id) }
     );
 
+    EVT_BUTTON(
+        $self, $translation_item{btnn},
+        sub { $self->toggle_note($id) }
+    );
+
     my $part_of_speach_selection
         = $id == 0
         # Try to guess the part-of-speech based on word's suffix
@@ -271,6 +279,7 @@ sub make_item {
 
     $hbox->Add($translation_item{cbox}, 0, wxALL, 0);
     $hbox->Add($translation_item{word}, 4, wxALL, 0);
+    $hbox->Add($translation_item{btnn}, 0, wxALL, 0);
     $hbox->Add($translation_item{btnm}, 0, wxALL, 0);
 
     $vbox->Add($hbox, 0, wxEXPAND, 0);
@@ -352,7 +361,7 @@ sub del_item {
 
     my $phrase = $self->word_translations->[$id]{word}->GetValue();
 
-    for (qw[ cbox word btnm btnp edit note ]) {
+    for (qw[ cbox word btnm btnp btnn edit note ]) {
         next unless defined $self->word_translations->[$id]{$_};
         $self->word_translations->[$id]{$_}->Destroy();
         delete $self->word_translations->[$id]{$_};
@@ -369,6 +378,23 @@ sub del_item {
         if $phrase;
 
     return $self;
+}
+
+=head2 toggle_note
+
+Show/hide a note field for given translation
+
+=cut
+
+sub toggle_note {
+    my ($self, $id) = @_;
+
+    die "There's no translation with such index"
+        unless exists $self->word_translations->[$id];
+
+    my $note = $self->word_translations->[$id]{note};
+    $note->Show(!$note->IsShown);
+    $self->vbox->Layout();
 }
 
 =head2 edit_word_as_new
