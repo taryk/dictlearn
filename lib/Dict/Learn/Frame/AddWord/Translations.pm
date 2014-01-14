@@ -376,6 +376,7 @@ sub del_item {
     delete $self->vbox_item->[$id];
     delete $self->word_translations->[$id]{parent_vbox};
     delete $self->word_translations->[$id]{parent_hbox};
+    delete $self->word_translations->[$id];
 
     $self->set_status_text(
         qq{Translation phrase "$phrase" has just been deleted})
@@ -448,9 +449,8 @@ TODO add description
 sub remove_all {
     my $self = shift;
 
-    for (@{$self->word_translations}) {
+    for (grep { defined } @{$self->word_translations}) {
         $self->del_item($_->{id});
-        delete $self->word_translations->[$_->{id}];
     }
 }
 
