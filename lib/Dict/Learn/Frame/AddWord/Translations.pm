@@ -321,10 +321,6 @@ sub add_item {
     my @children = $self->vbox->GetChildren;
     $self->vbox->Insert($#children || 0,
         $translation_item->{parent_vbox}, 0, wxALL | wxEXPAND, 0);
-    $self->vbox->FitInside($self);
-    $self->vbox->Layout();
-
-    $self->_scroll_to_bottom();
 
     # fill out the fields
 
@@ -343,7 +339,14 @@ sub add_item {
     my $note = '';
     $note = "( $params{category} )" if $params{category};
     $note .= ($note ? ' ' : '') . $params{note} if $params{note};
-    $translation_item->{note}->SetValue($note) if $note;
+    if ($note) {
+        $translation_item->{note}->Show();
+        $translation_item->{note}->SetValue($note);
+    }
+
+    $self->vbox->FitInside($self);
+    $self->vbox->Layout();
+    $self->_scroll_to_bottom();
 
     return $translation_item;
 }
