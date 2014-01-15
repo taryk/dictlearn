@@ -59,7 +59,7 @@ sub _build_test_groups {
         wxDefaultSize, wxLC_REPORT | wxLC_HRULES | wxLC_VRULES);
     $test_groups->InsertColumn(0, '#',     wxLIST_FORMAT_LEFT, 30);
     $test_groups->InsertColumn(1, 'name',  wxLIST_FORMAT_LEFT, 200);
-    $test_groups->InsertColumn(2, 'words', wxLIST_FORMAT_LEFT, 30);
+    $test_groups->InsertColumn(2, 'words', wxLIST_FORMAT_LEFT, 45);
 
     # score: taken (correct/wrong) percentage
     $test_groups->InsertColumn(3, 'score', wxLIST_FORMAT_LEFT, 60);
