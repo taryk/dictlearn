@@ -425,10 +425,12 @@ sub load_categories {
         = Database->schema->resultset('TestCategory')
         ->search(
         {
-            dictionary_id => Dict::Learn::Dictionary->curr_id,
+            'me.dictionary_id' => Dict::Learn::Dictionary->curr_id,
         },
         {
-            order_by => { -desc => 'test_category_id' },
+            distinct => 1,
+            join     => 'words',
+            order_by => { -desc => 'me.test_category_id' },
         }
         );
 
@@ -437,7 +439,7 @@ sub load_categories {
         my $id = $self->test_groups->InsertItem(Wx::ListItem->new);
         $self->test_groups->SetItem($id, 0, $category->test_category_id); # id
         $self->test_groups->SetItem($id, 1, $category->name);             # name
-        # $self->test_groups->SetItem($id, 2, $category->name);           # number of words
+        $self->test_groups->SetItem($id, 2, $category->words->count);     # number of words
         # $self->test_groups->SetItem($id, 3, $category->name);           # scrore
     }
 }
