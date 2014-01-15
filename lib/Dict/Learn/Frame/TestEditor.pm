@@ -437,10 +437,15 @@ sub load_categories {
     $self->test_groups->DeleteAllItems();
     while (my $category = $categories->next()) {
         my $id = $self->test_groups->InsertItem(Wx::ListItem->new);
-        $self->test_groups->SetItem($id, 0, $category->test_category_id); # id
-        $self->test_groups->SetItem($id, 1, $category->name);             # name
-        $self->test_groups->SetItem($id, 2, $category->words->count);     # number of words
-        # $self->test_groups->SetItem($id, 3, $category->name);           # scrore
+        for (
+            [ 0 => $category->test_category_id ], # ID
+            [ 1 => $category->name ],             # name
+            [ 2 => $category->words->count ],     # number of words
+            # [ 3 => $category->score ]           # score
+            )
+        {
+            $self->test_groups->SetItem($id, @$_);
+        }
     }
 }
 
