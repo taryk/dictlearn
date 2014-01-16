@@ -765,7 +765,7 @@ TODO add description
 
 =cut
 
-sub enable_controls($$) {
+sub enable_controls {
     my ($self, $is_enabled) = @_;
 
     $self->translations->btn_additem->Enable($is_enabled);
