@@ -803,6 +803,7 @@ sub load_step {
         text  => $step->[1],
         input => $step->[2],
     );
+    $self->hide_translation();
 }
 
 =head2 next_step
@@ -972,6 +973,19 @@ sub toggle_translation {
     );
 
     $self->translation_state(!$self->translation_state);
+}
+
+=head2 hide_translation
+
+Hide a translation
+
+=cut
+
+sub hide_translation {
+    my ($self) = @_;
+
+    $self->translation_state(1);
+    $self->toggle_translation();
 }
 
 no Moose;
