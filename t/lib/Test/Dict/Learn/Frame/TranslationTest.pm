@@ -49,6 +49,7 @@ sub fields : Tests {
     for (
         [qw(count total_score pos) => 'Int'     ],
         [qw(exercise)              => 'ArrayRef'],
+        [qw(translation_state)     => 'Bool'    ],
        )
     {
         my $type = pop @$_;
