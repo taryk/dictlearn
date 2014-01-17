@@ -323,6 +323,18 @@ has btn_reset => (
     },
 );
 
+=head2 translation_state
+
+Indicates whether translation is shown or not.
+
+=cut
+
+has translation_state => (
+    is      => 'rw',
+    isa     => 'Bool',
+    default => 0,
+);
+
 =head2 btn_toggle_translation
 
 TODO add description
@@ -951,18 +963,15 @@ TODO add description
 sub toggle_translation {
     my ($self) = @_;
 
-    state $show = 1;
-
     $self->btn_toggle_translation->SetLabel(
-        $show ? 'Hide translation' : 'Show translation');
+        $self->translation_state ? 'Show translation' : 'Hide translation');
 
     $self->translation->SetLabel(
-        $show
-        ? join("\n",
+        $self->translation_state ? '' : join("\n",
             map { "* $_->[1]" } @{ $self->exercise->[$self->pos - 1][3] })
-        : ''
     );
-    $show = !$show;
+
+    $self->translation_state(!$self->translation_state);
 }
 
 no Moose;
