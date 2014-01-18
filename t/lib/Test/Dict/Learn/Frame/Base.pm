@@ -106,6 +106,8 @@ sub _new_word_in_db {
             }
         );
     }
+
+    return $new_word;
 }
 
 1;
