@@ -151,6 +151,15 @@ sub keybind {
                 $self->del_item($last_word_obj->{id});
             }
         }
+        # Ctrl+"H" or Ctrl+"h"
+        when ([ord('H'), ord('h')]) {
+            my $window = Wx::Window::FindFocus();
+            return if ref $window->GetParent ne 'Wx::ComboCtrl';
+
+            # $window->GetLabel returns the index of element in
+            # word_translations
+            $self->toggle_note( $window->GetLabel );
+        }
     }
 }
 
@@ -255,6 +264,7 @@ sub make_item {
 
     $self->word_translations->[$id] = \%translation_item;
 
+    $translation_item{word}->GetTextCtrl->SetLabel($id);
     $translation_item{word}
         ->SetPopupControl($translation_item{popup});
 
