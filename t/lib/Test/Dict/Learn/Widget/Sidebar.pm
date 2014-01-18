@@ -20,6 +20,8 @@ sub startup : Test(startup => no_plan) {
         = Dict::Learn::Widget::Sidebar->new($parent, wxID_ANY,
         wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
+    *Dict::Learn::Widget::Sidebar::reload_parent = sub {};
+
     $self->SUPER::startup();
 
     ok($self->{frame}, qw{Sidebar panel created});

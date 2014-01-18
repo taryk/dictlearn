@@ -265,7 +265,7 @@ sub delete_word {
     my ($self) = @_;
 
     Database->schema->resultset('Word')->delete_one($self->word_id);
-    $self->parent->lookup_phrases->lookup;
+    $self->reload_parent();
 }
 
 =head2 unlink_word
@@ -278,6 +278,18 @@ sub unlink_word {
     my ($self) = @_;
 
     Database->schema->resultset('Word')->unlink_one($self->word_id);
+    $self->reload_parent();
+}
+
+=head2 reload_parent
+
+Reload a parent lookup_phrases table
+
+=cut
+
+sub reload_parent {
+    my ($self) = @_;
+
     $self->parent->lookup_phrases->lookup;
 }
 
