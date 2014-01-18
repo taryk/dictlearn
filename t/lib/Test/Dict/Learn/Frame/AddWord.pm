@@ -158,7 +158,11 @@ sub add_record : Tests {
         my ($found_record)
             = grep { $_->word eq $tr_record->{word} } @translations;
         ok($found_record,
-            'Translation "' . $found_record->word . '" was added');
+            'Translation "' . $tr_record->{word} . '" was added');
+
+        # There's no point to test partofspeech_id and lang_id attributes
+        # if a record hasn't been added
+        next if !$found_record;
         is(
             $found_record->partofspeech_id => $tr_record->{partofspeech_id},
             q{Part-of-speech was set correctly}
