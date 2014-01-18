@@ -160,6 +160,28 @@ sub keybind {
             # word_translations
             $self->toggle_note( $window->GetLabel );
         }
+        when ([WXK_UP, WXK_DOWN]) {
+            my $window = Wx::Window::FindFocus();
+            return if ref $window->GetParent ne 'Wx::ComboCtrl';
+
+            my $count = $self->translation_count;
+            return if $count <= 1;
+
+            my $current_id = $window->GetLabel;
+            my $id = $current_id;
+            my $inc = ($_ == WXK_UP) ? -1 : 1;
+
+            $id += $inc;
+            while (!$self->word_translations->[$id]) {
+                $id += $inc;
+                if    ($id < 0)      { $id = $count }
+                elsif ($id > $count) { $id = 0 }
+                return if $id == $current_id;
+            }
+
+            $self->word_translations->[$id]{word}->SetFocus()
+                if $self->word_translations->[$id];
+        }
     }
 }
 
