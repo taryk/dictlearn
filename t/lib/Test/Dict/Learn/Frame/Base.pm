@@ -110,4 +110,18 @@ sub _new_word_in_db {
     return $new_word;
 }
 
+sub _lookup_in_db {
+    my ($self, %params) = @_;
+
+    my $orig_lang_id
+        = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
+
+    return Database->schema->resultset('Word')->search(
+        {
+            word    => $params{word},
+            lang_id => $orig_lang_id,
+        }
+    )->first;
+}
+
 1;

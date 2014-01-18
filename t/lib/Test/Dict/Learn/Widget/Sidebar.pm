@@ -49,4 +49,25 @@ sub fields : Tests {
     }
 }
 
+sub delete_word_button_click : Tests {
+    my ($self) = @_;
+
+    my @phrases = qw(Test_phrase_1 Test_phrase_2 Test_phrase_3);
+    my @phrases_dbix = map { $self->_new_word_in_db(word => $_) } @phrases;
+
+    my $delete_phrase_idx = 1;
+    $self->{frame}->word_id($phrases_dbix[$delete_phrase_idx]->word_id);
+    $self->{frame}->delete_word();
+    for my $phrase (grep { $_ ne $phrases[$delete_phrase_idx] } @phrases) {
+        ok(
+            $self->_lookup_in_db(word => $phrase),
+            "'$phrase' has not been deleted"
+        );
+    }
+    ok(
+        !$self->_lookup_in_db(word => $phrases[$delete_phrase_idx]),
+        "'$phrases[$delete_phrase_idx]' has been deleted"
+    );
+}
+
 1;
