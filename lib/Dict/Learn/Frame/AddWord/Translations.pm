@@ -193,14 +193,41 @@ sub keybind {
     }
 }
 
+sub _find_phrase_id_by_widget {
+    my ($self, $widget) = @_;
+
+    for my $translation_item (grep { defined } @{ $self->word_translations })
+    {
+        for my $tr_widget (
+            $translation_item->{word}->GetTextCtrl,
+            $translation_item->{note}
+           )
+        {
+            # scalar of an object returns a string like
+            # Wx::TextCtrl=HASH(0x3af9fe0)
+            return $translation_item->{id}
+                if scalar $tr_widget eq scalar $widget;
+        }
+    }
+}
+
+# returns an index of element in word_translations
 sub _get_focused_tr_phrase_id {
     my ($self) = @_;
 
     my $widget = Wx::Window::FindFocus();
-    return if ref $widget->GetParent ne 'Wx::ComboCtrl';
+    return if ref $widget ne 'Wx::TextCtrl';
 
-    # returns the index of element in word_translations
-    return $widget->GetLabel;
+    given (ref $widget->GetParent) {
+        # word
+        when ('Wx::ComboCtrl') {
+            return $widget->GetLabel;
+        }
+        # note
+        when ('Dict::Learn::Frame::AddWord::Translations') {
+            return $self->_find_phrase_id_by_widget($widget);
+        }
+    }
 }
 
 sub _scroll_to_bottom {
@@ -448,7 +475,13 @@ sub toggle_note {
         unless exists $self->word_translations->[$id];
 
     my $note = $self->word_translations->[$id]{note};
-    $note->Show(!$note->IsShown);
+    if ($note->IsShown) {
+        $note->Hide();
+        $self->word_translations->[$id]{word}->SetFocus();
+    } else {
+        $note->Show();
+        $note->SetFocus();
+    }
     $self->vbox->Layout();
 }
 
