@@ -160,12 +160,23 @@ sub keybind {
         }
         # Ctrl+"-" or Ctrl+"-" on NumPad
         when ([WXK_SUBTRACT, WXK_NUMPAD_SUBTRACT]) {
-            if (my $last_word_obj
-                = first { defined $_->{cbox} }
-                reverse @{ $self->word_translations })
-            {
-                $self->del_item($last_word_obj->{id});
-            }
+            my $focused_phrase_id = $self->_get_focused_tr_phrase_id();
+            return if !defined $focused_phrase_id;
+            $self->del_item($focused_phrase_id);
+
+            # focus the next item
+            my $next_phrase_id = $focused_phrase_id;
+            my $next_tr_item;
+            do {
+                $next_phrase_id++;
+                if ($next_phrase_id >= $self->translation_count) {
+                    $next_phrase_id -= 2;
+                } elsif ($next_phrase_id == $focused_phrase_id) {
+                    return
+                }
+                $next_tr_item = $self->word_translations->[$next_phrase_id];
+            } while (!defined $next_tr_item);
+            $next_tr_item->{word}->SetFocus();
         }
         # Ctrl+"H" or Ctrl+"h"
         when ([ord('H'), ord('h')]) {
