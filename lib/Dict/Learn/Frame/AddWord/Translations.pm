@@ -139,11 +139,10 @@ sub keybind {
     if ($key_modifiers == (wxMOD_CONTROL | wxMOD_SHIFT)) {
         given ($key_code) {
             when ([WXK_UP, WXK_DOWN]) {
-                my $window = Wx::Window::FindFocus();
-                return if ref $window->GetParent ne 'Wx::ComboCtrl';
-                my $current_id = $window->GetLabel;
+                my $current_id = $self->_get_focused_tr_phrase_id();
                 my $cbox = $self->word_translations->[$current_id]{cbox};
-                my $new_index = $cbox->GetSelection + (($key_code == WXK_UP) ? -1 : 1);
+                my $new_index
+                    = $cbox->GetSelection + (($key_code == WXK_UP) ? -1 : 1);
                 if ($new_index < 0) { $new_index = $cbox->GetCount - 1 }
                 elsif ($new_index >= $cbox->GetCount) { $new_index = 0 }
                 $cbox->SetSelection($new_index);
@@ -170,21 +169,13 @@ sub keybind {
         }
         # Ctrl+"H" or Ctrl+"h"
         when ([ord('H'), ord('h')]) {
-            my $window = Wx::Window::FindFocus();
-            return if ref $window->GetParent ne 'Wx::ComboCtrl';
-
-            # $window->GetLabel returns the index of element in
-            # word_translations
-            $self->toggle_note( $window->GetLabel );
+            $self->toggle_note( $self->_get_focused_tr_phrase_id() );
         }
         when ([WXK_UP, WXK_DOWN]) {
-            my $window = Wx::Window::FindFocus();
-            return if ref $window->GetParent ne 'Wx::ComboCtrl';
-
             my $count = $self->translation_count;
             return if $count <= 1;
 
-            my $current_id = $window->GetLabel;
+            my $current_id = $self->_get_focused_tr_phrase_id();
             my $id = $current_id;
             my $inc = ($_ == WXK_UP) ? -1 : 1;
 
@@ -200,6 +191,16 @@ sub keybind {
                 if $self->word_translations->[$id];
         }
     }
+}
+
+sub _get_focused_tr_phrase_id {
+    my ($self) = @_;
+
+    my $widget = Wx::Window::FindFocus();
+    return if ref $widget->GetParent ne 'Wx::ComboCtrl';
+
+    # returns the index of element in word_translations
+    return $widget->GetLabel;
 }
 
 sub _scroll_to_bottom {
