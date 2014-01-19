@@ -164,6 +164,14 @@ sub keybind {
             return if !defined $focused_phrase_id;
             $self->del_item($focused_phrase_id);
 
+            if ($self->translation_count <= 0) {
+
+                # if there's no any translation item, set a focus on word_src
+                # field and go away
+                $self->parent->word_src->SetFocus();
+                return;
+            }
+
             # focus the next item
             my $next_phrase_id = $focused_phrase_id;
             my $next_tr_item;
