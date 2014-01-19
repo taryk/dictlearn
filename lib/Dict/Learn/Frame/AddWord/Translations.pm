@@ -133,11 +133,28 @@ TODO add description
 sub keybind {
     my ($self, $event) = @_;
 
-    # It should respond to Ctrl+"+" and Ctrl+"-"
-    # so if Ctrl key isn't pressed, go away
-    return if $event->GetModifiers() != wxMOD_CONTROL;
+    my $key_modifiers = $event->GetModifiers();
+    my $key_code = $event->GetKeyCode();
 
-    given ($event->GetKeyCode()) {
+    if ($key_modifiers == (wxMOD_CONTROL | wxMOD_SHIFT)) {
+        given ($key_code) {
+            when ([WXK_UP, WXK_DOWN]) {
+                my $window = Wx::Window::FindFocus();
+                return if ref $window->GetParent ne 'Wx::ComboCtrl';
+                my $current_id = $window->GetLabel;
+                my $cbox = $self->word_translations->[$current_id]{cbox};
+                my $new_index = $cbox->GetSelection + (($key_code == WXK_UP) ? -1 : 1);
+                if ($new_index < 0) { $new_index = $cbox->GetCount - 1 }
+                elsif ($new_index >= $cbox->GetCount) { $new_index = 0 }
+                $cbox->SetSelection($new_index);
+            }
+        }
+        return;
+    }
+
+    return if $key_modifiers != wxMOD_CONTROL;
+
+    given ($key_code) {
         # Ctrl+"+" or Ctrl+"+" on NumPad
         when ([WXK_ADD, WXK_NUMPAD_ADD]) {
             $self->add_item();
