@@ -35,6 +35,7 @@ const my $PARTSOFSPEACH => {
     cj      => 'conjunction',   # сполучник
     int     => 'interjection',  # вигук
     'p. p.' => 'participle',    # дієприкметник (past participle)
+    'phr v' => 'verb',          # фразове дієслово
 };
 
 =head1 METHODS
