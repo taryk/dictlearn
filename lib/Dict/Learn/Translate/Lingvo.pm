@@ -97,8 +97,7 @@ sub _parse_item {
                     $word_entry->{category} = $+{category};
                 }
                 if ($word =~ s/\s*[(]\s*(?<note>[^)]+)\s*[)]\s*$//iusx) {
-                    $word_entry->{note} = $+{note};
-                    chomp($word_entry->{note});
+                    $word_entry->{note} = ($+{note} =~ s/^\s*(.+)\s+$/$1/r);
                 }
                 $word_entry->{word} = $word;
                 push @$words => $word_entry;
