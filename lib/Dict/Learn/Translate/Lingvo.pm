@@ -67,8 +67,6 @@ sub _parse_item {
                     }
                 }
                 when ('l-article__abbrev') {
-
-                    # if ($text =~ /^(n|v|)$/)
                     say "unknown: '$text'" unless $PARTSOFSPEACH->{$text};
                     $curr->{partofspeech} = $PARTSOFSPEACH->{$text} // 'noun';
                 }
@@ -123,8 +121,8 @@ sub translate {
     my ($from, $to, $text) = @_;
     my $res = $class->SUPER::http_request(
         GET => sprintf($URL, $from, $to, uri_escape_utf8($text)),
-        {   'Cookie' =>
-                'ClickedOnTranslationsCount=2; '
+        {
+            'Cookie' => 'ClickedOnTranslationsCount=2; '
                 . 'xst=E33FE85E8DE54DC5B7CC20A2F0EEDD33; '
                 . 'LastSearchRequest=08.06.2013 20:37; rateUs_cnt_1_8=54; '
                 . 'rateUs_later_1_8=true; tz=120; uiCulture=uk; '
@@ -136,7 +134,6 @@ sub translate {
         }
     );
 
-    # return if $res->{code} < 0;
     my $dom = Mojo::DOM->new(decode('UTF-8', $res->{content}));
     my $tr_res;
     if (my $res = $dom->at('div.js-article-html')) {
