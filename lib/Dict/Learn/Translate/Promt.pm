@@ -89,7 +89,6 @@ sub parse_result {
         $res->{_} = $json->{result};
     }
 
-    # p($res);
     return $res;
 }
 
@@ -123,7 +122,8 @@ sub translate {
     my $res = $class->SUPER::http_request(
         POST => sprintf($URL, $from, $to, uri_escape_utf8($text)),
 
-        {   'Accept' =>
+        {
+            'Accept' =>
                 'Accept: application/json, text/javascript, */*; q=0.01',
             'Referer'          => 'Referer: http://www.translate.ru/',
             'Content-Type'     => 'application/json; charset=UTF-8',
@@ -132,7 +132,8 @@ sub translate {
         },
 
         # dirCode should be: er/re/ge/eg/etc.
-        {   dirCode => substr($from, 0, 1) . substr($to, 0, 1),
+        {
+            dirCode => substr($from, 0, 1) . substr($to, 0, 1),
             template => 'Computer',   # @TODO: template chould be configurable
             text     => $text,
             lang     => 'ru',         # `translate.ru` supports only `ru`?
@@ -144,7 +145,7 @@ sub translate {
         }
     );
     return if $res->{code} < 0;
-    my $json = from_json($res->{content}, {utf8 => 1});
+    my $json = from_json($res->{content}, { utf8 => 1 });
 
     # p($json);
     return { I => parse_result($json) };
