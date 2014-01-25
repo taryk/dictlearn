@@ -299,8 +299,10 @@ TODO add description
 
 sub find_ones_flushcashe {
     my $self = shift;
+
     flush_cache('find_ones_cached');
-    $self;
+
+    return$self;
 }
 
 =head2 match
@@ -426,8 +428,10 @@ TODO add description
 
 sub get_all_flushcashe {
     my $self = shift;
+
     flush_cache('get_all_cached');
-    $self;
+
+    return $self;
 }
 
 =head2 get_irregular_verbs

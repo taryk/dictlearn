@@ -351,8 +351,6 @@ sub BUILD {
     $self->SetSizer($self->vbox);
     $self->Layout();
     $self->vbox->Fit($self);
-
-    $self;
 }
 
 no Moose;

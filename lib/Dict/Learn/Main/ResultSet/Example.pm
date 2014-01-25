@@ -91,7 +91,8 @@ sub add_one {
             );
         }
     }
-    $self;
+
+    return $self;
 }
 
 =head2 update_one
@@ -148,7 +149,8 @@ sub update_one {
             $example_xref->delete;
         }
     }
-    $self;
+
+    return $self;
 }
 
 =head2 delete_one

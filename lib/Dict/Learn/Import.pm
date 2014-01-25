@@ -42,7 +42,7 @@ sub new {
     my $class = shift;
     my $self = bless {} => $class;
 
-    $self;
+    return $self;
 }
 
 =head2 do

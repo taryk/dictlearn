@@ -33,7 +33,7 @@ sub new {
     $self->{dict_id} = undef;
     $self->{cb}      = [];
 
-    $self;
+    return $self;
 }
 
 =head2 singleton

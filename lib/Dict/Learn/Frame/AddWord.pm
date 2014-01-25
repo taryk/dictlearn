@@ -840,8 +840,6 @@ sub BUILD {
 
     # Set focus on word field
     $self->word_src->SetFocus();
-
-    $self;
 }
 
 no Moose;

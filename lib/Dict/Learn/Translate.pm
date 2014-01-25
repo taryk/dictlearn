@@ -41,7 +41,7 @@ sub new {
     } => $class;
     $self->preload_tplugins;
 
-    $self;
+    return $self;
 }
 
 =head2 preload_tplugins
@@ -110,7 +110,7 @@ sub from {
 
     $self->{from} = shift;
 
-    $self;
+    return $self;
 }
 
 =head2 to
@@ -124,7 +124,7 @@ sub to {
 
     $self->{to} = shift;
 
-    $self;
+    return $self;
 }
 
 =head2 using
@@ -138,7 +138,7 @@ sub using {
 
     $self->{using} = shift;
 
-    $self;
+    return $self;
 }
 
 =head2 http_request
