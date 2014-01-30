@@ -30,8 +30,6 @@ unless (-e $dbfile) {
     make_path($config_dir) unless -d $config_dir;
 }
 
-# $ENV{DBIC_TRACE} //= $debug;
-
 Container->params(
     dbfile => $dbfile,
     debug  => $debug,
@@ -40,26 +38,20 @@ Container->params(
 if ($import) {
     require Dict::Learn::Import;
     exit !Dict::Learn::Import->new->do($import);
-}
-elsif ($export) {
+} elsif ($export) {
     require Dict::Learn::Export;
     exit !Dict::Learn::Export->new->do($export);
-}
-elsif ($clear_all) {
+} elsif ($clear_all) {
     exit !Container->lookup('db')->clear_all();
-}
-elsif ($clear_data) {
+} elsif ($clear_data) {
     exit !Container->lookup('db')->clear_data();
-}
-elsif ($clear_tests) {
+} elsif ($clear_tests) {
     exit !Container->lookup('db')->clear_test_results();
-}
-elsif ($reset) {
+} elsif ($reset) {
     exit 1 if !Container->lookup('db')->clear_all();
     Container->lookup('db')->install_schema();
     exit 0;
-}
-elsif ($migration) {
+} elsif ($migration) {
     eval {
         my $class = 'Dict::Learn::Main::Migration::' . $migration;
         require(($class =~ s/::/\//rg) . '.pm');
@@ -68,11 +60,10 @@ elsif ($migration) {
         $class->up($data);
         say 'up...';
         1;
-    } || do {
+    } or do {
         say "something went wrong $@";
-    }
-}
-else {
+    };
+} else {
     unless (Container->lookup('db')->check_tables()) {
         Container->lookup('db')->install_schema();
     }
