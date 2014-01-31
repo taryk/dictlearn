@@ -160,12 +160,12 @@ sub http_request {
     my $req = HTTP::Request->new($method => $url, $h, $json || $content);
     my $res = LWP::UserAgent->new(agent => $USERAGENT)->request($req);
     if ($res->is_success) {
-        {
+        return {
             code    => $res->code,
             content => $res->content
         };
     } else {
-        {
+        return {
             code    => -1,
             content => $res->status_line
         };
