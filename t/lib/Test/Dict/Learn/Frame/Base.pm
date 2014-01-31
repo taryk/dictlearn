@@ -26,7 +26,7 @@ sub startup : Test(startup => no_plan) {
     Dict::Learn::Dictionary->set(0);
 }
 
-# this method should run after frame is created
+# `z_` prefix is intended to make this method go after frame is created
 sub z_after_all_startups : Test(startup) {
     my ($self) = @_;
 

@@ -126,4 +126,49 @@ sub lookup : Tests {
     # TODO test other filters/commands
 }
 
+sub search_history : Tests {
+    my ($self) = @_;
+    
+    my @phrases_to_look_for = map { "Test-$_" } 0 .. 25;
+
+    my $lookup_phrases = $self->{frame};
+
+    # Clear all SearchHistory elements
+    $lookup_phrases->lookup_field->Clear;
+
+    $lookup_phrases->lookup_field->SetValue($phrases_to_look_for[0]);
+    $lookup_phrases->lookup();
+    is_deeply(
+        [ $lookup_phrases->lookup_field->GetStrings ],
+        [ $phrases_to_look_for[0] ],
+        qq{At first, the only element of SearchHistory is "$phrases_to_look_for[0]"}
+    );
+
+    $lookup_phrases->lookup_field->SetValue($phrases_to_look_for[0]);
+    $lookup_phrases->lookup();
+    is_deeply(
+        [ $lookup_phrases->lookup_field->GetStrings ],
+        [ $phrases_to_look_for[0] ],
+        qq{Looking for the same phrase doesn't add a new element}
+    );
+
+    for my $phrase (@phrases_to_look_for) {
+        $lookup_phrases->lookup_field->SetValue($phrase);
+        $lookup_phrases->lookup();
+        is($lookup_phrases->lookup_field->GetString(0),
+            $phrase, qq{The next element is "$phrase"});
+    }
+
+    my $max_count = 20;
+    is($lookup_phrases->lookup_field->GetCount, $max_count,
+       qq{Max possible SearchHistory size is $max_count});
+
+    is_deeply(
+        [ $lookup_phrases->lookup_field->GetStrings ],
+        [ (reverse @phrases_to_look_for)[0 .. 19] ], # 20 last elements
+        qq{The elements in SearchHistory are in reverse order}
+    );
+
+}
+
 1;
