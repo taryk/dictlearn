@@ -36,6 +36,16 @@ sub clear_db : Test(setup => no_plan) {
         Database->schema->resultset('Word')->count() => 0,
         qq{'word' table has been cleared up}
     );
+
+    # Clear all SearchHistory records
+    Database->schema->resultset('SearchHistory')->delete_all();
+    is(
+        Database->schema->resultset('SearchHistory')->count() => 0,
+        qq{'SearchHistory' table has been cleared up}
+    );
+
+    # ... and elements
+    $self->{frame}->lookup_field->Clear;
 }
 
 sub fields : Tests {
@@ -133,11 +143,9 @@ sub search_history : Tests {
 
     my $lookup_phrases = $self->{frame};
 
-    # Clear all SearchHistory elements
-    $lookup_phrases->lookup_field->Clear;
-
     $lookup_phrases->lookup_field->SetValue($phrases_to_look_for[0]);
     $lookup_phrases->lookup();
+
     is_deeply(
         [ $lookup_phrases->lookup_field->GetStrings ],
         [ $phrases_to_look_for[0] ],
