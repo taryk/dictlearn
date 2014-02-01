@@ -17,11 +17,10 @@ use Database;
 
 const my $COL_WORD         => [0, 'word'];
 const my $COL_REL_W        => [1, 'rel_words'];
-const my $COL_REL_E        => [2, 'rel_examples'];
-const my $COL_PARTOFSPEECH => [3, 'partofspeech'];
-const my $COL_INTEST       => [4, 'in_test'];
-const my $COL_CDATE        => [5, 'cdate'];
-const my $COL_MDATE        => [6, 'mdate'];
+const my $COL_PARTOFSPEECH => [2, 'partofspeech'];
+const my $COL_INTEST       => [3, 'in_test'];
+const my $COL_CDATE        => [4, 'cdate'];
+const my $COL_MDATE        => [5, 'mdate'];
 
 =head1 NAME
 
@@ -86,7 +85,6 @@ sub _build_grid {
     $grid->CreateGrid(0, $COL_MDATE->[0] + 1);
     $grid->SetColSize($COL_WORD->[0],         300);
     $grid->SetColSize($COL_REL_W->[0],        20);
-    $grid->SetColSize($COL_REL_E->[0],        20);
     $grid->SetColSize($COL_PARTOFSPEECH->[0], 30);
     $grid->SetColSize($COL_INTEST->[0],       20);
     $grid->SetColSize($COL_CDATE->[0],        140);
@@ -106,7 +104,6 @@ sub _build_grid {
     $grid->SetRowLabelAlignment(wxALIGN_CENTRE, wxALIGN_CENTRE);
     $grid->SetColLabelValue($COL_WORD->[0],         'Word');
     $grid->SetColLabelValue($COL_REL_W->[0],        'W');
-    $grid->SetColLabelValue($COL_REL_E->[0],        'E');
     $grid->SetColLabelValue($COL_PARTOFSPEECH->[0], 'pos');
     $grid->SetColLabelValue($COL_INTEST->[0],       't');
     $grid->SetColLabelValue($COL_CDATE->[0],        'Created');
@@ -297,9 +294,6 @@ sub select_words {
         $self->grid->SetCellValue($i, $COL_REL_W->[0],
             $item->{$COL_REL_W->[1]});
         $self->grid->SetReadOnly($i, $COL_REL_W->[0], 1);
-        $self->grid->SetCellValue($i, $COL_REL_E->[0],
-            $item->{$COL_REL_E->[1]});
-        $self->grid->SetReadOnly($i, $COL_REL_E->[0], 1);
         $self->grid->SetCellEditor($i, $COL_INTEST->[0],
             Wx::GridCellBoolEditor->new);
         $self->grid->SetCellRenderer($i, $COL_INTEST->[0],

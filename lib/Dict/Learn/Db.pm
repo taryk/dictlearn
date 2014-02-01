@@ -24,9 +24,8 @@ TODO add description
 
 const my $REQ_TABLES => [
     qw(
-        word word_xref example example_xref word_example_xref
-        dictionary partofspeech language test test_session
-        test_session_data
+        word word_xref dictionary partofspeech language
+        test test_session test_session_data
     )
 ];
 
@@ -149,9 +148,7 @@ TODO add description
 sub clear_data {
     my $self = shift;
 
-    for ( qw[Word Words Example Examples WordExample
-             TestSession TestSessionData] )
-    {
+    for ( qw[Word Words TestSession TestSessionData] ) {
         $self->schema->resultset($_)->clear_data();
     }
 
@@ -184,9 +181,10 @@ sub clear_all {
     my $self = shift;
 
     for (
-        qw[Word Words Example Examples WordExample
-        Language PartOfSpeech Dictionary
-        Test TestSession TestSessionData]
+        qw(
+              Word Words Language PartOfSpeech Dictionary
+              Test TestSession TestSessionData
+         )
         )
     {
         $self->schema->resultset($_)->clear_data();
@@ -222,35 +220,6 @@ CREATE TABLE IF NOT EXISTS word_xref (
   `dictionary_id`     INTEGER  NOT NULL DEFAULT 0,
   `rel_type`          INTEGER  NOT NULL DEFAULT 0,
   `category_id`       INTEGER  NOT NULL DEFAULT 0,
-  `note`              TEXT,
-  `cdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `mdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS example (
-  `example_id`        INTEGER  PRIMARY KEY ASC AUTOINCREMENT,
-  `example`           TEXT,
-  `lang_id`           INTEGER  NOT NULL DEFAULT 0,
-  `idioma`            INTEGER  NOT NULL DEFAULT 0,
-  `in_test`           INTEGER  NOT NULL DEFAULT 1,
-  `note`              TEXT,
-  `cdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `mdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS example_xref (
-  `example1_id`       INTEGER  NOT NULL DEFAULT 0,
-  `example2_id`       INTEGER  NOT NULL DEFAULT 0,
-  `dictionary_id`     INTEGER  NOT NULL DEFAULT 0,
-  `note`              TEXT,
-  `cdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `mdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS word_example_xref (
-  `word_id`           INTEGER  NOT NULL DEFAULT 0,
-  `example_id`        INTEGER  NOT NULL DEFAULT 0,
-  `partofspeech_id`   INTEGER  NOT NULL DEFAULT 0,
   `note`              TEXT,
   `cdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -363,21 +332,6 @@ INSERT INTO word_xref (word1_id, word2_id, dictionary_id, partofspeech_id) VALUE
 INSERT INTO word_xref (word1_id, word2_id, dictionary_id, partofspeech_id) VALUES (1, 0, 1, 0);
 INSERT INTO word_xref (word1_id, word2_id, dictionary_id, partofspeech_id) VALUES (0, 2, 0, 1);
 INSERT INTO word_xref (word1_id, word2_id, dictionary_id, partofspeech_id) VALUES (2, 0, 1, 1);
-
-INSERT INTO example (example_id, example, lang_id) VALUES (0, 'This is a test', 0);
-INSERT INTO example (example_id, example, lang_id) VALUES (1, 'Це є тест', 1);
-INSERT INTO example (example_id, example, lang_id) VALUES (2, 'Please test it', 0);
-INSERT INTO example (example_id, example, lang_id) VALUES (3, 'Будь-ласка, протестуй це', 1);
-
-INSERT INTO example_xref (example1_id, example2_id, dictionary_id) VALUES (0, 1, 0);
-INSERT INTO example_xref (example1_id, example2_id, dictionary_id) VALUES (1, 0, 1);
-INSERT INTO example_xref (example1_id, example2_id, dictionary_id) VALUES (2, 3, 0);
-INSERT INTO example_xref (example1_id, example2_id, dictionary_id) VALUES (3, 2, 1);
-
-INSERT INTO word_example_xref (word_id, example_id) VALUES (0, 0);
-INSERT INTO word_example_xref (word_id, example_id) VALUES (1, 1);
-INSERT INTO word_example_xref (word_id, example_id) VALUES (0, 2);
-INSERT INTO word_example_xref (word_id, example_id) VALUES (2, 3);
 
 INSERT INTO test (test_id, name, lang_id, enabled) VALUES (0, 'Irregular Verbs Test', 0, 1);
 INSERT INTO test (test_id, name, lang_id, enabled) VALUES (1, 'Translation Test', 0, 1);

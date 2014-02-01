@@ -25,9 +25,6 @@ const my $EXPORT_FILENAME => 'export.%d.json';
 const my $TABLE_MAP => {
     words               => 'Word',
     words_xref          => 'Words',
-    examples            => 'Example',
-    examples_xref       => 'Examples',
-    words_examples_xref => 'WordExample',
     test_session        => 'TestSession',
     test_session_data   => 'TestSessionData'
 };

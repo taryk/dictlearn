@@ -377,7 +377,7 @@ sub select_words_grid {
     my %params = @_;
     my $rs     = $self->search(
         {'me.lang_id' => $params{lang1_id}},
-        {   join   => ['rel_words', 'examples', 'partofspeech'],
+        {   join   => ['rel_words', 'partofspeech'],
             select => [
                 'me.word_id',
                 'me.word',
@@ -387,13 +387,12 @@ sub select_words_grid {
                 'partofspeech.abbr',
                 'me.in_test',
                 {count => ['rel_words.word2_id']},
-                {count => ['examples.example_id']},
                 'me.cdate',
                 'me.mdate'
             ],
             as => [
                 qw|word_id word word2 word3 is_irregular partofspeech in_test
-                    rel_words rel_examples cdate mdate|
+                    rel_words cdate mdate|
             ],
             group_by => ['me.word_id'],
             order_by => {-desc => ['me.cdate']}
