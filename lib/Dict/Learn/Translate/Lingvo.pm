@@ -2,6 +2,7 @@ package Dict::Learn::Translate::Lingvo;
 
 use base qw[ Dict::Learn::Translate ];
 
+use Carp;
 use Const::Fast;
 use Data::Printer;
 use Encode qw(encode decode);
@@ -67,8 +68,12 @@ sub _parse_item {
                     }
                 }
                 when ('l-article__abbrev') {
-                    say "unknown: '$text'" unless $PARTSOFSPEACH->{$text};
-                    $curr->{partofspeech} = $PARTSOFSPEACH->{$text} // 'noun';
+                    if (exists $PARTSOFSPEACH->{$text}) {
+                        $curr->{partofspeech} = $PARTSOFSPEACH->{$text};
+                    } else {
+                        carp "unknown: '$text'";
+                        $curr->{partofspeech} = 'noun';
+                    }
                 }
             }
         }
