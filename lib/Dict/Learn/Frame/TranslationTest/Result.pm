@@ -166,6 +166,8 @@ sub fill_result {
             @{$item->{other}}
         );
     }
+
+    return $self;
 }
 
 no Moose;
