@@ -140,7 +140,7 @@ sub keybind {
         given ($key_code) {
             when ([WXK_UP, WXK_DOWN]) {
                 my $current_id = $self->_get_focused_tr_phrase_id();
-                my $cbox = $self->word_translations->[$current_id]{cbox};
+                my $cbox = $self->word_translations->[$current_id]{cbox_pos};
                 my $new_index
                     = $cbox->GetSelection + (($key_code == WXK_UP) ? -1 : 1);
                 if ($new_index < 0) { $new_index = $cbox->GetCount - 1 }
@@ -285,11 +285,11 @@ sub _get_previous_part_of_speech {
 
     if ($id > 0 and my $prev_item = $self->word_translations->[$id - 1]) {
         return
-            unless defined $prev_item->{cbox}
-            and ref $prev_item->{cbox} eq 'Wx::ComboBox'
-            and $prev_item->{cbox}->GetSelection >= 0;
+            unless defined $prev_item->{cbox_pos}
+            and ref $prev_item->{cbox_pos} eq 'Wx::ComboBox'
+            and $prev_item->{cbox_pos}->GetSelection >= 0;
 
-        return $prev_item->{cbox}->GetSelection;
+        return $prev_item->{cbox_pos}->GetSelection;
     }
 }
 
@@ -321,16 +321,16 @@ sub make_item {
     my $id = $#{ $self->vbox_item };
 
     my %translation_item = (
-        word_id => $word_id,
-        id      => $id,
-        cbox    => Wx::ComboBox->new(
+        word_id  => $word_id,
+        id       => $id,
+        cbox_pos => Wx::ComboBox->new(
             $self, wxID_ANY,
             undef, wxDefaultPosition,
             [110, -1], [$self->import_partofspeech],
             wxCB_DROPDOWN | wxCB_READONLY, wxDefaultValidator
         ),
         popup => Dict::Learn::Widget::WordList->new(),
-        word => Wx::ComboCtrl->new(
+        word  => Wx::ComboCtrl->new(
             $self,         wxID_ANY,
             '',            wxDefaultPosition,
             wxDefaultSize, wxCB_DROPDOWN,
@@ -371,9 +371,9 @@ sub make_item {
         # Duplicate a previous part-of-speech in a next item
         : $self->_get_previous_part_of_speech() // 0;
 
-    $translation_item{cbox}->SetSelection($part_of_speach_selection);
+    $translation_item{cbox_pos}->SetSelection($part_of_speach_selection);
 
-    $hbox->Add($translation_item{cbox}, 0, wxALL, 0);
+    $hbox->Add($translation_item{cbox_pos}, 0, wxALL, 0);
     $hbox->Add($translation_item{word}, 4, wxALL, 0);
     $hbox->Add($translation_item{btnn}, 0, wxALL, 0);
     $hbox->Add($translation_item{btnm}, 0, wxALL, 0);
@@ -426,7 +426,7 @@ sub add_item {
     } elsif ($params{partofspeech}) {
         $partofspeech_id = $self->get_partofspeech_id($params{partofspeech});
     }
-    $translation_item->{cbox}->SetSelection($partofspeech_id)
+    $translation_item->{cbox_pos}->SetSelection($partofspeech_id)
         if defined $partofspeech_id;
 
     $translation_item->{word}->SetValue($params{word}) if $params{word};
@@ -461,7 +461,7 @@ sub del_item {
 
     my $phrase = $self->word_translations->[$id]{word}->GetValue();
 
-    for (qw[ cbox word btnm btnp btnn edit note ]) {
+    for (qw[ cbox_pos word btnm btnp btnn edit note ]) {
         next unless defined $self->word_translations->[$id]{$_};
         $self->word_translations->[$id]{$_}->Destroy();
         delete $self->word_translations->[$id]{$_};

@@ -523,7 +523,7 @@ sub add {
             );
             if ($translation_panel->{word}) {
                 $push_item{partofspeech}
-                    = int($translation_panel->{cbox}->GetSelection());
+                    = int($translation_panel->{cbox_pos}->GetSelection());
 
                 # `GetLabel` returns "" or value
                 my $word_id = $translation_panel->{word}->GetLabel();
@@ -776,7 +776,7 @@ sub enable_controls {
         sub {
             my $translation_item = pop;
             return unless defined $translation_item->{word};
-            for my $widget (qw(word note cbox btnm edit)) {
+            for my $widget (qw(word note cbox_pos btnm edit)) {
                 next if !$translation_item->{$widget};
                 $translation_item->{$widget}->Enable($is_enabled);
             }
