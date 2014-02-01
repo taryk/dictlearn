@@ -18,8 +18,16 @@ CREATE TABLE IF NOT EXISTS word_xref (
   `word2_id`          INTEGER  NOT NULL DEFAULT 0,
   `partofspeech_id`   INTEGER  NOT NULL DEFAULT 0,
   `dictionary_id`     INTEGER  NOT NULL DEFAULT 0,
-  `rel_type`          INTEGER  NOT NULL DEFAULT 0,
   `category_id`       INTEGER  NOT NULL DEFAULT 0,
+  `rel_type`          VARCHAR  NOT NULL DEFAULT 'tran',
+  `note`              TEXT,
+  `cdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS rel_type (
+  `rel_type`          VARCHAR PRIMARY KEY,
+  `name`              VARCHAR NOT NULL UNIQUE,
   `note`              TEXT,
   `cdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mdate`             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -135,3 +143,9 @@ INSERT INTO word_xref (word1_id, word2_id, dictionary_id, partofspeech_id) VALUE
 
 INSERT INTO test (test_id, name, lang_id, enabled) VALUES (0, 'Irregular Verbs Test', 0, 1);
 INSERT INTO test (test_id, name, lang_id, enabled) VALUES (1, 'Translation Test', 0, 1);
+
+INSERT INTO rel_type (rel_type, name) VALUES ('tran',  'Translation');
+INSERT INTO rel_type (rel_type, name) VALUES ('syn',   'Synonym');
+INSERT INTO rel_type (rel_type, name) VALUES ('opp',   'Opposite');
+INSERT INTO rel_type (rel_type, name, note) VALUES ('irr2', 'Irregular Verb Past', '2nd form');
+INSERT INTO rel_type (rel_type, name, note) VALUES ('irr3', 'Irregular Verb Past Participle', '3rd form');

@@ -45,5 +45,13 @@ __PACKAGE__->has_one(
         cascade_update => 0
     }
 );
+__PACKAGE__->has_one(
+    rel_type => 'Dict::Learn::Main::Result::RelType',
+    {'foreign.rel_type' => 'self.rel_type'},
+    {
+        cascade_delete => 0,
+        cascade_update => 0
+    }
+);
 
 1;
