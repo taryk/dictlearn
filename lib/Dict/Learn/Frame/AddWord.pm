@@ -13,7 +13,7 @@ use Data::Printer;
 use Database;
 use Dict::Learn::Dictionary;
 use Dict::Learn::Translate;
-use Dict::Learn::Frame::AddWord::Translations;
+use Dict::Learn::Frame::AddWord::LinkedPhrases;
 
 use common::sense;
 
@@ -292,14 +292,14 @@ TODO add description
 
 has translations => (
     is         => 'ro',
-    isa        => 'Dict::Learn::Frame::AddWord::Translations',
+    isa        => 'Dict::Learn::Frame::AddWord::LinkedPhrases',
     lazy_build => 1,
 );
 
 sub _build_translations {
     my $self = shift;
 
-    my $translations = Dict::Learn::Frame::AddWord::Translations->new(
+    my $translations = Dict::Learn::Frame::AddWord::LinkedPhrases->new(
         $self, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL
     );
     $translations->SetScrollbars(20, 20, 0, 0);

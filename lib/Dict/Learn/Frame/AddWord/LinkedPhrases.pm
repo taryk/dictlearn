@@ -1,4 +1,4 @@
-package Dict::Learn::Frame::AddWord::Translations;
+package Dict::Learn::Frame::AddWord::LinkedPhrases;
 
 use Wx qw[:everything];
 use Wx::Event qw[:everything];
@@ -18,7 +18,7 @@ use common::sense;
 
 =head1 NAME
 
-Dict::Learn::Frame::AddWord::Translations
+Dict::Learn::Frame::AddWord::LinkedPhrases
 
 =head1 DESCRIPTION
 
@@ -243,7 +243,7 @@ sub _get_focused_tr_phrase_id {
             return $widget->GetLabel;
         }
         # note
-        when ('Dict::Learn::Frame::AddWord::Translations') {
+        when ('Dict::Learn::Frame::AddWord::LinkedPhrases') {
             return $self->_find_phrase_id_by_widget($widget);
         }
     }

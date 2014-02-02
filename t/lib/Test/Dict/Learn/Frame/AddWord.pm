@@ -30,7 +30,7 @@ sub startup : Test(startup => no_plan) {
     # which isn't a real Dict::Learn::Frame instance in this test
     *Dict::Learn::Frame::AddWord::close_page = sub {};
     *Dict::Learn::Frame::AddWord::set_status_text = sub {};
-    *Dict::Learn::Frame::AddWord::Translations::set_status_text = sub {};
+    *Dict::Learn::Frame::AddWord::LinkedPhrases::set_status_text = sub {};
 }
 
 sub after  : Test(teardown) {
@@ -55,7 +55,7 @@ sub fields : Tests {
     for (
         [parent       => 'Dict::Learn::Frame'],
         [cb_irregular => 'Wx::CheckBox'],
-        [translations => 'Dict::Learn::Frame::AddWord::Translations'],
+        [translations => 'Dict::Learn::Frame::AddWord::LinkedPhrases'],
         [qw(word_note word_src word2_src word3_src) => 'Wx::TextCtrl'],
         [qw(vbox_src hbox_btn hbox_words vbox)      => 'Wx::BoxSizer'],
         [qw(btn_add_word btn_translate btn_clear btn_cancel) => 'Wx::Button'],
