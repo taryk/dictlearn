@@ -37,6 +37,34 @@ has parent => (
     isa => 'Dict::Learn::Frame::AddWord',
 );
 
+=head2 cbox_rel
+
+A combobox that allows to choose the type of relation to add
+
+=cut
+
+has cbox_rel => (
+    is         => 'ro',
+    isa        => 'Wx::ComboBox',
+    lazy_build => 1,
+);
+
+sub _build_cbox_rel {
+    my ($self) = @_;
+
+    my $cbox
+        = Wx::ComboBox->new(shift, wxID_ANY, undef, wxDefaultPosition,
+        [110, -1], [], wxCB_DROPDOWN | wxCB_READONLY,
+        wxDefaultValidator);
+
+    my $rel_type_rs = Database->schema->resultset('RelType')->search({}, {});
+    while (my $dbix_rel_type = $rel_type_rs->next) {
+        $cbox->Append($dbix_rel_type->name, $dbix_rel_type->rel_type);
+    }
+    $cbox->SetStringSelection('Translation');
+
+    return $cbox;
+}
 
 =head2 btn_additem
 
@@ -83,6 +111,7 @@ sub _build_hbox_add {
     my $self = shift;
 
     my $hbox_add = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox_add->Add($self->cbox_rel,    wxALIGN_LEFT | wxRIGHT, 5);
     $hbox_add->Add($self->btn_additem, wxALIGN_LEFT | wxRIGHT, 5);
 
     return $hbox_add;
@@ -323,12 +352,6 @@ sub make_item {
     my %translation_item = (
         word_id  => $word_id,
         id       => $id,
-        cbox_rel => Wx::ComboBox->new(
-            $self, wxID_ANY,
-            undef, wxDefaultPosition,
-            [110, -1], [],
-            wxCB_DROPDOWN | wxCB_READONLY, wxDefaultValidator
-        ),
         cbox_pos => Wx::ComboBox->new(
             $self, wxID_ANY,
             undef, wxDefaultPosition,
@@ -353,8 +376,7 @@ sub make_item {
         parent_vbox => $vbox,
         parent_hbox => $hbox,
     );
-    $self->init_cbox_rel($translation_item{cbox_rel});
-    
+
     $self->word_translations->[$id] = \%translation_item;
 
     $translation_item{word}->GetTextCtrl->SetLabel($id);
@@ -380,7 +402,6 @@ sub make_item {
 
     $translation_item{cbox_pos}->SetSelection($part_of_speach_selection);
 
-    $hbox->Add($translation_item{cbox_rel}, 0, wxALL, 0);
     $hbox->Add($translation_item{cbox_pos}, 0, wxALL, 0);
     $hbox->Add($translation_item{word}, 4, wxALL, 0);
     $hbox->Add($translation_item{btnn}, 0, wxALL, 0);
@@ -605,22 +626,6 @@ sub import_partofspeech {
 
     map { $_->{name_orig} }
         Database->schema->resultset('PartOfSpeech')->select();
-}
-
-=head2 init_cbox_rel
-
-Add L<rel_type> items to L<cbox_rel> widget
-
-=cut
-
-sub init_cbox_rel {
-    my ($self, $cbox_rel) = @_;
-
-    my $rel_type_rs = Database->schema->resultset('RelType')->search({}, {});
-    while (my $dbix_rel_type = $rel_type_rs->next) {
-        $cbox_rel->Append($dbix_rel_type->name, $dbix_rel_type->rel_type);
-    }
-    $cbox_rel->SetStringSelection('Translation');
 }
 
 =head2 get_partofspeech_id
