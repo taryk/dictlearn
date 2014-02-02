@@ -541,6 +541,9 @@ sub add {
                 $push_item{note} = $translation_panel->{note}->GetValue();
                 $push_item{lang_id}
                 = Dict::Learn::Dictionary->curr->{language_tr_id}{language_id};
+                $push_item{rel_type}
+                    = $translation_panel->{cbox_rel}->GetClientData(
+                    $translation_panel->{cbox_rel}->GetSelection());
             }
             push @{$params{translate}} => \%push_item;
         }

@@ -94,6 +94,7 @@ sub add_one {
                 dictionary_id   => $params{dictionary_id},
                 partofspeech_id => $word->{partofspeech},
                 note            => $word->{note},
+                rel_type        => $word->{rel_type},
             }
         );
     }
