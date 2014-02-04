@@ -669,7 +669,6 @@ sub predefined_categories {
                     %{ $category_settings->[1][2] || {} },
                 }
                 );
-            # $id_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
             @ids = shuffle map { $_->word_id } ($id_rs->all());
         }
         my $count = scalar(@ids);
@@ -696,6 +695,7 @@ sub predefined_categories {
                     [map { [$_->word_id, $_->word] } $word->words]
                 ];
         }
+        $self->exercise([shuffle @{ $self->exercise }]);
         $self->_check_exercise_consistency();
     }
 
