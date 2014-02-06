@@ -156,7 +156,7 @@ sub _build_menu_word {
 
     my @menu = (
         ['Add'    => \&p_addword   => 'Ctrl+N'],
-        ["Grid"   => \&p_gridwords => 'Ctrl+G'],
+        ["Grid"   => \&p_gridwords            ],
         ["Search" => \&p_search    => 'Ctrl+F'],
     );
 
