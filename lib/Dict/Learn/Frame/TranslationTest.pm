@@ -705,7 +705,11 @@ sub predefined_categories {
             my $item = $self->exercise->[$_];
             next if defined $item && ref $item eq 'ARRAY';
             p($self->exercise);
-            confess "${_}th of ".($self->max-1).' element is wrong';
+            my $no = {
+                1 => '1st',
+                2 => '2nd'
+            }->{$_} || "${_}th";
+            confess "$no of ".($self->max-1).' element is wrong';
         }
     }
 }
