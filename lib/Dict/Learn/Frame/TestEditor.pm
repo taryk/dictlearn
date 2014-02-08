@@ -62,7 +62,8 @@ sub _build_test_groups {
     $test_groups->InsertColumn(2, 'words', wxLIST_FORMAT_LEFT, 45);
 
     # score: taken (correct/wrong) percentage
-    $test_groups->InsertColumn(3, 'score', wxLIST_FORMAT_LEFT, 60);
+    $test_groups->InsertColumn(3, 'score', wxLIST_FORMAT_LEFT, 50);
+    $test_groups->InsertColumn(4, 'test',  wxLIST_FORMAT_LEFT, 120);
 
     EVT_LIST_ITEM_SELECTED($self, $test_groups, \&on_category_select);
 
@@ -421,18 +422,16 @@ TODO add description
 sub load_categories {
     my ($self) = @_;
 
-    my $categories
-        = Database->schema->resultset('TestCategory')
-        ->search(
+    my $categories = Database->schema->resultset('TestCategory')->search(
         {
             'me.dictionary_id' => Dict::Learn::Dictionary->curr_id,
         },
         {
             distinct => 1,
-            join     => 'words',
+            join     => ['words', 'test'],
             order_by => { -desc => 'me.test_category_id' },
         }
-        );
+    );
 
     $self->test_groups->DeleteAllItems();
     while (my $category = $categories->next()) {
@@ -442,6 +441,7 @@ sub load_categories {
             [ 1 => $category->name ],             # name
             [ 2 => $category->words->count ],     # number of words
             # [ 3 => $category->score ]           # score
+            [ 4 => $category->test->name ],       # test name
             )
         {
             $self->test_groups->SetItem($id, @$_);
