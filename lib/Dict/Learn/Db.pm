@@ -343,6 +343,7 @@ INSERT INTO word_xref (word1_id, word2_id, dictionary_id, partofspeech_id) VALUE
 
 INSERT INTO test (test_id, name, lang_id, enabled) VALUES (0, 'Irregular Verbs Test', 0, 1);
 INSERT INTO test (test_id, name, lang_id, enabled) VALUES (1, 'Translation Test', 0, 1);
+INSERT INTO test (test_id, name, lang_id, enabled) VALUES (2, 'Preposition Test', 0, 1);
 
 INSERT INTO rel_type (rel_type, name) VALUES ('tran',  'Translation');
 INSERT INTO rel_type (rel_type, name) VALUES ('syn',   'Synonym');

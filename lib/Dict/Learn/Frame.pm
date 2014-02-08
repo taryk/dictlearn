@@ -26,6 +26,7 @@ use Dict::Learn::Frame::SearchWords;
 use Dict::Learn::Frame::TestEditor;
 use Dict::Learn::Frame::TestSummary;
 use Dict::Learn::Frame::TranslationTest;
+use Dict::Learn::Frame::PrepositionTest;
 use Dict::Learn::Import;
 
 # A hardcoded offset to distinguish dictionaries IDs from other IDs
@@ -193,6 +194,7 @@ sub _build_menu_test {
         [ 'Irregular Verbs Test' => \&pt_irrverbs    => 'Ctrl+I' ],
         [ 'Test Summary'         => \&pts_irrverbs   => 'Ctrl+S' ],
         [ 'Translation Test'     => \&pt_translation => 'Ctrl+T' ],
+        [ 'Preposition Test'     => \&pt_preposition => 'Ctrl+P' ],
         [ 'Test Editor'          => \&p_testeditor   => 'Ctrl+E' ],
     );
 
@@ -413,6 +415,19 @@ sub pt_translation {
     my $self = shift;
 
     return Dict::Learn::Frame::TranslationTest->new($self, $self->notebook,
+        wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
+}
+
+=head2 pt_preposition
+
+Exercise on Prepositions
+
+=cut
+
+sub pt_preposition {
+    my $self = shift;
+
+    return Dict::Learn::Frame::PrepositionTest->new($self, $self->notebook,
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 }
 
