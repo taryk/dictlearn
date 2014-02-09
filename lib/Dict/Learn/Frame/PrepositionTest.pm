@@ -208,6 +208,19 @@ has exercise => (
     clearer => 'clear_exercise',
 );
 
+=head2 total_score
+
+TODO add description
+
+=cut
+
+has total_score => (
+    is      => 'rw',
+    isa     => 'Num',
+    default => 0,
+    clearer => 'clear_total_score',
+);
+
 =head2 pos
 
 TODO add description
@@ -338,6 +351,7 @@ sub init {
     $self->max(9);
     $self->pos(0);
     $self->exercise([]);
+    $self->total_score(0);
 
     my $lang_id
         = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
@@ -445,7 +459,8 @@ sub next_step {
 
     if ($self->pos + 1 > $self->max) {
         # finish
-        $self->calc_result();
+        $self->calc_scores();
+        $self->_print_result();
         $self->init();
         return;
     }
@@ -462,10 +477,9 @@ sub prev_step {
     $self->load_step($self->pos);
 }
 
-sub calc_result {
+sub calc_scores {
     my ($self) = @_;
 
-    my $total_score = 0;
     for my $step (@{ $self->exercise }) {
         my $count = scalar @{ $step->{answer} };
         for my $i (0 .. $count - 1) {
@@ -475,8 +489,12 @@ sub calc_result {
         }
         my $sm = sum @{ $step->{result} };
         $step->{score} = sum(@{ $step->{result} }) / ($count || 1);
-        $total_score += $step->{score};
+        $self->total_score($self->total_score + $step->{score});
     }
+}
+
+sub _print_result {
+    my ($self) = @_;
 
     my $i = 0;
     say;
@@ -487,9 +505,9 @@ sub calc_result {
             join(', ', @{ $step->{answer} }), $step->{phrase};
     }
     say;
-    printf "Total score: %d/%d (%d%%)\n", $total_score,
+    printf "Total score: %d/%d (%d%%)\n", $self->total_score,
         scalar @{ $self->exercise },
-        ($total_score / scalar @{ $self->exercise }) * 100;
+        ($self->total_score / scalar @{ $self->exercise }) * 100;
 }
 
 sub reset_session {
