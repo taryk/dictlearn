@@ -355,11 +355,37 @@ sub init {
         );
 
     while (my $dbix_phrase = $phrase_rs->next) {
+        my (@used_preps, @chunks);
+
+        my $phrase = $dbix_phrase->word;
+
+        # At first, we need to split the phrase into words
+        # and find all the prepositions used
+        my @words = split /\s/, $phrase;
+        for my $word (@words) {
+            for my $prep (@{ $self->preps }) {
+                if ($word eq $prep || $word =~ /\b$prep\b/i) {
+                    push @used_preps, $prep;
+                }
+            }
+        }
+
+        # Then try to split the phrase by prepositions
+        for my $prep (@used_preps) {
+            my @parts = split /\b$prep\b/i, $phrase, 2;
+            if (@parts > 1) {
+                push @chunks, $parts[0];
+                $phrase = $parts[1];
+            }
+        }
+        push(@chunks, $phrase) if $phrase;
+
         push @{ $self->exercise },
             {
                 phrase_id    => $dbix_phrase->word_id,
                 phrase       => $dbix_phrase->word,
-                preps        => [],
+                preps        => [ @used_preps ],
+                chunks       => [ @chunks ],
                 answer       => [],
                 widgets      => [],
                 result       => [],
@@ -393,29 +419,10 @@ sub load_step {
     $self->translations->SetLabel(join "\n",
         map { $_->{phrase} } @{ $step->{translations} });
 
-    my $phrase = $step->{phrase};
-    my (@chunks, @used_preps, @widgets);
-    my @words = split /\s/, $step->{phrase};
-    for my $word (@words) {
-        for my $prep (@{ $self->preps }) {
-            if ($word eq $prep || $word =~ /\b$prep\b/i) {
-                push @used_preps, $prep;
-            }
-        }
-    }
+    my @used_preps = @{ $step->{preps} };
 
-    $step->{preps} = [ @used_preps ];
-
-    for my $prep (@used_preps) {
-        my @parts = split /\b$prep\b/i, $phrase, 2;
-        if (@parts > 1) {
-            push @chunks, $parts[0];
-            $phrase = $parts[1];
-        }
-    }
-    push(@chunks, $phrase) if $phrase;
-
-    for my $chunk (@chunks) {
+    my @widgets;
+    for my $chunk (@{ $step->{chunks} }) {
         if ($chunk) {
             push @widgets,
                 Wx::StaticText->new($self, wxID_ANY, $chunk,
@@ -426,7 +433,7 @@ sub load_step {
                 = Wx::TextCtrl->new($self, wxID_ANY, '', wxDefaultPosition,
                 wxDefaultSize, wxTE_LEFT);
             push @widgets, $textctrl;
-            push $step->{widgets}, $textctrl;
+            push @{ $step->{widgets} }, $textctrl;
         }
     }
 
