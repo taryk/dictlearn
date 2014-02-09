@@ -297,7 +297,6 @@ sub _build_preps {
     return $preps;
 }
 
-
 =head1 METHODS
 
 =cut
@@ -355,30 +354,20 @@ sub init {
         );
 
     while (my $dbix_phrase = $phrase_rs->next) {
-        my (@used_preps, @chunks);
-
         my $phrase = $dbix_phrase->word;
 
         # At first, we need to split the phrase into words
         # and find all the prepositions used
         my $used_preps = $self->_extract_prepositions($phrase);
 
-        # Then try to split the phrase by prepositions
-        for my $prep (@$used_preps) {
-            my @parts = split /\b$prep\b/i, $phrase, 2;
-            if (@parts > 1) {
-                push @chunks, $parts[0];
-                $phrase = $parts[1];
-            }
-        }
-        push(@chunks, $phrase) if $phrase;
-
         push @{ $self->exercise },
             {
                 phrase_id    => $dbix_phrase->word_id,
                 phrase       => $dbix_phrase->word,
                 preps        => $used_preps,
-                chunks       => [ @chunks ],
+
+                # Split the phrase by prepositions into chunks
+                chunks       => $self->_split_into_chunks($phrase, $used_preps),
                 answer       => [],
                 widgets      => [],
                 result       => [],
@@ -524,6 +513,23 @@ sub _extract_prepositions {
     }
 
     return $used_preps;
+}
+
+sub _split_into_chunks {
+    my ($self, $phrase, $used_preps) = @_;
+
+    my $chunks;
+
+    for my $prep (@$used_preps) {
+        my @parts = split /\b$prep\b/i, $phrase, 2;
+        if (@parts > 1) {
+            push @$chunks, $parts[0];
+            $phrase = $parts[1];
+        }
+    }
+    push(@$chunks, $phrase) if $phrase;
+
+    return $chunks;
 }
 
 no Moose;
