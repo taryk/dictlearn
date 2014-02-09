@@ -348,10 +348,7 @@ sub BUILD {
 sub init {
     my ($self) = @_;
 
-    $self->max(9);
-    $self->pos(0);
-    $self->exercise([]);
-    $self->total_score(0);
+    $self->_reset_attributes();
 
     my $lang_id
         = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
@@ -402,6 +399,15 @@ sub init {
 
     # load the first step
     $self->load_step(0);
+}
+
+sub _reset_attributes {
+    my ($self) = @_;
+
+    $self->max(9);
+    $self->pos(0);
+    $self->exercise([]);
+    $self->total_score(0);
 }
 
 sub load_step {
