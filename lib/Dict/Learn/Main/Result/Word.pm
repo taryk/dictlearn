@@ -32,6 +32,14 @@ __PACKAGE__->has_many(
     }
 );
 __PACKAGE__->many_to_many(words => 'rel_words', 'word2_id');
+__PACKAGE__->has_one(
+    test_words => 'Dict::Learn::Main::Result::TestCategoryWords',
+    {'foreign.word_id' => 'self.word_id'},
+    {
+        cascade_delete => 0,
+        cascade_update => 0
+    }
+);
 
 __PACKAGE__->might_have(
     last_test => 'Dict::Learn::Main::Result::TestSessionData',
