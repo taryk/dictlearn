@@ -265,7 +265,7 @@ has max => (
     default => sub { shift->min },
 );
 
-=item preps
+=head2 preps
 
 Prepositions list
 
@@ -345,6 +345,12 @@ sub BUILD {
     );
 }
 
+=head2 init
+
+TODO add description
+
+=cut
+
 sub init {
     my ($self) = @_;
 
@@ -410,6 +416,12 @@ sub _reset_attributes {
     $self->total_score(0);
 }
 
+=head2 load_step
+
+TODO add description
+
+=cut
+
 sub load_step {
     my ($self, $step_no) = @_;
 
@@ -451,6 +463,12 @@ sub _render_exercise {
     $self->Layout();
 }
 
+=head2 next_step
+
+TODO add description
+
+=cut
+
 sub next_step {
     my ($self) = @_;
 
@@ -474,6 +492,12 @@ sub next_step {
     $self->load_step($self->pos);
 }
 
+=head2 prev_step
+
+TODO add description
+
+=cut
+
 sub prev_step {
     my ($self) = @_;
 
@@ -482,6 +506,12 @@ sub prev_step {
     $self->pos($self->pos - 1);
     $self->load_step($self->pos);
 }
+
+=head2 calc_scores
+
+TODO add description
+
+=cut
 
 sub calc_scores {
     my ($self) = @_;
@@ -515,6 +545,12 @@ sub _print_result {
         scalar @{ $self->exercise },
         ($self->total_score / scalar @{ $self->exercise }) * 100;
 }
+
+=head2 reset_session
+
+TODO add description
+
+=cut
 
 sub reset_session {
     my ($self) = @_;
