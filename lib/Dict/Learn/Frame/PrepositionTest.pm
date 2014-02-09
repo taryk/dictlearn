@@ -401,12 +401,18 @@ sub load_step {
     $self->translations->SetLabel(join "\n",
         map { $_->{phrase} } @{ $step->{translations} });
 
+    $self->_render_exercise($step);
+}
+
+sub _render_exercise {
+    my ($self, $step) = @_;
+
     my @used_preps = @{ $step->{preps} };
 
-    my @widgets;
+    my @hbox_widgets;
     for my $chunk (@{ $step->{chunks} }) {
         if ($chunk) {
-            push @widgets,
+            push @hbox_widgets,
                 Wx::StaticText->new($self, wxID_ANY, $chunk,
                 wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
         }
@@ -414,12 +420,11 @@ sub load_step {
             my $textctrl
                 = Wx::TextCtrl->new($self, wxID_ANY, '', wxDefaultPosition,
                 wxDefaultSize, wxTE_LEFT);
-            push @widgets, $textctrl;
-            push @{ $step->{widgets} }, $textctrl;
+            push @hbox_widgets, $textctrl;
         }
     }
 
-    for my $widget (@widgets) {
+    for my $widget (@hbox_widgets) {
         $self->hbox_exercise->Add($widget, 0, wxRIGHT, 5);
     }
 
@@ -430,7 +435,11 @@ sub next_step {
     my ($self) = @_;
 
     my $step = $self->exercise->[$self->pos];
-    for my $textctrl (@{ $step->{widgets} }) {
+
+    # Filter only Wx::TextCtrl items
+    for my $textctrl (grep { ref $_ eq 'Wx::TextCtrl' }
+        map { $_->GetWindow } $self->hbox_exercise->GetChildren())
+    {
         push @{ $step->{answer} }, $textctrl->GetValue;
     }
 
