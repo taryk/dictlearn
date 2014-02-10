@@ -442,6 +442,7 @@ sub _render_exercise {
     my @used_preps = @{ $step->{preps} };
 
     my @hbox_widgets;
+    my $i = 0;
     for my $chunk (@{ $step->{chunks} }) {
         if ($chunk) {
             push @hbox_widgets,
@@ -449,9 +450,11 @@ sub _render_exercise {
                 wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
         }
         if (shift @used_preps) {
+            my $value = $step->{answer}[$i++] // '';
             my $textctrl
-                = Wx::TextCtrl->new($self, wxID_ANY, '', wxDefaultPosition,
-                wxDefaultSize, wxTE_LEFT);
+                = Wx::TextCtrl->new($self, wxID_ANY, $value,
+                wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
+            $textctrl->Disable() if $value;
             push @hbox_widgets, $textctrl;
         }
     }
