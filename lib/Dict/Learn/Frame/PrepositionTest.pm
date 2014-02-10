@@ -334,6 +334,8 @@ sub BUILD {
     EVT_BUTTON($self, $self->btn_reset,  \&reset_session);
     EVT_BUTTON($self, $self->btn_giveup, \&giveup_step);
 
+    EVT_KEY_UP($self, sub { $self->keybind($_[1]) });
+
     $self->SetSizer($self->vbox);
     $self->Layout();
     $self->vbox->Fit($self);
@@ -343,6 +345,24 @@ sub BUILD {
             $self->init();
         }
     );
+}
+
+=head2 keybind
+
+TODO add description
+
+=cut
+
+sub keybind {
+    my ($self, $event) = @_;
+
+    my $key = $event->GetKeyCode();
+    if ($key == WXK_RETURN) {
+        $self->next_step();
+    }
+    elsif ($event->AltDown() && $key == WXK_BACK) {
+        $self->prev_step();
+    }
 }
 
 =head2 init
