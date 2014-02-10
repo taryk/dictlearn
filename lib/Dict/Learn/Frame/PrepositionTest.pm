@@ -513,7 +513,7 @@ sub next_step {
     if ($self->pos + 1 > $self->max) {
         # finish
         $self->calc_scores();
-        $self->_print_result();
+        $self->_show_result();
         $self->init();
         return;
     }
@@ -558,21 +558,22 @@ sub calc_scores {
     }
 }
 
-sub _print_result {
+sub _show_result {
     my ($self) = @_;
 
+    my $output;
     my $i = 0;
-    say;
-    say "Session summary:";
     for my $step (@{ $self->exercise }) {
-        printf "%02d - [score: %.1f] - [answers: %s] - %s\n",
+        $output .= sprintf "%02d - [score: %.1f] - [answers: %s] - %s\n",
             ++$i, $step->{score},
             join(', ', @{ $step->{answer} }), $step->{phrase};
     }
-    say;
-    printf "Total score: %d/%d (%d%%)\n", $self->total_score,
+    $output .= sprintf"Total score: %d/%d (%d%%)\n", $self->total_score,
         scalar @{ $self->exercise },
         ($self->total_score / scalar @{ $self->exercise }) * 100;
+    Wx::MessageBox($output, q{Session summary},
+        wxICON_EXCLAMATION | wxOK | wxCENTRE, $self,
+    );
 }
 
 =head2 reset_session
