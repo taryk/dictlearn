@@ -463,6 +463,7 @@ sub _render_exercise {
 
     my @hbox_widgets;
     my $i = 0;
+    my $set_focus = 0;
     for my $chunk (@{ $step->{chunks} }) {
         if ($chunk) {
             push @hbox_widgets,
@@ -474,7 +475,12 @@ sub _render_exercise {
             my $textctrl
                 = Wx::TextCtrl->new($self, wxID_ANY, $value,
                 wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
-            $textctrl->Disable() if $value;
+            if ($value) {
+                $textctrl->Disable();
+            } elsif (!$set_focus) {
+                $textctrl->SetFocus();
+                $set_focus = 1;
+            }
             push @hbox_widgets, $textctrl;
         }
     }
