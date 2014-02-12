@@ -59,12 +59,34 @@ sub _build_vbox {
     my ($self) = @_;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->position,      0, wxEXPAND,         0);
+    $vbox->Add($self->hbox_position, 0, wxEXPAND,         0);
     $vbox->Add($self->translations,  0, wxTOP | wxEXPAND, 20);
     $vbox->Add($self->hbox_exercise, 0, wxTOP | wxEXPAND, 20);
     $vbox->Add($self->hbox,          0, wxTOP | wxEXPAND, 20);
 
     return $vbox;
+}
+
+=head2 hbox_position
+
+TODO add description
+
+=cut
+
+has hbox_position => (
+    is         => 'ro',
+    isa        => 'Wx::BoxSizer',
+    lazy_build => 1,
+);
+
+sub _build_hbox_position {
+    my ($self) = @_;
+
+    my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
+    $hbox->Add($self->position, 0, wxEXPAND, 0);
+    $hbox->Add($self->spin,     0, wxEXPAND, 0);
+
+    return $hbox;
 }
 
 =head2 hbox_exercise
@@ -117,6 +139,21 @@ has position => (
     default => sub {
         Wx::StaticText->new(shift, wxID_ANY, '', wxDefaultPosition,
             wxDefaultSize, wxALIGN_LEFT);
+    },
+);
+
+=head2 spin
+
+TODO add description
+
+=cut
+
+has spin => (
+    is      => 'ro',
+    isa     => 'Wx::SpinCtrl',
+    default => sub {
+        Wx::SpinCtrl->new(shift, wxID_ANY, 0, wxDefaultPosition,
+            wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP);
     },
 );
 
@@ -329,10 +366,17 @@ sub BUILDARGS {
 sub BUILD {
     my ($self, @args) = @_;
 
+    # initial values
+    $self->max(9);
+    $self->spin->SetRange($self->min, 100);
+    $self->spin->SetValue($self->max + 1);
+
     EVT_BUTTON($self, $self->btn_prev,   \&prev_step);
     EVT_BUTTON($self, $self->btn_next,   \&next_step);
     EVT_BUTTON($self, $self->btn_reset,  \&reset_session);
     EVT_BUTTON($self, $self->btn_giveup, \&giveup_step);
+
+    EVT_SPINCTRL($self, $self->spin, \&set_max);
 
     EVT_KEY_UP($self, sub { $self->keybind($_[1]) });
 
@@ -430,7 +474,6 @@ sub init {
 sub _reset_attributes {
     my ($self) = @_;
 
-    $self->max(9);
     $self->pos(0);
     $self->exercise([]);
     $self->total_score(0);
@@ -588,14 +631,17 @@ sub reset_session {
     $self->init();
 }
 
+sub set_max {
+    my ($self, $event) = @_;
+
+    $self->max($event->GetInt - 1);
+    $self->init();
+}
+
 sub _render_position {
     my ($self) = @_;
 
-    $self->position->SetLabel(
-        sprintf '%00d/%00d',
-        $self->pos + 1,
-        $self->max + 1
-    );
+    $self->position->SetLabel(sprintf '%00d/', $self->pos + 1);
 }
 
 sub _extract_prepositions {
