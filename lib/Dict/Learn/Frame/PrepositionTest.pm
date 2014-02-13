@@ -631,6 +631,25 @@ sub reset_session {
     $self->init();
 }
 
+=head2 giveup_step
+
+TODO add description
+
+=cut
+
+sub giveup_step {
+    my ($self) = @_;
+
+    my @preps = @{ $self->exercise->[$self->pos]{preps} || [] };
+    for my $textctrl (
+        grep { ref $_ eq 'Wx::TextCtrl' }
+        map  { $_->GetWindow } $self->hbox_exercise->GetChildren()
+        )
+    {
+        $textctrl->SetValue(shift @preps);
+    }
+}
+
 =head2 set_max
 
 TODO add description
