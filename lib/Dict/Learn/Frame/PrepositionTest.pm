@@ -83,7 +83,7 @@ sub _build_hbox_position {
     my ($self) = @_;
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
-    $hbox->Add($self->position, 0, wxEXPAND, 0);
+    $hbox->Add($self->position, 0, wxTOP | wxEXPAND, 4);
     $hbox->Add($self->spin,     0, wxEXPAND, 0);
 
     return $hbox;
