@@ -59,10 +59,10 @@ sub _build_vbox {
     my ($self) = @_;
 
     my $vbox = Wx::BoxSizer->new(wxVERTICAL);
-    $vbox->Add($self->hbox_position, 0, wxEXPAND,         0);
-    $vbox->Add($self->translations,  0, wxTOP | wxEXPAND, 20);
-    $vbox->Add($self->hbox_exercise, 0, wxTOP | wxEXPAND, 20);
-    $vbox->Add($self->hbox,          0, wxTOP | wxEXPAND, 20);
+    $vbox->Add($self->hbox_position, 0, wxTOP | wxLEFT | wxEXPAND, 20);
+    $vbox->Add($self->translations,  0, wxTOP | wxLEFT | wxEXPAND, 20);
+    $vbox->Add($self->hbox_exercise, 0, wxTOP | wxLEFT | wxEXPAND, 20);
+    $vbox->Add($self->hbox,          0, wxTOP | wxLEFT | wxEXPAND, 20);
 
     return $vbox;
 }
