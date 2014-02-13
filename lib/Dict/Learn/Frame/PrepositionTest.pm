@@ -631,6 +631,12 @@ sub reset_session {
     $self->init();
 }
 
+=head2 set_max
+
+TODO add description
+
+=cut
+
 sub set_max {
     my ($self, $event) = @_;
 
