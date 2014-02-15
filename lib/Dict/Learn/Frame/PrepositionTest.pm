@@ -19,6 +19,7 @@ use Database;
 use Dict::Learn::Dictionary;
 
 const my $TEST_ID => 2;
+const our $TEST_CATEGORY_ID => 37;
 
 =head1 NAME
 
@@ -427,7 +428,7 @@ sub init {
         = Database->schema->resultset('Word')->search(
         {
             'me.lang_id' => $lang_id,
-            'test_words.test_category_id' => 37,
+            'test_words.test_category_id' => $TEST_CATEGORY_ID,
         },
         {
             join => [ 'rel_words', 'test_words' ],
