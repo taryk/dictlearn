@@ -611,7 +611,7 @@ sub _show_result {
             ++$i, $step->{score},
             join(', ', @{ $step->{answer} }), $step->{phrase};
     }
-    $output .= sprintf"Total score: %d/%d (%d%%)\n", $self->total_score,
+    $output .= sprintf"Total score: %.1f/%d (%d%%)\n", $self->total_score,
         scalar @{ $self->exercise },
         ($self->total_score / scalar @{ $self->exercise }) * 100;
     Wx::MessageBox($output, q{Session summary},
