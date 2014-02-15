@@ -18,7 +18,7 @@ use common::sense;
 use Database;
 use Dict::Learn::Dictionary;
 
-const my $TEST_ID => 2;
+const our $TEST_ID => 2;
 const our $TEST_CATEGORY_ID => 37;
 
 =head1 NAME
