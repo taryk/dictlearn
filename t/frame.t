@@ -7,5 +7,6 @@ use Test::Dict::Learn::Frame::TranslationTest;
 use Test::Dict::Learn::Frame::TranslationTest::Result;
 use Test::Dict::Learn::Frame::IrregularVerbsTest;
 use Test::Dict::Learn::Frame::IrregularVerbsTest::Result;
+use Test::Dict::Learn::Frame::PrepositionTest;
 
 Test::Class->runtests;
