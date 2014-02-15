@@ -57,6 +57,7 @@ sub test_field {
         given ($params{type}) {
             when ('Bool')     { $value = 1 }
             when ('Int')      { $value = 3 }
+            when ('Num')      { $value = 3.5 }
             when ('ArrayRef') { $value = [1 .. 9] }
             when ('HashRef')  { $value = { key => 'value' } }
             when (['Str', undef]) { $value = 'test' }
