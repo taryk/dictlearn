@@ -107,6 +107,24 @@ sub _new_word_in_db {
         );
     }
 
+    if ($params{test_category}) {
+        my $phrase_in_test
+            = Database->schema->resultset('TestCategoryWords')->create(
+            {
+                test_category_id => $params{test_category},
+                word_id          => $new_word->word_id,
+
+                # FIXME taking a partofspeech from first translated phrase
+                # is not a good idea
+                partofspeech_id  => (
+                    @{ $params{translations} || [] } > 0
+                    ? $params{translations}->[0]{partofspeech_id}
+                    : 0
+                )
+            },
+            );
+    }
+
     return $new_word;
 }
 
