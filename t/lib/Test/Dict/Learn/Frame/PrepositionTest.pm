@@ -110,4 +110,23 @@ sub _populate_db {
     }
 }
 
+sub reset_attributes : Tests {
+    my ($self) = @_;
+
+    my $frame = $self->{frame};
+
+    # At first, set random data
+    $frame->pos(3);
+    $frame->exercise([1..9]);
+    $frame->total_score(9);
+
+    # and reset them
+    $frame->_reset_attributes();
+
+    # and finally make sure all these attributes were reset
+    is($frame->pos => 0, 'Position is 0');
+    is(scalar(@{$frame->exercise}) => 0, 'Exercise is empty');
+    is($frame->total_score => 0, 'Total score is 0');
+}
+
 1;
