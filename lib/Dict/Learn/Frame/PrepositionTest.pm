@@ -530,7 +530,8 @@ sub _render_exercise {
     }
 
     for my $widget (@hbox_widgets) {
-        $self->hbox_exercise->Add($widget, 0, wxRIGHT, 5);
+        $self->hbox_exercise->Add($widget, 0,
+            (ref $widget eq 'Wx::StaticText' ? wxTOP | wxRIGHT : wxRIGHT), 5);
     }
 
     $self->Layout();
