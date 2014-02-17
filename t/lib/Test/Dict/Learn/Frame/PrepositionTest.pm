@@ -83,6 +83,7 @@ sub _populate_db {
         [under => qw(під)],
         [to    => qw(до)],
         [with  => qw(з)],
+        [from  => qw(з)],
 
         # Expressions
         ['result in'  => q(призвести до)],
@@ -127,6 +128,35 @@ sub reset_attributes : Tests {
     is($frame->pos => 0, 'Position is 0');
     is(scalar(@{$frame->exercise}) => 0, 'Exercise is empty');
     is($frame->total_score => 0, 'Total score is 0');
+}
+
+sub extract_prepositions : Tests {
+    my ($self) = @_;
+
+    my $frame = $self->{frame};
+
+    subtest qq{Extract prepositions from a sentence} => sub {
+        for (
+            ['result in'             => qw(in)],
+            ['agree with'            => qw(with)],
+            ['agree on'              => qw(on)],
+            ['in one'                => qw(in)],
+            ['in person'             => qw(in)],
+            ['in vain'               => qw(in)],
+            ['at least'              => qw(at)],
+            ['at latest'             => qw(at)],
+            ['in return'             => qw(in)],
+            ['on purpose'            => qw(on)],
+            ['from Monday to Friday' => qw(from to)],
+            )
+        {
+            my ($phrase, @prepositions) = @$_;
+            is_deeply(
+                $frame->_extract_prepositions($phrase) => \@prepositions,
+                "\"$phrase\": \"" . join('", "', @prepositions)."\""
+            );
+        }
+    };
 }
 
 1;
