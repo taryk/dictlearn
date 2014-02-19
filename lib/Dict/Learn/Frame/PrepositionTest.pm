@@ -693,7 +693,7 @@ sub _split_into_chunks {
     my $chunks;
 
     for my $prep (@$used_preps) {
-        my @parts = split /\b$prep\b/i, $phrase, 2;
+        my @parts = split /\s*\b$prep\b\s*/i, $phrase, 2;
         if (@parts > 1) {
             push @$chunks, $parts[0];
             $phrase = $parts[1];
