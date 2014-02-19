@@ -159,4 +159,31 @@ sub extract_prepositions : Tests {
     };
 }
 
+sub split_into_chunks : Tests {
+    my ($self) = @_;
+
+    my $frame = $self->{frame};
+
+    subtest qq{Split the sentences into chunks} => sub {
+        for (
+            ['agree with you'          => 'agree', 'you'],
+            ['agree on this'           => 'agree', 'this'],
+            ['do it in one'            => 'do it', 'one'],
+            ['know him in person'      => 'know him', 'person'],
+            ['did it in vain'          => 'did it', 'vain'],
+            ['at least 10 people'      => '', 'least 10 people'],
+            ['from Monday to Friday'   => '', 'Monday', 'Friday'],
+            ["I's what I'm working on" => "I's what I'm working"],
+            )
+        {
+            my ($clause, @chunks) = @$_;
+            my $used_preps = $frame->_extract_prepositions($clause);
+            is_deeply(
+                $frame->_split_into_chunks($clause, $used_preps) => \@chunks,
+                "\"$clause\": \"".join('", "', @chunks)."\""
+            );
+        }
+    };
+}
+
 1;
