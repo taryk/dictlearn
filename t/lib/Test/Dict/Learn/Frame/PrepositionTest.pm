@@ -186,4 +186,23 @@ sub split_into_chunks : Tests {
     };
 }
 
+sub render_position : Tests {
+    my ($self) = @_;
+
+    my $frame = $self->{frame};
+
+    subtest qq{Position label} => sub {
+        for my $position (0 .. 100) {
+            $frame->pos($position);
+            $frame->_render_position();
+            my $position_label = sprintf '%00d/', $position + 1;
+            is(
+                $frame->position->GetLabel => $position_label,
+                qq{Position label is '$position_label'}
+            );
+        }
+    };
+
+}
+
 1;
