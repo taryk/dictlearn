@@ -205,4 +205,93 @@ sub render_position : Tests {
 
 }
 
+sub calc_scores : Tests {
+    my ($self) = @_;
+
+    my $frame = $self->{frame};
+
+    subtest qq{Calc scores} => sub {
+        my @exercise = (
+            {
+                preps  => [qw(on at in)],
+                answer => [qw(on at in)],
+                result => [qw(1  1  1)],
+                score  => 1,
+            },
+            {
+                preps  => [qw(on at from)],
+                answer => [qw(on at in)],
+                result => [qw(1  1  0)],
+                score  => 2 / 3,
+            },
+            {
+                preps  => [qw(over from on)],
+                answer => [qw(from from at)],
+                result => [qw(0  1  0)],
+                score  => 1 / 3,
+            },
+            {
+                preps  => [qw(from to)],
+                answer => [qw(to   from)],
+                result => [qw(0    0)],
+                score  => 0,
+            },
+            {
+                preps  => [qw(till until)],
+                answer => [qw(till from)],
+                result => [qw(1    0)],
+                score  => 0.5,
+            },
+            {
+                preps  => [qw(on)],
+                answer => [qw(at)],
+                result => [qw(0)],
+                score  => 0
+            },
+            {
+                preps  => [qw(at)],
+                answer => [qw(at)],
+                result => [qw(1)],
+                score  => 1
+            },
+        );
+        my $total_score = 3.5;
+
+        $frame->exercise(
+            [
+                map {
+                    {
+                        preps  => $_->{preps},
+                        answer => $_->{answer}
+                    }
+                } @exercise
+            ]
+        );
+
+        $frame->calc_scores();
+
+        for my $i (0 .. $#{ $frame->exercise }) {
+            my $step_str;
+            given ($i) {
+                $step_str = "${i}st" when (/1$/);
+                $step_str = "${i}nd" when (/2$/);
+                $step_str = "${i}rd" when (/3$/);
+                default { $step_str = "${i}th" }
+            }
+            is_deeply(
+                $frame->exercise->[$i]{result} => $exercise[$i]{result},
+                "[$step_str item] : result is " . join(', ', @{ $exercise[$i]{result} })
+            );
+            is(
+                $frame->exercise->[$i]{score} => $exercise[$i]{score},
+                "[$step_str item] : score $exercise[$i]{score}"
+            );
+        }
+        is(
+            $frame->total_score => $total_score,
+            qq{Total score is $total_score}
+        );
+    };
+}
+
 1;
