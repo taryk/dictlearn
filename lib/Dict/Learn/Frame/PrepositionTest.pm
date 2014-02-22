@@ -85,7 +85,7 @@ sub _build_hbox_position {
 
     my $hbox = Wx::BoxSizer->new(wxHORIZONTAL);
     $hbox->Add($self->position, 0, wxTOP | wxEXPAND, 4);
-    $hbox->Add($self->spin,     0, wxEXPAND, 0);
+    $hbox->Add($self->spin,     0, wxEXPAND,         0);
 
     return $hbox;
 }
@@ -327,20 +327,21 @@ sub _build_preps {
             my $prepositions_rs
                 = Database->schema->resultset('Word')->search(
                 {
-                    'partofspeech.abbr' => 'pre',
-                    'rel_words.dictionary_id' => $dict->curr_id
+                    'partofspeech.abbr'       => 'pre',
+                    'rel_words.dictionary_id' => $dict->curr_id,
                 },
                 {
                     join     => { rel_words => 'partofspeech' },
+                    order_by => { -asc      => 'me.word' },
                     group_by => 'me.word',
-                    order_by => { -asc => 'me.word' }
                 }
                 );
             $preps = [
+
                 # sort it by length in descending order,
                 # because we need 'out of' go before 'of'
                 sort { length $b <=> length $a }
-                map { $_->word } $prepositions_rs->all()
+                    map { $_->word } $prepositions_rs->all()
             ];
         }
     );
@@ -384,7 +385,7 @@ sub BUILD {
     $self->SetSizer($self->vbox);
     $self->Layout();
     $self->vbox->Fit($self);
-    
+
     Dict::Learn::Dictionary->cb(
         sub {
             $self->init();
@@ -404,8 +405,7 @@ sub keybind {
     my $key = $event->GetKeyCode();
     if ($key == WXK_RETURN) {
         $self->next_step();
-    }
-    elsif ($event->AltDown() && $key == WXK_BACK) {
+    } elsif ($event->AltDown() && $key == WXK_BACK) {
         $self->prev_step();
     }
 }
@@ -424,16 +424,15 @@ sub init {
     my $lang_id
         = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
 
-    my $phrase_rs
-        = Database->schema->resultset('Word')->search(
+    my $phrase_rs = Database->schema->resultset('Word')->search(
         {
-            'me.lang_id' => $lang_id,
+            'me.lang_id'                  => $lang_id,
             'test_words.test_category_id' => $TEST_CATEGORY_ID,
         },
         {
-            join => [ 'rel_words', 'test_words' ],
+            join => ['rel_words', 'test_words'],
         }
-        );
+    );
 
     while (my $dbix_phrase = $phrase_rs->next) {
         my $phrase = $dbix_phrase->word;
@@ -442,27 +441,22 @@ sub init {
         # and find all the prepositions used
         my $used_preps = $self->_extract_prepositions($phrase);
 
-        push @{ $self->exercise },
-            {
-                phrase_id    => $dbix_phrase->word_id,
-                phrase       => $dbix_phrase->word,
-                preps        => $used_preps,
+        push @{ $self->exercise }, {
+            phrase_id => $dbix_phrase->word_id,
+            phrase    => $dbix_phrase->word,
+            preps     => $used_preps,
 
-                # Split the phrase by prepositions into chunks
-                chunks       => $self->_split_into_chunks($phrase, $used_preps),
-                answer       => [],
-                widgets      => [],
-                result       => [],
-                score        => 0,
-                translations => [
-                    map {
-                            {
-                                phrase_id => $_->word_id,
-                                phrase => $_->word
-                            }
-                    } $dbix_phrase->words
-                ]
-            };
+            # Split the phrase by prepositions into chunks
+            chunks       => $self->_split_into_chunks($phrase, $used_preps),
+            answer       => [],
+            widgets      => [],
+            result       => [],
+            score        => 0,
+            translations => [
+                map { { phrase_id => $_->word_id, phrase => $_->word } }
+                    $dbix_phrase->words
+            ]
+        };
     }
 
     # Shuffle the exercise
@@ -506,7 +500,7 @@ sub _render_exercise {
     my @used_preps = @{ $step->{preps} };
 
     my @hbox_widgets;
-    my $i = 0;
+    my $i         = 0;
     my $set_focus = 0;
     for my $chunk (@{ $step->{chunks} }) {
         if ($chunk) {
@@ -549,13 +543,16 @@ sub next_step {
     my $step = $self->exercise->[$self->pos];
 
     # Filter only Wx::TextCtrl items
-    for my $textctrl (grep { ref $_ eq 'Wx::TextCtrl' }
-        map { $_->GetWindow } $self->hbox_exercise->GetChildren())
+    for my $textctrl (
+        grep { ref $_ eq 'Wx::TextCtrl' }
+        map  { $_->GetWindow } $self->hbox_exercise->GetChildren()
+        )
     {
         push @{ $step->{answer} }, $textctrl->GetValue;
     }
 
     if ($self->pos + 1 > $self->max) {
+
         # finish
         $self->calc_scores();
         $self->_show_result();
@@ -593,7 +590,7 @@ sub calc_scores {
     for my $step (@{ $self->exercise }) {
         my $count = scalar @{ $step->{answer} };
         for my $i (0 .. $count - 1) {
-            my $answer = $step->{answer}[$i];
+            my $answer       = $step->{answer}[$i];
             my $correct_prep = $step->{preps}[$i];
             $step->{result}[$i] = (lc $correct_prep eq lc $answer ? 1 : 0);
         }
@@ -613,10 +610,11 @@ sub _show_result {
             ++$i, $step->{score},
             join(', ', @{ $step->{answer} }), $step->{phrase};
     }
-    $output .= sprintf"Total score: %.1f/%d (%d%%)\n", $self->total_score,
+    $output .= sprintf "Total score: %.1f/%d (%d%%)\n", $self->total_score,
         scalar @{ $self->exercise },
         ($self->total_score / scalar @{ $self->exercise }) * 100;
-    Wx::MessageBox($output, q{Session summary},
+    Wx::MessageBox(
+        $output, q{Session summary},
         wxICON_EXCLAMATION | wxOK | wxCENTRE, $self,
     );
 }
