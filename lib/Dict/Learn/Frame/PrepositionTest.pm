@@ -509,11 +509,11 @@ sub _render_exercise {
                 wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
         }
         if (shift @used_preps) {
-            my $value = $step->{answer}[$i++] // '';
+            my $value = $step->{answer}[$i++];
             my $textctrl
-                = Wx::TextCtrl->new($self, wxID_ANY, $value,
+                = Wx::TextCtrl->new($self, wxID_ANY, $value // '',
                 wxDefaultPosition, wxDefaultSize, wxTE_LEFT);
-            if ($value) {
+            if (defined $value) {
                 $textctrl->Disable();
             } elsif (!$set_focus) {
                 $textctrl->SetFocus();
