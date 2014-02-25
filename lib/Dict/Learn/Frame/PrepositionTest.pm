@@ -269,7 +269,7 @@ has pos => (
     is      => 'rw',
     isa     => 'Int',
     lazy    => 1,
-    default => sub { shift->min },
+    default => 0,
     trigger => sub {
         my ($self, $pos) = @_;
 
