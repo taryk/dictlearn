@@ -32,6 +32,13 @@ sub startup : Test(startup => no_plan) {
     ok($self->{frame}, qw{PrepositionTest page created});
 }
 
+sub before_each_test : Test(setup) {
+    my ($self) = @_;
+
+    $self->{frame}->_reset_attributes();
+    $self->{frame}->hbox_exercise->Clear(1);
+}
+
 sub fields : Tests {
     my ($self) = @_;
 
