@@ -294,4 +294,52 @@ sub calc_scores : Tests {
     };
 }
 
+sub giveup_step : Tests {
+    my ($self) = @_;
+
+    my $frame = $self->{frame};
+
+    # Setting `pos` attribute triggers `_render_position` method
+    # which creates text field for prepositions and does other stuff.
+    # We don't need that in this test, so monkey-patch it.
+    local *Dict::Learn::Frame::PrepositionTest::_render_position = sub {};
+
+    $frame->exercise(
+        [
+            { preps  => [qw(on at in from)] },
+            { preps  => [qw(on at in)] },
+            { preps  => [qw(on at)] },
+            { preps  => [qw(on)] },
+            { preps  => [qw()] },
+        ]
+    );
+
+    step:
+    for my $step (@{ $frame->exercise }) {
+        subtest sprintf('step %02d', $frame->pos + 1) => sub {
+            $frame->hbox_exercise->Add(Wx::TextCtrl->new($frame, wxID_ANY, ''))
+                for @{ $step->{preps} || [] };
+
+            $frame->giveup_step();
+            my @preps = @{ $step->{preps} || [] };
+            for my $textctrl (
+                grep { ref $_ eq 'Wx::TextCtrl' }
+                map  { $_->GetWindow } $frame->hbox_exercise->GetChildren()
+                )
+            {
+                my $next_prep = shift @preps;
+                is(
+                    $textctrl->GetValue() => $next_prep,
+                    qq{Preposition "$next_prep" was set}
+                );
+            }
+            pass "There were no prepositions to set"
+                if scalar $frame->hbox_exercise->GetChildren() == 0
+                && scalar @preps == 0;
+        };
+        $frame->hbox_exercise->Clear(1);
+        $frame->pos($frame->pos + 1);
+    }
+}
+
 1;
