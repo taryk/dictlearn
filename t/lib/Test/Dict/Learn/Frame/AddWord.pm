@@ -278,6 +278,7 @@ sub strip_spaces_data {
         ['phrase  '   => 'phrase'],
         ['  phrase'   => 'phrase'],
         ['  phrase  ' => 'phrase'],
+        ['phrase'     => 'phrase'],
     );
 }
 
