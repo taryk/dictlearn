@@ -154,7 +154,7 @@ sub http_request {
     $h->header(%$headers)
         if $headers and ref $headers eq 'HASH';
     my $json;
-    if ($content and ref($content) =~ /^ARRAY|HASH$/) {
+    if ($content and ref($content) ~~ ['ARRAY', 'HASH']) {
         $json = encode_json($content);
     }
     my $req = HTTP::Request->new($method => $url, $h, $json || $content);
