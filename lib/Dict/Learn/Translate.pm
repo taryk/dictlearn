@@ -5,7 +5,7 @@ use Data::Printer;
 use HTTP::Request;
 use JSON qw[ encode_json to_json decode_json from_json ];
 use LWP::UserAgent;
-use List::MoreUtils 'any';
+use List::Util 'none';
 
 use common::sense;
 
@@ -92,7 +92,7 @@ sub do {
     my ($from, $to, $text) = @_;
     $self->from($from)->to($to);
     my $tr_class = __PACKAGE__ . '::' . $self->{using};
-    unless (any { $_ eq $self->{using} } @{$self->{tplugins}}) {
+    if (none { $_ eq $self->{using} } @{$self->{tplugins}}) {
         printf "'%s' undef translate engine\n" => $self->{using};
         return;
     }
