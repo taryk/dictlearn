@@ -18,7 +18,7 @@ requires 'IOC::Slinky::Container'          => '>= 0.1001';
 requires 'Class::XSAccessor'               => '>= 1.16';
 requires 'IO::File'                        => '>= 1.14';
 requires 'URI::Escape'                     => '>= 3.31';
-requires 'List::Util'                      => '>= 1.25';
+requires 'List::Util'                      => '>= 1.38';
 requires 'List::MoreUtils'                 => '0';
 requires 'String::Diff'                    => '0';
 requires 'DateTime'                        => '0';

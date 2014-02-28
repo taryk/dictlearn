@@ -41,7 +41,7 @@ requires:
   JSON: 2.53
   LWP::UserAgent: 6.04
   List::MoreUtils: 0
-  List::Util: 1.25
+  List::Util: 1.38
   Memoize: 0
   Mojolicious: 0
   Moose: 0
