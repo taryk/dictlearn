@@ -58,15 +58,12 @@ sub parse_result {
         my $cur_partofspeech;
         for my $line (split "\r\n" => $json->{resultNoTags}) {
             next if $line =~ /^(\-+|GENERATED_FROM)$/x;
-            if (0 == index $line => "\n") {
+            if (index($line => "\n") == 0) {
                 if ($line =~ $pos_re) {
-
-                    # $res->{unknown} = $+{unknown};
                     $cur_partofspeech = partofspeech_tr($+{partofspeech});
                     $res->{$cur_partofspeech} = [];
                 }
-            }
-            elsif (
+            } elsif (
                 $line =~ m{^
                            \s\-\s(?<word>[\w/\- ]+)
                            (,\s\w)?
@@ -75,17 +72,15 @@ sub parse_result {
                           }iux
                 )
             {
-                push @{$res->{$cur_partofspeech}} => {
+                push @{ $res->{$cur_partofspeech} } => {
                     word     => $+{word},
                     category => $+{word_category}
                 };
-            }
-            elsif (not defined $cur_partofspeech) {
+            } elsif (not defined $cur_partofspeech) {
                 $res->{_} = $line;
             }
         }
-    }
-    else {
+    } else {
         $res->{_} = $json->{result};
     }
 
@@ -121,7 +116,6 @@ sub translate {
     $to   = 'ru' if $to eq 'uk';
     my $res = $class->SUPER::http_request(
         POST => sprintf($URL, $from, $to, uri_escape_utf8($text)),
-
         {
             'Accept' =>
                 'Accept: application/json, text/javascript, */*; q=0.01',
@@ -147,7 +141,6 @@ sub translate {
     return if $res->{code} < 0;
     my $json = from_json($res->{content}, { utf8 => 1 });
 
-    # p($json);
     return { I => parse_result($json) };
 }
 

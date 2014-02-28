@@ -56,8 +56,7 @@ sub translate {
 
     my ($from, $to, $text) = @_;
     my $res = $class->SUPER::http_request(
-        GET => sprintf $URL,
-        $from, $to, uri_escape_utf8($text)
+        GET => sprintf($URL, $from, $to, uri_escape_utf8($text))
     );
     return if $res->{code} < 0;
     $res->{content} =~ s/,{2,}/,/g;

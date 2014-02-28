@@ -121,9 +121,8 @@ TODO add description
 =cut
 
 sub translate {
-    my $class = shift;
+    my ($class, $from, $to, $text) = @_;
 
-    my ($from, $to, $text) = @_;
     my $res = $class->SUPER::http_request(
         GET => sprintf($URL, $from, $to, uri_escape_utf8($text)),
         {
@@ -142,8 +141,8 @@ sub translate {
     my $dom = Mojo::DOM->new(decode('UTF-8', $res->{content}));
     my $tr_res;
     if (my $res = $dom->at('div.js-article-html')) {
-        # p($res->to_xml);
-        # $res->all_text(0);
+
+        # `$res->to_xml` and `$res->all_text(0)` are useful for debugging purposes
         given ($res->find('p')->size) {
             when (1) {
                 if (my $parsed_item = _parse_item $res->p) {
