@@ -4,7 +4,7 @@ use Const::Fast;
 use DBIx::Class::QueryLog::Analyzer;
 use DBIx::Class::QueryLog;
 use Data::Printer;
-use List::MoreUtils 'any';
+use List::Util 'none';
 use Term::ANSIColor ':constants';
 
 use Moose;
@@ -115,7 +115,7 @@ sub check_tables {
         map { [(/^["](\w+)["][.]["](\w+)["]$/x)] }
         $self->schema->storage->dbh->tables();
     for my $req_table (@$REQ_TABLES) {
-        return unless any { $req_table eq $_->[1] } @tables;
+        return if none { $req_table eq $_->[1] } @tables;
     }
 
     1;

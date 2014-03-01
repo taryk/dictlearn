@@ -9,7 +9,7 @@ use Encode qw(encode decode);
 use JSON qw[ decode_json from_json ];
 use Mojo::DOM;
 use URI::Escape qw[ uri_escape_utf8 ];
-use List::MoreUtils 'any';
+use List::Util 'any';
 
 use common::sense;
 
