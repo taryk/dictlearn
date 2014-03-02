@@ -1,5 +1,5 @@
 package Dict::Learn::Main::Result::PartOfSpeech;
-use base qw[ DBIx::Class::Core ];
+use base 'DBIx::Class::Core';
 
 =head1 NAME
 
@@ -13,8 +13,8 @@ TODO add description
 
 __PACKAGE__->table('partofspeech');
 __PACKAGE__->add_columns(
-    qw[ partofspeech_id name_orig name_tr abbr
-        note cdate mdate ]
+    qw( partofspeech_id name_orig name_tr abbr
+        note cdate mdate )
 );
 __PACKAGE__->set_primary_key('partofspeech_id');
 

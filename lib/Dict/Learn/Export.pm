@@ -4,7 +4,7 @@ use Const::Fast;
 use Data::Printer;
 use IO::File;
 use JSON;
-use POSIX qw(strftime);
+use POSIX 'strftime';
 
 use common::sense;
 

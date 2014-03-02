@@ -1,15 +1,15 @@
 package Dict::Learn::Frame::AddWord::LinkedPhrases;
 
-use Wx qw[:everything];
-use Wx::Event qw[:everything];
+use Wx ':everything';
+use Wx::Event ':everything';
 
 use Moose;
 use MooseX::NonMoose;
 extends 'Wx::ScrolledWindow';
 
-use Carp qw[croak confess];
+use Carp qw(croak confess);
 use Data::Printer;
-use List::Util qw(first);
+use List::Util 'first';
 
 use Database;
 use Dict::Learn::Widget::WordList;

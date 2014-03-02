@@ -1,7 +1,7 @@
 package Dict::Learn::Widget::WordList;
 
-use Wx qw[:everything];
-use Wx::Event qw[:everything];
+use Wx ':everything';
+use Wx::Event ':everything';
 
 use Moose;
 extends 'Wx::PlComboPopup';

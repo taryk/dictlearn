@@ -2,7 +2,7 @@ package Dict::Learn::Main::ResultSet::Word;
 use base 'DBIx::Class::ResultSet';
 
 use Const::Fast;
-use Memoize qw[memoize flush_cache];
+use Memoize qw(memoize flush_cache);
 use Data::Printer;
 
 use namespace::autoclean;
@@ -267,10 +267,10 @@ sub find_ones {
                 'me.in_test'
             ],
             as => [
-                qw[
+                qw(
                     word_id word_orig word2 word3 is_irregular word_tr
                     mdate cdate note partofspeech in_test
-                  ]
+                  )
             ],
             group_by => ['me.word_id', 'rel_words.partofspeech_id'],
             order_by => { -desc => 'me.cdate' },

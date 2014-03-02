@@ -1,5 +1,5 @@
 package Dict::Learn::Main::Result::Word;
-use base qw[ DBIx::Class::Core ];
+use base 'DBIx::Class::Core';
 
 =head1 NAME
 
@@ -13,8 +13,8 @@ TODO add description
 
 __PACKAGE__->table('word');
 __PACKAGE__->add_columns(
-    qw[ word_id word word2 word3 irregular lang_id partofspeech_id in_test
-        note cdate mdate example ]
+    qw( word_id word word2 word3 irregular lang_id partofspeech_id in_test
+        note cdate mdate example )
 );
 __PACKAGE__->set_primary_key('word_id');
 __PACKAGE__->has_one(

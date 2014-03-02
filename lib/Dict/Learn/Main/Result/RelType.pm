@@ -1,5 +1,5 @@
 package Dict::Learn::Main::Result::RelType;
-use base qw[ DBIx::Class::Core ];
+use base 'DBIx::Class::Core';
 
 =head1 NAME
 

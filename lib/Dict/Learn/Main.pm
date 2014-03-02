@@ -1,5 +1,5 @@
 package Dict::Learn::Main;
-use base qw/DBIx::Class::Schema/;
+use base 'DBIx::Class::Schema';
 __PACKAGE__->load_namespaces;
 
 =head1 NAME

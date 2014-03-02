@@ -1,5 +1,5 @@
 package Dict::Learn::Main::Result::Dictionary;
-use base qw[ DBIx::Class::Core ];
+use base 'DBIx::Class::Core';
 
 =head1 NAME
 
@@ -13,8 +13,8 @@ TODO add description
 
 __PACKAGE__->table('dictionary');
 __PACKAGE__->add_columns(
-    qw[ dictionary_id dictionary_name language_orig_id language_tr_id
-        note cdate mdate ]
+    qw( dictionary_id dictionary_name language_orig_id language_tr_id
+        note cdate mdate )
 );
 __PACKAGE__->set_primary_key('dictionary_id');
 __PACKAGE__->has_one(

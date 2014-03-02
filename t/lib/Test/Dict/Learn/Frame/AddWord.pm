@@ -4,7 +4,7 @@ use parent 'Test::Dict::Learn::Frame::Base';
 use common::sense;
 
 use Test::More;
-use Wx qw[:everything];
+use Wx ':everything';
 
 use lib::abs qw( ../../../../../../lib );
 

@@ -1,7 +1,7 @@
 package Dict::Learn::Frame::IrregularVerbsTest;
 
-use Wx qw[:everything];
-use Wx::Event qw[:everything];
+use Wx ':everything';
+use Wx::Event ':everything';
 
 use Moose;
 use MooseX::NonMoose;
@@ -9,7 +9,7 @@ extends 'Wx::Panel';
 
 use Const::Fast;
 use Data::Printer;
-use List::Util qw[shuffle];
+use List::Util 'shuffle';
 
 use Database;
 use Dict::Learn::Frame::IrregularVerbsTest::Result;

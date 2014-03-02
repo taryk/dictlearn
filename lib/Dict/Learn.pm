@@ -1,8 +1,8 @@
 package Dict::Learn 0.1;
 use parent 'Wx::App';
 
-use Wx qw[:everything];
-use Wx::Event qw[EVT_MENU];
+use Wx ':everything';
+use Wx::Event 'EVT_MENU';
 
 use Dict::Learn::Frame;
 

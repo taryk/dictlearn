@@ -3,7 +3,7 @@ package Dict::Learn::Translate;
 use Const::Fast;
 use Data::Printer;
 use HTTP::Request;
-use JSON qw[ encode_json to_json decode_json from_json ];
+use JSON qw(encode_json to_json decode_json from_json);
 use LWP::UserAgent;
 use List::Util 'none';
 

@@ -1,7 +1,7 @@
 package Dict::Learn::Widget::LookupPhrases;
 
-use Wx qw[:everything];
-use Wx::Event qw[:everything];
+use Wx ':everything';
+use Wx::Event ':everything';
 
 use Moose;
 use MooseX::NonMoose;

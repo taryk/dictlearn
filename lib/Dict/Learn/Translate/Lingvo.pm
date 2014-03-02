@@ -1,14 +1,14 @@
 package Dict::Learn::Translate::Lingvo;
 
-use base qw[ Dict::Learn::Translate ];
+use base 'Dict::Learn::Translate';
 
 use Carp;
 use Const::Fast;
 use Data::Printer;
 use Encode qw(encode decode);
-use JSON qw[ decode_json from_json ];
+use JSON qw(decode_json from_json);
 use Mojo::DOM;
-use URI::Escape qw[ uri_escape_utf8 ];
+use URI::Escape 'uri_escape_utf8';
 use List::Util 'any';
 
 use common::sense;

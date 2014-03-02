@@ -1,8 +1,8 @@
 package Dict::Learn::Frame::GridWords;
 
-use Wx qw[:everything];
+use Wx ':everything';
 use Wx::Grid;
-use Wx::Event qw[:everything];
+use Wx::Event ':everything';
 
 use Moose;
 use MooseX::NonMoose;
@@ -202,7 +202,7 @@ TODO add description
 sub update_word {
     my ($self, $obj) = @_;
 
-    my @cols = qw[ word_orig word_tr ];
+    my @cols = qw(word_orig word_tr);
 
     printf "%s %d %d\n",
         $self->grid->GetCellValue($obj->GetRow(), $obj->GetCol()),

@@ -1,5 +1,5 @@
 package Dict::Learn::Main::Result::Test;
-use base qw[ DBIx::Class::Core ];
+use base 'DBIx::Class::Core';
 
 =head1 NAME
 
@@ -12,7 +12,7 @@ TODO add description
 =cut
 
 __PACKAGE__->table('test');
-__PACKAGE__->add_columns(qw[ test_id name lang_id enabled cdate mdate ]);
+__PACKAGE__->add_columns(qw( test_id name lang_id enabled cdate mdate ));
 __PACKAGE__->set_primary_key('test_id');
 __PACKAGE__->has_one(
     lang_id => 'Dict::Learn::Main::Result::Language',

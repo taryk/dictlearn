@@ -1,7 +1,7 @@
 package Dict::Learn::Frame::IrregularVerbsTest::Result;
 
-use Wx qw[:everything];
-use Wx::Event qw[:everything];
+use Wx ':everything';
+use Wx::Event ':everything';
 use Wx::Html;
 
 use Moose;

@@ -1,7 +1,7 @@
 package Dict::Learn::Frame::SearchWords;
 
-use Wx qw[:everything];
-use Wx::Event qw[:everything];
+use Wx ':everything';
+use Wx::Event ':everything';
 
 use Moose;
 use MooseX::NonMoose;

@@ -148,7 +148,7 @@ TODO add description
 sub clear_data {
     my $self = shift;
 
-    for ( qw[Word Words TestSession TestSessionData] ) {
+    for (qw(Word Words TestSession TestSessionData)) {
         $self->schema->resultset($_)->clear_data();
     }
 
@@ -164,7 +164,7 @@ TODO add description
 sub clear_test_results {
     my $self = shift;
 
-    for (qw[TestSession TestSessionData]) {
+    for (qw(TestSession TestSessionData)) {
         $self->schema->resultset($_)->clear_data();
     }
 

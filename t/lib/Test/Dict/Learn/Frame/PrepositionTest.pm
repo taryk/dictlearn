@@ -5,7 +5,7 @@ use common::sense;
 
 use Const::Fast;
 use Test::More;
-use Wx qw[:everything];
+use Wx ':everything';
 
 use lib::abs qw( ../../../../../../lib );
 

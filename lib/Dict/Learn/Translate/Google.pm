@@ -1,10 +1,10 @@
 package Dict::Learn::Translate::Google;
-use base qw[ Dict::Learn::Translate ];
+use base 'Dict::Learn::Translate';
 
 use Const::Fast;
 use Data::Printer;
-use JSON qw[ decode_json from_json ];
-use URI::Escape qw[ uri_escape_utf8 ];
+use JSON qw(decode_json from_json);
+use URI::Escape 'uri_escape_utf8';
 
 use common::sense;
 

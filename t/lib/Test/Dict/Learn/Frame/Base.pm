@@ -6,7 +6,7 @@ use common::sense;
 use Data::Printer;
 use Test::MockObject;
 use Test::More;
-use Wx qw[:everything];
+use Wx ':everything';
 
 use lib::abs qw( ../../../../../../lib );
 

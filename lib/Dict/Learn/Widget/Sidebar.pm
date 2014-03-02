@@ -1,14 +1,14 @@
 package Dict::Learn::Widget::Sidebar;
 
-use Wx qw[:everything];
-use Wx::Event qw[:everything];
+use Wx ':everything';
+use Wx::Event ':everything';
 use Wx::Html;
 
 use Moose;
 use MooseX::NonMoose;
 extends 'Wx::Panel';
 
-use Carp qw[croak confess];
+use Carp qw(croak confess);
 use Data::Printer;
 
 use common::sense;

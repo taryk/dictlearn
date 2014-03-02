@@ -1,7 +1,7 @@
 package Dict::Learn::Frame::PrepositionTest;
 
-use Wx qw[:everything];
-use Wx::Event qw[:everything];
+use Wx ':everything';
+use Wx::Event ':everything';
 
 use Data::Printer;
 
@@ -9,7 +9,7 @@ use Moose;
 use MooseX::NonMoose;
 extends 'Wx::Panel';
 
-use Carp qw[ croak confess ];
+use Carp qw(croak confess);
 use Const::Fast;
 use List::Util qw(shuffle sum);
 

@@ -1,5 +1,5 @@
 package Dict::Learn::Main::Result::Words;
-use base qw[ DBIx::Class::Core ];
+use base 'DBIx::Class::Core';
 
 =head1 NAME
 
@@ -13,10 +13,10 @@ TODO add description
 
 __PACKAGE__->table('word_xref');
 __PACKAGE__->add_columns(
-    qw[ word1_id word2_id dictionary_id partofspeech_id rel_type category_id
-        note cdate mdate ]
+    qw( word1_id word2_id dictionary_id partofspeech_id rel_type category_id
+        note cdate mdate )
 );
-__PACKAGE__->set_primary_key(qw[ word1_id word2_id rel_type ]);
+__PACKAGE__->set_primary_key(qw( word1_id word2_id rel_type ));
 __PACKAGE__->has_one(
     dictionary => 'Dict::Learn::Main::Result::Dictionary',
     {'foreign.dictionary_id' => 'self.dictionary_id'},

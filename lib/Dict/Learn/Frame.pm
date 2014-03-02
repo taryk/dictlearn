@@ -1,15 +1,15 @@
 package Dict::Learn::Frame;
 
-use Wx qw[:everything];
+use Wx ':everything';
 use Wx::AUI;
 use Wx::Grid;
-use Wx::Event qw[:everything];
+use Wx::Event ':everything';
 
 use Moose;
 use MooseX::NonMoose;
 extends 'Wx::Frame';
 
-use Carp qw[ croak confess ];
+use Carp qw(croak confess);
 use Const::Fast;
 use Data::Printer;
 use File::Basename 'dirname';

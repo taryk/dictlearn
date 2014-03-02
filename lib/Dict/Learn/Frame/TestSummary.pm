@@ -1,14 +1,14 @@
 package Dict::Learn::Frame::TestSummary;
 
-use Wx qw[:everything];
+use Wx ':everything';
 use Wx::Grid;
-use Wx::Event qw[:everything];
+use Wx::Event ':everything';
 
 use Moose;
 use MooseX::NonMoose;
 extends 'Wx::Panel';
 
-use Carp qw[croak confess];
+use Carp qw(croak confess);
 use Const::Fast;
 use Data::Printer;
 

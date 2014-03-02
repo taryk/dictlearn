@@ -1,5 +1,5 @@
 package Dict::Learn::Main::Result::TestSession;
-use base qw[ DBIx::Class::Core ];
+use base 'DBIx::Class::Core';
 
 =head1 NAME
 
@@ -13,8 +13,7 @@ TODO add description
 
 __PACKAGE__->table('test_session');
 __PACKAGE__->add_columns(
-    qw[ test_session_id test_id score
-        cdate mdate ]
+    qw( test_session_id test_id score cdate mdate )
 );
 __PACKAGE__->set_primary_key('test_session_id');
 __PACKAGE__->belongs_to(
