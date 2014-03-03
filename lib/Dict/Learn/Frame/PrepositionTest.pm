@@ -100,7 +100,7 @@ has hbox_exercise => (
     is      => 'ro',
     isa     => 'Wx::BoxSizer',
     lazy    => 1,
-    default => sub { Wx::BoxSizer->new(wxHORIZONTAL) }
+    default => sub { Wx::BoxSizer->new(wxHORIZONTAL) },
 );
 
 =head2 hbox

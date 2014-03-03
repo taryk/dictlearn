@@ -511,7 +511,6 @@ TODO add description
 sub on_close {
     my ($self, $event) = @_;
 
-    print "exit\n";
     $self->Destroy;
 }
 
