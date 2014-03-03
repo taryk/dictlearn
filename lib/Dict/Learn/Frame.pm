@@ -157,8 +157,8 @@ sub _build_menu_word {
 
     my @menu = (
         ['Add'    => \&p_addword   => 'Ctrl+N'],
-        ["Grid"   => \&p_gridwords            ],
-        ["Search" => \&p_search    => 'Ctrl+F'],
+        ['Grid'   => \&p_gridwords            ],
+        ['Search' => \&p_search    => 'Ctrl+F'],
     );
 
     for my $menu_item (@menu) {
@@ -650,8 +650,8 @@ sub BUILD {
     $self->make_pages();
 
     $self->manager->AddPane($self->notebook,
-        Wx::AuiPaneInfo->new->Name("notebook")
-            ->CenterPane->Caption("Notebook")->Position(1)
+        Wx::AuiPaneInfo->new->Name('notebook')
+            ->CenterPane->Caption('Notebook')->Position(1)
     );
 
     Dict::Learn::Dictionary->set(0);
