@@ -18,6 +18,4 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key('partofspeech_id');
 
-# __PACKAGE__->belongs_to('word');
-
 1;

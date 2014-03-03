@@ -44,12 +44,6 @@ __PACKAGE__->has_one(
 __PACKAGE__->might_have(
     last_test => 'Dict::Learn::Main::Result::TestSessionData',
     'word_id',
-    #{ group_by => { "fereign" => 1 } }
-    #{   cascade_delete => 0,
-    #    cascade_update => 0
-    #}
 );
-
-# __PACKAGE__->has_many( words_tr  => 'Dict::Learn::Main::Result::Words', 'word2_id');
 
 1;
