@@ -290,7 +290,7 @@ has min => (
     default => 3,
 );
 
-=head2 min
+=head2 max
 
 TODO add description
 
