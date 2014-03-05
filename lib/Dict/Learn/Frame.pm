@@ -13,6 +13,7 @@ use Carp qw(croak confess);
 use Const::Fast;
 use Data::Printer;
 use File::Basename 'dirname';
+use Scalar::Util 'looks_like_number';
 
 use common::sense;
 
@@ -31,6 +32,7 @@ use Dict::Learn::Import;
 
 # A hardcoded offset to distinguish dictionaries IDs from other IDs
 const my $DICT_OFFSET => 100;
+const my $DEFAULT_TRANSLATION_BACKEND => 'Lingvo';
 
 =head1 NAME
 
@@ -266,6 +268,12 @@ sub _build_menu_translate {
         my $menu_id = $self->_next_menu_id;
         $menu_translate->AppendRadioItem($menu_id, $translator_backend);
         EVT_MENU($self, $menu_id, \&set_translator_backend);
+
+        # Set default translation backend
+        if ($translator_backend eq $DEFAULT_TRANSLATION_BACKEND) {
+            $menu_translate->Check($menu_id, 1);
+            $self->set_translator_backend($translator_backend);
+        }
     }
 
     return $menu_translate
@@ -480,12 +488,18 @@ TODO add description
 =cut
 
 sub set_translator_backend {
-    my ($self, $event) = @_;
+    my $self = shift;
 
-    my $menu_item = $self->menu_translate->FindItem($event->GetId);
-    $self->status_bar->SetStatusText(
-        'Use "' . $menu_item->GetLabel . '" translator');
-    $self->translator->using($menu_item->GetLabel);
+    my $translator_backend;
+    if (ref $_[0] eq 'Wx::CommandEvent') {
+        my $menu_item = $self->menu_translate->FindItem($_[0]->GetId);
+        $self->status_bar->SetStatusText(
+            'Use "' . $menu_item->GetLabel . '" translator');
+        $translator_backend = $menu_item->GetLabel;
+    } else {
+        $translator_backend = $_[0];
+    }
+    $self->translator->using($translator_backend);
 }
 
 =head2 set_frame_title

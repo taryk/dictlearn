@@ -33,7 +33,7 @@ sub new {
     my $class = shift;
 
     my $self  = bless {
-        using    => 'Google',
+        using    => undef,
         from     => 'en',
         to       => 'uk',
         tplugins => [],
