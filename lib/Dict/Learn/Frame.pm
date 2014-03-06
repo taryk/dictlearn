@@ -495,7 +495,9 @@ sub dictionary_check {
 
 =head2 set_translator_backend
 
-TODO add description
+Sets translation backend. Can be supplied with either L<Wx::CommandEvent>
+object or a name of translation backend (which can be: I<Google>, I<Lingvo>,
+I<Promt>, or I<Yandex>).
 
 =cut
 
