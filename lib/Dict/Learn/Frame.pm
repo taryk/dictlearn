@@ -464,6 +464,18 @@ sub new_page {
     $self->notebook->AddPage($panel_ref, $caption, $default // 1);
 }
 
+=head2 set_status_text
+
+Set the status in the bottom's statusbar
+
+=cut
+
+sub set_status_text {
+    my ($self, $status_text) = @_;
+
+    $self->status_bar->SetStatusText($status_text);
+}
+
 =head2 dictionary_check
 
 TODO add description
@@ -475,7 +487,7 @@ sub dictionary_check {
 
     # my $menu = $event->GetEventObject();
     my $menu_item = $self->menu_dicts->FindItem($event->GetId);
-    $self->status_bar->SetStatusText(
+    $self->set_status_text(
         'Dictionary "' . $menu_item->GetLabel . '" selected');
     Dict::Learn::Dictionary->set(_DICT_ID($event->GetId));
     $self->set_frame_title(_DICT_ID($event->GetId));
@@ -493,7 +505,7 @@ sub set_translator_backend {
     my $translator_backend;
     if (ref $_[0] eq 'Wx::CommandEvent') {
         my $menu_item = $self->menu_translate->FindItem($_[0]->GetId);
-        $self->status_bar->SetStatusText(
+        $self->set_status_text(
             'Use "' . $menu_item->GetLabel . '" translator');
         $translator_backend = $menu_item->GetLabel;
     } else {
