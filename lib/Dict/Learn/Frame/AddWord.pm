@@ -395,14 +395,13 @@ sub set_status_text {
 
 =head2 strip_spaces
 
-TODO add description
+Removes leading and trailing spaces of a supplied string.
 
 =cut
 
 sub strip_spaces {
     my ($self, $phrase) = @_;
 
-    # remove leading and trailing spaces
     $phrase =~ s{ ^ \s+ }{}x;
     $phrase =~ s{ \s+ $ }{}x;
 
