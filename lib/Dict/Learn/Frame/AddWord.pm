@@ -620,7 +620,7 @@ sub clear_fields {
 
 =head2 remove_translations
 
-TODO add description
+Remove all the translation items
 
 =cut
 
