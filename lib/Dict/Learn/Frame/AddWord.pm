@@ -595,7 +595,7 @@ sub add {
 
 =head2 clear_fields
 
-TODO add description
+Clear the fields and properties
 
 =cut
 
