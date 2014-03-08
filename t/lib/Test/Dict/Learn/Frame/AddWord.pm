@@ -263,6 +263,38 @@ sub check_word : Tests {
        q{The button label has been changed to 'Add'});
 }
 
+sub clear_fields : Tests {
+    my ($self) = @_;
+
+    my $frame = $self->{frame};
+
+    # First off, set the data to the fields and properties
+    $frame->item_id(12);
+    $frame->edit_origin({ foo => 'bar' });
+    $frame->enable(0);
+    $frame->word_src->SetValue('foo');
+    $frame->word2_src->SetValue('bar');
+    $frame->word3_src->SetValue('baz');
+    $frame->word_note->SetValue('Once upon a time ...');
+    $frame->translations->add_item() for 1 .. 5;
+
+    # Then clear the fields above
+    $frame->clear_fields();
+
+    # And then check if all of them were reset/cleared
+    subtest q{Check if all the fields were reset} => sub {
+        ok(!$frame->has_item_id,     q{'item_id' property was cleared});
+        ok(!$frame->has_edit_origin, q{'edit_origin' property was cleared});
+        is($frame->enable, 1, q{'enable' property was reset});
+        is($frame->word_src->GetValue,  '', q{'word_src' field was cleared});
+        is($frame->word2_src->GetValue, '', q{'word2_src' field was cleared});
+        is($frame->word3_src->GetValue, '', q{'word3_src' field was cleared});
+        is($frame->word_note->GetValue, '', q{'word_note' field was cleared});
+        is($frame->translations->translation_count,
+            0, q{All translation fields were removed});
+    };
+}
+
 sub _create_event_object {
     my ($self, $word) = @_;
 
