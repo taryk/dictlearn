@@ -295,6 +295,22 @@ sub clear_fields : Tests {
     };
 }
 
+sub remove_translations : Tests {
+    my ($self) = @_;
+
+    my $frame = $self->{frame};
+
+    # First off, create 5 translation items
+    $frame->translations->add_item() for 1 .. 5;
+
+    # Then try remove all the translation items
+    $frame->remove_translations();
+
+    # And then check if all of them were removed
+    is($frame->translations->translation_count,
+        0, q{All translation fields were removed});
+}
+
 sub _create_event_object {
     my ($self, $word) = @_;
 
