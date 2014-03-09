@@ -735,7 +735,7 @@ sub translate_word {
 
 =head2 enable_irregular
 
-TODO add description
+Enables/disables irregular verb related fields
 
 =cut
 
