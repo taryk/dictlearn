@@ -311,6 +311,26 @@ sub remove_translations : Tests {
         0, q{All translation fields were removed});
 }
 
+sub enable_irregular : Tests {
+    my ($self) = @_;
+
+    my $frame = $self->{frame};
+
+    subtest q{Try to enable irregular-verb-related fields} => sub {
+        $frame->enable_irregular(1);
+        ok($frame->cb_irregular->GetValue, q{cb_irregular is enabled});
+        ok($frame->word2_src->IsEnabled, q{word2_src is enabled});
+        ok($frame->word3_src->IsEnabled, q{word3_src is enabled});
+    };
+
+    subtest q{Then try to disable irregular-verb-related fields} => sub {
+        $frame->enable_irregular(0);
+        ok(!$frame->cb_irregular->GetValue, q{cb_irregular is disabled});
+        ok(!$frame->word2_src->IsEnabled, q{word2_src is disabled});
+        ok(!$frame->word3_src->IsEnabled, q{word3_src is disabled});
+    };
+}
+
 sub _create_event_object {
     my ($self, $word) = @_;
 
