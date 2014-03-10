@@ -333,6 +333,26 @@ sub enable_irregular : Tests {
     };
 }
 
+sub toggle_irregular : Tests {
+    my ($self) = @_;
+
+    my $frame = $self->{frame};
+
+    subtest q{Check cb_irregular} => sub {
+        $frame->toggle_irregular(
+            $self->_create_event_object(IsChecked => sub { 1 }));
+        ok($frame->word2_src->IsEnabled, q{word2_src is enabled});
+        ok($frame->word3_src->IsEnabled, q{word3_src is enabled});
+    };
+
+    subtest q{Uncheck cb_irregular} => sub {
+        $frame->toggle_irregular(
+            $self->_create_event_object(IsChecked => sub { 0 }));
+        ok(!$frame->word2_src->IsEnabled, q{word2_src is disabled});
+        ok(!$frame->word3_src->IsEnabled, q{word3_src is disabled});
+    };
+}
+
 sub _create_event_object {
     my ($self, @params) = @_;
 
