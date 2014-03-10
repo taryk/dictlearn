@@ -749,7 +749,7 @@ sub enable_irregular {
 
 =head2 toggle_irregular
 
-TODO add description
+Click handler of L<cb_irregular> checkbox
 
 =cut
 
