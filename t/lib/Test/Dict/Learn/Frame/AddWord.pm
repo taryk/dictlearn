@@ -4,6 +4,8 @@ use parent 'Test::Dict::Learn::Frame::Base';
 use common::sense;
 
 use Test::More;
+use Test::MockObject;
+
 use Wx ':everything';
 
 use lib::abs qw( ../../../../../../lib );
@@ -246,8 +248,8 @@ sub check_word : Tests {
 
     # if the word already exists in the database, the form controls have to be
     # disabled
-    $self->{frame}->check_word(
-        $self->_create_event_object($word));
+    $self->{frame}
+        ->check_word($self->_create_event_object(GetString => sub { $word }));
 
     is($self->{frame}->enable, 0, q{Form has been disabled});
     like($self->{frame}->btn_add_word->GetLabel => qr{^Edit word},
@@ -256,7 +258,7 @@ sub check_word : Tests {
     # Try to pass a word that doesn't exist in the database.
     # The form controls have to be enabled again in the end.
     $self->{frame}->check_word(
-        $self->_create_event_object($word.'0'));
+        $self->_create_event_object(GetString => sub { $word . '0' }));
 
     is($self->{frame}->enable, 1, q{Form has been enabled});
     is($self->{frame}->btn_add_word->GetLabel => 'Add',
@@ -332,10 +334,10 @@ sub enable_irregular : Tests {
 }
 
 sub _create_event_object {
-    my ($self, $word) = @_;
+    my ($self, @params) = @_;
 
     my $event = Test::MockObject->new();
-    $event->mock( GetString => sub { $word } );
+    $event->mock( @params );
 
     return $event;
 }
