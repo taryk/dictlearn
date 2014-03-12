@@ -761,7 +761,7 @@ sub toggle_irregular {
 
 =head2 enable_controls
 
-TODO add description
+Enables/Disables all the fields and buttons on this page.
 
 =cut
 
@@ -786,7 +786,8 @@ sub enable_controls {
 
 =head2 close_page
 
-TODO add description
+Closes the current page.
+This method bound to I<Ctrl+W>
 
 =cut
 
@@ -800,7 +801,8 @@ sub close_page {
 
 =head2 set_word
 
-TODO add description
+Puts a value in L<word_src> field.
+Also removes the leading and trailing spaces of that value.
 
 =cut
 
