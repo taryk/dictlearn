@@ -410,7 +410,8 @@ sub strip_spaces {
 
 =head2 check_word
 
-TODO add description
+Checks a word or phrase whether it alredy exists in the DB on not.
+If so, disable the buttons, so user won't be able to add that one.
 
 =cut
 
@@ -465,7 +466,8 @@ sub check_word {
 
 =head2 check_for_duplicates
 
-TODO add description
+Supplied with a hash of translation entities.
+Checks if there are duplicates in this hash.
 
 =cut
 
