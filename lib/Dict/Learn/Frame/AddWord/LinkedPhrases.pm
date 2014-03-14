@@ -162,6 +162,8 @@ TODO add description
 sub keybind {
     my ($self, $event) = @_;
 
+    return if !$self->parent->enable;
+
     my $key_modifiers = $event->GetModifiers();
     my $key_code = $event->GetKeyCode();
 

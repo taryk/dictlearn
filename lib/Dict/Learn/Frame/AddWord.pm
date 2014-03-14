@@ -362,6 +362,8 @@ TODO add description
 sub keybind {
     my ($self, $event) = @_;
 
+    return if !$self->enable;
+
     # Handle keybindings from translations panel as well
     $self->translations->keybind($event);
 
@@ -421,45 +423,58 @@ sub check_word {
     my $lang_id
         = Dict::Learn::Dictionary->curr->{language_orig_id}{language_id};
     my $value = $self->strip_spaces($event->GetString);
-    my $word;
-    unless (
-        defined(
-            $word
-                = Database->schema->resultset('Word')
-                ->match($lang_id, $value)->first
-        ))
-    {
+    if ($value) {
+
+        # First, enable btn_add_word button when there's any text in
+        # word_src field
         $self->enable(1);
-        $self->btn_add_word->SetLabel($self->has_item_id ? 'Save' : 'Add');
-        EVT_BUTTON($self, $self->btn_add_word, \&add);
-    } else {
-        if ($self->item_id >= 0) {
-            return
-                if $self->has_edit_origin
-                and $self->edit_origin->{word} eq $value;
-        }
-        if ((my $word_id = $word->word_id) >= 0) {
-            $self->enable(0);
-            $self->btn_add_word->SetLabel(qq{Edit word "$value"});
-            EVT_BUTTON(
-                $self,
-                $self->btn_add_word,
-                sub {
-                    $self->enable(1);
-                    $self->load_word(word_id => $word_id);
-                    EVT_BUTTON($self, $self->btn_add_word, \&add);
-                }
-            );
-            my $translations_number = $word->words->count;
-            $self->set_status_text(qq{Word "$value" already exists with }
-                    . ($translations_number > 0 ? $translations_number : 'no')
-                    . ' translation(s)');
-        }
-        else {
+        $self->btn_add_word->Enable($self->enable);
+
+        my $word;
+        unless (
+            defined(
+                $word
+                    = Database->schema->resultset('Word')
+                    ->match($lang_id, $value)->first
+            ))
+        {
             $self->enable(1);
-            $self->btn_add_word->SetLabel('Add');
+            $self->btn_add_word->SetLabel($self->has_item_id ? 'Save' : 'Add');
             EVT_BUTTON($self, $self->btn_add_word, \&add);
+        } else {
+            if ($self->item_id >= 0) {
+                return
+                    if $self->has_edit_origin
+                    and $self->edit_origin->{word} eq $value;
+            }
+            if ((my $word_id = $word->word_id) >= 0) {
+                $self->enable(0);
+                $self->btn_add_word->SetLabel(qq{Edit word "$value"});
+                EVT_BUTTON(
+                    $self,
+                    $self->btn_add_word,
+                    sub {
+                        $self->enable(1);
+                        $self->load_word(word_id => $word_id);
+                        EVT_BUTTON($self, $self->btn_add_word, \&add);
+                    }
+                );
+                my $translations_number = $word->words->count;
+                $self->set_status_text(qq{Word "$value" already exists with }
+                        . ($translations_number > 0 ? $translations_number : 'no')
+                        . ' translation(s)');
+            }
+            else {
+                $self->enable(1);
+                $self->btn_add_word->SetLabel('Add');
+                EVT_BUTTON($self, $self->btn_add_word, \&add);
+            }
         }
+    } else {
+
+        # Disable btn_add_word button when word_src field is empty
+        $self->enable(0);
+        $self->btn_add_word->Enable($self->enable);
     }
     $self->enable_controls($self->enable);
 }
@@ -844,6 +859,9 @@ sub BUILD {
 
     # Set focus on word field
     $self->word_src->SetFocus();
+
+    # To trigger the EVT_TEXT event
+    $self->word_src->SetValue('');
 }
 
 no Moose;
